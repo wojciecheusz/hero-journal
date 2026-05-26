@@ -495,7 +495,6 @@ function Inventory({ inventory, setInventory }) {
    NPC TRACKER
 ═══════════════════════════════════════════════ */
 function NPCTracker({ npcs, setNPCs }) {
-  const [form,{name:"",role:"",relation:"unknown",notes:""}] = [useState({name:"",role:"",relation:"unknown",notes:""}), null];
   const [formState, setForm]   = useState({name:"",role:"",relation:"unknown",notes:""});
   const [showForm, setShowForm]= useState(false);
   const [expanded, setExpanded]= useState({});
