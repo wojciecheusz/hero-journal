@@ -738,7 +738,7 @@ function CharacterSheet({ char, setChar }) {
       </div>
 
       <div className="card">
-        <div className="sect-label">Chronicles & Traits</div>
+        <div className="sect-label">Personal thoughts</div>
         <textarea
           className="g-textarea"
           rows={6}
