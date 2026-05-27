@@ -1023,12 +1023,12 @@ function QuestTracker({quests,setQuests}) {
 /* ═══ NAV ══════════════════════════════════════ */
 const TABS=[
   {id:"character",label:"Hero",     icon:"⚔️"},
-  {id:"inventory",label:"Pack",     icon:"🎒"},
+  {id:"inventory",label:"Backpack",     icon:"🎒"},
+  {id:"skills",   label:"Abilities",icon:"✨"},
   {id:"npcs",     label:"People",   icon:"👥"},
   {id:"locations",label:"Places",   icon:"🗺️"},
-  {id:"skills",   label:"Abilities",icon:"✨"},
-  {id:"sessions", label:"Log",      icon:"📜"},
   {id:"quests",   label:"Quests",   icon:"⚡"},
+  {id:"sessions", label:"Sessions",      icon:"📜"},
 ];
 
 /* ═══ ROOT APP ═════════════════════════════════ */
