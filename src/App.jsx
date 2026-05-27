@@ -517,7 +517,7 @@ function EntityLink({ match, part, onNavigate, tabLabel }) {
       onMouseLeave={hide}
       onTouchStart={e=>{e.preventDefault();show();}}
       onTouchEnd={hide}
-      title={`→ ${tabLabel}: ${match.name}`}
+      title={match.name}
       style={{position:"relative",display:"inline"}}
     >
       {part}
@@ -525,17 +525,12 @@ function EntityLink({ match, part, onNavigate, tabLabel }) {
         <span className="entity-tooltip" onClick={e=>e.stopPropagation()}>
           <span className="entity-tooltip-name">{match.name}</span>
           {match.tooltip.sub && (
-            <span className="entity-tooltip-sub">
-              {tabLabel}{match.tooltip.sub ? ` · ${match.tooltip.sub}` : ""}
-            </span>
+            <span className="entity-tooltip-sub">{match.tooltip.sub}</span>
           )}
           {match.tooltip.body && (
             <span className="entity-tooltip-body">
               {match.tooltip.body.slice(0,140)}{match.tooltip.body.length>140?"…":""}
             </span>
-          )}
-          {!match.tooltip.sub && !match.tooltip.body && (
-            <span className="entity-tooltip-sub">{tabLabel}</span>
           )}
         </span>
       )}
