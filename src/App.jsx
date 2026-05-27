@@ -6,121 +6,263 @@ const CSS = `
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body, #root { min-height: 100vh; background: #0f0d0b; }
 
-  .hj-root { position: relative; min-height: 100vh; background: #0f0d0b; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: 90px; }
+  .hj-root { position: relative; min-height: 100vh; background: #0f0d0b; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: 80px; }
   .hj-root::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.045; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-repeat: repeat; }
 
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: #0a0806; }
-  ::-webkit-scrollbar-thumb { background: #3a3020; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: #3a3020; }
 
-  .hj-header { position: sticky; top: 0; z-index: 50; background: linear-gradient(180deg,#1c1810 0%,#141008 100%); border-bottom: 1px solid #352e1e; box-shadow: 0 4px 32px rgba(0,0,0,0.8); padding: 1rem 1.25rem; }
-  .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.3rem; font-weight: 700; color: #e2b94e; letter-spacing: 0.12em; text-shadow: 0 0 22px rgba(226,185,78,0.4); display: flex; align-items: center; gap: 0.5rem; }
+  .hj-header { position: sticky; top: 0; z-index: 50; background: linear-gradient(180deg,#1c1810 0%,#141008 100%); border-bottom: 1px solid #352e1e; box-shadow: 0 4px 32px rgba(0,0,0,0.8); padding: 0.9rem 1.25rem; }
+  .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; letter-spacing: 0.12em; text-shadow: 0 0 22px rgba(226,185,78,0.4); display: flex; align-items: center; gap: 0.5rem; }
 
-  /* ── Mobile Optimized Bottom Nav ── */
-  .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(0deg,#0d0b08 0%,#161210 100%); border-top: 1px solid #302818; box-shadow: 0 -4px 32px rgba(0,0,0,0.8); display: flex; align-items: stretch; height: 76px; padding-bottom: env(safe-area-inset-bottom,0px); overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .hj-bottom-nav::-webkit-scrollbar { display: none; }
-  .hj-nav-btn { flex: 0 0 22%; min-width: 75px; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.5rem; position: relative; }
-  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 3px; background: #e2b94e; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 3px 3px; }
+  .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(0deg,#0d0b08 0%,#161210 100%); border-top: 1px solid #302818; box-shadow: 0 -4px 32px rgba(0,0,0,0.8); display: flex; align-items: stretch; height: 68px; padding-bottom: env(safe-area-inset-bottom,0px); }
+  .hj-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.3rem 0.05rem; position: relative; }
+  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px; background: #e2b94e; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
   .hj-nav-btn.active::before { transform: scaleX(1); }
-  .hj-nav-icon { font-size: 1.4rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
+  .hj-nav-icon { font-size: 1.1rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
   .hj-nav-btn.active .hj-nav-icon { filter: grayscale(0) brightness(1); }
-  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6a5830; transition: color 0.18s; font-weight: 600; }
+  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.4rem; letter-spacing: 0.06em; text-transform: uppercase; color: #6a5830; transition: color 0.18s; }
   .hj-nav-btn.active .hj-nav-label { color: #e2b94e; }
+  .hj-nav-btn:hover:not(.active) .hj-nav-label { color: #9a7840; }
 
-  .hj-content { max-width: 780px; margin: 0 auto; padding: 1.4rem 1rem 2rem; display: flex; flex-direction: column; gap: 1.2rem; }
+  .hj-content { max-width: 780px; margin: 0 auto; padding: 1.4rem 1rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
 
   /* ── Cards ── */
-  .card { background: #1c1810; border: 1px solid #352e1e; border-radius: 4px; box-shadow: 0 3px 0 #0a0806, inset 0 1px 0 rgba(226,185,78,0.05); padding: 1.25rem; position: relative; }
+  .card { background: #1c1810; border: 1px solid #352e1e; box-shadow: 0 3px 0 #0a0806, inset 0 1px 0 rgba(226,185,78,0.05); padding: 1.25rem; position: relative; }
+  .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(226,185,78,0.03) 0%,transparent 55%); pointer-events: none; }
   .card.pinned { border-color: #7a6030; }
-  .card.pinned::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#e2b94e,transparent); }
-  .card.inuse-active { border-color: #5a3a8a; }
-  .card.spell-active { border-color: #1a3a6a; }
+  .card.pinned::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#e2b94e,transparent); pointer-events: none; }
+  .card.inuse-active { border-color: #5a3a8a; box-shadow: 0 3px 0 #0a0806, 0 0 0 1px rgba(168,122,204,0.15); }
+  .card.inuse-active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#a87acc,transparent); pointer-events: none; }
+  .card.spell-active { border-color: #1a3a6a; box-shadow: 0 3px 0 #0a0806, 0 0 0 1px rgba(100,160,230,0.18); }
+  .card.spell-active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#64a0e6,transparent); pointer-events: none; }
 
-  .inner-divider { border: none; border-top: 1px solid #2a2418; margin: 1.4rem 0; position: relative; }
-  .inner-divider::before { content: attr(data-label); position: absolute; top: 50%; left: 0; transform: translateY(-50%); background: #1c1810; padding-right: 0.8rem; font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #b09050; }
+  /* ── Inner section divider inside merged card ── */
+  .inner-divider { border: none; border-top: 1px solid #2a2418; margin: 1.1rem 0; position: relative; }
+  .inner-divider::before { content: attr(data-label); position: absolute; top: 50%; left: 0; transform: translateY(-50%); background: #1c1810; padding-right: 0.6rem; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: #b09050; }
 
-  .sect-label { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: #b09050; display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.2rem; }
+  .sect-label { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: #b09050; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
   .sect-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,#352e1e,transparent); }
 
-  /* ── Inputs & Touch Targets ── */
-  .iedit { background: transparent; border: none; border-bottom: 1px dashed #5a4e34; color: inherit; font-family: inherit; font-size: inherit; font-weight: inherit; outline: none; width: 100%; transition: border-color 0.15s; padding: 0.3rem 0; }
+  .iedit { background: transparent; border: none; border-bottom: 1px dashed #5a4e34; color: inherit; font-family: inherit; font-size: inherit; font-weight: inherit; font-style: inherit; outline: none; width: 100%; transition: border-color 0.15s; line-height: inherit; padding: 0; }
   .iedit:focus { border-bottom-color: #e2b94e; }
+  .iedit::placeholder { color: #6a5a38; }
 
-  .g-input, .g-select, .g-textarea { background: #130f0c; border: 1px solid #3a3220; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.1rem; padding: 0.75rem 0.85rem; outline: none; width: 100%; border-radius: 4px; appearance: none; }
-  .g-input:focus, .g-select:focus, .g-textarea:focus { border-color: #8a6830; }
+  .g-input { background: #130f0c; border: 1px solid #3a3220; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; padding: 0.5rem 0.85rem; outline: none; width: 100%; transition: border-color 0.15s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.45); }
+  .g-input:focus { border-color: #8a6830; }
+  .g-input::placeholder { color: #5a4e34; font-style: italic; }
 
-  /* ── Buttons ── */
-  .btn-gold, .btn-ghost, .btn-danger, .btn-sm { padding: 0.6rem 1.2rem; cursor: pointer; border-radius: 3px; font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
-  .btn-gold { background: transparent; color: #e2b94e; border: 1px solid #8a6830; }
-  .btn-ghost { border: 1px solid #3a3220; color: #9a8050; }
-  .btn-danger { border: 1px solid #6a2a2a; color: #c04040; }
-  .btn-sm { font-size: 0.65rem; padding: 0.4rem 0.8rem; }
-  
-  .btn-pm { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: #130f0c; border: 1px solid #3a3220; color: #9a8050; font-size: 1.5rem; border-radius: 4px; }
+  .g-select { background: #130f0c; border: 1px solid #3a3220; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1rem; padding: 0.45rem 0.75rem; outline: none; width: 100%; transition: border-color 0.15s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.45); appearance: none; cursor: pointer; }
+  .g-select:focus { border-color: #8a6830; }
 
-  /* ── Tags & Badges ── */
-  .tags-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.8rem; }
-  .tag { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 2px; }
+  .g-textarea { background: #130f0c; border: 1px solid #3a3220; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; padding: 0.75rem 0.85rem; outline: none; width: 100%; resize: vertical; transition: border-color 0.15s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.45); line-height: 1.65; }
+  .g-textarea:focus { border-color: #8a6830; }
+  .g-textarea::placeholder { color: #5a4e34; font-style: italic; }
+
+  .btn-gold { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: #e2b94e; border: 1px solid #8a6830; padding: 0.48rem 1.1rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-gold:hover { background: rgba(226,185,78,0.12); border-color: #e2b94e; box-shadow: 0 0 14px rgba(226,185,78,0.22); }
+  .btn-ghost { background: transparent; border: 1px solid #3a3220; color: #9a8050; font-size: 0.72rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
+  .btn-ghost:hover { border-color: #9b2c2c; color: #c04040; }
+  .btn-danger { background: transparent; border: 1px solid #6a2a2a; color: #c04040; font-size: 0.68rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.08em; text-transform: uppercase; }
+  .btn-danger:hover { background: rgba(192,64,64,0.12); border-color: #c04040; }
+  .btn-sm { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; color: #9a8050; border: 1px solid #3a3220; padding: 0.25rem 0.6rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-sm:hover { border-color: #8a6830; color: #e2b94e; }
+  .btn-pm { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #3a3220; color: #9a8050; font-size: 1.2rem; cursor: pointer; transition: all 0.15s; flex-shrink: 0; font-family: monospace; }
+  .btn-pm.minus:hover { border-color: #7a2a2a; color: #e04040; }
+  .btn-pm.plus:hover  { border-color: #2a6a2a; color: #5acc5a; }
+
+  /* ── Tags ── */
+  .tags-row { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-top: 0.55rem; }
+  .tag { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.18rem 0.55rem; display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap; }
   .tag-default { background: rgba(226,185,78,0.08); border: 1px solid #4a3e20; color: #b09050; }
-  .tag-remove { background: transparent; border: none; color: #7a6040; font-size: 0.8rem; padding: 0.2rem; margin: -0.2rem; }
-  .tag-add-btn { background: transparent; border: 1px dashed #3a3018; color: #7a6840; font-family: 'Cinzel', serif; font-size: 0.6rem; padding: 0.3rem 0.8rem; }
-  
-  .filter-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-bottom: 1rem; }
-  .filter-tag { font-family: 'Cinzel', serif; font-size: 0.65rem; padding: 0.4rem 0.8rem; border: 1px solid #352e1e; border-radius: 3px; color: #8a7040; background: transparent; }
+  .tag-remove { background: transparent; border: none; color: #7a6040; cursor: pointer; font-size: 0.6rem; padding: 0; line-height: 1; transition: color 0.15s; }
+  .tag-remove:hover { color: #c04040; }
+  .tag-input { background: transparent; border: none; border-bottom: 1px dashed #5a4e34; color: #b09050; font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; outline: none; width: 80px; padding: 0.1rem 0; }
+  .tag-input::placeholder { color: #4a3e24; }
+  .tag-add-btn { background: transparent; border: 1px dashed #3a3018; color: #7a6840; font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.08em; padding: 0.18rem 0.5rem; cursor: pointer; transition: all 0.15s; }
+  .tag-add-btn:hover { border-color: #7a6030; color: #b09050; }
+
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; margin-bottom: 0.8rem; }
+  .filter-tag { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border: 1px solid #352e1e; color: #8a7040; cursor: pointer; transition: all 0.15s; background: transparent; }
   .filter-tag.active-filter { background: rgba(226,185,78,0.1); border-color: #8a6830; color: #e2b94e; }
+  .filter-tag:hover:not(.active-filter) { border-color: #5a4a28; color: #b09050; }
 
   /* ── Stat box ── */
   .stat-grid-6 { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.5rem; }
-  @media (max-width:600px) { .stat-grid-6 { grid-template-columns: repeat(3,1fr); gap: 0.8rem; } }
-  .stat-box { background: #130f0c; border: 1px solid #3a3220; border-radius: 4px; text-align: center; padding: 0.85rem 0.4rem; cursor: pointer; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
-  .stat-name { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em; color: #b09050; margin-bottom: 0.4rem; display: block; }
-  .stat-val  { font-family: 'Cinzel', serif; font-size: 1.7rem; font-weight: 700; color: #e2b94e; line-height: 1.1; }
-  .stat-mod  { font-family: 'Cinzel', serif; font-size: 0.7rem; color: #9a8050; margin-top: 0.2rem; display: block; }
+  @media (max-width:500px) { .stat-grid-6 { grid-template-columns: repeat(3,1fr); } }
+  .stat-box { background: #130f0c; border: 1px solid #3a3220; text-align: center; padding: 0.65rem 0.3rem 0.55rem; cursor: pointer; transition: all 0.15s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); user-select: none; }
+  .stat-box:hover { border-color: #7a6030; }
+  .stat-box.editing { border-color: #e2b94e; }
+  .stat-name { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.15em; color: #b09050; display: block; margin-bottom: 0.25rem; }
+  .stat-val  { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; color: #e2b94e; line-height: 1.1; display: block; }
+  .stat-mod  { font-family: 'Cinzel', serif; font-size: 0.62rem; color: #9a8050; display: block; margin-top: 0.15rem; }
+  .stat-input { background: transparent; border: none; border-bottom: 1px solid #e2b94e; color: #e2b94e; font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 700; width: 100%; text-align: center; outline: none; }
 
-  /* ── Combat & HP ── */
-  .hp-bar-bg { height: 14px; background: #0a0806; border: 1px solid #231e12; border-radius: 7px; overflow: hidden; margin-top: 1rem; }
+  /* ── HP ── */
+  .hp-bar-bg { height: 10px; background: #0a0806; border: 1px solid #231e12; box-shadow: inset 0 2px 5px rgba(0,0,0,0.7); position: relative; overflow: hidden; margin-top: 0.7rem; }
   .hp-bar-fill { height: 100%; transition: width 0.35s ease, background 0.5s ease; }
-  
-  .combat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.8rem; margin-top: 1rem; }
-  .combat-box { background: #130f0c; border: 1px solid #3a3220; border-radius: 4px; text-align: center; padding: 0.8rem 0.4rem; }
-  .combat-box-label { font-family: 'Cinzel', serif; font-size: 0.65rem; color: #b09050; display: block; margin-bottom: 0.4rem; }
-  .combat-box-input { font-size: 1.4rem; color: #e2b94e; text-align: center; width: 100%; background: transparent; border: none; outline: none; }
+  .hp-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .hp-display { font-family: 'Cinzel', serif; font-size: 1.5rem; display: flex; align-items: baseline; gap: 0.2rem; }
+  .hp-sep { color: #4a3a2a; font-size: 1rem; }
+  .hp-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: #7a6040; }
+  .hp-pct { font-family: 'Cinzel', serif; font-size: 0.58rem; text-align: right; margin-top: 0.25rem; transition: color 0.5s; }
 
-  /* ── Toggles & Checkboxes (Enlarged Targets) ── */
-  .check-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.5rem 0.4rem; border-bottom: 1px solid #231e12; }
-  .prof-dot-btn { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #5a4a28; background: transparent; flex-shrink: 0; appearance: none; }
-  .prof-dot-btn.prof { background: #e2b94e; border-color: #c9a84c; }
-  .check-label { font-size: 1.1rem; flex: 1; }
-  .check-attr { font-size: 0.65rem; color: #8a7040; width: 30px; }
-  .check-bonus { font-size: 1rem; font-weight: 700; width: 40px; text-align: right; }
+  .combat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-top: 0.7rem; }
+  .combat-box { background: #130f0c; border: 1px solid #3a3220; text-align: center; padding: 0.5rem 0.3rem; }
+  .combat-box-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.14em; color: #b09050; display: block; margin-bottom: 0.2rem; }
+  .combat-box-val { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; display: block; }
+  .combat-box-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; text-align: center; width: 100%; }
 
-  .skill-pips { display: flex; gap: 6px; align-items: center; }
-  .pip { width: 16px; height: 16px; border: 2px solid #3a3018; border-radius: 2px; }
-  .pip.filled { background: #e2b94e; border-color: #c9a84c; }
+  /* ── Saving throws & skills ── */
+  .save-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 1rem; }
+  @media (max-width:480px) { .save-grid { grid-template-columns: 1fr; } }
+  .check-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.22rem 0.3rem; border-bottom: 1px solid #231e12; }
+  .check-row:last-child { border-bottom: none; }
+  .prof-dot-btn { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #5a4a28; background: transparent; cursor: pointer; flex-shrink: 0; transition: all 0.15s; padding: 0; appearance: none; -webkit-appearance: none; }
+  .prof-dot-btn.prof { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 6px rgba(226,185,78,0.55); }
+  .prof-dot-btn:hover:not(.prof) { border-color: #9a8050; background: rgba(226,185,78,0.1); }
+  .check-label { font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; color: #ccc0a0; flex: 1; }
+  .check-attr { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #8a7040; flex-shrink: 0; }
+  .check-bonus { font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700; color: #e2b94e; min-width: 28px; text-align: right; }
 
-  .toggle-wrap { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; padding: 0.4rem; }
-  .toggle-track { width: 44px; height: 24px; border-radius: 12px; background: #2a2418; border: 1px solid #3a3220; position: relative; }
-  .toggle-thumb { width: 16px; height: 16px; border-radius: 50%; background: #5a4a28; position: absolute; top: 3px; left: 3px; transition: left 0.2s; }
-  .toggle-track.on .toggle-thumb, .toggle-track.on-purple .toggle-thumb, .toggle-track.on-blue .toggle-thumb { left: 23px; }
+  /* ── Traits ── */
+  .trait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  @media (max-width:480px) { .trait-grid { grid-template-columns: 1fr; } }
+  .trait-block { display: flex; flex-direction: column; gap: 0.3rem; }
+  .trait-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase; color: #b09050; }
+  .trait-ta { background: #130f0c; border: 1px solid #3a3220; color: #ccc0a0; font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; padding: 0.5rem 0.65rem; outline: none; width: 100%; resize: vertical; line-height: 1.55; }
+  .trait-ta:focus { border-color: #7a6030; }
+  .trait-ta::placeholder { color: #5a4e34; font-style: italic; }
 
-  /* ── Entities & Logs ── */
-  .entity-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 0.8rem; }
-  .pin-btn, .entity-toggle { padding: 0.6rem; font-size: 1.2rem; background: transparent; border: none; color: #9a8050; }
-  
-  .sess-header { padding: 1rem 1.2rem; gap: 1rem; }
-  .sess-body { padding: 1rem 1.2rem 1.4rem; }
-  .sess-rendered { font-size: 1.1rem; line-height: 1.8; padding: 1rem; border-radius: 4px; }
-  
-  .checklist-item { padding: 0.6rem 0; gap: 0.8rem; }
-  .check-box { width: 22px; height: 22px; border: 2px solid #5a4a28; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-  .check-box.checked::after { content: '✓'; font-size: 0.9rem; }
+  .class-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #231e12; }
+  .class-row:last-child { border-bottom: none; }
 
-  .modal-box { max-width: 90%; border-radius: 6px; padding: 2rem; }
+  /* ── Equipped items on Hero tab ── */
+  .equipped-section { margin-bottom: 0; }
+  .equipped-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #231e12; }
+  .equipped-item:last-child { border-bottom: none; }
+  .equipped-icon { font-size: 1.05rem; flex-shrink: 0; line-height: 1.3; }
+  .equipped-name { font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 700; color: #e0d6b4; }
+  .equipped-stat { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: #9a8050; font-style: italic; }
+  .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #3a3220; color: #8a7040; flex-shrink: 0; }
+  /* Purple badge for skills/traits/feats in use */
+  .equipped-skill-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #5a3a8a; color: #a87acc; background: rgba(168,122,204,0.08); flex-shrink: 0; }
+  /* Blue badge for active spells */
+  .equipped-spell-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; }
 
-  .row { display: flex; align-items: center; gap: 0.8rem; }
-  .col { display: flex; flex-direction: column; gap: 0.8rem; }
-  .flex1 { flex: 1; min-width: 0; }
-  .mt05 { margin-top: 0.8rem; }
+  /* ── Pack items ── */
+  .pack-item { background: #1a1510; border: 1px solid #2e2618; padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; }
+  .pack-item.equipped-active { border-color: #7a6030; border-left: 3px solid #e2b94e; }
+  .pack-item-header { display: flex; align-items: center; gap: 0.5rem; }
+  .pack-item-body { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .pack-item-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .pack-field { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; min-width: 80px; }
+  .pack-field-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase; color: #9a8050; }
+  .pack-field-input { background: #0f0c09; border: 1px solid #2e2618; color: #ccc0a0; font-family: 'Crimson Text', Georgia, serif; font-size: 0.9rem; padding: 0.25rem 0.45rem; outline: none; width: 100%; transition: border-color 0.15s; }
+  .pack-field-input:focus { border-color: #7a6030; }
+  .pack-field-input::placeholder { color: #4a3e28; font-style: italic; }
+
+  /* ── Toggle switch ── */
+  .toggle-wrap { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; user-select: none; }
+  .toggle-track { width: 32px; height: 17px; border-radius: 9px; background: #2a2418; border: 1px solid #3a3220; position: relative; transition: all 0.2s; flex-shrink: 0; }
+  .toggle-track.on { background: rgba(226,185,78,0.25); border-color: #c9a84c; }
+  .toggle-track.on-purple { background: rgba(168,122,204,0.25); border-color: #9a6acc; }
+  .toggle-track.on-blue   { background: rgba(100,160,230,0.22); border-color: #4a90d6; }
+  .toggle-thumb { width: 11px; height: 11px; border-radius: 50%; background: #5a4a28; position: absolute; top: 2px; left: 2px; transition: all 0.2s; }
+  .toggle-track.on .toggle-thumb, .toggle-track.on-purple .toggle-thumb, .toggle-track.on-blue .toggle-thumb { left: 17px; }
+  .toggle-track.on .toggle-thumb { background: #e2b94e; box-shadow: 0 0 5px rgba(226,185,78,0.6); }
+  .toggle-track.on-purple .toggle-thumb { background: #a87acc; box-shadow: 0 0 5px rgba(168,122,204,0.6); }
+  .toggle-track.on-blue .toggle-thumb   { background: #64a0e6; box-shadow: 0 0 5px rgba(100,160,230,0.6); }
+  .toggle-label { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase; color: #7a6840; transition: color 0.15s; }
+
+  /* ── Skill pips ── */
+  .skill-pips { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
+  .pip { width: 8px; height: 8px; border: 1px solid #3a3018; cursor: pointer; transition: all 0.15s; }
+  .pip.filled { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 4px rgba(226,185,78,0.4); }
+
+  /* ── Spell level badge ── */
+  .spell-level-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; text-transform: uppercase; }
+  .spell-school-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #2a2a5a; color: #8888cc; background: rgba(100,100,200,0.06); flex-shrink: 0; text-transform: uppercase; }
+  .spell-slot-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.4rem; }
+  @media (max-width:420px) { .spell-slot-grid { grid-template-columns: repeat(3,1fr); } }
+  .spell-slot-box { background: #130f0c; border: 1px solid #1a3a6a; text-align: center; padding: 0.4rem 0.2rem; }
+  .spell-slot-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #4a7aaa; display: block; margin-bottom: 0.2rem; }
+  .spell-slot-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #64a0e6; text-align: center; width: 100%; }
+
+  /* ── NPC / Location ── */
+  .entity-header { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.5rem; }
+  .pin-btn { background: transparent; border: none; cursor: pointer; font-size: 0.9rem; padding: 0.1rem; opacity: 0.4; transition: opacity 0.15s; flex-shrink: 0; line-height: 1; }
+  .pin-btn.pinned { opacity: 1; }
+  .entity-toggle { background: transparent; border: none; color: #6a5830; cursor: pointer; font-size: 0.6rem; padding: 0; transition: color 0.15s; flex-shrink: 0; font-family: 'Cinzel', serif; }
+  .entity-toggle:hover { color: #9a8050; }
+  .rel-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; cursor: pointer; flex-shrink: 0; transition: all 0.15s; user-select: none; text-transform: uppercase; }
+  .rel-ally    { border: 1px solid #3a6a3a; color: #6acc6a; background: rgba(74,122,74,0.08); }
+  .rel-neutral { border: 1px solid #4a4030; color: #b09050; background: rgba(74,64,48,0.08); }
+  .rel-hostile { border: 1px solid #6a2a2a; color: #cc4444; background: rgba(122,44,44,0.08); }
+  .rel-unknown { border: 1px solid #2e2618; color: #7a6040; background: transparent; }
+  .rel-badge:hover { filter: brightness(1.2); }
+  .loc-type { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.15rem 0.55rem; border: 1px solid #352e1e; color: #9a8050; background: rgba(226,185,78,0.04); flex-shrink: 0; }
+
+  /* ── Session ── */
+  .sess-entry { border: 1px solid #2a2416; background: #171208; overflow: hidden; box-shadow: 0 2px 0 #0a0806; }
+  .sess-header { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; cursor: pointer; transition: background 0.15s; user-select: none; }
+  .sess-header:hover { background: rgba(226,185,78,0.04); }
+  .sess-header.open { background: rgba(226,185,78,0.06); border-bottom: 1px solid #2e2618; }
+  .sess-num { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.08em; color: #7a6040; flex-shrink: 0; min-width: 24px; }
+  .sess-body { padding: 0.9rem 1rem 1.1rem; }
+  .sess-rendered { font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; color: #c8c0a0; line-height: 1.75; white-space: pre-wrap; word-break: break-word; padding: 0.75rem 0.85rem; background: #130f0c; border: 1px solid #352e1e; min-height: 80px; cursor: text; }
+
+  /* ── Entity links ── */
+  .entity-link { cursor: pointer; padding: 0 2px; font-weight: 600; transition: all 0.15s; display: inline; }
+  .entity-link-npc        { color:#e2b94e; background:rgba(226,185,78,0.10); border-bottom:1px solid rgba(226,185,78,0.4); }
+  .entity-link-npc:hover  { background:rgba(226,185,78,0.22); }
+  .entity-link-location        { color:#7aaccc; background:rgba(122,172,204,0.10); border-bottom:1px solid rgba(122,172,204,0.4); }
+  .entity-link-location:hover  { background:rgba(122,172,204,0.22); }
+  .entity-link-quest        { color:#cc6666; background:rgba(204,102,102,0.10); border-bottom:1px solid rgba(204,102,102,0.4); }
+  .entity-link-quest:hover  { background:rgba(204,102,102,0.22); }
+  .entity-link-inventory        { color:#7acc9a; background:rgba(122,204,154,0.10); border-bottom:1px solid rgba(122,204,154,0.4); }
+  .entity-link-inventory:hover  { background:rgba(122,204,154,0.22); }
+  .entity-link-skill        { color:#a87acc; background:rgba(168,122,204,0.10); border-bottom:1px solid rgba(168,122,204,0.4); }
+  .entity-link-skill:hover  { background:rgba(168,122,204,0.22); }
+
+  .sess-legend { display:flex; gap:0.7rem; flex-wrap:wrap; padding:0.5rem 0.7rem; background:rgba(226,185,78,0.03); border:1px solid #2a2416; margin-bottom:0.6rem; align-items:center; }
+  .sess-legend-item { display:flex; align-items:center; gap:0.3rem; font-family:'Cinzel',serif; font-size:0.48rem; letter-spacing:0.08em; text-transform:uppercase; }
+  .legend-dot { width:8px; height:8px; flex-shrink:0; }
+
+  /* ── Quest ── */
+  .quest-entry { background: #1c1810; border: 1px solid #2a2416; padding: 0.9rem 1rem; box-shadow: 0 2px 0 #0a0806; }
+  .quest-entry.active    { border-left: 2px solid #e2b94e; }
+  .quest-entry.completed { border-left: 2px solid #5a9a5a; opacity: 0.78; }
+  .quest-entry.failed    { border-left: 2px solid #8a2a2a; opacity: 0.62; }
+  .badge { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.15rem 0.55rem; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all 0.15s; user-select:none; }
+  .badge.active    { border:1px solid #8a6830; color:#e2b94e; background:rgba(226,185,78,0.1); }
+  .badge.completed { border:1px solid #3a6a3a; color:#6acc6a; background:rgba(74,122,74,0.1); }
+  .badge.failed    { border:1px solid #6a2a2a; color:#cc4444; background:rgba(122,44,44,0.1); }
+  .badge:hover { filter:brightness(1.25); }
+
+  /* ── Checklist ── */
+  .checklist-item { display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0; border-bottom:1px solid #231e12; }
+  .checklist-item:last-child { border-bottom:none; }
+  .check-box { width:14px; height:14px; border:1px solid #5a4a28; background:transparent; flex-shrink:0; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+  .check-box.checked { background:rgba(226,185,78,0.2); border-color:#c9a84c; }
+  .check-box.checked::after { content:'✓'; font-size:0.6rem; color:#e2b94e; }
+  .checklist-text.done { text-decoration:line-through; color:#6a5a38; }
+
+  /* ── Modal ── */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
+  .modal-box { background:#1c1810; border:1px solid #6a2a2a; padding:1.5rem; max-width:340px; width:100%; box-shadow:0 0 40px rgba(192,64,64,0.25); }
+  .modal-title { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
+  .modal-text { font-family:'Crimson Text',serif; font-size:1rem; color:#9a8050; line-height:1.6; margin-bottom:1.2rem; }
+
+  .add-form { background:#171208; border:1px dashed #352e1e; padding:1.1rem; }
+  .empty-state { text-align:center; padding:2.5rem; color:#6a5a38; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.12em; line-height:1.9; }
+  .row   { display:flex; align-items:center; gap:0.6rem; }
+  .col   { display:flex; flex-direction:column; gap:0.5rem; }
+  .flex1 { flex:1; min-width:0; }
+  .mt05  { margin-top:0.5rem; }
+  .mt1   { margin-top:1rem; }
+  @media (max-width:480px) { .hj-logo { font-size:1rem; } }
 `;
 
 /* ═══ CONSTANTS ═════════════════════════════════ */
@@ -340,43 +482,43 @@ function CharacterSheet({char,setChar,inventory,skills,spells}) {
 
       {/* ─ Vitality ─ */}
       <hr className="inner-divider" data-label="Vitality" style={{marginTop:"1.1rem"}}/>
-      <div style={{marginTop:"0.8rem",display:"grid",gridTemplateColumns:"auto 1fr",gap:"0.6rem",alignItems:"center"}}>
+      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"stretch",gap:"0.5rem",flexWrap:"wrap"}}>
 
-        {/* Left: − num/max + HP label */}
-        <div style={{display:"flex",alignItems:"center",gap:"0.4rem",whiteSpace:"nowrap"}}>
-          <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-          <div className="hp-display">
-            <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-            <span className="hp-sep">/</span>
-            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+        {/* HP controls — left group */}
+        <div style={{display:"flex",flexDirection:"column",gap:"0.4rem",flex:"0 0 auto"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"0.4rem"}}>
+            <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+            <div className="hp-display">
+              <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+              <span className="hp-sep">/</span>
+              <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+            </div>
+            <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+            <span className="hp-label">HP</span>
           </div>
-          <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
-          <span className="hp-label">HP</span>
+          <div className="hp-bar-bg" style={{marginTop:0}}>
+            <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
+          </div>
+          <div className="hp-pct" style={{color:hpNumColor(hpPct),marginTop:0}}>{hpPct}% vitality remaining</div>
         </div>
 
-        {/* Right: three combat boxes */}
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.4rem"}}>
-          <div className="combat-box">
+        {/* Combat boxes — right, same row */}
+        <div style={{display:"flex",gap:"0.4rem",flex:"1 1 auto",alignItems:"stretch"}}>
+          <div className="combat-box" style={{flex:1}}>
             <span className="combat-box-label">Temp HP</span>
             <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
           </div>
-          <div className="combat-box">
+          <div className="combat-box" style={{flex:1}}>
             <span className="combat-box-label">Armor Class</span>
             <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
           </div>
-          <div className="combat-box">
+          <div className="combat-box" style={{flex:1}}>
             <span className="combat-box-label">Initiative</span>
             <span className="combat-box-val">{numMod(Math.floor((char.stats.DEX-10)/2))}</span>
           </div>
         </div>
 
       </div>
-
-      {/* HP bar + pct below the whole row */}
-      <div className="hp-bar-bg" style={{marginTop:"0.5rem"}}>
-        <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
-      </div>
-      <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
 
       {/* ─ Saving Throws ─ */}
       <hr className="inner-divider" data-label="Saving Throws" style={{marginTop:"1.1rem"}}/>
