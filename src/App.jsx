@@ -94,6 +94,8 @@ const CSS = `
   .stat-box { background: #130f0c; border: 1px solid #3a3220; text-align: center; padding: 0.65rem 0.3rem 0.55rem; cursor: pointer; transition: all 0.15s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); user-select: none; }
   .stat-box:hover { border-color: #7a6030; }
   .stat-box.editing { border-color: #e2b94e; }
+  .stat-box.stat-box-prof { border-color: #5a4820; background: rgba(226,185,78,0.06); }
+  .stat-box.stat-box-exp  { border-color: #1a5a6a; background: rgba(100,200,224,0.06); }
   .stat-name { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.15em; color: #b09050; display: block; margin-bottom: 0.25rem; }
   .stat-val  { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; color: #e2b94e; line-height: 1.1; display: block; }
   .stat-mod  { font-family: 'Cinzel', serif; font-size: 0.62rem; color: #9a8050; display: block; margin-top: 0.15rem; }
@@ -480,77 +482,222 @@ function CharacterSheet({char,setChar,inventory,skills,spells}) {
       <hr className="inner-divider" data-label="Attributes — tap to edit" style={{marginTop:"1.1rem"}}/>
       <div className="stat-grid-6" style={{marginTop:"0.8rem"}}>{STAT_KEYS.map(k=><StatBox key={k} label={k} value={char.stats[k]} onChange={v=>updSt(k,v)}/>)}</div>
 
+      {/* ST row — saving throw modifier under each stat, editable override */}
+      <div className="stat-grid-6" style={{gap:"0.5rem",marginTop:"0.2rem"}}>
+        {SAVING_THROWS.map(st=>{
+          const prof  = !!(char.savingThrows||{})[st.key];
+          const exp   = !!(char.savingThrowExp||{})[st.key];
+          const base  = Math.floor((char.stats[st.attr]-10)/2);
+          const auto  = exp ? base+pb*2 : prof ? base+pb : base;
+          const over  = (char.savingThrowOverride||{})[st.key];
+          const val   = over!==undefined ? over : auto;
+          return (
+            <div key={st.key} style={{textAlign:"center"}}>
+              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",color:"#5a4a28",textTransform:"uppercase",display:"block",marginBottom:"1px"}}>ST</span>
+              <input
+                type="number"
+                value={val}
+                title={`Saving throw: ${over!==undefined?"manual override":"auto from stats"}`}
+                style={{
+                  background: over!==undefined ? "rgba(226,185,78,0.06)" : "transparent",
+                  border: "none",
+                  borderBottom: over!==undefined ? "1px solid #7a6030" : "1px dashed #2e2618",
+                  outline:"none",
+                  fontFamily:"Cinzel,serif",
+                  fontSize:"0.82rem",
+                  fontWeight:700,
+                  color: exp?"#64c8e0": prof?"#e2b94e":"#7a6840",
+                  textAlign:"center",
+                  width:"100%",
+                  padding:"0.1rem 0",
+                  transition:"color 0.2s",
+                }}
+                onChange={e=>{
+                  const n=parseInt(e.target.value);
+                  setChar(c=>({...c,savingThrowOverride:{...(c.savingThrowOverride||{}),[st.key]:isNaN(n)?undefined:n}}));
+                }}
+                onDoubleClick={()=>{
+                  // double-click resets to auto
+                  setChar(c=>{const o={...(c.savingThrowOverride||{})};delete o[st.key];return{...c,savingThrowOverride:o};});
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
+      <div style={{textAlign:"right",marginTop:"0.2rem"}}>
+        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",letterSpacing:"0.08em",color:"#3a3018",textTransform:"uppercase"}}>double-tap ST to reset to auto</span>
+      </div>
+
       {/* ─ Vitality ─ */}
       <hr className="inner-divider" data-label="Vitality" style={{marginTop:"1.1rem"}}/>
-      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"stretch",gap:"0.5rem",flexWrap:"wrap"}}>
+      <div style={{marginTop:"0.8rem",display:"grid",gridTemplateColumns:"auto 1fr",gap:"0.6rem",alignItems:"center"}}>
 
-        {/* HP controls — left group */}
-        <div style={{display:"flex",flexDirection:"column",gap:"0.4rem",flex:"0 0 auto"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"0.4rem"}}>
-            <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-            <div className="hp-display">
-              <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-              <span className="hp-sep">/</span>
-              <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
-            </div>
-            <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
-            <span className="hp-label">HP</span>
+        {/* Left: − num/max + HP label */}
+        <div style={{display:"flex",alignItems:"center",gap:"0.4rem",whiteSpace:"nowrap"}}>
+          <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+          <div className="hp-display">
+            <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+            <span className="hp-sep">/</span>
+            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
           </div>
-          <div className="hp-bar-bg" style={{marginTop:0}}>
-            <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
-          </div>
-          <div className="hp-pct" style={{color:hpNumColor(hpPct),marginTop:0}}>{hpPct}% vitality remaining</div>
+          <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+          <span className="hp-label">HP</span>
         </div>
 
-        {/* Combat boxes — right, same row */}
-        <div style={{display:"flex",gap:"0.4rem",flex:"1 1 auto",alignItems:"stretch"}}>
-          <div className="combat-box" style={{flex:1}}>
+        {/* Right: three combat boxes */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.4rem"}}>
+          <div className="combat-box">
             <span className="combat-box-label">Temp HP</span>
             <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
           </div>
-          <div className="combat-box" style={{flex:1}}>
+          <div className="combat-box">
             <span className="combat-box-label">Armor Class</span>
             <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
           </div>
-          <div className="combat-box" style={{flex:1}}>
+          <div className="combat-box" title="DEX modifier by default — edit to override">
             <span className="combat-box-label">Initiative</span>
-            <span className="combat-box-val">{numMod(Math.floor((char.stats.DEX-10)/2))}</span>
+            <input className="combat-box-input" type="number"
+              value={char.initiativeBonus!==undefined ? char.initiativeBonus : Math.floor((char.stats.DEX-10)/2)}
+              onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}
+            />
           </div>
         </div>
 
       </div>
 
-      {/* ─ Saving Throws ─ */}
+      {/* HP bar + pct below the whole row */}
+      <div className="hp-bar-bg" style={{marginTop:"0.5rem"}}>
+        <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
+      </div>
+      <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
+
+      {/* ─ Saving Throws — prof + expertise pip in each box ─ */}
       <hr className="inner-divider" data-label="Saving Throws" style={{marginTop:"1.1rem"}}/>
-      <div className="save-grid" style={{marginTop:"0.8rem"}}>
+      <div className="stat-grid-6" style={{marginTop:"0.8rem"}}>
         {SAVING_THROWS.map(st=>{
-          const prof=!!(char.savingThrows||{})[st.key];
-          const base=Math.floor((char.stats[st.attr]-10)/2);
-          const bonus=prof?base+pb:base;
-          return <div key={st.key} className="check-row">
-            <button type="button" className={`prof-dot-btn${prof?" prof":""}`} onClick={()=>toggleSave(st.key)} title="Toggle proficiency"/>
-            <span className="check-attr">{st.attr}</span>
-            <span className="check-label">{st.label}</span>
-            <span className="check-bonus">{numMod(bonus)}</span>
-          </div>;
+          const prof = !!(char.savingThrows||{})[st.key];
+          const exp  = !!(char.savingThrowExp||{})[st.key];
+          const base = Math.floor((char.stats[st.attr]-10)/2);
+          const bonus= exp ? base+pb*2 : prof ? base+pb : base;
+          // cycle: none → prof → expertise → none
+          const cycleProf=()=>setChar(c=>{
+            const wasProf=!!(c.savingThrows||{})[st.key];
+            const wasExp =!!(c.savingThrowExp||{})[st.key];
+            if (!wasProf && !wasExp) return {...c, savingThrows:{...(c.savingThrows||{}),[st.key]:true}};
+            if (wasProf && !wasExp)  return {...c, savingThrowExp:{...(c.savingThrowExp||{}),[st.key]:true}};
+            // was expertise → reset both
+            const st2={...(c.savingThrows||{})};    delete st2[st.key];
+            const ex2={...(c.savingThrowExp||{})}; delete ex2[st.key];
+            return {...c, savingThrows:st2, savingThrowExp:ex2};
+          });
+          const stateLabel = exp?"expertise": prof?"proficient":"—";
+          const stateColor = exp?"#64c8e0"  : prof?"#e2b94e"  :"#5a4a28";
+          return (
+            <div key={st.key}
+              className={`stat-box${exp?" stat-box-exp":prof?" stat-box-prof":""}`}
+              style={{cursor:"default",paddingTop:"0.5rem",paddingBottom:"0.5rem",position:"relative"}}>
+              {/* pip button top-right — click to cycle */}
+              <button type="button"
+                onClick={cycleProf}
+                title="Click: none → proficient → expertise → none"
+                style={{
+                  position:"absolute",top:"0.3rem",right:"0.3rem",
+                  width:13,height:13,borderRadius:"50%",
+                  border: exp?"2px solid #64c8e0": prof?"1.5px solid #c9a84c":"1.5px solid #5a4a28",
+                  background: exp?"#64c8e0": prof?"#e2b94e":"transparent",
+                  cursor:"pointer",padding:0,
+                  boxShadow: exp?"0 0 6px rgba(100,200,224,0.6)": prof?"0 0 6px rgba(226,185,78,0.5)":"none",
+                  transition:"all 0.15s",
+                  // expertise gets a diamond shape via clip-path
+                  clipPath: exp?"polygon(50% 0%,100% 50%,50% 100%,0% 50%)":"none",
+                  appearance:"none",WebkitAppearance:"none",
+                }}
+              />
+              <span className="stat-name">{st.key.toUpperCase()}</span>
+              <span className="stat-val" style={{fontSize:"1.1rem",color:stateColor}}>{numMod(bonus)}</span>
+              <span className="stat-mod" style={{fontSize:"0.52rem",color:stateColor,opacity:0.8}}>{stateLabel}</span>
+            </div>
+          );
         })}
       </div>
 
-      {/* ─ Skills ─ */}
+      {/* ─ Skills — prof + expertise cycling pip ─ */}
       <hr className="inner-divider" data-label="Skills" style={{marginTop:"1.1rem"}}/>
       <div className="save-grid" style={{marginTop:"0.8rem"}}>
         {GENERIC_SKILLS.map(sk=>{
-          const prof=!!(char.skills||{})[sk.key];
-          const base=Math.floor((char.stats[sk.attr]-10)/2);
-          const bonus=prof?base+pb:base;
-          return <div key={sk.key} className="check-row">
-            <button type="button" className={`prof-dot-btn${prof?" prof":""}`} onClick={()=>toggleSkill(sk.key)} title="Toggle proficiency"/>
-            <span className="check-attr">{sk.attr}</span>
-            <span className="check-label">{sk.label}</span>
-            <span className="check-bonus">{numMod(bonus)}</span>
-          </div>;
+          const prof = !!(char.skills||{})[sk.key];
+          const exp  = !!(char.skillExp||{})[sk.key];
+          const base = Math.floor((char.stats[sk.attr]-10)/2);
+          const bonus= exp ? base+pb*2 : prof ? base+pb : base;
+          const cycleSkill=()=>setChar(c=>{
+            const wasProf=!!(c.skills||{})[sk.key];
+            const wasExp =!!(c.skillExp||{})[sk.key];
+            if (!wasProf && !wasExp) return {...c, skills:{...(c.skills||{}),[sk.key]:true}};
+            if (wasProf && !wasExp)  return {...c, skillExp:{...(c.skillExp||{}),[sk.key]:true}};
+            const s2={...(c.skills||{})};  delete s2[sk.key];
+            const e2={...(c.skillExp||{})}; delete e2[sk.key];
+            return {...c, skills:s2, skillExp:e2};
+          });
+          const dotColor = exp?"#64c8e0": prof?"#e2b94e":"transparent";
+          const dotBorder= exp?"2px solid #64c8e0": prof?"1.5px solid #c9a84c":"1.5px solid #5a4a28";
+          const dotClip  = exp?"polygon(50% 0%,100% 50%,50% 100%,0% 50%)":"none";
+          const dotShadow= exp?"0 0 5px rgba(100,200,224,0.6)": prof?"0 0 5px rgba(226,185,78,0.5)":"none";
+          return (
+            <div key={sk.key} className="check-row">
+              <button type="button"
+                onClick={cycleSkill}
+                title="Click: none → proficient → expertise → none"
+                style={{width:13,height:13,borderRadius:"50%",border:dotBorder,background:dotColor,cursor:"pointer",padding:0,flexShrink:0,clipPath:dotClip,boxShadow:dotShadow,transition:"all 0.15s",appearance:"none",WebkitAppearance:"none"}}
+              />
+              <span className="check-attr">{sk.attr}</span>
+              <span className="check-label" style={{color:exp?"#64c8e0":prof?"#ccc0a0":"#8a7848"}}>{sk.label}</span>
+              <span className="check-bonus" style={{color:exp?"#64c8e0":prof?"#e2b94e":"#6a5838"}}>{numMod(bonus)}</span>
+            </div>
+          );
         })}
       </div>
+
+      {/* ─ Spell Slots — only levels present in Spells tab ─ */}
+      {(()=>{
+        const usedLevels=[...new Set((spells||[]).map(s=>s.level).filter(l=>l!=="Cantrip"))];
+        if (!usedLevels.length) return null;
+        // sort by SPELL_SLOT_LABELS order
+        usedLevels.sort((a,b)=>SPELL_SLOT_LABELS.indexOf(a)-SPELL_SLOT_LABELS.indexOf(b));
+        return <>
+          <hr className="inner-divider" data-label="Spell Slots" style={{marginTop:"1.1rem"}}/>
+          <div style={{marginTop:"0.8rem",display:"grid",gap:"0.35rem",gridTemplateColumns:`repeat(${usedLevels.length},1fr)`}}>
+            {usedLevels.map(lv=>{
+              const sl=(char.spellSlots||{})[lv]||{max:0,used:0};
+              const spellCount=(spells||[]).filter(s=>s.level===lv).length;
+              return (
+                <div key={lv} className="spell-slot-box">
+                  <span className="spell-slot-label">{lv}</span>
+                  {/* used / max on one line */}
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"2px"}}>
+                    <input className="spell-slot-input" type="number" min={0}
+                      value={sl.used||0}
+                      onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),used:Math.max(0,parseInt(e.target.value)||0)}}}))}
+                      style={{width:28,fontSize:"0.9rem"}}/>
+                    <span style={{color:"#2a5a8a",fontSize:"0.7rem",lineHeight:1}}>/</span>
+                    <input className="spell-slot-input" type="number" min={0}
+                      value={sl.max||0}
+                      onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),max:Math.max(0,parseInt(e.target.value)||0)}}}))}
+                      style={{width:28,fontSize:"0.9rem",color:"#4a7aaa"}}/>
+                  </div>
+                  <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",letterSpacing:"0.06em",color:"#2a4a6a",textTransform:"uppercase",marginTop:"0.1rem",display:"block"}}>
+                    {spellCount} spell{spellCount!==1?"s":""}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{marginTop:"0.2rem"}}>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.44rem",letterSpacing:"0.08em",color:"#3a5a7a",textTransform:"uppercase"}}>used / max · add spells in the Spells tab</span>
+          </div>
+        </>;
+      })()}
+
     </div>
 
     {/* ══ Active / Equipped (from all tabs) ══ */}
