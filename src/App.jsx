@@ -1,271 +1,321 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-const CSS = `
+/* ═══════════════════════════════════════════════
+   THEME SYSTEM
+   dark  = original dark parchment
+   light = old paper / parchment (bright)
+═══════════════════════════════════════════════ */
+const THEMES = {
+  dark: {
+    bg:"#0f0d0b", bgCard:"#1c1810", bgInput:"#130f0c", bgNav:"#0d0b08",
+    border:"#352e1e", borderSub:"#2a2418", borderInput:"#3a3220",
+    text:"#ddd5bb", textMuted:"#9a8050", textDim:"#6a5830", textLabel:"#b09050",
+    accent:"#e2b94e", accentBorder:"#8a6830",
+    headerBg:"linear-gradient(180deg,#1c1810 0%,#141008 100%)",
+    navBg:"linear-gradient(0deg,#0d0b08 0%,#161210 100%)",
+    scrollTrack:"#0a0806", scrollThumb:"#3a3020",
+    noise:"0.045", shadowBot:"rgba(0,0,0,0.8)", shadowCard:"#0a0806",
+    innerDivBg:"#1c1810", hpBg:"#0a0806", addForm:"#171208",
+    modalBg:"#1c1810", emptyColor:"#6a5a38",
+    sessEntry:"#171208", combatBox:"#130f0c",
+    spellSlotBox:"#130f0c", spellSlotBorder:"#1a3a6a",
+    packItem:"#1a1510", packItemBorder:"#2e2618", packFieldInput:"#0f0c09",
+  },
+  light: {
+    bg:"#f0e8d5", bgCard:"#faf3e4", bgInput:"#ede3cc", bgNav:"#e8dcc8",
+    border:"#c8a86a", borderSub:"#d4b87a", borderInput:"#c0a060",
+    text:"#2a1e0a", textMuted:"#6a4a1a", textDim:"#8a6030", textLabel:"#7a5020",
+    accent:"#9a5a10", accentBorder:"#7a4008",
+    headerBg:"linear-gradient(180deg,#e8dcc8 0%,#ddd0b0 100%)",
+    navBg:"linear-gradient(0deg,#ddd0b0 0%,#e8dcc8 100%)",
+    scrollTrack:"#e0d4b8", scrollThumb:"#c0a060",
+    noise:"0.025", shadowBot:"rgba(80,50,10,0.25)", shadowCard:"#c8a86a",
+    innerDivBg:"#faf3e4", hpBg:"#e0d4b8", addForm:"#f5ecda",
+    modalBg:"#faf3e4", emptyColor:"#9a7840",
+    sessEntry:"#f5ecda", combatBox:"#ede3cc",
+    spellSlotBox:"#ede3cc", spellSlotBorder:"#8ab0d0",
+    packItem:"#f0e8d5", packItemBorder:"#c8a86a", packFieldInput:"#e8dcc8",
+  },
+};
+
+function buildCSS(t) {
+  return `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body, #root { min-height: 100vh; background: #0f0d0b; }
-
-  .hj-root { position: relative; min-height: 100vh; background: #0f0d0b; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: 80px; }
-  .hj-root::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.045; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-repeat: repeat; }
-
+  html, body, #root { min-height: 100vh; background: ${t.bg}; }
+  .hj-root { position: relative; min-height: 100vh; background: ${t.bg}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: 80px; }
+  .hj-root::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: ${t.noise}; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-repeat: repeat; }
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: #0a0806; }
-  ::-webkit-scrollbar-thumb { background: #3a3020; }
+  ::-webkit-scrollbar-track { background: ${t.scrollTrack}; }
+  ::-webkit-scrollbar-thumb { background: ${t.scrollThumb}; }
 
-  .hj-header { position: sticky; top: 0; z-index: 50; background: linear-gradient(180deg,#1c1810 0%,#141008 100%); border-bottom: 1px solid #352e1e; box-shadow: 0 4px 32px rgba(0,0,0,0.8); padding: 0.9rem 1.25rem; }
-  .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; letter-spacing: 0.12em; text-shadow: 0 0 22px rgba(226,185,78,0.4); display: flex; align-items: center; gap: 0.5rem; }
+  .hj-header { position: sticky; top: 0; z-index: 50; background: ${t.headerBg}; border-bottom: 1px solid ${t.border}; box-shadow: 0 4px 32px ${t.shadowBot}; padding: 0.75rem 1.25rem; }
+  .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.05rem; font-weight: 700; color: ${t.accent}; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem; }
+  .hj-char-name { font-family: 'Cinzel', serif; font-size: 0.72rem; color: ${t.textMuted}; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
 
-  .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(0deg,#0d0b08 0%,#161210 100%); border-top: 1px solid #302818; box-shadow: 0 -4px 32px rgba(0,0,0,0.8); display: flex; align-items: stretch; height: 68px; padding-bottom: env(safe-area-inset-bottom,0px); }
+  .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: ${t.navBg}; border-top: 1px solid ${t.border}; box-shadow: 0 -4px 32px ${t.shadowBot}; display: flex; align-items: stretch; height: 68px; padding-bottom: env(safe-area-inset-bottom,0px); }
   .hj-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.3rem 0.05rem; position: relative; }
-  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px; background: #e2b94e; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
+  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px; background: ${t.accent}; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
   .hj-nav-btn.active::before { transform: scaleX(1); }
   .hj-nav-icon { font-size: 1.1rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
   .hj-nav-btn.active .hj-nav-icon { filter: grayscale(0) brightness(1); }
-  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.4rem; letter-spacing: 0.06em; text-transform: uppercase; color: #6a5830; transition: color 0.18s; }
-  .hj-nav-btn.active .hj-nav-label { color: #e2b94e; }
-  .hj-nav-btn:hover:not(.active) .hj-nav-label { color: #9a7840; }
+  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.4rem; letter-spacing: 0.06em; text-transform: uppercase; color: ${t.textDim}; transition: color 0.18s; }
+  .hj-nav-btn.active .hj-nav-label { color: ${t.accent}; }
+  .hj-nav-btn:hover:not(.active) .hj-nav-label { color: ${t.textMuted}; }
 
   .hj-content { max-width: 780px; margin: 0 auto; padding: 1.4rem 1rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
 
-  /* ── Cards ── */
-  .card { background: #1c1810; border: 1px solid #352e1e; box-shadow: 0 3px 0 #0a0806, inset 0 1px 0 rgba(226,185,78,0.05); padding: 1.25rem; position: relative; }
-  .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(226,185,78,0.03) 0%,transparent 55%); pointer-events: none; }
-  .card.pinned { border-color: #7a6030; }
-  .card.pinned::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#e2b94e,transparent); pointer-events: none; }
-  .card.inuse-active { border-color: #5a3a8a; box-shadow: 0 3px 0 #0a0806, 0 0 0 1px rgba(168,122,204,0.15); }
+  .card { background: ${t.bgCard}; border: 1px solid ${t.border}; box-shadow: 0 3px 0 ${t.shadowCard}, inset 0 1px 0 rgba(226,185,78,0.05); padding: 1.25rem; position: relative; }
+  .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(226,185,78,0.02) 0%,transparent 55%); pointer-events: none; }
+  .card.pinned { border-color: ${t.accentBorder}; }
+  .card.pinned::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,${t.accent},transparent); pointer-events: none; }
+  .card.inuse-active { border-color: #5a3a8a; }
   .card.inuse-active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#a87acc,transparent); pointer-events: none; }
-  .card.spell-active { border-color: #1a3a6a; box-shadow: 0 3px 0 #0a0806, 0 0 0 1px rgba(100,160,230,0.18); }
+  .card.spell-active { border-color: #1a3a6a; }
   .card.spell-active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#64a0e6,transparent); pointer-events: none; }
 
-  /* ── Inner section divider inside merged card ── */
-  .inner-divider { border: none; border-top: 1px solid #2a2418; margin: 1.1rem 0; position: relative; }
-  .inner-divider::before { content: attr(data-label); position: absolute; top: 50%; left: 0; transform: translateY(-50%); background: #1c1810; padding-right: 0.6rem; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: #b09050; }
+  .inner-divider { border: none; border-top: 1px solid ${t.borderSub}; margin: 1.1rem 0; position: relative; }
+  .inner-divider::before { content: attr(data-label); position: absolute; top: 50%; left: 0; transform: translateY(-50%); background: ${t.innerDivBg}; padding-right: 0.6rem; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: ${t.textLabel}; }
 
-  .sect-label { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: #b09050; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
-  .sect-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,#352e1e,transparent); }
+  .sect-label { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: ${t.textLabel}; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+  .sect-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,${t.border},transparent); }
 
-  .iedit { background: transparent; border: none; border-bottom: 1px dashed #5a4e34; color: inherit; font-family: inherit; font-size: inherit; font-weight: inherit; font-style: inherit; outline: none; width: 100%; transition: border-color 0.15s; line-height: inherit; padding: 0; }
-  .iedit:focus { border-bottom-color: #e2b94e; }
-  .iedit::placeholder { color: #6a5a38; }
+  .iedit { background: transparent; border: none; border-bottom: 1px dashed ${t.borderInput}; color: inherit; font-family: inherit; font-size: inherit; font-weight: inherit; font-style: inherit; outline: none; width: 100%; transition: border-color 0.15s; line-height: inherit; padding: 0; }
+  .iedit:focus { border-bottom-color: ${t.accent}; }
+  .iedit::placeholder { color: ${t.textDim}; }
 
-  .g-input { background: #130f0c; border: 1px solid #3a3220; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; padding: 0.5rem 0.85rem; outline: none; width: 100%; transition: border-color 0.15s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.45); }
-  .g-input:focus { border-color: #8a6830; }
-  .g-input::placeholder { color: #5a4e34; font-style: italic; }
+  .g-input { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; padding: 0.5rem 0.85rem; outline: none; width: 100%; transition: border-color 0.15s; }
+  .g-input:focus { border-color: ${t.accentBorder}; }
+  .g-input::placeholder { color: ${t.textDim}; font-style: italic; }
 
-  .g-select { background: #130f0c; border: 1px solid #3a3220; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1rem; padding: 0.45rem 0.75rem; outline: none; width: 100%; transition: border-color 0.15s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.45); appearance: none; cursor: pointer; }
-  .g-select:focus { border-color: #8a6830; }
+  .g-select { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1rem; padding: 0.45rem 0.75rem; outline: none; width: 100%; transition: border-color 0.15s; appearance: none; cursor: pointer; }
+  .g-select:focus { border-color: ${t.accentBorder}; }
 
-  .g-textarea { background: #130f0c; border: 1px solid #3a3220; color: #ddd5bb; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; padding: 0.75rem 0.85rem; outline: none; width: 100%; resize: vertical; transition: border-color 0.15s; box-shadow: inset 0 2px 6px rgba(0,0,0,0.45); line-height: 1.65; }
-  .g-textarea:focus { border-color: #8a6830; }
-  .g-textarea::placeholder { color: #5a4e34; font-style: italic; }
+  .g-textarea { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; padding: 0.75rem 0.85rem; outline: none; width: 100%; resize: vertical; transition: border-color 0.15s; line-height: 1.65; }
+  .g-textarea:focus { border-color: ${t.accentBorder}; }
+  .g-textarea::placeholder { color: ${t.textDim}; font-style: italic; }
 
-  .btn-gold { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: #e2b94e; border: 1px solid #8a6830; padding: 0.48rem 1.1rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .btn-gold:hover { background: rgba(226,185,78,0.12); border-color: #e2b94e; box-shadow: 0 0 14px rgba(226,185,78,0.22); }
-  .btn-ghost { background: transparent; border: 1px solid #3a3220; color: #9a8050; font-size: 0.72rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
+  .btn-gold { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: ${t.accent}; border: 1px solid ${t.accentBorder}; padding: 0.48rem 1.1rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-gold:hover { background: rgba(226,185,78,0.12); border-color: ${t.accent}; }
+  .btn-ghost { background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; font-size: 0.72rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
   .btn-ghost:hover { border-color: #9b2c2c; color: #c04040; }
   .btn-danger { background: transparent; border: 1px solid #6a2a2a; color: #c04040; font-size: 0.68rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.08em; text-transform: uppercase; }
   .btn-danger:hover { background: rgba(192,64,64,0.12); border-color: #c04040; }
-  .btn-sm { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; color: #9a8050; border: 1px solid #3a3220; padding: 0.25rem 0.6rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .btn-sm:hover { border-color: #8a6830; color: #e2b94e; }
-  .btn-pm { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #3a3220; color: #9a8050; font-size: 1.2rem; cursor: pointer; transition: all 0.15s; flex-shrink: 0; font-family: monospace; }
+  .btn-sm { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; color: ${t.textMuted}; border: 1px solid ${t.borderInput}; padding: 0.25rem 0.6rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-sm:hover { border-color: ${t.accentBorder}; color: ${t.accent}; }
+  .btn-pm { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; font-size: 1.2rem; cursor: pointer; transition: all 0.15s; flex-shrink: 0; font-family: monospace; }
   .btn-pm.minus:hover { border-color: #7a2a2a; color: #e04040; }
   .btn-pm.plus:hover  { border-color: #2a6a2a; color: #5acc5a; }
 
-  /* ── Tags ── */
+  /* Rest buttons */
+  .btn-rest { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; padding: 0.35rem 0.75rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-rest.short:hover { border-color: #8a7030; color: #d4a030; background: rgba(212,160,48,0.08); }
+  .btn-rest.long:hover  { border-color: #2a5a8a; color: #64a0d4; background: rgba(100,160,212,0.08); }
+
+  /* Tags */
   .tags-row { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-top: 0.55rem; }
   .tag { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.18rem 0.55rem; display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap; }
-  .tag-default { background: rgba(226,185,78,0.08); border: 1px solid #4a3e20; color: #b09050; }
-  .tag-remove { background: transparent; border: none; color: #7a6040; cursor: pointer; font-size: 0.6rem; padding: 0; line-height: 1; transition: color 0.15s; }
+  .tag-default { background: rgba(226,185,78,0.08); border: 1px solid ${t.border}; color: ${t.textLabel}; }
+  .tag-remove { background: transparent; border: none; color: ${t.textDim}; cursor: pointer; font-size: 0.6rem; padding: 0; line-height: 1; transition: color 0.15s; }
   .tag-remove:hover { color: #c04040; }
-  .tag-input { background: transparent; border: none; border-bottom: 1px dashed #5a4e34; color: #b09050; font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; outline: none; width: 80px; padding: 0.1rem 0; }
-  .tag-input::placeholder { color: #4a3e24; }
-  .tag-add-btn { background: transparent; border: 1px dashed #3a3018; color: #7a6840; font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.08em; padding: 0.18rem 0.5rem; cursor: pointer; transition: all 0.15s; }
-  .tag-add-btn:hover { border-color: #7a6030; color: #b09050; }
+  .tag-input { background: transparent; border: none; border-bottom: 1px dashed ${t.borderInput}; color: ${t.textLabel}; font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; outline: none; width: 80px; padding: 0.1rem 0; }
+  .tag-add-btn { background: transparent; border: 1px dashed ${t.borderSub}; color: ${t.textDim}; font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.08em; padding: 0.18rem 0.5rem; cursor: pointer; transition: all 0.15s; }
+  .tag-add-btn:hover { border-color: ${t.accentBorder}; color: ${t.textLabel}; }
 
   .filter-bar { display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; margin-bottom: 0.8rem; }
-  .filter-tag { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border: 1px solid #352e1e; color: #8a7040; cursor: pointer; transition: all 0.15s; background: transparent; }
-  .filter-tag.active-filter { background: rgba(226,185,78,0.1); border-color: #8a6830; color: #e2b94e; }
-  .filter-tag:hover:not(.active-filter) { border-color: #5a4a28; color: #b09050; }
+  .filter-tag { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border: 1px solid ${t.border}; color: ${t.textMuted}; cursor: pointer; transition: all 0.15s; background: transparent; }
+  .filter-tag.active-filter { background: rgba(226,185,78,0.1); border-color: ${t.accentBorder}; color: ${t.accent}; }
+  .filter-tag:hover:not(.active-filter) { border-color: ${t.borderInput}; color: ${t.textLabel}; }
 
-  /* ── Stat box ── */
+  /* Stat boxes */
   .stat-grid-6 { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.5rem; }
   @media (max-width:500px) { .stat-grid-6 { grid-template-columns: repeat(3,1fr); } }
-  .stat-box { background: #130f0c; border: 1px solid #3a3220; text-align: center; padding: 0.65rem 0.3rem 0.55rem; cursor: pointer; transition: all 0.15s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); user-select: none; }
-  .stat-box:hover { border-color: #7a6030; }
-  .stat-box.editing { border-color: #e2b94e; }
-  .stat-box.stat-box-prof { border-color: #5a4820; background: rgba(226,185,78,0.06); }
+  .stat-box { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; text-align: center; padding: 0.65rem 0.3rem 0.55rem; cursor: pointer; transition: all 0.15s; user-select: none; }
+  .stat-box:hover { border-color: ${t.accentBorder}; }
+  .stat-box.editing { border-color: ${t.accent}; }
+  .stat-box.stat-box-prof { border-color: ${t.accentBorder}; background: rgba(226,185,78,0.06); }
   .stat-box.stat-box-exp  { border-color: #1a5a6a; background: rgba(100,200,224,0.06); }
-  .stat-name { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.15em; color: #b09050; display: block; margin-bottom: 0.25rem; }
-  .stat-val  { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; color: #e2b94e; line-height: 1.1; display: block; }
-  .stat-mod  { font-family: 'Cinzel', serif; font-size: 0.62rem; color: #9a8050; display: block; margin-top: 0.15rem; }
-  .stat-input { background: transparent; border: none; border-bottom: 1px solid #e2b94e; color: #e2b94e; font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 700; width: 100%; text-align: center; outline: none; }
+  .stat-name { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.15em; color: ${t.textLabel}; display: block; margin-bottom: 0.25rem; }
+  .stat-val  { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; color: ${t.accent}; line-height: 1.1; display: block; }
+  .stat-mod  { font-family: 'Cinzel', serif; font-size: 0.62rem; color: ${t.textMuted}; display: block; margin-top: 0.15rem; }
+  .stat-input { background: transparent; border: none; border-bottom: 1px solid ${t.accent}; color: ${t.accent}; font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 700; width: 100%; text-align: center; outline: none; }
 
-  /* ── HP ── */
-  .hp-bar-bg { height: 10px; background: #0a0806; border: 1px solid #231e12; box-shadow: inset 0 2px 5px rgba(0,0,0,0.7); position: relative; overflow: hidden; margin-top: 0.7rem; }
+  /* HP */
+  .hp-bar-bg { height: 10px; background: ${t.hpBg}; border: 1px solid ${t.borderSub}; position: relative; overflow: hidden; margin-top: 0.7rem; }
   .hp-bar-fill { height: 100%; transition: width 0.35s ease, background 0.5s ease; }
-  .hp-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
   .hp-display { font-family: 'Cinzel', serif; font-size: 1.5rem; display: flex; align-items: baseline; gap: 0.2rem; }
-  .hp-sep { color: #4a3a2a; font-size: 1rem; }
-  .hp-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: #7a6040; }
+  .hp-sep { color: ${t.textDim}; font-size: 1rem; }
+  .hp-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: ${t.textDim}; }
   .hp-pct { font-family: 'Cinzel', serif; font-size: 0.58rem; text-align: right; margin-top: 0.25rem; transition: color 0.5s; }
+  .combat-box { background: ${t.combatBox}; border: 1px solid ${t.borderInput}; text-align: center; padding: 0.5rem 0.3rem; }
+  .combat-box-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.14em; color: ${t.textLabel}; display: block; margin-bottom: 0.2rem; }
+  .combat-box-val { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: ${t.accent}; display: block; }
+  .combat-box-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: ${t.accent}; text-align: center; width: 100%; }
 
-  .combat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-top: 0.7rem; }
-  .combat-box { background: #130f0c; border: 1px solid #3a3220; text-align: center; padding: 0.5rem 0.3rem; }
-  .combat-box-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.14em; color: #b09050; display: block; margin-bottom: 0.2rem; }
-  .combat-box-val { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; display: block; }
-  .combat-box-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; text-align: center; width: 100%; }
-
-  /* ── Saving throws & skills ── */
+  /* Saves & Skills */
   .save-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 1rem; }
   @media (max-width:480px) { .save-grid { grid-template-columns: 1fr; } }
-  .check-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.22rem 0.3rem; border-bottom: 1px solid #231e12; }
+  .check-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.22rem 0.3rem; border-bottom: 1px solid ${t.borderSub}; }
   .check-row:last-child { border-bottom: none; }
-  .prof-dot-btn { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #5a4a28; background: transparent; cursor: pointer; flex-shrink: 0; transition: all 0.15s; padding: 0; appearance: none; -webkit-appearance: none; }
-  .prof-dot-btn.prof { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 6px rgba(226,185,78,0.55); }
-  .prof-dot-btn:hover:not(.prof) { border-color: #9a8050; background: rgba(226,185,78,0.1); }
-  .check-label { font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; color: #ccc0a0; flex: 1; }
-  .check-attr { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #8a7040; flex-shrink: 0; }
-  .check-bonus { font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700; color: #e2b94e; min-width: 28px; text-align: right; }
+  .prof-dot-btn { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid ${t.borderInput}; background: transparent; cursor: pointer; flex-shrink: 0; transition: all 0.15s; padding: 0; appearance: none; -webkit-appearance: none; }
+  .prof-dot-btn.prof { background: ${t.accent}; border-color: ${t.accentBorder}; }
+  .check-label { font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; color: ${t.text}; flex: 1; }
+  .check-attr { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: ${t.textMuted}; flex-shrink: 0; }
+  .check-bonus { font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700; color: ${t.accent}; min-width: 28px; text-align: right; }
 
-  /* ── Traits ── */
+  /* Hit Dice */
+  .hd-box { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; text-align: center; padding: 0.4rem 0.3rem; }
+  .hd-label { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.12em; color: ${t.textLabel}; display: block; margin-bottom: 0.15rem; }
+  .hd-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: ${t.accent}; text-align: center; width: 100%; }
+
+  /* Traits */
   .trait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
   @media (max-width:480px) { .trait-grid { grid-template-columns: 1fr; } }
   .trait-block { display: flex; flex-direction: column; gap: 0.3rem; }
-  .trait-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase; color: #b09050; }
-  .trait-ta { background: #130f0c; border: 1px solid #3a3220; color: #ccc0a0; font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; padding: 0.5rem 0.65rem; outline: none; width: 100%; resize: vertical; line-height: 1.55; }
-  .trait-ta:focus { border-color: #7a6030; }
-  .trait-ta::placeholder { color: #5a4e34; font-style: italic; }
-
-  .class-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #231e12; }
+  .trait-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase; color: ${t.textLabel}; }
+  .trait-ta { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; padding: 0.5rem 0.65rem; outline: none; width: 100%; resize: vertical; line-height: 1.55; }
+  .trait-ta:focus { border-color: ${t.accentBorder}; }
+  .trait-ta::placeholder { color: ${t.textDim}; font-style: italic; }
+  .class-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid ${t.borderSub}; }
   .class-row:last-child { border-bottom: none; }
 
-  /* ── Equipped items on Hero tab ── */
-  .equipped-section { margin-bottom: 0; }
-  .equipped-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #231e12; }
+  /* Active & Equipped subtabs */
+  .subtab-bar { display: flex; gap: 0; border-bottom: 1px solid ${t.border}; margin-bottom: 1rem; }
+  .subtab-btn { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.4rem 0.9rem 0.45rem; background: transparent; border: none; border-bottom: 2px solid transparent; color: ${t.textDim}; cursor: pointer; transition: all 0.15s; margin-bottom: -1px; }
+  .subtab-btn.active { color: ${t.accent}; border-bottom-color: ${t.accent}; }
+  .subtab-btn:hover:not(.active) { color: ${t.textMuted}; }
+
+  /* Equipped items */
+  .equipped-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid ${t.borderSub}; }
   .equipped-item:last-child { border-bottom: none; }
   .equipped-icon { font-size: 1.05rem; flex-shrink: 0; line-height: 1.3; }
-  .equipped-name { font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 700; color: #e0d6b4; }
-  .equipped-stat { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: #9a8050; font-style: italic; }
-  .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #3a3220; color: #8a7040; flex-shrink: 0; }
-  /* Purple badge for skills/traits/feats in use */
+  .equipped-name { font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 700; color: ${t.text}; }
+  .equipped-stat { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: ${t.textMuted}; font-style: italic; }
+  .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; flex-shrink: 0; }
   .equipped-skill-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #5a3a8a; color: #a87acc; background: rgba(168,122,204,0.08); flex-shrink: 0; }
-  /* Blue badge for active spells */
   .equipped-spell-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; }
 
-  /* ── Pack items ── */
-  .pack-item { background: #1a1510; border: 1px solid #2e2618; padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; }
-  .pack-item.equipped-active { border-color: #7a6030; border-left: 3px solid #e2b94e; }
+  /* Spell slots (inside subtab) */
+  .spell-slot-box { background: ${t.spellSlotBox}; border: 1px solid ${t.spellSlotBorder}; text-align: center; padding: 0.4rem 0.2rem; }
+  .spell-slot-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #4a7aaa; display: block; margin-bottom: 0.2rem; }
+  .spell-slot-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #64a0e6; text-align: center; width: 100%; }
+
+  /* Pack items */
+  .pack-item { background: ${t.packItem}; border: 1px solid ${t.packItemBorder}; padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; }
+  .pack-item.equipped-active { border-color: ${t.accentBorder}; border-left: 3px solid ${t.accent}; }
   .pack-item-header { display: flex; align-items: center; gap: 0.5rem; }
   .pack-item-body { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
   .pack-item-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .pack-field { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; min-width: 80px; }
-  .pack-field-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase; color: #9a8050; }
-  .pack-field-input { background: #0f0c09; border: 1px solid #2e2618; color: #ccc0a0; font-family: 'Crimson Text', Georgia, serif; font-size: 0.9rem; padding: 0.25rem 0.45rem; outline: none; width: 100%; transition: border-color 0.15s; }
-  .pack-field-input:focus { border-color: #7a6030; }
-  .pack-field-input::placeholder { color: #4a3e28; font-style: italic; }
+  .pack-field-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.12em; text-transform: uppercase; color: ${t.textMuted}; }
+  .pack-field-input { background: ${t.packFieldInput}; border: 1px solid ${t.packItemBorder}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 0.9rem; padding: 0.25rem 0.45rem; outline: none; width: 100%; transition: border-color 0.15s; }
+  .pack-field-input:focus { border-color: ${t.accentBorder}; }
+  .pack-field-input::placeholder { color: ${t.textDim}; font-style: italic; }
 
-  /* ── Toggle switch ── */
+  /* Toggle switch */
   .toggle-wrap { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; user-select: none; }
-  .toggle-track { width: 32px; height: 17px; border-radius: 9px; background: #2a2418; border: 1px solid #3a3220; position: relative; transition: all 0.2s; flex-shrink: 0; }
-  .toggle-track.on { background: rgba(226,185,78,0.25); border-color: #c9a84c; }
+  .toggle-track { width: 32px; height: 17px; border-radius: 9px; background: ${t.borderSub}; border: 1px solid ${t.borderInput}; position: relative; transition: all 0.2s; flex-shrink: 0; }
+  .toggle-track.on { background: rgba(226,185,78,0.25); border-color: ${t.accentBorder}; }
   .toggle-track.on-purple { background: rgba(168,122,204,0.25); border-color: #9a6acc; }
   .toggle-track.on-blue   { background: rgba(100,160,230,0.22); border-color: #4a90d6; }
-  .toggle-thumb { width: 11px; height: 11px; border-radius: 50%; background: #5a4a28; position: absolute; top: 2px; left: 2px; transition: all 0.2s; }
+  .toggle-thumb { width: 11px; height: 11px; border-radius: 50%; background: ${t.textDim}; position: absolute; top: 2px; left: 2px; transition: all 0.2s; }
   .toggle-track.on .toggle-thumb, .toggle-track.on-purple .toggle-thumb, .toggle-track.on-blue .toggle-thumb { left: 17px; }
-  .toggle-track.on .toggle-thumb { background: #e2b94e; box-shadow: 0 0 5px rgba(226,185,78,0.6); }
-  .toggle-track.on-purple .toggle-thumb { background: #a87acc; box-shadow: 0 0 5px rgba(168,122,204,0.6); }
-  .toggle-track.on-blue .toggle-thumb   { background: #64a0e6; box-shadow: 0 0 5px rgba(100,160,230,0.6); }
-  .toggle-label { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase; color: #7a6840; transition: color 0.15s; }
+  .toggle-track.on .toggle-thumb { background: ${t.accent}; }
+  .toggle-track.on-purple .toggle-thumb { background: #a87acc; }
+  .toggle-track.on-blue .toggle-thumb   { background: #64a0e6; }
+  .toggle-label { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase; color: ${t.textDim}; transition: color 0.15s; }
 
-  /* ── Skill pips ── */
+  /* Skill pips */
   .skill-pips { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
-  .pip { width: 8px; height: 8px; border: 1px solid #3a3018; cursor: pointer; transition: all 0.15s; }
-  .pip.filled { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 4px rgba(226,185,78,0.4); }
+  .pip { width: 8px; height: 8px; border: 1px solid ${t.borderInput}; cursor: pointer; transition: all 0.15s; }
+  .pip.filled { background: ${t.accent}; border-color: ${t.accentBorder}; }
 
-  /* ── Spell level badge ── */
+  /* Spell badges */
   .spell-level-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; text-transform: uppercase; }
   .spell-school-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #2a2a5a; color: #8888cc; background: rgba(100,100,200,0.06); flex-shrink: 0; text-transform: uppercase; }
-  .spell-slot-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.4rem; }
-  @media (max-width:420px) { .spell-slot-grid { grid-template-columns: repeat(3,1fr); } }
-  .spell-slot-box { background: #130f0c; border: 1px solid #1a3a6a; text-align: center; padding: 0.4rem 0.2rem; }
-  .spell-slot-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #4a7aaa; display: block; margin-bottom: 0.2rem; }
-  .spell-slot-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #64a0e6; text-align: center; width: 100%; }
 
-  /* ── NPC / Location ── */
+  /* NPC / Location */
   .entity-header { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.5rem; }
   .pin-btn { background: transparent; border: none; cursor: pointer; font-size: 0.9rem; padding: 0.1rem; opacity: 0.4; transition: opacity 0.15s; flex-shrink: 0; line-height: 1; }
   .pin-btn.pinned { opacity: 1; }
-  .entity-toggle { background: transparent; border: none; color: #6a5830; cursor: pointer; font-size: 0.6rem; padding: 0; transition: color 0.15s; flex-shrink: 0; font-family: 'Cinzel', serif; }
-  .entity-toggle:hover { color: #9a8050; }
+  .entity-toggle { background: transparent; border: none; color: ${t.textDim}; cursor: pointer; font-size: 0.6rem; padding: 0; transition: color 0.15s; flex-shrink: 0; font-family: 'Cinzel', serif; }
+  .entity-toggle:hover { color: ${t.textMuted}; }
   .rel-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; cursor: pointer; flex-shrink: 0; transition: all 0.15s; user-select: none; text-transform: uppercase; }
   .rel-ally    { border: 1px solid #3a6a3a; color: #6acc6a; background: rgba(74,122,74,0.08); }
-  .rel-neutral { border: 1px solid #4a4030; color: #b09050; background: rgba(74,64,48,0.08); }
+  .rel-neutral { border: 1px solid #4a4030; color: ${t.textMuted}; background: rgba(74,64,48,0.08); }
   .rel-hostile { border: 1px solid #6a2a2a; color: #cc4444; background: rgba(122,44,44,0.08); }
-  .rel-unknown { border: 1px solid #2e2618; color: #7a6040; background: transparent; }
+  .rel-unknown { border: 1px solid ${t.border}; color: ${t.textDim}; background: transparent; }
   .rel-badge:hover { filter: brightness(1.2); }
-  .loc-type { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.15rem 0.55rem; border: 1px solid #352e1e; color: #9a8050; background: rgba(226,185,78,0.04); flex-shrink: 0; }
+  .loc-type { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.15rem 0.55rem; border: 1px solid ${t.border}; color: ${t.textMuted}; background: rgba(226,185,78,0.04); flex-shrink: 0; }
 
-  /* ── Session ── */
-  .sess-entry { border: 1px solid #2a2416; background: #171208; overflow: hidden; box-shadow: 0 2px 0 #0a0806; }
+  /* Session */
+  .sess-entry { border: 1px solid ${t.border}; background: ${t.sessEntry}; overflow: hidden; box-shadow: 0 2px 0 ${t.shadowCard}; }
   .sess-header { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; cursor: pointer; transition: background 0.15s; user-select: none; }
   .sess-header:hover { background: rgba(226,185,78,0.04); }
-  .sess-header.open { background: rgba(226,185,78,0.06); border-bottom: 1px solid #2e2618; }
-  .sess-num { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.08em; color: #7a6040; flex-shrink: 0; min-width: 24px; }
+  .sess-header.open { background: rgba(226,185,78,0.06); border-bottom: 1px solid ${t.border}; }
+  .sess-num { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.08em; color: ${t.textDim}; flex-shrink: 0; min-width: 24px; }
   .sess-body { padding: 0.9rem 1rem 1.1rem; }
-  .sess-rendered { font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; color: #c8c0a0; line-height: 1.75; white-space: pre-wrap; word-break: break-word; padding: 0.75rem 0.85rem; background: #130f0c; border: 1px solid #352e1e; min-height: 80px; cursor: text; }
+  .sess-rendered { font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; color: ${t.text}; line-height: 1.75; white-space: pre-wrap; word-break: break-word; padding: 0.75rem 0.85rem; background: ${t.bgInput}; border: 1px solid ${t.border}; min-height: 80px; cursor: text; }
 
-  /* ── Entity links ── */
-  .entity-link { cursor: pointer; padding: 0 2px; font-weight: 600; transition: all 0.15s; display: inline; }
-  .entity-link-npc        { color:#e2b94e; background:rgba(226,185,78,0.10); border-bottom:1px solid rgba(226,185,78,0.4); }
-  .entity-link-npc:hover  { background:rgba(226,185,78,0.22); }
-  .entity-link-location        { color:#7aaccc; background:rgba(122,172,204,0.10); border-bottom:1px solid rgba(122,172,204,0.4); }
-  .entity-link-location:hover  { background:rgba(122,172,204,0.22); }
-  .entity-link-quest        { color:#cc6666; background:rgba(204,102,102,0.10); border-bottom:1px solid rgba(204,102,102,0.4); }
-  .entity-link-quest:hover  { background:rgba(204,102,102,0.22); }
-  .entity-link-inventory        { color:#7acc9a; background:rgba(122,204,154,0.10); border-bottom:1px solid rgba(122,204,154,0.4); }
-  .entity-link-inventory:hover  { background:rgba(122,204,154,0.22); }
-  .entity-link-skill        { color:#a87acc; background:rgba(168,122,204,0.10); border-bottom:1px solid rgba(168,122,204,0.4); }
-  .entity-link-skill:hover  { background:rgba(168,122,204,0.22); }
+  /* Entity links */
+  .entity-link { cursor: pointer; padding: 0 2px; font-weight: 600; transition: all 0.15s; display: inline; position: relative; }
+  .entity-link-npc        { color:#c9943e; background:rgba(201,148,62,0.12); border-bottom:1px solid rgba(201,148,62,0.4); }
+  .entity-link-npc:hover  { background:rgba(201,148,62,0.22); }
+  .entity-link-location        { color:#4a8aaa; background:rgba(74,138,170,0.12); border-bottom:1px solid rgba(74,138,170,0.4); }
+  .entity-link-location:hover  { background:rgba(74,138,170,0.22); }
+  .entity-link-quest        { color:#aa4444; background:rgba(170,68,68,0.12); border-bottom:1px solid rgba(170,68,68,0.4); }
+  .entity-link-quest:hover  { background:rgba(170,68,68,0.22); }
+  .entity-link-inventory        { color:#3a8a5a; background:rgba(58,138,90,0.12); border-bottom:1px solid rgba(58,138,90,0.4); }
+  .entity-link-inventory:hover  { background:rgba(58,138,90,0.22); }
+  .entity-link-skill        { color:#7a5aaa; background:rgba(122,90,170,0.12); border-bottom:1px solid rgba(122,90,170,0.4); }
+  .entity-link-skill:hover  { background:rgba(122,90,170,0.22); }
 
-  .sess-legend { display:flex; gap:0.7rem; flex-wrap:wrap; padding:0.5rem 0.7rem; background:rgba(226,185,78,0.03); border:1px solid #2a2416; margin-bottom:0.6rem; align-items:center; }
+  /* Session log tooltip */
+  .entity-tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: ${t.bgCard}; border: 1px solid ${t.border}; padding: 0.5rem 0.7rem; min-width: 180px; max-width: 260px; z-index: 500; pointer-events: none; box-shadow: 0 4px 16px ${t.shadowBot}; }
+  .entity-tooltip-name { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.12em; font-weight: 700; color: ${t.accent}; margin-bottom: 0.25rem; }
+  .entity-tooltip-sub  { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; color: ${t.textMuted}; margin-bottom: 0.25rem; }
+  .entity-tooltip-body { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: ${t.text}; line-height: 1.45; }
+
+  .sess-legend { display:flex; gap:0.7rem; flex-wrap:wrap; padding:0.5rem 0.7rem; background:rgba(226,185,78,0.03); border:1px solid ${t.border}; margin-bottom:0.6rem; align-items:center; }
   .sess-legend-item { display:flex; align-items:center; gap:0.3rem; font-family:'Cinzel',serif; font-size:0.48rem; letter-spacing:0.08em; text-transform:uppercase; }
   .legend-dot { width:8px; height:8px; flex-shrink:0; }
 
-  /* ── Quest ── */
-  .quest-entry { background: #1c1810; border: 1px solid #2a2416; padding: 0.9rem 1rem; box-shadow: 0 2px 0 #0a0806; }
-  .quest-entry.active    { border-left: 2px solid #e2b94e; }
+  /* Quest */
+  .quest-entry { background: ${t.bgCard}; border: 1px solid ${t.border}; padding: 0.9rem 1rem; box-shadow: 0 2px 0 ${t.shadowCard}; }
+  .quest-entry.active    { border-left: 2px solid ${t.accent}; }
   .quest-entry.completed { border-left: 2px solid #5a9a5a; opacity: 0.78; }
   .quest-entry.failed    { border-left: 2px solid #8a2a2a; opacity: 0.62; }
   .badge { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.15rem 0.55rem; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all 0.15s; user-select:none; }
-  .badge.active    { border:1px solid #8a6830; color:#e2b94e; background:rgba(226,185,78,0.1); }
+  .badge.active    { border:1px solid ${t.accentBorder}; color:${t.accent}; background:rgba(226,185,78,0.1); }
   .badge.completed { border:1px solid #3a6a3a; color:#6acc6a; background:rgba(74,122,74,0.1); }
   .badge.failed    { border:1px solid #6a2a2a; color:#cc4444; background:rgba(122,44,44,0.1); }
   .badge:hover { filter:brightness(1.25); }
 
-  /* ── Checklist ── */
-  .checklist-item { display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0; border-bottom:1px solid #231e12; }
+  /* Checklist */
+  .checklist-item { display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0; border-bottom:1px solid ${t.borderSub}; }
   .checklist-item:last-child { border-bottom:none; }
-  .check-box { width:14px; height:14px; border:1px solid #5a4a28; background:transparent; flex-shrink:0; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
-  .check-box.checked { background:rgba(226,185,78,0.2); border-color:#c9a84c; }
-  .check-box.checked::after { content:'✓'; font-size:0.6rem; color:#e2b94e; }
-  .checklist-text.done { text-decoration:line-through; color:#6a5a38; }
+  .check-box { width:14px; height:14px; border:1px solid ${t.borderInput}; background:transparent; flex-shrink:0; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+  .check-box.checked { background:rgba(226,185,78,0.2); border-color:${t.accentBorder}; }
+  .check-box.checked::after { content:'✓'; font-size:0.6rem; color:${t.accent}; }
+  .checklist-text.done { text-decoration:line-through; color:${t.textDim}; }
 
-  /* ── Modal ── */
-  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
-  .modal-box { background:#1c1810; border:1px solid #6a2a2a; padding:1.5rem; max-width:340px; width:100%; box-shadow:0 0 40px rgba(192,64,64,0.25); }
+  /* Modal */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
+  .modal-box { background:${t.modalBg}; border:1px solid #6a2a2a; padding:1.5rem; max-width:380px; width:100%; }
   .modal-title { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
-  .modal-text { font-family:'Crimson Text',serif; font-size:1rem; color:#9a8050; line-height:1.6; margin-bottom:1.2rem; }
+  .modal-text { font-family:'Crimson Text',serif; font-size:1rem; color:${t.textMuted}; line-height:1.6; margin-bottom:1.2rem; }
+  .modal-detail { font-family:'Crimson Text',serif; font-size:0.9rem; color:${t.text}; background:${t.bgInput}; border:1px solid ${t.borderInput}; padding:0.5rem 0.75rem; margin-bottom:1rem; line-height:1.6; }
 
-  .add-form { background:#171208; border:1px dashed #352e1e; padding:1.1rem; }
-  .empty-state { text-align:center; padding:2.5rem; color:#6a5a38; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.12em; line-height:1.9; }
+  .add-form { background:${t.addForm}; border:1px dashed ${t.border}; padding:1.1rem; }
+  .empty-state { text-align:center; padding:2.5rem; color:${t.emptyColor}; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.12em; line-height:1.9; }
   .row   { display:flex; align-items:center; gap:0.6rem; }
   .col   { display:flex; flex-direction:column; gap:0.5rem; }
   .flex1 { flex:1; min-width:0; }
   .mt05  { margin-top:0.5rem; }
   .mt1   { margin-top:1rem; }
-  @media (max-width:480px) { .hj-logo { font-size:1rem; } }
-`;
+  @media (max-width:480px) { .hj-logo { font-size:0.95rem; } }
+  `;
+}
 
 /* ═══ CONSTANTS ═════════════════════════════════ */
 const today   = () => new Date().toISOString().slice(0,10);
@@ -281,12 +331,9 @@ const LOC_TYPES    = ["Settlement","Dungeon","Wilderness","Building","Ruin","Lan
 const ALIGNMENTS   = ["Lawful Good","Neutral Good","Chaotic Good","Lawful Neutral","True Neutral","Chaotic Neutral","Lawful Evil","Neutral Evil","Chaotic Evil"];
 const ITEM_TYPES   = ["General","Weapon","Armor","Spell Scroll","Wondrous Item","Consumable","Tool","Other"];
 const ITEM_ICONS   = { General:"📦", Weapon:"⚔️", Armor:"🛡️", "Spell Scroll":"📜", "Wondrous Item":"✨", Consumable:"🧪", Tool:"🔧", Other:"◈" };
-
-/* Skills tab: only Skill, Trait, Feat */
-const SKILL_CATS = ["Skill","Trait","Feat"];
-
-const SPELL_SCHOOLS = ["Abjuration","Conjuration","Divination","Enchantment","Evocation","Illusion","Necromancy","Transmutation","Other"];
-const SPELL_LEVELS  = ["Cantrip","1st","2nd","3rd","4th","5th","6th","7th","8th","9th"];
+const SKILL_CATS   = ["Skill","Trait","Feat"];
+const SPELL_SCHOOLS= ["Abjuration","Conjuration","Divination","Enchantment","Evocation","Illusion","Necromancy","Transmutation","Other"];
+const SPELL_LEVELS = ["Cantrip","1st","2nd","3rd","4th","5th","6th","7th","8th","9th"];
 const SPELL_SLOT_LABELS = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th"];
 
 const SAVING_THROWS = [
@@ -322,49 +369,95 @@ const DEFAULT_CHAR = {
   name:"", classes:[{name:"Adventurer",level:1}],
   stats:{STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10},
   profBonus:2, hp:{current:10,max:10,temp:0}, ac:10,
-  savingThrows:{}, skills:{},
+  initiativeBonus:undefined,
+  savingThrows:{}, savingThrowExp:{}, savingThrowOverride:{},
+  skills:{}, skillExp:{},
   alignment:"True Neutral", background:"",
   traits:{personality:"",ideals:"",bonds:"",flaws:""},
   personalNotes:"", backstory:"",
-  spellSlots:{}, // { "1st": {max:2,used:0}, ... }
-  spellcastingAbility:"INT",
+  spellSlots:{}, spellcastingAbility:"INT",
+  hitDice:{ type:"d8", max:1, used:0 },
+  deathSaves:{ successes:0, failures:0 },
 };
 
 const load = (key,fb) => { try { return JSON.parse(localStorage.getItem(key))??fb; } catch { return fb; } };
 const save = (key,val) => { try { localStorage.setItem(key,JSON.stringify(val)); } catch {} };
-const ALL_KEYS = ["hj_char","hj_inventory","hj_npcs","hj_locations","hj_skills","hj_spells","hj_sessions","hj_quests"];
+const ALL_KEYS = ["hj_char","hj_inventory","hj_npcs","hj_locations","hj_skills","hj_spells","hj_sessions","hj_quests","hj_theme"];
 
 const hpBarColor = pct => pct>70?"linear-gradient(90deg,#1a5a1a,#2a8a2a,#33aa33)":pct>35?"linear-gradient(90deg,#7a4a10,#cc7020,#e08030)":"linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
-const hpNumColor = pct => pct>70?"#5acc5a":pct>35?"#e08030":"#cc3a3a";
+const hpNumColor = pct => pct>70?"#3a9a3a":pct>35?"#c06010":"#c03030";
 
 const LEGEND_ITEMS = [
-  {type:"npc",      color:"rgba(226,185,78,0.35)", border:"rgba(226,185,78,0.7)",  label:"People"},
-  {type:"location", color:"rgba(122,172,204,0.35)",border:"rgba(122,172,204,0.7)", label:"Places"},
-  {type:"quest",    color:"rgba(204,102,102,0.35)",border:"rgba(204,102,102,0.7)", label:"Quests"},
-  {type:"inventory",color:"rgba(122,204,154,0.35)",border:"rgba(122,204,154,0.7)", label:"Pack"},
-  {type:"skill",    color:"rgba(168,122,204,0.35)",border:"rgba(168,122,204,0.7)", label:"Skills"},
+  {type:"npc",      color:"rgba(201,148,62,0.35)", border:"rgba(201,148,62,0.7)",  label:"People"},
+  {type:"location", color:"rgba(74,138,170,0.35)", border:"rgba(74,138,170,0.7)",  label:"Places"},
+  {type:"quest",    color:"rgba(170,68,68,0.35)",  border:"rgba(170,68,68,0.7)",   label:"Quests"},
+  {type:"inventory",color:"rgba(58,138,90,0.35)",  border:"rgba(58,138,90,0.7)",   label:"Pack"},
+  {type:"skill",    color:"rgba(122,90,170,0.35)", border:"rgba(122,90,170,0.7)",  label:"Skills"},
 ];
 
-function parseEntityLinks(text,npcs,locations,quests,inventory,skills,onNavigate) {
+/* ═══ ENTITY LINK PARSER with tooltip data ══════ */
+function parseEntityLinksWithTooltips(text, npcs, locations, quests, inventory, skills, onNavigate) {
   if (!text) return null;
-  const entities=[
-    ...npcs.map(n=>({name:n.name,tab:"npcs",type:"npc"})),
-    ...locations.map(l=>({name:l.name,tab:"locations",type:"location"})),
-    ...quests.map(q=>({name:q.name,tab:"quests",type:"quest"})),
-    ...inventory.map(i=>({name:i.name,tab:"inventory",type:"inventory"})),
-    ...skills.map(s=>({name:s.name,tab:"skills",type:"skill"})),
-  ].filter(e=>e.name&&e.name.trim().length>1).sort((a,b)=>b.name.length-a.name.length);
-  if (!entities.length) return text;
-  const pattern=new RegExp(`(${entities.map(e=>e.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')})`,'gi');
-  const TAB_LABELS={npc:"People",location:"Places",quest:"Quests",inventory:"Pack",skill:"Skills"};
-  return text.split(pattern).map((part,i)=>{
-    const match=entities.find(e=>e.name.toLowerCase()===part.toLowerCase());
-    if (match) return <span key={i} className={`entity-link entity-link-${match.type}`} onClick={()=>onNavigate(match.tab)} title={`→ ${TAB_LABELS[match.type]}: ${match.name}`}>{part}</span>;
+  const entityMap = new Map();
+  const addEntities = (list, tab, type, getTooltip) =>
+    list.forEach(e => e.name?.trim().length > 1 && entityMap.set(e.name.toLowerCase(), { name:e.name, tab, type, tooltip:getTooltip(e) }));
+  addEntities(npcs,      "npcs",      "npc",       e=>({ sub:e.role||"", body:e.notes||"" }));
+  addEntities(locations, "locations", "location",  e=>({ sub:e.type||"", body:e.notes||"" }));
+  addEntities(quests,    "quests",    "quest",     e=>({ sub:e.status||"", body:e.description||"" }));
+  addEntities(inventory, "inventory", "inventory", e=>({ sub:e.type||"", body:e.note||"" }));
+  addEntities(skills,    "skills",    "skill",     e=>({ sub:e.category||"", body:e.description||"" }));
+
+  const sorted = [...entityMap.values()].sort((a,b)=>b.name.length-a.name.length);
+  if (!sorted.length) return text;
+  const pattern = new RegExp(`(${sorted.map(e=>e.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')})`, 'gi');
+  const TAB_LABELS = {npc:"People",location:"Places",quest:"Quests",inventory:"Pack",skill:"Skills"};
+
+  return text.split(pattern).map((part, i) => {
+    const key = part.toLowerCase();
+    const match = entityMap.get(key);
+    if (match) {
+      return <EntityLink key={i} match={match} part={part} onNavigate={onNavigate} tabLabel={TAB_LABELS[match.type]}/>;
+    }
     return part;
   });
 }
 
-/* ═══ SHARED ════════════════════════════════════ */
+/* ── EntityLink with hover tooltip ── */
+function EntityLink({ match, part, onNavigate, tabLabel }) {
+  const [visible, setVisible] = useState(false);
+  const timerRef = useRef(null);
+
+  const show = () => { timerRef.current = setTimeout(()=>setVisible(true), 400); };
+  const hide = () => { clearTimeout(timerRef.current); setVisible(false); };
+
+  return (
+    <span
+      className={`entity-link entity-link-${match.type}`}
+      onClick={() => onNavigate(match.tab)}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onTouchStart={show}
+      onTouchEnd={hide}
+      title={`→ ${tabLabel}: ${match.name}`}
+      style={{position:"relative"}}
+    >
+      {part}
+      {visible && (
+        <span className="entity-tooltip">
+          <span className="entity-tooltip-name">{match.name}</span>
+          {match.tooltip.sub && <span className="entity-tooltip-sub">{match.tooltip.sub}</span>}
+          {match.tooltip.body && (
+            <span className="entity-tooltip-body">
+              {match.tooltip.body.slice(0,120)}{match.tooltip.body.length>120?"…":""}
+            </span>
+          )}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/* ═══ SHARED COMPONENTS ════════════════════════ */
 function TagsEditor({tags,onChange}) {
   const [adding,setAdding]=useState(false); const [draft,setDraft]=useState("");
   const commit=()=>{const t=draft.trim().toLowerCase();if(t&&!tags.includes(t))onChange([...tags,t]);setDraft("");setAdding(false);};
@@ -378,7 +471,7 @@ function TagsEditor({tags,onChange}) {
 function FilterBar({allTags,activeTag,onSelect}) {
   if (!allTags.length) return null;
   return <div className="filter-bar">
-    <span style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.12em",color:"#6a5a38",textTransform:"uppercase"}}>Filter:</span>
+    <span style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.12em",textTransform:"uppercase"}}>Filter:</span>
     <button className={`filter-tag${!activeTag?" active-filter":""}`} onClick={()=>onSelect(null)}>All</button>
     {allTags.map(tag=><button key={tag} className={`filter-tag${activeTag===tag?" active-filter":""}`} onClick={()=>onSelect(activeTag===tag?null:tag)}>{tag}</button>)}
   </div>;
@@ -411,11 +504,81 @@ function SkillPips({value,onChange}) {
   return <div className="skill-pips">{[1,2,3,4,5].map(i=><div key={i} className={`pip${i<=value?" filled":""}`} onClick={()=>onChange(i===value?0:i)}/>)}</div>;
 }
 
+/* ── Rest Modal ── */
+function RestModal({ type, char, setChar, onClose }) {
+  const pb = char.profBonus||2;
+  const hd = char.hitDice||{type:"d8",max:1,used:0};
+  const available = Math.max(0, hd.max - hd.used);
+  const [hdSpend, setHdSpend] = useState(1);
+
+  const doShortRest = () => {
+    const spend = clamp(hdSpend, 0, available);
+    const dieMax = parseInt(hd.type.replace("d",""))||8;
+    const conMod = Math.floor((char.stats.CON-10)/2);
+    // average roll per die for simplicity display; player tracks actual
+    const healed = spend>0 ? spend*Math.ceil(dieMax/2)+spend*conMod : 0;
+    setChar(c=>({
+      ...c,
+      hp:{ ...c.hp, current: clamp(c.hp.current+Math.max(0,healed), 0, c.hp.max) },
+      hitDice:{ ...hd, used: hd.used+spend },
+    }));
+    onClose();
+  };
+
+  const doLongRest = () => {
+    // Long rest: full HP, reset spell slots used to 0, recover half hit dice (min 1)
+    const recover = Math.max(1, Math.floor(hd.max/2));
+    const newUsed = Math.max(0, hd.used - recover);
+    const newSlots = {};
+    Object.entries(char.spellSlots||{}).forEach(([k,v])=>{ newSlots[k]={...v,used:0}; });
+    setChar(c=>({
+      ...c,
+      hp:{ ...c.hp, current:c.hp.max, temp:0 },
+      hitDice:{ ...hd, used:newUsed },
+      spellSlots: newSlots,
+      deathSaves:{ successes:0, failures:0 },
+    }));
+    onClose();
+  };
+
+  const isShort = type==="short";
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-box" onClick={e=>e.stopPropagation()}>
+        <div className="modal-title">{isShort?"☽ Short Rest":"☀ Long Rest"}</div>
+        {isShort ? <>
+          <p className="modal-text">Spend Hit Dice to recover HP. You have <strong>{available}</strong> of <strong>{hd.max}</strong> {hd.type} remaining.</p>
+          <div className="row" style={{marginBottom:"1rem",gap:"0.5rem"}}>
+            <select className="g-select" style={{width:"auto",fontSize:"0.9rem",padding:"0.3rem 0.5rem"}} value={hd.type} onChange={e=>setChar(c=>({...c,hitDice:{...hd,type:e.target.value}}))}>
+              {["d4","d6","d8","d10","d12"].map(d=><option key={d} value={d}>{d}</option>)}
+            </select>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.6rem"}}>Max:</span>
+            <input type="number" min={1} value={hd.max} onChange={e=>setChar(c=>({...c,hitDice:{...hd,max:parseInt(e.target.value)||1}}))} style={{width:44,fontFamily:"Cinzel,serif",fontSize:"0.9rem",background:"transparent",border:"none",borderBottom:"1px dashed currentColor",outline:"none",textAlign:"center"}}/>
+          </div>
+          <div className="modal-detail">
+            Spend <input type="number" min={0} max={available} value={hdSpend} onChange={e=>setHdSpend(clamp(parseInt(e.target.value)||0,0,available))} style={{width:36,fontFamily:"Cinzel,serif",fontSize:"1rem",background:"transparent",border:"none",borderBottom:"1px solid currentColor",outline:"none",textAlign:"center"}}/> {hd.type} → ~{clamp(hdSpend,0,available)*Math.ceil(parseInt(hd.type.replace("d",""))/2)+clamp(hdSpend,0,available)*Math.floor((char.stats.CON-10)/2)} HP healed (avg + CON)
+          </div>
+          <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
+            <button className="btn-ghost" onClick={onClose}>Cancel</button>
+            <button className="btn-gold" onClick={doShortRest}>Rest</button>
+          </div>
+        </> : <>
+          <p className="modal-text">A full night's rest. You will recover to <strong>full HP</strong>, reset all <strong>Spell Slots</strong>, and regain <strong>{Math.max(1,Math.floor((char.hitDice?.max||1)/2))} Hit Dice</strong>.</p>
+          <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
+            <button className="btn-ghost" onClick={onClose}>Cancel</button>
+            <button className="btn-gold" onClick={doLongRest}>Long Rest</button>
+          </div>
+        </>}
+      </div>
+    </div>
+  );
+}
+
 function ResetModal({onConfirm,onCancel}) {
   return <div className="modal-overlay" onClick={onCancel}>
     <div className="modal-box" onClick={e=>e.stopPropagation()}>
       <div className="modal-title">⚠ Full Reset</div>
-      <p className="modal-text">This will permanently erase all character data, inventory, NPCs, locations, sessions, quests, skills and spells. This cannot be undone.</p>
+      <p className="modal-text">This will permanently erase all character data. This cannot be undone.</p>
       <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
         <button className="btn-ghost" onClick={onCancel}>Cancel</button>
         <button className="btn-danger" onClick={onConfirm}>Erase Everything</button>
@@ -424,38 +587,103 @@ function ResetModal({onConfirm,onCancel}) {
   </div>;
 }
 
-/* ═══ CHARACTER SHEET (merged card) ════════════ */
-function CharacterSheet({char,setChar,inventory,skills,spells}) {
+/* ═══ SPELL SLOTS WIDGET (reusable) ════════════ */
+function SpellSlotsWidget({ char, setChar, spells }) {
+  const usedLevels = [...new Set((spells||[]).map(s=>s.level).filter(l=>l!=="Cantrip"))];
+  if (!usedLevels.length) return <p style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",opacity:0.5,textAlign:"center",padding:"1rem 0"}}>No non-cantrip spells added yet.</p>;
+  usedLevels.sort((a,b)=>SPELL_SLOT_LABELS.indexOf(a)-SPELL_SLOT_LABELS.indexOf(b));
+  return (
+    <div style={{display:"grid",gap:"0.35rem",gridTemplateColumns:`repeat(${usedLevels.length},1fr)`}}>
+      {usedLevels.map(lv=>{
+        const sl=(char.spellSlots||{})[lv]||{max:0,used:0};
+        const count=(spells||[]).filter(s=>s.level===lv).length;
+        return (
+          <div key={lv} className="spell-slot-box">
+            <span className="spell-slot-label">{lv}</span>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"2px"}}>
+              <input className="spell-slot-input" type="number" min={0} value={sl.used||0}
+                onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),used:Math.max(0,parseInt(e.target.value)||0)}}}))}
+                style={{width:28,fontSize:"0.9rem"}}/>
+              <span style={{color:"#2a5a8a",fontSize:"0.7rem"}}>/</span>
+              <input className="spell-slot-input" type="number" min={0} value={sl.max||0}
+                onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),max:Math.max(0,parseInt(e.target.value)||0)}}}))}
+                style={{width:28,fontSize:"0.9rem",color:"#4a7aaa"}}/>
+            </div>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",color:"#2a4a6a",textTransform:"uppercase",marginTop:"0.1rem",display:"block"}}>{count} spell{count!==1?"s":""}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ═══ CHARACTER SHEET ══════════════════════════ */
+function CharacterSheet({ char, setChar, inventory, skills, spells }) {
   const upd  = (f,v) => setChar(c=>({...c,[f]:v}));
   const updSt= (s,v) => setChar(c=>({...c,stats:{...c.stats,[s]:v}}));
   const hpPct= Math.round(clamp((char.hp.current/char.hp.max)*100,0,100));
   const pb   = char.profBonus||2;
+  const [restModal, setRestModal] = useState(null); // "short"|"long"|null
+  const [activeTab, setActiveTab] = useState("items"); // subtab in Active & Equipped
 
   const toggleSave = useCallback(key=>setChar(c=>({...c,savingThrows:{...(c.savingThrows||{}),[key]:!(c.savingThrows||{})[key]}})),[setChar]);
-  const toggleSkill= useCallback(key=>setChar(c=>({...c,skills:{...(c.skills||{}),[key]:!(c.skills||{})[key]}})),[setChar]);
 
-  const equippedItems  = (inventory||[]).filter(i=>i.equipped);
-  const activeSkills   = (skills||[]).filter(s=>s.inUse);
-  const activeSpells   = (spells||[]).filter(s=>s.inUse);
-  const hasActive      = equippedItems.length||activeSkills.length||activeSpells.length;
+  const equippedItems = (inventory||[]).filter(i=>i.equipped);
+  const activeSkills  = (skills||[]).filter(s=>s.inUse);
+  const activeSpells  = (spells||[]).filter(s=>s.inUse);
+  const hasActive     = equippedItems.length||activeSkills.length||activeSpells.length;
+
+  const profPip = (prof, exp, cycle) => (
+    <button type="button" onClick={cycle}
+      title="none → proficient → expertise → none"
+      style={{
+        width:13,height:13,borderRadius:"50%",padding:0,cursor:"pointer",flexShrink:0,
+        border: exp?"2px solid #64c8e0": prof?"1.5px solid #c9a84c":"1.5px solid #5a4a28",
+        background: exp?"#64c8e0": prof?"#e2b94e":"transparent",
+        clipPath: exp?"polygon(50% 0%,100% 50%,50% 100%,0% 50%)":"none",
+        boxShadow: exp?"0 0 5px rgba(100,200,224,0.6)": prof?"0 0 5px rgba(226,185,78,0.5)":"none",
+        transition:"all 0.15s", appearance:"none",WebkitAppearance:"none",
+      }}
+    />
+  );
+
+  const cycleSave = key => setChar(c=>{
+    const wasP=!!(c.savingThrows||{})[key]; const wasE=!!(c.savingThrowExp||{})[key];
+    if(!wasP&&!wasE) return {...c,savingThrows:{...(c.savingThrows||{}),[key]:true}};
+    if(wasP&&!wasE)  return {...c,savingThrowExp:{...(c.savingThrowExp||{}),[key]:true}};
+    const s2={...(c.savingThrows||{})};delete s2[key];
+    const e2={...(c.savingThrowExp||{})};delete e2[key];
+    return {...c,savingThrows:s2,savingThrowExp:e2};
+  });
+
+  const cycleSkill = key => setChar(c=>{
+    const wasP=!!(c.skills||{})[key]; const wasE=!!(c.skillExp||{})[key];
+    if(!wasP&&!wasE) return {...c,skills:{...(c.skills||{}),[key]:true}};
+    if(wasP&&!wasE)  return {...c,skillExp:{...(c.skillExp||{}),[key]:true}};
+    const s2={...(c.skills||{})};delete s2[key];
+    const e2={...(c.skillExp||{})};delete e2[key];
+    return {...c,skills:s2,skillExp:e2};
+  });
 
   return <>
-    {/* ══ Single merged CHARACTER card ══ */}
+    {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={()=>setRestModal(null)}/>}
+
+    {/* ══ CHARACTER card ══ */}
     <div className="card">
       <div className="sect-label">Character</div>
 
       {/* Name */}
       <div style={{marginBottom:"1rem"}}>
-        <input className="iedit" style={{fontFamily:"Cinzel,serif",fontSize:"1.4rem",color:"#ede5c5",fontWeight:700,letterSpacing:"0.04em"}} value={char.name||""} onChange={e=>upd("name",e.target.value)} placeholder="Enter your hero's name…"/>
+        <input className="iedit" style={{fontFamily:"Cinzel,serif",fontSize:"1.4rem",fontWeight:700,letterSpacing:"0.04em"}} value={char.name||""} onChange={e=>upd("name",e.target.value)} placeholder="Enter your hero's name…"/>
       </div>
 
       {/* Classes */}
       <div style={{display:"flex",flexDirection:"column",gap:"0.3rem",marginBottom:"0.8rem"}}>
         {(char.classes||[]).map((cls,i)=>(
           <div key={i} className="class-row">
-            <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:i===0?"#e2b94e":"#c8bfa0",fontWeight:600}} value={cls.name} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return{...c,classes:cl};})} placeholder={`Class ${i+1}…`}/>
-            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.56rem",color:"#8a7040",letterSpacing:"0.1em",flexShrink:0}}>LVL</span>
-            <input type="number" className="iedit" style={{width:38,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e2b94e"}} value={cls.level} min={1} max={20} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}/>
+            <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:i===0?"var(--accent)":"inherit",fontWeight:600}} value={cls.name} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return{...c,classes:cl};})} placeholder={`Class ${i+1}…`}/>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.56rem",letterSpacing:"0.1em",flexShrink:0}}>LVL</span>
+            <input type="number" className="iedit" style={{width:38,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem"}} value={cls.level} min={1} max={20} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}/>
             {i>0&&<button className="btn-ghost" style={{padding:"0.1rem 0.35rem",fontSize:"0.65rem"}} onClick={()=>setChar(c=>({...c,classes:c.classes.filter((_,j)=>j!==i)}))}>✕</button>}
           </div>
         ))}
@@ -463,17 +691,17 @@ function CharacterSheet({char,setChar,inventory,skills,spells}) {
       </div>
 
       {/* Background / ProfBonus / Alignment */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 90px 1fr",gap:"0.6rem",alignItems:"end",marginBottom:"0"}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 90px 1fr",gap:"0.6rem",alignItems:"end"}}>
         <div>
-          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",color:"#8a7040",marginBottom:"0.25rem"}}>Background</div>
-          <input className="iedit" style={{fontSize:"0.9rem",color:"#c8bfa0"}} value={char.background||""} onChange={e=>upd("background",e.target.value)} placeholder="Background…"/>
+          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:"0.25rem"}}>Background</div>
+          <input className="iedit" style={{fontSize:"0.9rem"}} value={char.background||""} onChange={e=>upd("background",e.target.value)} placeholder="Background…"/>
         </div>
         <div>
-          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",color:"#8a7040",marginBottom:"0.25rem"}}>Prof. Bonus</div>
-          <input type="number" className="iedit" style={{textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e2b94e"}} value={pb} onChange={e=>upd("profBonus",parseInt(e.target.value)||2)}/>
+          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:"0.25rem"}}>Prof. Bonus</div>
+          <input type="number" className="iedit" style={{textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem"}} value={pb} onChange={e=>upd("profBonus",parseInt(e.target.value)||2)}/>
         </div>
         <div>
-          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",color:"#8a7040",marginBottom:"0.25rem"}}>Alignment</div>
+          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",marginBottom:"0.25rem"}}>Alignment</div>
           <select className="g-select" value={char.alignment||"True Neutral"} onChange={e=>upd("alignment",e.target.value)} style={{fontSize:"0.78rem",padding:"0.3rem 0.5rem"}}>{ALIGNMENTS.map(a=><option key={a} value={a}>{a}</option>)}</select>
         </div>
       </div>
@@ -482,228 +710,126 @@ function CharacterSheet({char,setChar,inventory,skills,spells}) {
       <hr className="inner-divider" data-label="Attributes — tap to edit" style={{marginTop:"1.1rem"}}/>
       <div className="stat-grid-6" style={{marginTop:"0.8rem"}}>{STAT_KEYS.map(k=><StatBox key={k} label={k} value={char.stats[k]} onChange={v=>updSt(k,v)}/>)}</div>
 
-      {/* ST row — saving throw modifier under each stat, editable override */}
+      {/* ST row under attributes */}
       <div className="stat-grid-6" style={{gap:"0.5rem",marginTop:"0.2rem"}}>
         {SAVING_THROWS.map(st=>{
-          const prof  = !!(char.savingThrows||{})[st.key];
-          const exp   = !!(char.savingThrowExp||{})[st.key];
-          const base  = Math.floor((char.stats[st.attr]-10)/2);
-          const auto  = exp ? base+pb*2 : prof ? base+pb : base;
-          const over  = (char.savingThrowOverride||{})[st.key];
-          const val   = over!==undefined ? over : auto;
+          const prof=!!(char.savingThrows||{})[st.key];
+          const exp =!!(char.savingThrowExp||{})[st.key];
+          const base=Math.floor((char.stats[st.attr]-10)/2);
+          const auto=exp?base+pb*2:prof?base+pb:base;
+          const over=(char.savingThrowOverride||{})[st.key];
+          const val=over!==undefined?over:auto;
           return (
             <div key={st.key} style={{textAlign:"center"}}>
-              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",color:"#5a4a28",textTransform:"uppercase",display:"block",marginBottom:"1px"}}>ST</span>
-              <input
-                type="number"
-                value={val}
-                title={`Saving throw: ${over!==undefined?"manual override":"auto from stats"}`}
-                style={{
-                  background: over!==undefined ? "rgba(226,185,78,0.06)" : "transparent",
-                  border: "none",
-                  borderBottom: over!==undefined ? "1px solid #7a6030" : "1px dashed #2e2618",
-                  outline:"none",
-                  fontFamily:"Cinzel,serif",
-                  fontSize:"0.82rem",
-                  fontWeight:700,
-                  color: exp?"#64c8e0": prof?"#e2b94e":"#7a6840",
-                  textAlign:"center",
-                  width:"100%",
-                  padding:"0.1rem 0",
-                  transition:"color 0.2s",
-                }}
-                onChange={e=>{
-                  const n=parseInt(e.target.value);
-                  setChar(c=>({...c,savingThrowOverride:{...(c.savingThrowOverride||{}),[st.key]:isNaN(n)?undefined:n}}));
-                }}
-                onDoubleClick={()=>{
-                  // double-click resets to auto
-                  setChar(c=>{const o={...(c.savingThrowOverride||{})};delete o[st.key];return{...c,savingThrowOverride:o};});
-                }}
+              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",textTransform:"uppercase",display:"block",marginBottom:"1px"}}>ST</span>
+              <input type="number" value={val}
+                title={over!==undefined?"Manual override — double-click to reset":"Auto from stats"}
+                style={{background:over!==undefined?"rgba(226,185,78,0.06)":"transparent",border:"none",borderBottom:over!==undefined?"1px solid currentColor":"1px dashed rgba(128,128,128,0.3)",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.82rem",fontWeight:700,color:exp?"#64c8e0":prof?"#c9a84c":"inherit",textAlign:"center",width:"100%",padding:"0.1rem 0"}}
+                onChange={e=>{const n=parseInt(e.target.value);setChar(c=>({...c,savingThrowOverride:{...(c.savingThrowOverride||{}),[st.key]:isNaN(n)?undefined:n}}));}}
+                onDoubleClick={()=>setChar(c=>{const o={...(c.savingThrowOverride||{})};delete o[st.key];return{...c,savingThrowOverride:o};})}
               />
             </div>
           );
         })}
-      </div>
-      <div style={{textAlign:"right",marginTop:"0.2rem"}}>
-        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",letterSpacing:"0.08em",color:"#3a3018",textTransform:"uppercase"}}>double-tap ST to reset to auto</span>
       </div>
 
       {/* ─ Vitality ─ */}
       <hr className="inner-divider" data-label="Vitality" style={{marginTop:"1.1rem"}}/>
       <div style={{marginTop:"0.8rem",display:"grid",gridTemplateColumns:"auto 1fr",gap:"0.6rem",alignItems:"center"}}>
-
-        {/* Left: − num/max + HP label */}
         <div style={{display:"flex",alignItems:"center",gap:"0.4rem",whiteSpace:"nowrap"}}>
           <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
           <div className="hp-display">
             <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
             <span className="hp-sep">/</span>
-            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
           </div>
           <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
           <span className="hp-label">HP</span>
         </div>
-
-        {/* Right: three combat boxes */}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.4rem"}}>
-          <div className="combat-box">
-            <span className="combat-box-label">Temp HP</span>
-            <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
-          </div>
-          <div className="combat-box">
-            <span className="combat-box-label">Armor Class</span>
-            <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
-          </div>
-          <div className="combat-box" title="DEX modifier by default — edit to override">
-            <span className="combat-box-label">Initiative</span>
-            <input className="combat-box-input" type="number"
-              value={char.initiativeBonus!==undefined ? char.initiativeBonus : Math.floor((char.stats.DEX-10)/2)}
-              onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}
-            />
-          </div>
+          <div className="combat-box"><span className="combat-box-label">Temp HP</span><input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/></div>
+          <div className="combat-box"><span className="combat-box-label">Armor Class</span><input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/></div>
+          <div className="combat-box" title="DEX mod by default — edit to override"><span className="combat-box-label">Initiative</span><input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/></div>
         </div>
-
       </div>
-
-      {/* HP bar + pct below the whole row */}
-      <div className="hp-bar-bg" style={{marginTop:"0.5rem"}}>
-        <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
-      </div>
+      <div className="hp-bar-bg" style={{marginTop:"0.5rem"}}><div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/></div>
       <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
 
-      {/* ─ Saving Throws — prof + expertise pip in each box ─ */}
+      {/* Hit Dice + Rest buttons */}
+      <div style={{display:"flex",alignItems:"center",gap:"0.6rem",marginTop:"0.7rem",flexWrap:"wrap"}}>
+        <div className="hd-box" style={{display:"flex",alignItems:"center",gap:"0.4rem",padding:"0.3rem 0.7rem",flex:"0 0 auto"}}>
+          <span className="hd-label" style={{marginBottom:0}}>Hit Dice</span>
+          <select style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.78rem",cursor:"pointer",color:"inherit"}} value={(char.hitDice||{type:"d8"}).type} onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),type:e.target.value}}))}>{["d4","d6","d8","d10","d12"].map(d=><option key={d} value={d}>{d}</option>)}</select>
+          <input type="number" min={0} value={(char.hitDice||{used:0}).used||0} onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),used:parseInt(e.target.value)||0}}))} style={{width:28,background:"transparent",border:"none",borderBottom:"1px dashed currentColor",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.82rem",textAlign:"center",color:"inherit"}}/>
+          <span style={{fontSize:"0.7rem"}}>/</span>
+          <input type="number" min={1} value={(char.hitDice||{max:1}).max||1} onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),max:parseInt(e.target.value)||1}}))} style={{width:28,background:"transparent",border:"none",borderBottom:"1px dashed currentColor",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.82rem",textAlign:"center",color:"inherit"}}/>
+        </div>
+        <button className="btn-rest short" onClick={()=>setRestModal("short")}>☽ Short Rest</button>
+        <button className="btn-rest long"  onClick={()=>setRestModal("long")}>☀ Long Rest</button>
+      </div>
+
+      {/* ─ Saving Throws ─ */}
       <hr className="inner-divider" data-label="Saving Throws" style={{marginTop:"1.1rem"}}/>
       <div className="stat-grid-6" style={{marginTop:"0.8rem"}}>
         {SAVING_THROWS.map(st=>{
-          const prof = !!(char.savingThrows||{})[st.key];
-          const exp  = !!(char.savingThrowExp||{})[st.key];
-          const base = Math.floor((char.stats[st.attr]-10)/2);
-          const bonus= exp ? base+pb*2 : prof ? base+pb : base;
-          // cycle: none → prof → expertise → none
-          const cycleProf=()=>setChar(c=>{
-            const wasProf=!!(c.savingThrows||{})[st.key];
-            const wasExp =!!(c.savingThrowExp||{})[st.key];
-            if (!wasProf && !wasExp) return {...c, savingThrows:{...(c.savingThrows||{}),[st.key]:true}};
-            if (wasProf && !wasExp)  return {...c, savingThrowExp:{...(c.savingThrowExp||{}),[st.key]:true}};
-            // was expertise → reset both
-            const st2={...(c.savingThrows||{})};    delete st2[st.key];
-            const ex2={...(c.savingThrowExp||{})}; delete ex2[st.key];
-            return {...c, savingThrows:st2, savingThrowExp:ex2};
-          });
-          const stateLabel = exp?"expertise": prof?"proficient":"—";
-          const stateColor = exp?"#64c8e0"  : prof?"#e2b94e"  :"#5a4a28";
+          const prof=!!(char.savingThrows||{})[st.key];
+          const exp =!!(char.savingThrowExp||{})[st.key];
+          const base=Math.floor((char.stats[st.attr]-10)/2);
+          const bonus=exp?base+pb*2:prof?base+pb:base;
+          const stateColor=exp?"#64c8e0":prof?"#e2b94e":"inherit";
           return (
-            <div key={st.key}
-              className={`stat-box${exp?" stat-box-exp":prof?" stat-box-prof":""}`}
+            <div key={st.key} className={`stat-box${exp?" stat-box-exp":prof?" stat-box-prof":""}`}
               style={{cursor:"default",paddingTop:"0.5rem",paddingBottom:"0.5rem",position:"relative"}}>
-              {/* pip button top-right — click to cycle */}
-              <button type="button"
-                onClick={cycleProf}
-                title="Click: none → proficient → expertise → none"
-                style={{
-                  position:"absolute",top:"0.3rem",right:"0.3rem",
-                  width:13,height:13,borderRadius:"50%",
-                  border: exp?"2px solid #64c8e0": prof?"1.5px solid #c9a84c":"1.5px solid #5a4a28",
-                  background: exp?"#64c8e0": prof?"#e2b94e":"transparent",
-                  cursor:"pointer",padding:0,
-                  boxShadow: exp?"0 0 6px rgba(100,200,224,0.6)": prof?"0 0 6px rgba(226,185,78,0.5)":"none",
-                  transition:"all 0.15s",
-                  // expertise gets a diamond shape via clip-path
-                  clipPath: exp?"polygon(50% 0%,100% 50%,50% 100%,0% 50%)":"none",
-                  appearance:"none",WebkitAppearance:"none",
-                }}
-              />
+              {profPip(prof,exp,()=>cycleSave(st.key))}
               <span className="stat-name">{st.key.toUpperCase()}</span>
               <span className="stat-val" style={{fontSize:"1.1rem",color:stateColor}}>{numMod(bonus)}</span>
-              <span className="stat-mod" style={{fontSize:"0.52rem",color:stateColor,opacity:0.8}}>{stateLabel}</span>
+              <span className="stat-mod" style={{fontSize:"0.52rem",color:stateColor,opacity:0.8}}>{exp?"expertise":prof?"prof":"—"}</span>
             </div>
           );
         })}
       </div>
 
-      {/* ─ Skills — prof + expertise cycling pip ─ */}
+      {/* ─ Skills ─ */}
       <hr className="inner-divider" data-label="Skills" style={{marginTop:"1.1rem"}}/>
       <div className="save-grid" style={{marginTop:"0.8rem"}}>
         {GENERIC_SKILLS.map(sk=>{
-          const prof = !!(char.skills||{})[sk.key];
-          const exp  = !!(char.skillExp||{})[sk.key];
-          const base = Math.floor((char.stats[sk.attr]-10)/2);
-          const bonus= exp ? base+pb*2 : prof ? base+pb : base;
-          const cycleSkill=()=>setChar(c=>{
-            const wasProf=!!(c.skills||{})[sk.key];
-            const wasExp =!!(c.skillExp||{})[sk.key];
-            if (!wasProf && !wasExp) return {...c, skills:{...(c.skills||{}),[sk.key]:true}};
-            if (wasProf && !wasExp)  return {...c, skillExp:{...(c.skillExp||{}),[sk.key]:true}};
-            const s2={...(c.skills||{})};  delete s2[sk.key];
-            const e2={...(c.skillExp||{})}; delete e2[sk.key];
-            return {...c, skills:s2, skillExp:e2};
-          });
-          const dotColor = exp?"#64c8e0": prof?"#e2b94e":"transparent";
-          const dotBorder= exp?"2px solid #64c8e0": prof?"1.5px solid #c9a84c":"1.5px solid #5a4a28";
-          const dotClip  = exp?"polygon(50% 0%,100% 50%,50% 100%,0% 50%)":"none";
-          const dotShadow= exp?"0 0 5px rgba(100,200,224,0.6)": prof?"0 0 5px rgba(226,185,78,0.5)":"none";
+          const prof=!!(char.skills||{})[sk.key];
+          const exp =!!(char.skillExp||{})[sk.key];
+          const base=Math.floor((char.stats[sk.attr]-10)/2);
+          const bonus=exp?base+pb*2:prof?base+pb:base;
           return (
             <div key={sk.key} className="check-row">
-              <button type="button"
-                onClick={cycleSkill}
-                title="Click: none → proficient → expertise → none"
-                style={{width:13,height:13,borderRadius:"50%",border:dotBorder,background:dotColor,cursor:"pointer",padding:0,flexShrink:0,clipPath:dotClip,boxShadow:dotShadow,transition:"all 0.15s",appearance:"none",WebkitAppearance:"none"}}
-              />
+              {profPip(prof,exp,()=>cycleSkill(sk.key))}
               <span className="check-attr">{sk.attr}</span>
-              <span className="check-label" style={{color:exp?"#64c8e0":prof?"#ccc0a0":"#8a7848"}}>{sk.label}</span>
-              <span className="check-bonus" style={{color:exp?"#64c8e0":prof?"#e2b94e":"#6a5838"}}>{numMod(bonus)}</span>
+              <span className="check-label" style={{color:exp?"#64c8e0":prof?"inherit":"inherit"}}>{sk.label}</span>
+              <span className="check-bonus" style={{color:exp?"#64c8e0":prof?"#c9a84c":"inherit"}}>{numMod(bonus)}</span>
             </div>
           );
         })}
       </div>
 
-      {/* ─ Spell Slots — only levels present in Spells tab ─ */}
+      {/* ─ Spell Slots ─ */}
       {(()=>{
         const usedLevels=[...new Set((spells||[]).map(s=>s.level).filter(l=>l!=="Cantrip"))];
         if (!usedLevels.length) return null;
-        // sort by SPELL_SLOT_LABELS order
-        usedLevels.sort((a,b)=>SPELL_SLOT_LABELS.indexOf(a)-SPELL_SLOT_LABELS.indexOf(b));
         return <>
           <hr className="inner-divider" data-label="Spell Slots" style={{marginTop:"1.1rem"}}/>
-          <div style={{marginTop:"0.8rem",display:"grid",gap:"0.35rem",gridTemplateColumns:`repeat(${usedLevels.length},1fr)`}}>
-            {usedLevels.map(lv=>{
-              const sl=(char.spellSlots||{})[lv]||{max:0,used:0};
-              const spellCount=(spells||[]).filter(s=>s.level===lv).length;
-              return (
-                <div key={lv} className="spell-slot-box">
-                  <span className="spell-slot-label">{lv}</span>
-                  {/* used / max on one line */}
-                  <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"2px"}}>
-                    <input className="spell-slot-input" type="number" min={0}
-                      value={sl.used||0}
-                      onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),used:Math.max(0,parseInt(e.target.value)||0)}}}))}
-                      style={{width:28,fontSize:"0.9rem"}}/>
-                    <span style={{color:"#2a5a8a",fontSize:"0.7rem",lineHeight:1}}>/</span>
-                    <input className="spell-slot-input" type="number" min={0}
-                      value={sl.max||0}
-                      onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),max:Math.max(0,parseInt(e.target.value)||0)}}}))}
-                      style={{width:28,fontSize:"0.9rem",color:"#4a7aaa"}}/>
-                  </div>
-                  <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",letterSpacing:"0.06em",color:"#2a4a6a",textTransform:"uppercase",marginTop:"0.1rem",display:"block"}}>
-                    {spellCount} spell{spellCount!==1?"s":""}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          <div style={{marginTop:"0.2rem"}}>
-            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.44rem",letterSpacing:"0.08em",color:"#3a5a7a",textTransform:"uppercase"}}>used / max · add spells in the Spells tab</span>
-          </div>
+          <div style={{marginTop:"0.8rem"}}><SpellSlotsWidget char={char} setChar={setChar} spells={spells}/></div>
         </>;
       })()}
 
     </div>
 
-    {/* ══ Active / Equipped (from all tabs) ══ */}
+    {/* ══ Active & Equipped with subtabs ══ */}
     {hasActive>0&&<div className="card">
       <div className="sect-label">Active & Equipped</div>
-      {equippedItems.map(item=>(
+      <div className="subtab-bar">
+        {[["items","Items",equippedItems.length],["skills","Skills",activeSkills.length],["spells","Spells",activeSpells.length]].map(([id,label,count])=>(
+          count>0&&<button key={id} className={`subtab-btn${activeTab===id?" active":""}`} onClick={()=>setActiveTab(id)}>{label} ({count})</button>
+        ))}
+      </div>
+
+      {activeTab==="items"&&equippedItems.map(item=>(
         <div key={item.id} className="equipped-item">
           <span className="equipped-icon">{ITEM_ICONS[item.type]||"◈"}</span>
           <div className="flex1">
@@ -715,7 +841,8 @@ function CharacterSheet({char,setChar,inventory,skills,spells}) {
           </div>
         </div>
       ))}
-      {activeSkills.map(sk=>(
+
+      {activeTab==="skills"&&activeSkills.map(sk=>(
         <div key={sk.id} className="equipped-item">
           <span className="equipped-icon">✨</span>
           <div className="flex1">
@@ -724,20 +851,32 @@ function CharacterSheet({char,setChar,inventory,skills,spells}) {
           </div>
         </div>
       ))}
-      {activeSpells.map(sp=>(
-        <div key={sp.id} className="equipped-item">
-          <span className="equipped-icon">🔮</span>
-          <div className="flex1">
-            <div className="row" style={{gap:"0.4rem",marginBottom:"0.15rem",flexWrap:"wrap"}}>
-              <span className="equipped-name">{sp.name}</span>
-              <span className="equipped-spell-badge">{sp.level}</span>
-              {sp.school&&<span className="equipped-spell-badge">{sp.school}</span>}
+
+      {activeTab==="spells"&&<>
+        {/* Spell Slots at top of Spells subtab */}
+        {(()=>{
+          const usedLevels=[...new Set((spells||[]).map(s=>s.level).filter(l=>l!=="Cantrip"))];
+          if (!usedLevels.length) return null;
+          return <div style={{marginBottom:"1rem"}}>
+            <div style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"0.4rem",opacity:0.6}}>Spell Slots</div>
+            <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
+          </div>;
+        })()}
+        {activeSpells.map(sp=>(
+          <div key={sp.id} className="equipped-item">
+            <span className="equipped-icon">🔮</span>
+            <div className="flex1">
+              <div className="row" style={{gap:"0.4rem",marginBottom:"0.15rem",flexWrap:"wrap"}}>
+                <span className="equipped-name">{sp.name}</span>
+                <span className="equipped-spell-badge">{sp.level}</span>
+                {sp.school&&<span className="equipped-spell-badge">{sp.school}</span>}
+              </div>
+              {sp.castingTime&&<div className="equipped-stat">Cast: {sp.castingTime} · Range: {sp.range||"—"}</div>}
+              {sp.description&&<div className="equipped-stat">{sp.description.slice(0,100)}{sp.description.length>100?"…":""}</div>}
             </div>
-            {sp.castingTime&&<div className="equipped-stat">Cast: {sp.castingTime} · Range: {sp.range||"—"}</div>}
-            {sp.description&&<div className="equipped-stat">{sp.description}</div>}
           </div>
-        </div>
-      ))}
+        ))}
+      </>}
     </div>}
 
     {/* ══ Traits ══ */}
@@ -784,28 +923,26 @@ function Pack({inventory,setInventory}) {
   const needsExtras=t=>["Weapon","Spell Scroll","Wondrous Item","Consumable"].includes(t);
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{inventory.length} items{equippedCount>0?` · ${equippedCount} equipped`:""}</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em"}}>{inventory.length} items{equippedCount>0?` · ${equippedCount} equipped`:""}</span>
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Item"}</button>
     </div>
-    {showForm&&<div className="add-form">
-      <div className="col">
-        <div className="row"><input className="g-input flex1" placeholder="Item name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addItem()}/><input className="g-input" style={{width:60}} placeholder="Qty" value={form.qty} onChange={e=>setForm(f=>({...f,qty:e.target.value}))}/></div>
-        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{ITEM_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.5,borderColor:form.type===t?"#8a6830":"",color:form.type===t?"#e2b94e":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{ITEM_ICONS[t]} {t}</button>)}</div>
-        {needsExtras(form.type)&&<>
-          {form.type==="Weapon"&&<div className="pack-item-row">
-            <div className="pack-field"><span className="pack-field-label">Damage Dice</span><input className="pack-field-input" placeholder="e.g. 1d8" value={form.damage} onChange={e=>setForm(f=>({...f,damage:e.target.value}))}/></div>
-            <div className="pack-field"><span className="pack-field-label">Damage Type</span><input className="pack-field-input" placeholder="e.g. Slashing" value={form.damageType} onChange={e=>setForm(f=>({...f,damageType:e.target.value}))}/></div>
-            <div className="pack-field"><span className="pack-field-label">To Hit Bonus</span><input className="pack-field-input" type="number" placeholder="+0" value={form.modifier} onChange={e=>setForm(f=>({...f,modifier:e.target.value}))}/></div>
-          </div>}
-          {["Spell Scroll","Wondrous Item","Consumable"].includes(form.type)&&<div className="pack-item-row">
-            <div className="pack-field"><span className="pack-field-label">Charges / Uses</span><input className="pack-field-input" placeholder="e.g. 3" value={form.charges} onChange={e=>setForm(f=>({...f,charges:e.target.value}))}/></div>
-            <div className="pack-field" style={{flex:2}}><span className="pack-field-label">Effect / Spell</span><input className="pack-field-input" placeholder="e.g. Fireball (3rd lvl)" value={form.effect} onChange={e=>setForm(f=>({...f,effect:e.target.value}))}/></div>
-          </div>}
-        </>}
-        <input className="g-input" placeholder="Notes…" value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))}/>
-        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addItem}>⊕ Add Item</button></div>
-      </div>
-    </div>}
+    {showForm&&<div className="add-form"><div className="col">
+      <div className="row"><input className="g-input flex1" placeholder="Item name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addItem()}/><input className="g-input" style={{width:60}} placeholder="Qty" value={form.qty} onChange={e=>setForm(f=>({...f,qty:e.target.value}))}/></div>
+      <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{ITEM_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.5,borderColor:form.type===t?"currentColor":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{ITEM_ICONS[t]} {t}</button>)}</div>
+      {needsExtras(form.type)&&<>
+        {form.type==="Weapon"&&<div className="pack-item-row">
+          <div className="pack-field"><span className="pack-field-label">Damage Dice</span><input className="pack-field-input" placeholder="1d8" value={form.damage} onChange={e=>setForm(f=>({...f,damage:e.target.value}))}/></div>
+          <div className="pack-field"><span className="pack-field-label">Damage Type</span><input className="pack-field-input" placeholder="Slashing" value={form.damageType} onChange={e=>setForm(f=>({...f,damageType:e.target.value}))}/></div>
+          <div className="pack-field"><span className="pack-field-label">To Hit</span><input className="pack-field-input" type="number" value={form.modifier} onChange={e=>setForm(f=>({...f,modifier:e.target.value}))}/></div>
+        </div>}
+        {["Spell Scroll","Wondrous Item","Consumable"].includes(form.type)&&<div className="pack-item-row">
+          <div className="pack-field"><span className="pack-field-label">Charges</span><input className="pack-field-input" value={form.charges} onChange={e=>setForm(f=>({...f,charges:e.target.value}))}/></div>
+          <div className="pack-field" style={{flex:2}}><span className="pack-field-label">Effect</span><input className="pack-field-input" value={form.effect} onChange={e=>setForm(f=>({...f,effect:e.target.value}))}/></div>
+        </div>}
+      </>}
+      <input className="g-input" placeholder="Notes…" value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))}/>
+      <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addItem}>⊕ Add Item</button></div>
+    </div></div>}
     <div className="filter-bar">
       <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={()=>setFilterType(null)}>All</button>
       {ITEM_TYPES.map(t=>{const c=inventory.filter(i=>i.type===t).length;if(!c)return null;return<button key={t} className={`filter-tag${filterType===t?" active-filter":""}`} onClick={()=>setFilterType(filterType===t?null:t)}>{ITEM_ICONS[t]} {t} ({c})</button>;})}
@@ -815,8 +952,8 @@ function Pack({inventory,setInventory}) {
       <div key={item.id} className={`pack-item${item.equipped?" equipped-active":""}`}>
         <div className="pack-item-header">
           <span style={{fontSize:"1.1rem",flexShrink:0}}>{ITEM_ICONS[item.type]||"◈"}</span>
-          <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.9rem",fontWeight:700,color:"#e0d6b4"}} value={item.name} onChange={e=>upd(item.id,"name",e.target.value)}/>
-          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.08em",color:"#7a6040",border:"1px solid #2e2618",padding:"0.1rem 0.35rem",flexShrink:0}}>{item.type}</span>
+          <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.9rem",fontWeight:700}} value={item.name} onChange={e=>upd(item.id,"name",e.target.value)}/>
+          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.08em",border:"1px solid currentColor",padding:"0.1rem 0.35rem",flexShrink:0,opacity:0.6}}>{item.type}</span>
           <Toggle on={!!item.equipped} onToggle={()=>toggleEquip(item.id)} label={item.equipped?"Equipped":"Stowed"} color="gold"/>
           <button className="entity-toggle" onClick={()=>toggle(item.id)}>{open?"▲":"▼"}</button>
         </div>
@@ -824,8 +961,8 @@ function Pack({inventory,setInventory}) {
           <div className="pack-item-row">
             <div className="pack-field"><span className="pack-field-label">Qty</span><input className="pack-field-input" value={item.qty||"1"} onChange={e=>upd(item.id,"qty",e.target.value)}/></div>
             {item.type==="Weapon"&&<>
-              <div className="pack-field"><span className="pack-field-label">Damage</span><input className="pack-field-input" placeholder="1d8" value={item.damage||""} onChange={e=>upd(item.id,"damage",e.target.value)}/></div>
-              <div className="pack-field"><span className="pack-field-label">Type</span><input className="pack-field-input" placeholder="Slashing" value={item.damageType||""} onChange={e=>upd(item.id,"damageType",e.target.value)}/></div>
+              <div className="pack-field"><span className="pack-field-label">Damage</span><input className="pack-field-input" value={item.damage||""} onChange={e=>upd(item.id,"damage",e.target.value)}/></div>
+              <div className="pack-field"><span className="pack-field-label">Type</span><input className="pack-field-input" value={item.damageType||""} onChange={e=>upd(item.id,"damageType",e.target.value)}/></div>
               <div className="pack-field"><span className="pack-field-label">To Hit</span><input className="pack-field-input" type="number" value={item.modifier||""} onChange={e=>upd(item.id,"modifier",e.target.value)}/></div>
             </>}
             {["Spell Scroll","Wondrous Item","Consumable"].includes(item.type)&&<>
@@ -833,7 +970,7 @@ function Pack({inventory,setInventory}) {
               <div className="pack-field" style={{flex:2}}><span className="pack-field-label">Effect</span><input className="pack-field-input" value={item.effect||""} onChange={e=>upd(item.id,"effect",e.target.value)}/></div>
             </>}
           </div>
-          <div className="pack-field"><span className="pack-field-label">Notes</span><input className="pack-field-input" value={item.note||""} placeholder="Notes…" onChange={e=>upd(item.id,"note",e.target.value)}/></div>
+          <div className="pack-field"><span className="pack-field-label">Notes</span><input className="pack-field-input" value={item.note||""} onChange={e=>upd(item.id,"note",e.target.value)}/></div>
           <div className="row" style={{justifyContent:"flex-end",marginTop:"0.3rem"}}><button className="btn-ghost" onClick={()=>del(item.id)}>Remove</button></div>
         </div>}
       </div>
@@ -841,7 +978,7 @@ function Pack({inventory,setInventory}) {
   </>;
 }
 
-/* ═══ SKILLS TAB (Skill / Trait / Feat only, + in-use) ═ */
+/* ═══ SKILLS TAB ════════════════════════════════ */
 function SkillsTab({skills,setSkills}) {
   const [form,setForm]=useState({name:"",category:"Skill",description:"",level:0});
   const [showForm,setShowForm]=useState(false);
@@ -855,34 +992,32 @@ function SkillsTab({skills,setSkills}) {
   const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
   const toggleInUse=id=>setSkills(l=>l.map(x=>x.id===id?{...x,inUse:!x.inUse}:x));
   const visible=skills.filter(s=>(!activeTag||(s.tags||[]).includes(activeTag))&&(!activeCat||s.category===activeCat)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
-  const catColor=cat=>({Skill:"#e2b94e",Trait:"#7aaccc",Feat:"#cc8844"})[cat]||"#8a7848";
+  const catColor=cat=>({Skill:"#c9943e",Trait:"#4a8aaa",Feat:"#9a6030"})[cat]||"#8a7848";
   const inUseCount=skills.filter(s=>s.inUse).length;
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{skills.length} entries{inUseCount>0?` · ${inUseCount} active`:""}</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em"}}>{skills.length} entries{inUseCount>0?` · ${inUseCount} active`:""}</span>
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Entry"}</button>
     </div>
-    {showForm&&<div className="add-form">
-      <div className="col">
-        <input className="g-input" placeholder="Name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSkill()}/>
-        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{SKILL_CATS.map(c=><button key={c} className="filter-tag" style={{opacity:form.category===c?1:0.45,borderColor:form.category===c?catColor(c)+"88":"",color:form.category===c?catColor(c):""}} onClick={()=>setForm(f=>({...f,category:c}))}>{c}</button>)}</div>
-        <div className="row" style={{gap:"0.6rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",color:"#8a7040",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={form.level} onChange={v=>setForm(f=>({...f,level:v}))}/></div>
-        <textarea className="g-textarea" rows={3} placeholder="Description, effect, source, prerequisites…" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
-        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addSkill}>⊕ Add</button></div>
-      </div>
-    </div>}
+    {showForm&&<div className="add-form"><div className="col">
+      <input className="g-input" placeholder="Name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSkill()}/>
+      <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{SKILL_CATS.map(c=><button key={c} className="filter-tag" style={{opacity:form.category===c?1:0.45,borderColor:form.category===c?catColor(c)+"88":"",color:form.category===c?catColor(c):""}} onClick={()=>setForm(f=>({...f,category:c}))}>{c}</button>)}</div>
+      <div className="row" style={{gap:"0.6rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={form.level} onChange={v=>setForm(f=>({...f,level:v}))}/></div>
+      <textarea className="g-textarea" rows={3} placeholder="Description, effect, source, prerequisites…" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
+      <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addSkill}>⊕ Add</button></div>
+    </div></div>}
     <div className="filter-bar">
       <button className={`filter-tag${!activeCat?" active-filter":""}`} onClick={()=>setActiveCat(null)}>All</button>
       {SKILL_CATS.map(c=>{const count=skills.filter(s=>s.category===c).length;if(!count)return null;return<button key={c} className={`filter-tag${activeCat===c?" active-filter":""}`} style={{borderColor:activeCat===c?catColor(c)+"88":"",color:activeCat===c?catColor(c):""}} onClick={()=>setActiveCat(activeCat===c?null:c)}>{c} ({count})</button>;})}
     </div>
     <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-    {skills.length===0&&<div className="card empty-state">No skills, traits or feats recorded.<br/><span style={{fontSize:"0.62rem"}}>Add your first entry above.</span></div>}
+    {skills.length===0&&<div className="card empty-state">No skills, traits or feats recorded.</div>}
     {visible.map(sk=>{const open=!!expanded[sk.id];const cc=catColor(sk.category);return(
       <div key={sk.id} className={`card${sk.pinned?" pinned":""}${sk.inUse?" inuse-active":""}`} style={{padding:"1rem 1.1rem",borderLeftColor:cc+"55",borderLeftWidth:2}}>
         <div className="entity-header">
           <div className="flex1">
             <div className="row" style={{gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
-              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.98rem",color:"#e0d6b4",fontWeight:700}} value={sk.name} onChange={e=>upd(sk.id,"name",e.target.value)} placeholder="Name…"/>
+              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.98rem",fontWeight:700}} value={sk.name} onChange={e=>upd(sk.id,"name",e.target.value)} placeholder="Name…"/>
               <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.1em",textTransform:"uppercase",color:cc,border:`1px solid ${cc}55`,padding:"0.15rem 0.5rem",background:`${cc}0d`,flexShrink:0}}>{sk.category}</span>
             </div>
             {sk.level>0&&<SkillPips value={sk.level} onChange={v=>upd(sk.id,"level",v)}/>}
@@ -891,11 +1026,11 @@ function SkillsTab({skills,setSkills}) {
           <PinBtn pinned={sk.pinned} onToggle={()=>upd(sk.id,"pinned",!sk.pinned)}/>
           <button className="entity-toggle" onClick={()=>toggle(sk.id)}>{open?"▲":"▼"}</button>
         </div>
-        {!open&&sk.description&&<p style={{fontSize:"0.92rem",color:"#9a8a68",fontStyle:"italic",marginTop:"0.3rem",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sk.description}</p>}
+        {!open&&sk.description&&<p style={{fontSize:"0.92rem",fontStyle:"italic",marginTop:"0.3rem",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",opacity:0.7}}>{sk.description}</p>}
         <TagsEditor tags={sk.tags||[]} onChange={v=>upd(sk.id,"tags",v)}/>
         {open&&<div style={{marginTop:"0.8rem"}}>
           <div className="row" style={{gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.5rem"}}>{SKILL_CATS.map(c=><button key={c} className="filter-tag" style={{opacity:sk.category===c?1:0.4,borderColor:sk.category===c?catColor(c)+"88":"",color:sk.category===c?catColor(c):""}} onClick={()=>upd(sk.id,"category",c)}>{c}</button>)}</div>
-          <div className="row" style={{gap:"0.6rem",marginBottom:"0.7rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",color:"#8a7040",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={sk.level} onChange={v=>upd(sk.id,"level",v)}/></div>
+          <div className="row" style={{gap:"0.6rem",marginBottom:"0.7rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={sk.level} onChange={v=>upd(sk.id,"level",v)}/></div>
           <textarea className="g-textarea" rows={4} placeholder="Description, effect, source, requirements…" value={sk.description||""} onChange={e=>upd(sk.id,"description",e.target.value)}/>
           <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(sk.id)}>Remove</button></div>
         </div>}
@@ -917,79 +1052,53 @@ function SpellsTab({spells,setSpells,char,setChar}) {
   const del=id=>setSpells(l=>l.filter(x=>x.id!==id));
   const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
   const toggleInUse=id=>setSpells(l=>l.map(x=>x.id===id?{...x,inUse:!x.inUse}:x));
-
-  // Spell slots management
-  const updSlot=(lvl,field,val)=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lvl]:{...((c.spellSlots||{})[lvl]||{max:0,used:0}),[field]:parseInt(val)||0}}}));
   const slots=char.spellSlots||{};
-
+  const pb=char.profBonus||2;
+  const spMod=Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2;
   const visible=activeLevel?spells.filter(s=>s.level===activeLevel):spells;
-  const levelColor=lv=>lv==="Cantrip"?"#8aaccc":"#9a6acc";
   const inUseCount=spells.filter(s=>s.inUse).length;
 
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#5a8ab0"}}>{spells.length} spells known{inUseCount>0?` · ${inUseCount} prepared`:""}</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#4a7aaa"}}>{spells.length} spells{inUseCount>0?` · ${inUseCount} prepared`:""}</span>
       <div className="row" style={{gap:"0.5rem"}}>
         <button className="btn-sm" style={{borderColor:"#1a4a8a",color:"#64a0e6"}} onClick={()=>setShowSlots(s=>!s)}>{showSlots?"✕ Slots":"⚙ Slots"}</button>
         <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Spell"}</button>
       </div>
     </div>
 
-    {/* Spell slots tracker */}
     {showSlots&&<div className="card" style={{borderColor:"#1a3a6a"}}>
-      <div className="sect-label" style={{color:"#64a0e6"}}>Spell Slots</div>
+      <div className="sect-label" style={{color:"#64a0e6"}}>Spell Slots & Casting</div>
       <div style={{display:"flex",alignItems:"center",gap:"0.6rem",marginBottom:"0.7rem",flexWrap:"wrap"}}>
-        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.14em",color:"#4a7aaa",textTransform:"uppercase"}}>Spellcasting Ability</span>
-        <select className="g-select" style={{width:"auto",fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={char.spellcastingAbility||"INT"} onChange={e=>setChar(c=>({...c,spellcastingAbility:e.target.value}))}>
-          {STAT_KEYS.map(s=><option key={s} value={s}>{s}</option>)}
-        </select>
-        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.72rem",color:"#64a0e6"}}>
-          DC {8+(char.profBonus||2)+Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2} · Attack {numMod((char.profBonus||2)+Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2)}
-        </span>
+        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.14em",color:"#4a7aaa",textTransform:"uppercase"}}>Casting Ability</span>
+        <select className="g-select" style={{width:"auto",fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={char.spellcastingAbility||"INT"} onChange={e=>setChar(c=>({...c,spellcastingAbility:e.target.value}))}>{STAT_KEYS.map(s=><option key={s} value={s}>{s}</option>)}</select>
+        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.72rem",color:"#64a0e6"}}>DC {8+pb+spMod} · Atk {numMod(pb+spMod)}</span>
       </div>
-      <div className="spell-slot-grid">
-        {SPELL_SLOT_LABELS.map(lv=>{
-          const sl=slots[lv]||{max:0,used:0};
-          return <div key={lv} className="spell-slot-box">
-            <span className="spell-slot-label">{lv}</span>
-            <div className="row" style={{justifyContent:"center",gap:"0.2rem"}}>
-              <input className="spell-slot-input" type="number" min={0} max={sl.max||0} value={sl.used||0} onChange={e=>updSlot(lv,"used",e.target.value)} style={{width:28,fontSize:"0.9rem"}}/>
-              <span style={{color:"#2a5a8a",fontSize:"0.7rem"}}>/</span>
-              <input className="spell-slot-input" type="number" min={0} value={sl.max||0} onChange={e=>updSlot(lv,"max",e.target.value)} style={{width:28,fontSize:"0.9rem",color:"#4a7aaa"}}/>
-            </div>
-          </div>;
-        })}
-      </div>
+      <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
     </div>}
 
-    {/* Add spell form */}
-    {showForm&&<div className="add-form" style={{borderColor:"#1a3a6a"}}>
-      <div className="col">
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
-          <input className="g-input" placeholder="Spell name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSpell()}/>
-          <select className="g-select" value={form.school} onChange={e=>setForm(f=>({...f,school:e.target.value}))}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select>
-        </div>
-        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>
-          {SPELL_LEVELS.map(lv=><button key={lv} className="filter-tag" style={{opacity:form.level===lv?1:0.45,borderColor:form.level===lv?"#1a5a9a":"",color:form.level===lv?"#64a0e6":""}} onClick={()=>setForm(f=>({...f,level:lv}))}>{lv}</button>)}
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.5rem"}}>
-          <div className="pack-field"><span className="pack-field-label">Casting Time</span><input className="pack-field-input" placeholder="1 action" value={form.castingTime} onChange={e=>setForm(f=>({...f,castingTime:e.target.value}))}/></div>
-          <div className="pack-field"><span className="pack-field-label">Range</span><input className="pack-field-input" placeholder="60 ft" value={form.range} onChange={e=>setForm(f=>({...f,range:e.target.value}))}/></div>
-          <div className="pack-field"><span className="pack-field-label">Duration</span><input className="pack-field-input" placeholder="Instantaneous" value={form.duration} onChange={e=>setForm(f=>({...f,duration:e.target.value}))}/></div>
-        </div>
-        <input className="g-input" placeholder="Components (V, S, M — material…)" value={form.components} onChange={e=>setForm(f=>({...f,components:e.target.value}))}/>
-        <textarea className="g-textarea" rows={3} placeholder="Spell description and effects…" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
-        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addSpell}>⊕ Add Spell</button></div>
+    {showForm&&<div className="add-form" style={{borderColor:"#1a3a6a"}}><div className="col">
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
+        <input className="g-input" placeholder="Spell name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSpell()}/>
+        <select className="g-select" value={form.school} onChange={e=>setForm(f=>({...f,school:e.target.value}))}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select>
       </div>
-    </div>}
+      <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{SPELL_LEVELS.map(lv=><button key={lv} className="filter-tag" style={{opacity:form.level===lv?1:0.45,borderColor:form.level===lv?"#1a5a9a":"",color:form.level===lv?"#64a0e6":""}} onClick={()=>setForm(f=>({...f,level:lv}))}>{lv}</button>)}</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.5rem"}}>
+        <div className="pack-field"><span className="pack-field-label">Casting Time</span><input className="pack-field-input" placeholder="1 action" value={form.castingTime} onChange={e=>setForm(f=>({...f,castingTime:e.target.value}))}/></div>
+        <div className="pack-field"><span className="pack-field-label">Range</span><input className="pack-field-input" placeholder="60 ft" value={form.range} onChange={e=>setForm(f=>({...f,range:e.target.value}))}/></div>
+        <div className="pack-field"><span className="pack-field-label">Duration</span><input className="pack-field-input" placeholder="Instantaneous" value={form.duration} onChange={e=>setForm(f=>({...f,duration:e.target.value}))}/></div>
+      </div>
+      <input className="g-input" placeholder="Components (V, S, M…)" value={form.components} onChange={e=>setForm(f=>({...f,components:e.target.value}))}/>
+      <textarea className="g-textarea" rows={3} placeholder="Spell description and effects…" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
+      <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addSpell}>⊕ Add Spell</button></div>
+    </div></div>}
 
-    {/* Level filter */}
     <div className="filter-bar">
       <button className={`filter-tag${!activeLevel?" active-filter":""}`} onClick={()=>setActiveLevel(null)}>All</button>
       {SPELL_LEVELS.map(lv=>{const count=spells.filter(s=>s.level===lv).length;if(!count)return null;return<button key={lv} className={`filter-tag${activeLevel===lv?" active-filter":""}`} style={{borderColor:activeLevel===lv?"#1a5a9a":"",color:activeLevel===lv?"#64a0e6":""}} onClick={()=>setActiveLevel(activeLevel===lv?null:lv)}>{lv} ({count})</button>;})}
     </div>
 
-    {spells.length===0&&<div className="card empty-state">No spells recorded.<br/><span style={{fontSize:"0.62rem"}}>Add your first spell above.</span></div>}
+    {spells.length===0&&<div className="card empty-state">No spells recorded.</div>}
 
     {visible.map(sp=>{const open=!!expanded[sp.id];return(
       <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{padding:"1rem 1.1rem",borderLeftColor:"#1a4a8a",borderLeftWidth:2}}>
@@ -1012,12 +1121,8 @@ function SpellsTab({spells,setSpells,char,setChar}) {
         <TagsEditor tags={sp.tags||[]} onChange={v=>upd(sp.id,"tags",v)}/>
         {open&&<div style={{marginTop:"0.8rem"}}>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem",marginBottom:"0.7rem"}}>
-            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>Level</span>
-              <select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.level} onChange={e=>upd(sp.id,"level",e.target.value)}>{SPELL_LEVELS.map(lv=><option key={lv} value={lv}>{lv}</option>)}</select>
-            </div>
-            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>School</span>
-              <select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.school} onChange={e=>upd(sp.id,"school",e.target.value)}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select>
-            </div>
+            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>Level</span><select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.level} onChange={e=>upd(sp.id,"level",e.target.value)}>{SPELL_LEVELS.map(lv=><option key={lv} value={lv}>{lv}</option>)}</select></div>
+            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>School</span><select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.school} onChange={e=>upd(sp.id,"school",e.target.value)}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select></div>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.5rem",marginBottom:"0.7rem"}}>
             <div className="pack-field"><span className="pack-field-label">Casting Time</span><input className="pack-field-input" value={sp.castingTime||""} onChange={e=>upd(sp.id,"castingTime",e.target.value)}/></div>
@@ -1025,11 +1130,10 @@ function SpellsTab({spells,setSpells,char,setChar}) {
             <div className="pack-field"><span className="pack-field-label">Duration</span><input className="pack-field-input" value={sp.duration||""} onChange={e=>upd(sp.id,"duration",e.target.value)}/></div>
           </div>
           <div className="pack-field" style={{marginBottom:"0.6rem"}}><span className="pack-field-label">Components</span><input className="pack-field-input" value={sp.components||""} placeholder="V, S, M (material)" onChange={e=>upd(sp.id,"components",e.target.value)}/></div>
-          <textarea className="g-textarea" rows={4} placeholder="Spell description and effects…" value={sp.description||""} onChange={e=>upd(sp.id,"description",e.target.value)}/>
-          {/* Notes / upcast */}
+          <textarea className="g-textarea" rows={4} placeholder="Spell description…" value={sp.description||""} onChange={e=>upd(sp.id,"description",e.target.value)}/>
           <div style={{marginTop:"0.5rem"}}>
             <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.25rem"}}>At Higher Levels / Notes</span>
-            <textarea className="g-textarea" rows={2} placeholder="When cast using a higher level slot…" value={sp.notes||""} onChange={e=>upd(sp.id,"notes",e.target.value)}/>
+            <textarea className="g-textarea" rows={2} value={sp.notes||""} placeholder="When cast using a higher level slot…" onChange={e=>upd(sp.id,"notes",e.target.value)}/>
           </div>
           <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(sp.id)}>Remove</button></div>
         </div>}
@@ -1041,7 +1145,7 @@ function SpellsTab({spells,setSpells,char,setChar}) {
 /* ═══ NPC TRACKER ══════════════════════════════ */
 function NPCTracker({npcs,setNPCs}) {
   const [formState,setForm]=useState({name:"",role:"",relation:"unknown",affiliation:"",metAt:"",connections:"",notes:""});
-  const [showForm,setShowForm]=useState(false); const [expanded,setExpanded]=useState({}); const [activeTag,setActiveTag]=useState(null);
+  const [showForm,setShowForm]=useState(false);const [expanded,setExpanded]=useState({});const [activeTag,setActiveTag]=useState(null);
   const allTags=[...new Set(npcs.flatMap(n=>n.tags||[]))].sort();
   const addNPC=()=>{const n=formState.name.trim();if(!n)return;setNPCs(l=>[...l,{id:Date.now(),...formState,name:n,tags:[],pinned:false}]);setForm({name:"",role:"",relation:"unknown",affiliation:"",metAt:"",connections:"",notes:""});setShowForm(false);};
   const upd=(id,f,v)=>setNPCs(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
@@ -1051,7 +1155,7 @@ function NPCTracker({npcs,setNPCs}) {
   const visible=npcs.filter(n=>!activeTag||(n.tags||[]).includes(activeTag)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{npcs.length} {npcs.length===1?"character":"characters"} known</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em"}}>{npcs.length} {npcs.length===1?"character":"characters"} known</span>
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add NPC"}</button>
     </div>
     {showForm&&<div className="add-form"><div className="col">
@@ -1073,14 +1177,14 @@ function NPCTracker({npcs,setNPCs}) {
         <div className="entity-header">
           <div className="flex1">
             <div className="row" style={{gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
-              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"1rem",color:"#e0d6b4",fontWeight:700}} value={npc.name} onChange={e=>upd(npc.id,"name",e.target.value)} placeholder="Name…"/>
+              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"1rem",fontWeight:700}} value={npc.name} onChange={e=>upd(npc.id,"name",e.target.value)} placeholder="Name…"/>
               <span className={`rel-badge rel-${rel}`} onClick={()=>cycleRel(npc.id)}>{REL_LABELS[rel]}</span>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.25rem 0.6rem"}}>
-              <input className="iedit" style={{fontSize:"0.88rem",color:"#9a8050",fontStyle:"italic"}} value={npc.role||""} onChange={e=>upd(npc.id,"role",e.target.value)} placeholder="Role…"/>
-              <input className="iedit" style={{fontSize:"0.88rem",color:"#9a8050"}} value={npc.affiliation||""} onChange={e=>upd(npc.id,"affiliation",e.target.value)} placeholder="Affiliation…"/>
-              <input className="iedit" style={{fontSize:"0.85rem",color:"#7a6840"}} value={npc.metAt||""} onChange={e=>upd(npc.id,"metAt",e.target.value)} placeholder="First met at…"/>
-              <input className="iedit" style={{fontSize:"0.85rem",color:"#7a6840"}} value={npc.connections||""} onChange={e=>upd(npc.id,"connections",e.target.value)} placeholder="Connections…"/>
+              <input className="iedit" style={{fontSize:"0.88rem",fontStyle:"italic"}} value={npc.role||""} onChange={e=>upd(npc.id,"role",e.target.value)} placeholder="Role…"/>
+              <input className="iedit" style={{fontSize:"0.88rem"}} value={npc.affiliation||""} onChange={e=>upd(npc.id,"affiliation",e.target.value)} placeholder="Affiliation…"/>
+              <input className="iedit" style={{fontSize:"0.85rem"}} value={npc.metAt||""} onChange={e=>upd(npc.id,"metAt",e.target.value)} placeholder="First met at…"/>
+              <input className="iedit" style={{fontSize:"0.85rem"}} value={npc.connections||""} onChange={e=>upd(npc.id,"connections",e.target.value)} placeholder="Connections…"/>
             </div>
           </div>
           <PinBtn pinned={npc.pinned} onToggle={()=>upd(npc.id,"pinned",!npc.pinned)}/>
@@ -1099,7 +1203,7 @@ function NPCTracker({npcs,setNPCs}) {
 /* ═══ LOCATIONS ════════════════════════════════ */
 function Locations({locations,setLocations}) {
   const [form,setForm]=useState({name:"",type:"Settlement",notes:""});
-  const [showForm,setShowForm]=useState(false); const [expanded,setExpanded]=useState({}); const [activeTag,setActiveTag]=useState(null);
+  const [showForm,setShowForm]=useState(false);const [expanded,setExpanded]=useState({});const [activeTag,setActiveTag]=useState(null);
   const allTags=[...new Set(locations.flatMap(l=>l.tags||[]))].sort();
   const addLoc=()=>{const n=form.name.trim();if(!n)return;setLocations(l=>[...l,{id:Date.now(),name:n,type:form.type,notes:form.notes.trim(),tags:[],pinned:false}]);setForm({name:"",type:"Settlement",notes:""});setShowForm(false);};
   const upd=(id,f,v)=>setLocations(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
@@ -1108,12 +1212,12 @@ function Locations({locations,setLocations}) {
   const visible=locations.filter(l=>!activeTag||(l.tags||[]).includes(activeTag)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{locations.length} {locations.length===1?"location":"locations"} mapped</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em"}}>{locations.length} {locations.length===1?"location":"locations"} mapped</span>
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Location"}</button>
     </div>
     {showForm&&<div className="add-form"><div className="col">
       <input className="g-input" placeholder="Location name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addLoc()}/>
-      <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.45,borderColor:form.type===t?"#8a6830":"",color:form.type===t?"#e2b94e":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{t}</button>)}</div>
+      <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.45,borderColor:form.type===t?"currentColor":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{t}</button>)}</div>
       <textarea className="g-textarea" rows={3} placeholder="Description, atmosphere, notable features…" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
       <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addLoc}>⊕ Add</button></div>
     </div></div>}
@@ -1124,7 +1228,7 @@ function Locations({locations,setLocations}) {
         <div className="entity-header">
           <div className="flex1">
             <div className="row" style={{gap:"0.5rem",marginBottom:"0.25rem"}}>
-              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"1rem",color:"#e0d6b4",fontWeight:700}} value={loc.name} onChange={e=>upd(loc.id,"name",e.target.value)} placeholder="Location name…"/>
+              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"1rem",fontWeight:700}} value={loc.name} onChange={e=>upd(loc.id,"name",e.target.value)} placeholder="Location name…"/>
               <span className="loc-type">{loc.type}</span>
             </div>
           </div>
@@ -1133,7 +1237,7 @@ function Locations({locations,setLocations}) {
         </div>
         <TagsEditor tags={loc.tags||[]} onChange={v=>upd(loc.id,"tags",v)}/>
         {open&&<div style={{marginTop:"0.8rem"}}>
-          <div className="row" style={{gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.7rem"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:loc.type===t?1:0.4,borderColor:loc.type===t?"#8a6830":"",color:loc.type===t?"#e2b94e":""}} onClick={()=>upd(loc.id,"type",t)}>{t}</button>)}</div>
+          <div className="row" style={{gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.7rem"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:loc.type===t?1:0.4,borderColor:loc.type===t?"currentColor":""}} onClick={()=>upd(loc.id,"type",t)}>{t}</button>)}</div>
           <textarea className="g-textarea" rows={4} placeholder="Geography, atmosphere, notable features, dangers…" value={loc.notes||""} onChange={e=>upd(loc.id,"notes",e.target.value)}/>
           <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(loc.id)}>Remove</button></div>
         </div>}
@@ -1144,7 +1248,7 @@ function Locations({locations,setLocations}) {
 
 /* ═══ SESSION LOG ═══════════════════════════════ */
 function SessionLog({sessions,setSessions,npcs,locations,quests,inventory,skills,onNavigate}) {
-  const [openIds,setOpenIds]=useState({}); const [editingId,setEditingId]=useState(null);
+  const [openIds,setOpenIds]=useState({});const [editingId,setEditingId]=useState(null);
   const addSession=()=>{const e={id:Date.now(),number:sessions.length+1,date:today(),title:`Session ${sessions.length+1}`,notes:""};setSessions(s=>[e,...s]);setOpenIds(o=>({...o,[e.id]:true}));setEditingId(e.id);};
   const upd=(id,f,v)=>setSessions(s=>s.map(x=>x.id===id?{...x,[f]:v}:x));
   const del=id=>{setSessions(s=>s.filter(x=>x.id!==id));if(editingId===id)setEditingId(null);};
@@ -1153,27 +1257,27 @@ function SessionLog({sessions,setSessions,npcs,locations,quests,inventory,skills
   const hasNotes=sessions.some(s=>s.notes);
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{sessions.length} {sessions.length===1?"session":"sessions"} recorded</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em"}}>{sessions.length} {sessions.length===1?"session":"sessions"} recorded</span>
       <button className="btn-gold" onClick={addSession}>⊕ New Session</button>
     </div>
     {hasAny&&hasNotes&&<div className="sess-legend">
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",color:"#6a5838",textTransform:"uppercase"}}>Tap to jump →</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Hover for preview →</span>
       {LEGEND_ITEMS.map(li=>{const counts={npc:npcs.length,location:locations.length,quest:quests.length,inventory:inventory.length,skill:skills.length};if(!counts[li.type])return null;return<div key={li.type} className="sess-legend-item"><div className="legend-dot" style={{background:li.color,border:`1px solid ${li.border}`}}/><span style={{color:li.border}}>{li.label}</span></div>;})}
     </div>}
     {sessions.length===0&&<div className="card empty-state">No chronicles written yet.</div>}
     {sessions.map(sess=>{
-      const open=!!openIds[sess.id]; const editing=editingId===sess.id;
-      const parsed=parseEntityLinks(sess.notes,npcs,locations,quests,inventory,skills,onNavigate);
+      const open=!!openIds[sess.id];const editing=editingId===sess.id;
+      const parsed=parseEntityLinksWithTooltips(sess.notes,npcs,locations,quests,inventory,skills,onNavigate);
       return <div key={sess.id} className="sess-entry">
         <div className={`sess-header${open?" open":""}`} onClick={()=>toggle(sess.id)}>
           <span className="sess-num">#{String(sess.number).padStart(2,"0")}</span>
-          <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.92rem",color:"#ddd5bb"}} value={sess.title} onChange={e=>{e.stopPropagation();upd(sess.id,"title",e.target.value);}} onClick={e=>e.stopPropagation()}/>
-          <input type="date" style={{background:"transparent",border:"none",color:"#8a7040",fontFamily:"inherit",fontSize:"0.75rem",outline:"none",flexShrink:0}} value={sess.date} onChange={e=>{e.stopPropagation();upd(sess.id,"date",e.target.value);}} onClick={e=>e.stopPropagation()}/>
-          <span style={{color:open?"#e2b94e":"#4a3a20",fontSize:"0.65rem",flexShrink:0}}>{open?"▲":"▼"}</span>
+          <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.92rem"}} value={sess.title} onChange={e=>{e.stopPropagation();upd(sess.id,"title",e.target.value);}} onClick={e=>e.stopPropagation()}/>
+          <input type="date" style={{background:"transparent",border:"none",color:"inherit",fontFamily:"inherit",fontSize:"0.75rem",outline:"none",flexShrink:0,opacity:0.6}} value={sess.date} onChange={e=>{e.stopPropagation();upd(sess.id,"date",e.target.value);}} onClick={e=>e.stopPropagation()}/>
+          <span style={{fontSize:"0.65rem",flexShrink:0,opacity:0.5}}>{open?"▲":"▼"}</span>
         </div>
         {open&&<div className="sess-body">
           {editing?<>
-            <textarea className="g-textarea" rows={6} autoFocus placeholder="Write your session notes… named entities become coloured links." value={sess.notes} onChange={e=>upd(sess.id,"notes",e.target.value)}/>
+            <textarea className="g-textarea" rows={6} autoFocus placeholder="Write your session notes… named entities become coloured links with hover previews." value={sess.notes} onChange={e=>upd(sess.id,"notes",e.target.value)}/>
             <div className="row mt05" style={{justifyContent:"space-between"}}>
               <button className="btn-ghost" onClick={()=>del(sess.id)}>Expunge Record</button>
               <button className="btn-gold" onClick={()=>setEditingId(null)}>✓ Done</button>
@@ -1182,7 +1286,7 @@ function SessionLog({sessions,setSessions,npcs,locations,quests,inventory,skills
             <div className="sess-rendered" data-placeholder="No notes yet — tap to write…" onClick={()=>setEditingId(sess.id)}>{sess.notes?parsed:null}</div>
             <div className="row mt05" style={{justifyContent:"space-between"}}>
               <button className="btn-ghost" onClick={()=>del(sess.id)}>Expunge Record</button>
-              <button className="btn-ghost" style={{borderColor:"#5a4a28",color:"#9a8050"}} onClick={()=>setEditingId(sess.id)}>✎ Edit</button>
+              <button className="btn-ghost" style={{opacity:0.7}} onClick={()=>setEditingId(sess.id)}>✎ Edit</button>
             </div>
           </>}
         </div>}
@@ -1193,7 +1297,7 @@ function SessionLog({sessions,setSessions,npcs,locations,quests,inventory,skills
 
 /* ═══ QUEST TRACKER ════════════════════════════ */
 function QuestTracker({quests,setQuests}) {
-  const [name,setName]=useState(""); const [desc,setDesc]=useState(""); const [reward,setReward]=useState("");
+  const [name,setName]=useState("");const [desc,setDesc]=useState("");const [reward,setReward]=useState("");
   const [expanded,setExpanded]=useState({});
   const addQuest=()=>{const n=name.trim();if(!n)return;setQuests(q=>[...q,{id:Date.now(),name:n,description:desc.trim(),reward:reward.trim(),status:"Active",steps:[]}]);setName("");setDesc("");setReward("");};
   const cycle=id=>setQuests(q=>q.map(x=>x.id===id?{...x,status:STATUS_CYCLE[x.status]}:x));
@@ -1215,36 +1319,36 @@ function QuestTracker({quests,setQuests}) {
     </div>
     {quests.length===0&&<div className="card empty-state">No mandates issued.</div>}
     {["Active","Completed","Failed"].map(status=>{
-      const filtered=quests.filter(q=>q.status===status); if(!filtered.length)return null;
-      const lc=status==="Active"?"#e2b94e":status==="Completed"?"#6acc6a":"#cc4444";
+      const filtered=quests.filter(q=>q.status===status);if(!filtered.length)return null;
+      const lc=status==="Active"?"#c9943e":status==="Completed"?"#5a8a5a":"#8a3a3a";
       return <div key={status} style={{display:"flex",flexDirection:"column",gap:"0.5rem"}}>
-        <div className="sect-label" style={{color:lc}}>{status} <span style={{color:"#4a3a20"}}>({filtered.length})</span></div>
+        <div className="sect-label" style={{color:lc}}>{status} <span style={{opacity:0.5}}>({filtered.length})</span></div>
         {filtered.map(quest=>{const open=!!expanded[quest.id];const steps=quest.steps||[];const doneCount=steps.filter(s=>s.done).length;
           return <div key={quest.id} className={`quest-entry ${status.toLowerCase()}`}>
             <div className="row" style={{alignItems:"flex-start"}}>
               <div className="flex1">
                 <div className="row" style={{marginBottom:"0.3rem",flexWrap:"wrap",gap:"0.4rem"}}>
-                  <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e0d6b4",fontWeight:700}} value={quest.name} onChange={e=>upd(quest.id,"name",e.target.value)} placeholder="Quest name…"/>
+                  <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",fontWeight:700}} value={quest.name} onChange={e=>upd(quest.id,"name",e.target.value)} placeholder="Quest name…"/>
                   <span className={`badge ${status.toLowerCase()}`} onClick={()=>cycle(quest.id)}>{status}</span>
                 </div>
-                <input className="iedit" style={{fontSize:"0.92rem",color:"#9a8050",fontStyle:"italic"}} value={quest.description||""} onChange={e=>upd(quest.id,"description",e.target.value)} placeholder="Description…"/>
-                {quest.reward&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",color:"#6acc6a",marginTop:"0.3rem"}}>⭐ {quest.reward}</div>}
-                {steps.length>0&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",color:"#7a6840",marginTop:"0.2rem"}}>{doneCount}/{steps.length} steps</div>}
+                <input className="iedit" style={{fontSize:"0.92rem",fontStyle:"italic"}} value={quest.description||""} onChange={e=>upd(quest.id,"description",e.target.value)} placeholder="Description…"/>
+                {quest.reward&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",color:"#5a8a5a",marginTop:"0.3rem"}}>⭐ {quest.reward}</div>}
+                {steps.length>0&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",marginTop:"0.2rem",opacity:0.6}}>{doneCount}/{steps.length} steps</div>}
               </div>
               <button className="entity-toggle" onClick={()=>toggle(quest.id)} style={{marginTop:"0.1rem"}}>{open?"▲":"▼"}</button>
-              <button onClick={()=>del(quest.id)} style={{background:"transparent",border:"none",color:"#4a3a2a",cursor:"pointer",fontSize:"0.85rem",padding:"0.1rem 0.2rem",transition:"color 0.15s",flexShrink:0}} onMouseEnter={e=>e.currentTarget.style.color="#c04040"} onMouseLeave={e=>e.currentTarget.style.color="#4a3a2a"}>✕</button>
+              <button onClick={()=>del(quest.id)} style={{background:"transparent",border:"none",cursor:"pointer",fontSize:"0.85rem",padding:"0.1rem 0.2rem",transition:"color 0.15s",flexShrink:0,opacity:0.4}} onMouseEnter={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="0.4"}>✕</button>
             </div>
             {open&&<div style={{marginTop:"0.7rem"}}>
               {steps.map(step=><div key={step.id} className="checklist-item">
                 <div className={`check-box${step.done?" checked":""}`} onClick={()=>updStep(quest.id,step.id,"done",!step.done)}/>
-                <input className={`iedit flex1 checklist-text${step.done?" done":""}`} style={{fontSize:"0.92rem",color:step.done?"#5a4a28":"#ccc0a0"}} value={step.text} onChange={e=>updStep(quest.id,step.id,"text",e.target.value)} placeholder="Step description…"/>
-                <button style={{background:"transparent",border:"none",color:"#3a2a1a",cursor:"pointer",fontSize:"0.75rem",transition:"color 0.15s"}} onMouseEnter={e=>e.currentTarget.style.color="#c04040"} onMouseLeave={e=>e.currentTarget.style.color="#3a2a1a"} onClick={()=>delStep(quest.id,step.id)}>✕</button>
+                <input className={`iedit flex1 checklist-text${step.done?" done":""}`} style={{fontSize:"0.92rem"}} value={step.text} onChange={e=>updStep(quest.id,step.id,"text",e.target.value)} placeholder="Step description…"/>
+                <button style={{background:"transparent",border:"none",cursor:"pointer",fontSize:"0.75rem",transition:"opacity 0.15s",opacity:0.3}} onMouseEnter={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="0.3"} onClick={()=>delStep(quest.id,step.id)}>✕</button>
               </div>)}
               <div className="row mt05" style={{justifyContent:"space-between",alignItems:"flex-end"}}>
                 <button className="btn-sm" onClick={()=>addStep(quest.id)}>+ Step</button>
                 <div style={{display:"flex",flexDirection:"column",gap:"0.1rem"}}>
-                  <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",color:"#6a5830",textTransform:"uppercase"}}>Reward</span>
-                  <input className="iedit" style={{fontSize:"0.88rem",color:"#6acc6a",minWidth:120}} value={quest.reward||""} onChange={e=>upd(quest.id,"reward",e.target.value)} placeholder="Gold, items, XP…"/>
+                  <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",textTransform:"uppercase",opacity:0.6}}>Reward</span>
+                  <input className="iedit" style={{fontSize:"0.88rem",color:"#5a8a5a",minWidth:120}} value={quest.reward||""} onChange={e=>upd(quest.id,"reward",e.target.value)} placeholder="Gold, items, XP…"/>
                 </div>
               </div>
             </div>}
@@ -1269,17 +1373,19 @@ const TABS=[
 
 /* ═══ ROOT APP ═════════════════════════════════ */
 export default function HeroJournal() {
-  const [tab,      setTab]      = useState("character");
-  const [char,     setChar]     = useState(()=>load("hj_char",      DEFAULT_CHAR));
-  const [inventory,setInventory]= useState(()=>load("hj_inventory", []));
-  const [npcs,     setNPCs]     = useState(()=>load("hj_npcs",      []));
-  const [locations,setLocations]= useState(()=>load("hj_locations", []));
-  const [skills,   setSkills]   = useState(()=>load("hj_skills",    []));
-  const [spells,   setSpells]   = useState(()=>load("hj_spells",    []));
-  const [sessions, setSessions] = useState(()=>load("hj_sessions",  []));
-  const [quests,   setQuests]   = useState(()=>load("hj_quests",    []));
-  const [showReset,setShowReset]= useState(false);
+  const [tab,       setTab]       = useState("character");
+  const [theme,     setTheme]     = useState(()=>load("hj_theme","dark"));
+  const [char,      setChar]      = useState(()=>load("hj_char",      DEFAULT_CHAR));
+  const [inventory, setInventory] = useState(()=>load("hj_inventory", []));
+  const [npcs,      setNPCs]      = useState(()=>load("hj_npcs",      []));
+  const [locations, setLocations] = useState(()=>load("hj_locations", []));
+  const [skills,    setSkills]    = useState(()=>load("hj_skills",    []));
+  const [spells,    setSpells]    = useState(()=>load("hj_spells",    []));
+  const [sessions,  setSessions]  = useState(()=>load("hj_sessions",  []));
+  const [quests,    setQuests]    = useState(()=>load("hj_quests",    []));
+  const [showReset, setShowReset] = useState(false);
 
+  useEffect(()=>{save("hj_theme",     theme);},[theme]);
   useEffect(()=>{save("hj_char",      char);},[char]);
   useEffect(()=>{save("hj_inventory", inventory);},[inventory]);
   useEffect(()=>{save("hj_npcs",      npcs);},[npcs]);
@@ -1289,25 +1395,41 @@ export default function HeroJournal() {
   useEffect(()=>{save("hj_sessions",  sessions);},[sessions]);
   useEffect(()=>{save("hj_quests",    quests);},[quests]);
 
-  const handleNavigate=useCallback(t=>setTab(t),[]);
+  const handleNavigate = useCallback(t=>setTab(t),[]);
+  const t = THEMES[theme]||THEMES.dark;
 
-  const handleReset=()=>{
+  const handleReset = () => {
     ALL_KEYS.forEach(k=>localStorage.removeItem(k));
     setChar(DEFAULT_CHAR); setInventory([]); setNPCs([]); setLocations([]);
     setSkills([]); setSpells([]); setSessions([]); setQuests([]);
     setTab("character"); setShowReset(false);
   };
 
+  const charName = char.name?.trim()||"";
+
   return <>
-    <style>{CSS}</style>
+    <style>{buildCSS(t)}</style>
     {showReset&&<ResetModal onConfirm={handleReset} onCancel={()=>setShowReset(false)}/>}
     <div className="hj-root">
+
       <header className="hj-header">
-        <div style={{maxWidth:780,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <div className="hj-logo"><span style={{fontSize:"1rem",opacity:0.85}}>⚔</span>Hero Journal</div>
-          <button className="btn-danger" style={{fontSize:"0.55rem",padding:"0.2rem 0.55rem",letterSpacing:"0.1em"}} onClick={()=>setShowReset(true)} title="Reset all data">↺ Reset</button>
+        <div style={{maxWidth:780,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"0.75rem"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"0.75rem",minWidth:0}}>
+            <div className="hj-logo"><span style={{fontSize:"0.9rem",opacity:0.75}}>⚔</span>HJ</div>
+            {charName&&<span className="hj-char-name">{charName}</span>}
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:"0.5rem",flexShrink:0}}>
+            {/* Theme toggle */}
+            <button
+              onClick={()=>setTheme(t=>t==="dark"?"light":"dark")}
+              style={{background:"transparent",border:`1px solid ${t.borderInput}`,color:t.textMuted,fontFamily:"Cinzel,serif",fontSize:"0.55rem",letterSpacing:"0.1em",padding:"0.2rem 0.5rem",cursor:"pointer",textTransform:"uppercase",transition:"all 0.2s"}}
+              title="Toggle parchment / dark theme"
+            >{theme==="dark"?"☀ Parchment":"🌙 Dark"}</button>
+            <button className="btn-danger" style={{fontSize:"0.55rem",padding:"0.2rem 0.55rem",letterSpacing:"0.1em"}} onClick={()=>setShowReset(true)} title="Reset all data">↺ Reset</button>
+          </div>
         </div>
       </header>
+
       <main className="hj-content">
         {tab==="character" &&<CharacterSheet char={char} setChar={setChar} inventory={inventory} skills={skills} spells={spells}/>}
         {tab==="inventory" &&<Pack inventory={inventory} setInventory={setInventory}/>}
@@ -1318,6 +1440,7 @@ export default function HeroJournal() {
         {tab==="sessions"  &&<SessionLog sessions={sessions} setSessions={setSessions} npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab==="quests"    &&<QuestTracker quests={quests} setQuests={setQuests}/>}
       </main>
+
       <nav className="hj-bottom-nav">
         {TABS.map(t=><button key={t.id} className={`hj-nav-btn${tab===t.id?" active":""}`} onClick={()=>setTab(t.id)}>
           <span className="hj-nav-icon">{t.icon}</span>
