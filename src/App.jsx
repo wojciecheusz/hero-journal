@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
-/* ═══════════════════════════════════════════════
-   STYLES
-═══════════════════════════════════════════════ */
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
@@ -31,17 +28,14 @@ const CSS = `
 
   .hj-content { max-width: 780px; margin: 0 auto; padding: 1.4rem 1rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
 
-  /* ── Cards ── */
   .card { background: #1c1810; border: 1px solid #352e1e; box-shadow: 0 3px 0 #0a0806, inset 0 1px 0 rgba(226,185,78,0.05); padding: 1.25rem; position: relative; }
   .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(226,185,78,0.03) 0%,transparent 55%); pointer-events: none; }
-  .card.pinned { border-color: #7a6030; box-shadow: 0 3px 0 #0a0806,0 0 0 1px rgba(226,185,78,0.12); }
+  .card.pinned { border-color: #7a6030; }
   .card.pinned::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#e2b94e,transparent); pointer-events: none; }
 
-  /* ── Section label — improved contrast ── */
   .sect-label { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: #b09050; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
   .sect-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,#352e1e,transparent); }
 
-  /* ── Inputs ── */
   .iedit { background: transparent; border: none; border-bottom: 1px dashed #5a4e34; color: inherit; font-family: inherit; font-size: inherit; font-weight: inherit; font-style: inherit; outline: none; width: 100%; transition: border-color 0.15s; line-height: inherit; padding: 0; }
   .iedit:focus { border-bottom-color: #e2b94e; }
   .iedit::placeholder { color: #6a5a38; }
@@ -57,11 +51,12 @@ const CSS = `
   .g-textarea:focus { border-color: #8a6830; }
   .g-textarea::placeholder { color: #5a4e34; font-style: italic; }
 
-  /* ── Buttons ── */
   .btn-gold { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: #e2b94e; border: 1px solid #8a6830; padding: 0.48rem 1.1rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
   .btn-gold:hover { background: rgba(226,185,78,0.12); border-color: #e2b94e; box-shadow: 0 0 14px rgba(226,185,78,0.22); }
   .btn-ghost { background: transparent; border: 1px solid #3a3220; color: #9a8050; font-size: 0.72rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
   .btn-ghost:hover { border-color: #9b2c2c; color: #c04040; }
+  .btn-danger { background: transparent; border: 1px solid #6a2a2a; color: #c04040; font-size: 0.68rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.08em; text-transform: uppercase; }
+  .btn-danger:hover { background: rgba(192,64,64,0.12); border-color: #c04040; }
   .btn-sm { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; color: #9a8050; border: 1px solid #3a3220; padding: 0.25rem 0.6rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
   .btn-sm:hover { border-color: #8a6830; color: #e2b94e; }
   .btn-pm { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid #3a3220; color: #9a8050; font-size: 1.2rem; cursor: pointer; transition: all 0.15s; flex-shrink: 0; font-family: monospace; }
@@ -86,71 +81,63 @@ const CSS = `
 
   /* ── Stat box ── */
   .stat-grid-6 { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.5rem; }
-  .stat-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
   @media (max-width:500px) { .stat-grid-6 { grid-template-columns: repeat(3,1fr); } }
   .stat-box { background: #130f0c; border: 1px solid #3a3220; text-align: center; padding: 0.65rem 0.3rem 0.55rem; cursor: pointer; transition: all 0.15s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); user-select: none; }
   .stat-box:hover { border-color: #7a6030; }
-  .stat-box.editing { border-color: #e2b94e; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5),0 0 16px rgba(226,185,78,0.26); }
+  .stat-box.editing { border-color: #e2b94e; }
   .stat-name { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.15em; color: #b09050; display: block; margin-bottom: 0.25rem; }
   .stat-val  { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; color: #e2b94e; line-height: 1.1; display: block; }
   .stat-mod  { font-family: 'Cinzel', serif; font-size: 0.62rem; color: #9a8050; display: block; margin-top: 0.15rem; }
   .stat-input { background: transparent; border: none; border-bottom: 1px solid #e2b94e; color: #e2b94e; font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 700; width: 100%; text-align: center; outline: none; }
 
-  /* ── HP / combat ── */
+  /* ── HP ── */
   .hp-bar-bg { height: 10px; background: #0a0806; border: 1px solid #231e12; box-shadow: inset 0 2px 5px rgba(0,0,0,0.7); position: relative; overflow: hidden; margin-top: 0.7rem; }
-  .hp-bar-fill { height: 100%; transition: width 0.35s ease,background 0.4s; }
-  .hp-bar-fill::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent); }
+  .hp-bar-fill { height: 100%; transition: width 0.35s ease, background 0.5s ease; }
   .hp-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
   .hp-display { font-family: 'Cinzel', serif; font-size: 1.5rem; display: flex; align-items: baseline; gap: 0.2rem; }
-  .hp-cur-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; text-align: center; color: #cc3a3a; font-size: 1.5rem; width: 52px; }
-  .hp-max-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; text-align: center; color: #8a5a5a; font-size: 1rem; width: 44px; }
   .hp-sep { color: #4a3a2a; font-size: 1rem; }
   .hp-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.18em; color: #7a6040; }
-  .hp-pct { font-family: 'Cinzel', serif; font-size: 0.58rem; color: #6a5a38; text-align: right; margin-top: 0.25rem; }
+  .hp-pct { font-family: 'Cinzel', serif; font-size: 0.58rem; text-align: right; margin-top: 0.25rem; transition: color 0.5s; }
 
   .combat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-top: 0.7rem; }
   .combat-box { background: #130f0c; border: 1px solid #3a3220; text-align: center; padding: 0.5rem 0.3rem; }
   .combat-box-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.14em; color: #b09050; display: block; margin-bottom: 0.2rem; }
-  .combat-box-val { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; }
+  .combat-box-val { font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; display: block; }
   .combat-box-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; text-align: center; width: 100%; }
 
   /* ── Saving throws & skills ── */
-  .save-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; }
+  .save-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 1rem; }
   @media (max-width:480px) { .save-grid { grid-template-columns: 1fr; } }
-  .check-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.22rem 0.3rem; border-bottom: 1px solid #231e12; }
+  .check-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.22rem 0.3rem; border-bottom: 1px solid #231e12; }
   .check-row:last-child { border-bottom: none; }
-  .prof-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid #5a4a28; background: transparent; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
-  .prof-dot.prof { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 5px rgba(226,185,78,0.5); }
+  /* FIX: use button element instead of div to avoid event issues */
+  .prof-dot-btn { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #5a4a28; background: transparent; cursor: pointer; flex-shrink: 0; transition: all 0.15s; padding: 0; appearance: none; -webkit-appearance: none; }
+  .prof-dot-btn.prof { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 6px rgba(226,185,78,0.55); }
+  .prof-dot-btn:hover:not(.prof) { border-color: #9a8050; background: rgba(226,185,78,0.1); }
   .check-label { font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; color: #ccc0a0; flex: 1; }
-  .check-attr { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; color: #8a7040; margin-right: 0.2rem; }
-  .check-bonus { font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 700; color: #e2b94e; min-width: 28px; text-align: right; }
+  .check-attr { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #8a7040; flex-shrink: 0; }
+  .check-bonus { font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700; color: #e2b94e; min-width: 28px; text-align: right; }
 
-  /* ── Alignment ── */
-  .alignment-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.3rem; }
-  .align-btn { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.35rem 0.2rem; background: transparent; border: 1px solid #3a3220; color: #8a7040; cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.3; }
-  .align-btn:hover { border-color: #7a6030; color: #c9a84c; }
-  .align-btn.selected { background: rgba(226,185,78,0.12); border-color: #c9a84c; color: #e2b94e; }
-
-  /* ── Trait blocks ── */
+  /* ── Traits ── */
   .trait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
   @media (max-width:480px) { .trait-grid { grid-template-columns: 1fr; } }
   .trait-block { display: flex; flex-direction: column; gap: 0.3rem; }
   .trait-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.18em; text-transform: uppercase; color: #b09050; }
-  .trait-ta { background: #130f0c; border: 1px solid #3a3220; color: #ccc0a0; font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; padding: 0.5rem 0.65rem; outline: none; width: 100%; resize: vertical; line-height: 1.55; box-shadow: inset 0 2px 5px rgba(0,0,0,0.4); }
+  .trait-ta { background: #130f0c; border: 1px solid #3a3220; color: #ccc0a0; font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; padding: 0.5rem 0.65rem; outline: none; width: 100%; resize: vertical; line-height: 1.55; }
   .trait-ta:focus { border-color: #7a6030; }
   .trait-ta::placeholder { color: #5a4e34; font-style: italic; }
 
-  /* ── Classes ── */
-  .class-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid #231e12; }
+  /* ── Class rows ── */
+  .class-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #231e12; }
   .class-row:last-child { border-bottom: none; }
 
-  /* ── Equipped items in hero ── */
+  /* ── Equipped items ── */
   .equipped-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.55rem 0; border-bottom: 1px solid #231e12; }
   .equipped-item:last-child { border-bottom: none; }
   .equipped-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1.2; }
   .equipped-name { font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 700; color: #e0d6b4; }
   .equipped-stat { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: #9a8050; font-style: italic; }
-  .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.4rem; border: 1px solid #3a3220; color: #8a7040; background: transparent; flex-shrink: 0; }
+  .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.4rem; border: 1px solid #3a3220; color: #8a7040; flex-shrink: 0; }
 
   /* ── Pack items ── */
   .pack-item { background: #1a1510; border: 1px solid #2e2618; padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; }
@@ -180,31 +167,29 @@ const CSS = `
   .check-box { width: 14px; height: 14px; border: 1px solid #5a4a28; background: transparent; flex-shrink: 0; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
   .check-box.checked { background: rgba(226,185,78,0.2); border-color: #c9a84c; }
   .check-box.checked::after { content: '✓'; font-size: 0.6rem; color: #e2b94e; }
-  .checklist-text { flex: 1; font-size: 0.98rem; color: #ccc0a0; }
   .checklist-text.done { text-decoration: line-through; color: #6a5a38; }
 
-  /* ── Sessions ── */
-  .sess-entry { border: 1px solid #2a2416; background: #171208; overflow: hidden; transition: border-color 0.2s; box-shadow: 0 2px 0 #0a0806; }
-  .sess-entry:hover { border-color: #352e1e; }
+  /* ── Session ── */
+  .sess-entry { border: 1px solid #2a2416; background: #171208; overflow: hidden; box-shadow: 0 2px 0 #0a0806; }
   .sess-header { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; cursor: pointer; transition: background 0.15s; user-select: none; }
   .sess-header:hover { background: rgba(226,185,78,0.04); }
   .sess-header.open { background: rgba(226,185,78,0.06); border-bottom: 1px solid #2e2618; }
   .sess-num { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.08em; color: #7a6040; flex-shrink: 0; min-width: 24px; }
   .sess-body { padding: 0.9rem 1rem 1.1rem; }
-  .sess-rendered { font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; color: #c8c0a0; line-height: 1.75; white-space: pre-wrap; word-break: break-word; padding: 0.75rem 0.85rem; background: #130f0c; border: 1px solid #352e1e; min-height: 80px; cursor: text; box-shadow: inset 0 2px 6px rgba(0,0,0,0.45); }
+  .sess-rendered { font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; color: #c8c0a0; line-height: 1.75; white-space: pre-wrap; word-break: break-word; padding: 0.75rem 0.85rem; background: #130f0c; border: 1px solid #352e1e; min-height: 80px; cursor: text; }
 
   /* ── Entity links ── */
   .entity-link { cursor: pointer; padding: 0 2px; font-weight: 600; transition: all 0.15s; display: inline; }
-  .entity-link-npc       { color:#e2b94e; background:rgba(226,185,78,0.10); border-bottom:1px solid rgba(226,185,78,0.4); }
-  .entity-link-npc:hover { background:rgba(226,185,78,0.22); }
-  .entity-link-location       { color:#7aaccc; background:rgba(122,172,204,0.10); border-bottom:1px solid rgba(122,172,204,0.4); }
-  .entity-link-location:hover { background:rgba(122,172,204,0.22); }
-  .entity-link-quest       { color:#cc6666; background:rgba(204,102,102,0.10); border-bottom:1px solid rgba(204,102,102,0.4); }
-  .entity-link-quest:hover { background:rgba(204,102,102,0.22); }
-  .entity-link-inventory       { color:#7acc9a; background:rgba(122,204,154,0.10); border-bottom:1px solid rgba(122,204,154,0.4); }
-  .entity-link-inventory:hover { background:rgba(122,204,154,0.22); }
-  .entity-link-skill       { color:#a87acc; background:rgba(168,122,204,0.10); border-bottom:1px solid rgba(168,122,204,0.4); }
-  .entity-link-skill:hover { background:rgba(168,122,204,0.22); }
+  .entity-link-npc        { color:#e2b94e; background:rgba(226,185,78,0.10); border-bottom:1px solid rgba(226,185,78,0.4); }
+  .entity-link-npc:hover  { background:rgba(226,185,78,0.22); }
+  .entity-link-location        { color:#7aaccc; background:rgba(122,172,204,0.10); border-bottom:1px solid rgba(122,172,204,0.4); }
+  .entity-link-location:hover  { background:rgba(122,172,204,0.22); }
+  .entity-link-quest        { color:#cc6666; background:rgba(204,102,102,0.10); border-bottom:1px solid rgba(204,102,102,0.4); }
+  .entity-link-quest:hover  { background:rgba(204,102,102,0.22); }
+  .entity-link-inventory        { color:#7acc9a; background:rgba(122,204,154,0.10); border-bottom:1px solid rgba(122,204,154,0.4); }
+  .entity-link-inventory:hover  { background:rgba(122,204,154,0.22); }
+  .entity-link-skill        { color:#a87acc; background:rgba(168,122,204,0.10); border-bottom:1px solid rgba(168,122,204,0.4); }
+  .entity-link-skill:hover  { background:rgba(168,122,204,0.22); }
 
   .sess-legend { display:flex; gap:0.7rem; flex-wrap:wrap; padding:0.5rem 0.7rem; background:rgba(226,185,78,0.03); border:1px solid #2a2416; margin-bottom:0.6rem; align-items:center; }
   .sess-legend-item { display:flex; align-items:center; gap:0.3rem; font-family:'Cinzel',serif; font-size:0.48rem; letter-spacing:0.08em; text-transform:uppercase; }
@@ -221,11 +206,10 @@ const CSS = `
   .badge.failed    { border:1px solid #6a2a2a; color:#cc4444; background:rgba(122,44,44,0.1); }
   .badge:hover { filter:brightness(1.25); }
 
-  /* ── NPC / Location / Skill ── */
+  /* ── NPC / Location ── */
   .entity-header { display:flex; align-items:flex-start; gap:0.6rem; margin-bottom:0.5rem; }
-  .pin-btn { background:transparent; border:none; cursor:pointer; font-size:0.9rem; padding:0.1rem; opacity:0.4; transition:opacity 0.15s,transform 0.15s; flex-shrink:0; line-height:1; }
+  .pin-btn { background:transparent; border:none; cursor:pointer; font-size:0.9rem; padding:0.1rem; opacity:0.4; transition:opacity 0.15s; flex-shrink:0; line-height:1; }
   .pin-btn.pinned { opacity:1; }
-  .pin-btn:hover { opacity:0.75; transform:scale(1.15); }
   .entity-toggle { background:transparent; border:none; color:#6a5830; cursor:pointer; font-size:0.6rem; padding:0; transition:color 0.15s; flex-shrink:0; font-family:'Cinzel',serif; }
   .entity-toggle:hover { color:#9a8050; }
   .skill-pips { display:flex; gap:3px; align-items:center; flex-shrink:0; }
@@ -238,6 +222,12 @@ const CSS = `
   .rel-unknown { border:1px solid #2e2618; color:#7a6040; background:transparent; }
   .rel-badge:hover { filter:brightness(1.2); }
   .loc-type { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.15rem 0.55rem; border:1px solid #352e1e; color:#9a8050; background:rgba(226,185,78,0.04); flex-shrink:0; }
+
+  /* ── Reset modal ── */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
+  .modal-box { background:#1c1810; border:1px solid #6a2a2a; padding:1.5rem; max-width:340px; width:100%; box-shadow:0 0 40px rgba(192,64,64,0.25); }
+  .modal-title { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
+  .modal-text { font-family:'Crimson Text',serif; font-size:1rem; color:#9a8050; line-height:1.6; margin-bottom:1.2rem; }
 
   .add-form { background:#171208; border:1px dashed #352e1e; padding:1.1rem; }
   .empty-state { text-align:center; padding:2.5rem; color:#6a5a38; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.12em; line-height:1.9; }
@@ -262,64 +252,71 @@ const REL_CYCLE    = { unknown:"ally", ally:"neutral", neutral:"hostile", hostil
 const REL_LABELS   = { ally:"Ally", neutral:"Neutral", hostile:"Hostile", unknown:"Unknown" };
 const SKILL_CATS   = ["Skill","Trait","Feat","Spell","Ability","Other"];
 const LOC_TYPES    = ["Settlement","Dungeon","Wilderness","Building","Ruin","Landmark","Other"];
-
-const ALIGNMENTS = [
-  "Lawful Good","Neutral Good","Chaotic Good",
-  "Lawful Neutral","True Neutral","Chaotic Neutral",
-  "Lawful Evil","Neutral Evil","Chaotic Evil",
-];
+const ALIGNMENTS   = ["Lawful Good","Neutral Good","Chaotic Good","Lawful Neutral","True Neutral","Chaotic Neutral","Lawful Evil","Neutral Evil","Chaotic Evil"];
+const ITEM_TYPES   = ["General","Weapon","Armor","Spell Scroll","Wondrous Item","Consumable","Tool","Other"];
+const ITEM_ICONS   = { General:"📦", Weapon:"⚔️", Armor:"🛡️", "Spell Scroll":"📜", "Wondrous Item":"✨", Consumable:"🧪", Tool:"🔧", Other:"◈" };
 
 const SAVING_THROWS = [
-  {key:"str",label:"Strength",   attr:"STR"},
-  {key:"dex",label:"Dexterity",  attr:"DEX"},
+  {key:"str",label:"Strength",    attr:"STR"},
+  {key:"dex",label:"Dexterity",   attr:"DEX"},
   {key:"con",label:"Constitution",attr:"CON"},
   {key:"int",label:"Intelligence",attr:"INT"},
-  {key:"wis",label:"Wisdom",     attr:"WIS"},
-  {key:"cha",label:"Charisma",   attr:"CHA"},
+  {key:"wis",label:"Wisdom",      attr:"WIS"},
+  {key:"cha",label:"Charisma",    attr:"CHA"},
 ];
 
 const GENERIC_SKILLS = [
-  {key:"acrobatics",   label:"Acrobatics",    attr:"DEX"},
-  {key:"athletics",    label:"Athletics",     attr:"STR"},
-  {key:"arcana",       label:"Arcana",        attr:"INT"},
-  {key:"deception",    label:"Deception",     attr:"CHA"},
-  {key:"history",      label:"History",       attr:"INT"},
-  {key:"insight",      label:"Insight",       attr:"WIS"},
-  {key:"intimidation", label:"Intimidation",  attr:"CHA"},
-  {key:"investigation",label:"Investigation", attr:"INT"},
-  {key:"medicine",     label:"Medicine",      attr:"WIS"},
-  {key:"nature",       label:"Nature",        attr:"INT"},
-  {key:"perception",   label:"Perception",    attr:"WIS"},
-  {key:"performance",  label:"Performance",   attr:"CHA"},
-  {key:"persuasion",   label:"Persuasion",    attr:"CHA"},
-  {key:"religion",     label:"Religion",      attr:"INT"},
-  {key:"sleightofhand",label:"Sleight of Hand",attr:"DEX"},
-  {key:"stealth",      label:"Stealth",       attr:"DEX"},
-  {key:"survival",     label:"Survival",      attr:"WIS"},
+  {key:"acrobatics",    label:"Acrobatics",     attr:"DEX"},
+  {key:"athletics",     label:"Athletics",      attr:"STR"},
+  {key:"arcana",        label:"Arcana",         attr:"INT"},
+  {key:"deception",     label:"Deception",      attr:"CHA"},
+  {key:"history",       label:"History",        attr:"INT"},
+  {key:"insight",       label:"Insight",        attr:"WIS"},
+  {key:"intimidation",  label:"Intimidation",   attr:"CHA"},
+  {key:"investigation", label:"Investigation",  attr:"INT"},
+  {key:"medicine",      label:"Medicine",       attr:"WIS"},
+  {key:"nature",        label:"Nature",         attr:"INT"},
+  {key:"perception",    label:"Perception",     attr:"WIS"},
+  {key:"performance",   label:"Performance",    attr:"CHA"},
+  {key:"persuasion",    label:"Persuasion",     attr:"CHA"},
+  {key:"religion",      label:"Religion",       attr:"INT"},
+  {key:"sleightofhand", label:"Sleight of Hand",attr:"DEX"},
+  {key:"stealth",       label:"Stealth",        attr:"DEX"},
+  {key:"survival",      label:"Survival",       attr:"WIS"},
   {key:"animalhandling",label:"Animal Handling",attr:"WIS"},
 ];
 
-const ITEM_TYPES = ["General","Weapon","Armor","Spell Scroll","Wondrous Item","Consumable","Tool","Other"];
-const ITEM_ICONS = { General:"📦", Weapon:"⚔️", Armor:"🛡️", "Spell Scroll":"📜", "Wondrous Item":"✨", Consumable:"🧪", Tool:"🔧", Other:"◈" };
-
 /* ═══ DEFAULT STATE ═════════════════════════════ */
 const DEFAULT_CHAR = {
+  name: "",
   classes: [{ name:"Adventurer", level:1 }],
   stats: {STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10},
   profBonus: 2,
   hp: {current:10,max:10,temp:0},
   ac: 10,
-  savingThrows: {},   // { str: true, ... } proficient
-  skills: {},          // { perception: true, ... } proficient
+  savingThrows: {},
+  skills: {},
   alignment: "True Neutral",
   background: "",
   traits: { personality:"", ideals:"", bonds:"", flaws:"" },
-  notes:"",
+  personalNotes: "",
+  backstory: "",
 };
 
 /* ═══ STORAGE ═══════════════════════════════════ */
 const load = (key,fb) => { try { return JSON.parse(localStorage.getItem(key))??fb; } catch { return fb; } };
 const save = (key,val) => { try { localStorage.setItem(key,JSON.stringify(val)); } catch {} };
+
+const ALL_KEYS = ["hj_char","hj_inventory","hj_npcs","hj_locations","hj_skills","hj_sessions","hj_quests"];
+
+/* ═══ HP COLOR HELPERS ══════════════════════════ */
+const hpBarColor = pct =>
+  pct > 70 ? "linear-gradient(90deg,#1a5a1a,#2a8a2a,#33aa33)"
+  : pct > 35 ? "linear-gradient(90deg,#7a4a10,#cc7020,#e08030)"
+  : "linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
+
+const hpNumColor = pct =>
+  pct > 70 ? "#5acc5a" : pct > 35 ? "#e08030" : "#cc3a3a";
 
 /* ═══ ENTITY LINK PARSER ════════════════════════ */
 const LEGEND_ITEMS = [
@@ -381,57 +378,106 @@ function Toggle({on,onToggle,label}) {
 }
 
 function StatBox({label,value,onChange}) {
-  const [editing,setEditing]=useState(false); const [draft,setDraft]=useState(String(value)); const ref=useRef(null);
+  const [editing,setEditing]=useState(false); const [draft,setDraft]=useState(String(value));
   const commit=()=>{const n=parseInt(draft,10);if(!isNaN(n))onChange(clamp(n,1,30));setEditing(false);};
   return <div className={`stat-box${editing?" editing":""}`} onClick={()=>{if(!editing){setDraft(String(value));setEditing(true);}}}>
     <span className="stat-name">{label}</span>
-    {editing?<input ref={ref} className="stat-input" value={draft} autoFocus onChange={e=>setDraft(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==="Enter")commit();if(e.key==="Escape")setEditing(false);}} onClick={e=>e.stopPropagation()}/>
+    {editing?<input className="stat-input" value={draft} autoFocus onChange={e=>setDraft(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==="Enter")commit();if(e.key==="Escape")setEditing(false);}} onClick={e=>e.stopPropagation()}/>
             :<span className="stat-val">{value}</span>}
     <span className="stat-mod">{statMod(value)}</span>
   </div>;
 }
 
-const hpColor=p=>p>60?"linear-gradient(90deg,#6b1515,#9b2c2c,#cc3a3a)":p>25?"linear-gradient(90deg,#7a3a10,#c06020,#d87030)":"linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
-
 function SkillPips({value,onChange}) {
   return <div className="skill-pips">{[1,2,3,4,5].map(i=><div key={i} className={`pip${i<=value?" filled":""}`} onClick={()=>onChange(i===value?0:i)}/>)}</div>;
 }
 
+/* ═══ RESET MODAL ═══════════════════════════════ */
+function ResetModal({onConfirm,onCancel}) {
+  return <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-box" onClick={e=>e.stopPropagation()}>
+      <div className="modal-title">⚠ Full Reset</div>
+      <p className="modal-text">This will permanently erase all character data, inventory, NPCs, locations, sessions, quests and abilities. This action cannot be undone.</p>
+      <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
+        <button className="btn-ghost" onClick={onCancel}>Cancel</button>
+        <button className="btn-danger" onClick={onConfirm}>Erase Everything</button>
+      </div>
+    </div>
+  </div>;
+}
+
 /* ═══ CHARACTER SHEET ══════════════════════════ */
 function CharacterSheet({char,setChar,inventory}) {
-  const upd=(f,v)=>setChar(c=>({...c,[f]:v}));
-  const updSt=(s,v)=>setChar(c=>({...c,stats:{...c.stats,[s]:v}}));
-  const hpPct=Math.round(clamp((char.hp.current/char.hp.max)*100,0,100));
-  const pb=char.profBonus||2;
+  const upd  = (f,v) => setChar(c=>({...c,[f]:v}));
+  const updSt= (s,v) => setChar(c=>({...c,stats:{...c.stats,[s]:v}}));
+  const hpPct= Math.round(clamp((char.hp.current/char.hp.max)*100,0,100));
+  const pb   = char.profBonus||2;
 
-  const toggleSave=key=>setChar(c=>({...c,savingThrows:{...c.savingThrows,[key]:!c.savingThrows[key]}}));
-  const toggleSkill=key=>setChar(c=>({...c,skills:{...c.skills,[key]:!c.skills[key]}}));
+  /* FIX: use functional update, never read stale state from closure */
+  const toggleSave = useCallback((key) => {
+    setChar(c => ({...c, savingThrows: {...(c.savingThrows||{}), [key]: !(c.savingThrows||{})[key]}}));
+  }, [setChar]);
+
+  const toggleSkill = useCallback((key) => {
+    setChar(c => ({...c, skills: {...(c.skills||{}), [key]: !(c.skills||{})[key]}}));
+  }, [setChar]);
 
   const equippedItems=(inventory||[]).filter(i=>i.equipped);
 
   return <>
-    {/* ── Classes ── */}
+    {/* ── Identity: name + classes ── */}
     <div className="card">
       <div className="sect-label">Identity</div>
-      <div style={{display:"flex",flexDirection:"column",gap:"0.35rem",marginBottom:"0.8rem"}}>
-        {(char.classes||[{name:"Adventurer",level:1}]).map((cls,i)=>(
+
+      {/* Character name — single, prominent */}
+      <div style={{marginBottom:"1rem"}}>
+        <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Character Name</div>
+        <input
+          className="iedit"
+          style={{fontFamily:"Cinzel,serif",fontSize:"1.4rem",color:"#ede5c5",fontWeight:700,letterSpacing:"0.04em"}}
+          value={char.name||""}
+          onChange={e=>upd("name",e.target.value)}
+          placeholder="Enter your hero's name…"
+        />
+      </div>
+
+      {/* Classes — separate from name */}
+      <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.5rem"}}>Class & Level</div>
+      <div style={{display:"flex",flexDirection:"column",gap:"0.3rem",marginBottom:"0.65rem"}}>
+        {(char.classes||[]).map((cls,i)=>(
           <div key={i} className="class-row">
-            <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:i===0?"1.15rem":"0.95rem",color:i===0?"#ede5c5":"#c8bfa0",fontWeight:700}} value={cls.name} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return {...c,classes:cl};})} placeholder={`Class ${i+1}…`}/>
-            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",color:"#8a7040",letterSpacing:"0.1em",flexShrink:0}}>LVL</span>
-            <input type="number" className="iedit" style={{width:36,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"1rem",color:"#e2b94e"}} value={cls.level} min={1} max={20} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}/>
-            {i>0&&<button className="btn-ghost" style={{padding:"0.15rem 0.4rem",fontSize:"0.65rem"}} onClick={()=>setChar(c=>({...c,classes:c.classes.filter((_,j)=>j!==i)}))}>✕</button>}
+            <input
+              className="iedit flex1"
+              style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:i===0?"#e2b94e":"#c8bfa0",fontWeight:600}}
+              value={cls.name}
+              onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return{...c,classes:cl};})}
+              placeholder={`Class ${i+1}…`}
+            />
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.56rem",color:"#8a7040",letterSpacing:"0.1em",flexShrink:0}}>LVL</span>
+            <input
+              type="number"
+              className="iedit"
+              style={{width:38,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e2b94e"}}
+              value={cls.level}
+              min={1} max={20}
+              onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}
+            />
+            {i>0&&<button className="btn-ghost" style={{padding:"0.1rem 0.35rem",fontSize:"0.65rem"}} onClick={()=>setChar(c=>({...c,classes:c.classes.filter((_,j)=>j!==i)}))}>✕</button>}
           </div>
         ))}
-        {(char.classes||[]).length<4&&<button className="btn-sm" style={{alignSelf:"flex-start"}} onClick={()=>setChar(c=>({...c,classes:[...(c.classes||[]),{name:"",level:1}]}))}>+ Multiclass</button>}
+        {(char.classes||[]).length<4&&
+          <button className="btn-sm" style={{alignSelf:"flex-start",marginTop:"0.2rem"}} onClick={()=>setChar(c=>({...c,classes:[...(c.classes||[]),{name:"",level:1}]}))}>+ Multiclass</button>}
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.6rem",alignItems:"end"}}>
+
+      {/* Background / Prof Bonus / Alignment */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 90px 1fr",gap:"0.6rem",alignItems:"end"}}>
         <div>
           <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Background</div>
-          <input className="iedit" style={{fontSize:"0.95rem",color:"#c8bfa0"}} value={char.background||""} onChange={e=>upd("background",e.target.value)} placeholder="Background…"/>
+          <input className="iedit" style={{fontSize:"0.9rem",color:"#c8bfa0"}} value={char.background||""} onChange={e=>upd("background",e.target.value)} placeholder="Background…"/>
         </div>
         <div>
           <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Prof. Bonus</div>
-          <input type="number" className="iedit" style={{textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"1rem",color:"#e2b94e"}} value={pb} onChange={e=>upd("profBonus",parseInt(e.target.value)||2)}/>
+          <input type="number" className="iedit" style={{textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e2b94e"}} value={pb} onChange={e=>upd("profBonus",parseInt(e.target.value)||2)}/>
         </div>
         <div>
           <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Alignment</div>
@@ -448,21 +494,35 @@ function CharacterSheet({char,setChar,inventory}) {
       <div className="stat-grid-6">{STAT_KEYS.map(k=><StatBox key={k} label={k} value={char.stats[k]} onChange={v=>updSt(k,v)}/>)}</div>
     </div>
 
-    {/* ── Vitality & Combat ── */}
+    {/* ── Vitality ── */}
     <div className="card">
       <div className="sect-label">Vitality</div>
       <div className="hp-row">
         <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
         <div className="hp-display">
-          <input className="hp-cur-input" type="number" value={char.hp.current} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+          <input
+            className="hp-cur-input"
+            type="number"
+            value={char.hp.current}
+            style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}}
+            onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}
+          />
           <span className="hp-sep">/</span>
-          <input className="hp-max-input" type="number" value={char.hp.max} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+          <input
+            className="hp-max-input"
+            type="number"
+            value={char.hp.max}
+            style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}}
+            onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}
+          />
         </div>
         <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
         <span className="hp-label">HP</span>
       </div>
-      <div className="hp-bar-bg"><div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpColor(hpPct)}}/></div>
-      <div className="hp-pct">{hpPct}% vitality remaining</div>
+      <div className="hp-bar-bg">
+        <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
+      </div>
+      <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
       <div className="combat-grid">
         <div className="combat-box">
           <span className="combat-box-label">Temp HP</span>
@@ -484,11 +544,17 @@ function CharacterSheet({char,setChar,inventory}) {
       <div className="sect-label">Saving Throws</div>
       <div className="save-grid">
         {SAVING_THROWS.map(st=>{
-          const prof=!!char.savingThrows?.[st.key];
+          const prof=!!(char.savingThrows||{})[st.key];
           const base=Math.floor((char.stats[st.attr]-10)/2);
           const bonus=prof?base+pb:base;
           return <div key={st.key} className="check-row">
-            <div className={`prof-dot${prof?" prof":""}`} onClick={()=>toggleSave(st.key)} title="Toggle proficiency"/>
+            {/* FIX: button element with type="button" prevents form-submit behaviour and event issues */}
+            <button
+              type="button"
+              className={`prof-dot-btn${prof?" prof":""}`}
+              onClick={()=>toggleSave(st.key)}
+              title="Toggle proficiency"
+            />
             <span className="check-attr">{st.attr}</span>
             <span className="check-label">{st.label}</span>
             <span className="check-bonus">{numMod(bonus)}</span>
@@ -502,11 +568,16 @@ function CharacterSheet({char,setChar,inventory}) {
       <div className="sect-label">Skills</div>
       <div className="save-grid">
         {GENERIC_SKILLS.map(sk=>{
-          const prof=!!char.skills?.[sk.key];
+          const prof=!!(char.skills||{})[sk.key];
           const base=Math.floor((char.stats[sk.attr]-10)/2);
           const bonus=prof?base+pb:base;
           return <div key={sk.key} className="check-row">
-            <div className={`prof-dot${prof?" prof":""}`} onClick={()=>toggleSkill(sk.key)} title="Toggle proficiency"/>
+            <button
+              type="button"
+              className={`prof-dot-btn${prof?" prof":""}`}
+              onClick={()=>toggleSkill(sk.key)}
+              title="Toggle proficiency"
+            />
             <span className="check-attr">{sk.attr}</span>
             <span className="check-label">{sk.label}</span>
             <span className="check-bonus">{numMod(bonus)}</span>
@@ -515,7 +586,7 @@ function CharacterSheet({char,setChar,inventory}) {
       </div>
     </div>
 
-    {/* ── Equipped gear from Pack ── */}
+    {/* ── Equipped Gear from Pack ── */}
     {equippedItems.length>0&&<div className="card">
       <div className="sect-label">Equipped Gear</div>
       {equippedItems.map(item=>(
@@ -527,39 +598,46 @@ function CharacterSheet({char,setChar,inventory}) {
               <span className="equipped-type-badge">{item.type}</span>
             </div>
             {item.damage&&<div className="equipped-stat">Damage: {item.damage}{item.damageType?` ${item.damageType}`:""}</div>}
-            {item.modifier!==undefined&&item.modifier!==""&&<div className="equipped-stat">To Hit / Bonus: {numMod(parseInt(item.modifier)||0)}</div>}
+            {item.modifier!==undefined&&item.modifier!==""&&<div className="equipped-stat">To Hit: {numMod(parseInt(item.modifier)||0)}</div>}
             {item.charges&&<div className="equipped-stat">Charges: {item.charges}</div>}
             {item.effect&&<div className="equipped-stat" style={{color:"#a87acc"}}>{item.effect}</div>}
+            {item.note&&<div className="equipped-stat">{item.note}</div>}
           </div>
         </div>
       ))}
     </div>}
 
-    {/* ── Traits ── */}
+    {/* ── Character Traits ── */}
     <div className="card">
       <div className="sect-label">Character Traits</div>
       <div className="trait-grid">
-        {[["personality","Personality Traits","Describe how your character acts and speaks…"],
-          ["ideals","Ideals","What does your character believe in?"],
-          ["bonds","Bonds","What ties your character to the world?"],
-          ["flaws","Flaws","What weaknesses does your character have?"]].map(([key,label,ph])=>(
+        {[["personality","Personality Traits","How your character acts and speaks…"],
+          ["ideals","Ideals","What your character believes in…"],
+          ["bonds","Bonds","What ties your character to the world…"],
+          ["flaws","Flaws","Your character's weaknesses…"]].map(([key,label,ph])=>(
           <div key={key} className="trait-block">
             <span className="trait-label">{label}</span>
-            <textarea className="trait-ta" rows={3} placeholder={ph} value={char.traits?.[key]||""} onChange={e=>setChar(c=>({...c,traits:{...c.traits,[key]:e.target.value}}))}/>
+            <textarea className="trait-ta" rows={3} placeholder={ph} value={char.traits?.[key]||""} onChange={e=>setChar(c=>({...c,traits:{...(c.traits||{}),[key]:e.target.value}}))}/>
           </div>
         ))}
       </div>
     </div>
 
-    {/* ── Notes ── */}
+    {/* ── Personal Notes ── */}
     <div className="card">
-      <div className="sect-label">Additional Notes</div>
-      <textarea className="g-textarea" rows={5} placeholder="Campaign notes, GM secrets, reminders…" value={char.notes||""} onChange={e=>upd("notes",e.target.value)}/>
+      <div className="sect-label">Personal Notes</div>
+      <textarea className="g-textarea" rows={4} placeholder="Session reminders, GM hints, party notes…" value={char.personalNotes||""} onChange={e=>upd("personalNotes",e.target.value)}/>
+    </div>
+
+    {/* ── Backstory ── */}
+    <div className="card">
+      <div className="sect-label">Backstory</div>
+      <textarea className="g-textarea" rows={6} placeholder="Where did your hero come from? What shaped them? What do they seek?…" value={char.backstory||""} onChange={e=>upd("backstory",e.target.value)}/>
     </div>
   </>;
 }
 
-/* ═══ PACK (INVENTORY) ══════════════════════════ */
+/* ═══ PACK ══════════════════════════════════════ */
 function Pack({inventory,setInventory}) {
   const [showForm,setShowForm]=useState(false);
   const [form,setForm]=useState({name:"",type:"General",qty:"1",damage:"",damageType:"",modifier:"",charges:"",effect:"",note:""});
@@ -576,10 +654,8 @@ function Pack({inventory,setInventory}) {
   const del=id=>setInventory(inv=>inv.filter(x=>x.id!==id));
   const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
   const toggleEquip=id=>setInventory(inv=>inv.map(x=>x.id===id?{...x,equipped:!x.equipped}:x));
-
   const visible=filterType?inventory.filter(i=>i.type===filterType):inventory;
   const equippedCount=inventory.filter(i=>i.equipped).length;
-
   const needsExtras=t=>["Weapon","Spell Scroll","Wondrous Item","Consumable"].includes(t);
 
   return <>
@@ -616,13 +692,12 @@ function Pack({inventory,setInventory}) {
       </div>
     </div>}
 
-    {/* Type filter */}
     <div className="filter-bar">
       <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={()=>setFilterType(null)}>All</button>
       {ITEM_TYPES.map(t=>{const c=inventory.filter(i=>i.type===t).length;if(!c)return null;return<button key={t} className={`filter-tag${filterType===t?" active-filter":""}`} onClick={()=>setFilterType(filterType===t?null:t)}>{ITEM_ICONS[t]} {t} ({c})</button>;})}
     </div>
 
-    {inventory.length===0&&<div className="card empty-state">Your pack lies empty…<br/><span style={{fontSize:"0.62rem"}}>Add your first item above.</span></div>}
+    {inventory.length===0&&<div className="card empty-state">Your pack lies empty…</div>}
 
     {visible.map(item=>{
       const open=!!expanded[item.id];
@@ -636,7 +711,7 @@ function Pack({inventory,setInventory}) {
         </div>
         {open&&<div className="pack-item-body">
           <div className="pack-item-row">
-            <div className="pack-field"><span className="pack-field-label">Quantity</span><input className="pack-field-input" value={item.qty||"1"} onChange={e=>upd(item.id,"qty",e.target.value)}/></div>
+            <div className="pack-field"><span className="pack-field-label">Qty</span><input className="pack-field-input" value={item.qty||"1"} onChange={e=>upd(item.id,"qty",e.target.value)}/></div>
             {item.type==="Weapon"&&<>
               <div className="pack-field"><span className="pack-field-label">Damage</span><input className="pack-field-input" placeholder="1d8" value={item.damage||""} onChange={e=>upd(item.id,"damage",e.target.value)}/></div>
               <div className="pack-field"><span className="pack-field-label">Type</span><input className="pack-field-input" placeholder="Slashing" value={item.damageType||""} onChange={e=>upd(item.id,"damageType",e.target.value)}/></div>
@@ -648,7 +723,7 @@ function Pack({inventory,setInventory}) {
             </>}
           </div>
           <div className="pack-field"><span className="pack-field-label">Notes</span><input className="pack-field-input" value={item.note||""} placeholder="Notes…" onChange={e=>upd(item.id,"note",e.target.value)}/></div>
-          <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(item.id)}>Remove</button></div>
+          <div className="row" style={{justifyContent:"flex-end",marginTop:"0.3rem"}}><button className="btn-ghost" onClick={()=>del(item.id)}>Remove</button></div>
         </div>}
       </div>;
     })}
@@ -674,33 +749,32 @@ function NPCTracker({npcs,setNPCs}) {
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add NPC"}</button>
     </div>
     {showForm&&<div className="add-form">
-      <div className="sect-label" style={{marginBottom:"0.8rem"}}>New Character</div>
       <div className="col">
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
           <input className="g-input" placeholder="Name…" value={formState.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addNPC()}/>
           <input className="g-input" placeholder="Role / occupation…" value={formState.role} onChange={e=>setForm(f=>({...f,role:e.target.value}))}/>
-          <input className="g-input" placeholder="Affiliation (faction, guild…)" value={formState.affiliation} onChange={e=>setForm(f=>({...f,affiliation:e.target.value}))}/>
+          <input className="g-input" placeholder="Affiliation…" value={formState.affiliation} onChange={e=>setForm(f=>({...f,affiliation:e.target.value}))}/>
           <input className="g-input" placeholder="First met at…" value={formState.metAt} onChange={e=>setForm(f=>({...f,metAt:e.target.value}))}/>
         </div>
-        <input className="g-input" placeholder="Known connections (other NPCs, factions…)" value={formState.connections} onChange={e=>setForm(f=>({...f,connections:e.target.value}))}/>
+        <input className="g-input" placeholder="Connections…" value={formState.connections} onChange={e=>setForm(f=>({...f,connections:e.target.value}))}/>
         <div className="row" style={{gap:"0.5rem",flexWrap:"wrap"}}>
           {["unknown","ally","neutral","hostile"].map(r=><button key={r} className={`rel-badge rel-${r}`} style={{opacity:formState.relation===r?1:0.45}} onClick={()=>setForm(f=>({...f,relation:r}))}>{REL_LABELS[r]}</button>)}
         </div>
-        <textarea className="g-textarea" rows={3} placeholder="First impressions, known facts…" value={formState.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
+        <textarea className="g-textarea" rows={3} placeholder="Notes…" value={formState.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
         <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addNPC}>⊕ Add</button></div>
       </div>
     </div>}
     <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-    {npcs.length===0&&<div className="card empty-state">No characters recorded.<br/><span style={{fontSize:"0.62rem"}}>Add the first soul you've encountered.</span></div>}
+    {npcs.length===0&&<div className="card empty-state">No characters recorded.</div>}
     {visible.map(npc=>{const open=!!expanded[npc.id];const rel=npc.relation||"unknown";return(
       <div key={npc.id} className={`card${npc.pinned?" pinned":""}`} style={{padding:"1rem 1.1rem"}}>
         <div className="entity-header">
           <div className="flex1">
             <div className="row" style={{gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
               <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"1rem",color:"#e0d6b4",fontWeight:700}} value={npc.name} onChange={e=>upd(npc.id,"name",e.target.value)} placeholder="Name…"/>
-              <span className={`rel-badge rel-${rel}`} onClick={()=>cycleRel(npc.id)} title="Tap to change">{REL_LABELS[rel]}</span>
+              <span className={`rel-badge rel-${rel}`} onClick={()=>cycleRel(npc.id)}>{REL_LABELS[rel]}</span>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.3rem 0.6rem"}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.25rem 0.6rem"}}>
               <input className="iedit" style={{fontSize:"0.88rem",color:"#9a8050",fontStyle:"italic"}} value={npc.role||""} onChange={e=>upd(npc.id,"role",e.target.value)} placeholder="Role…"/>
               <input className="iedit" style={{fontSize:"0.88rem",color:"#9a8050"}} value={npc.affiliation||""} onChange={e=>upd(npc.id,"affiliation",e.target.value)} placeholder="Affiliation…"/>
               <input className="iedit" style={{fontSize:"0.85rem",color:"#7a6840"}} value={npc.metAt||""} onChange={e=>upd(npc.id,"metAt",e.target.value)} placeholder="First met at…"/>
@@ -738,16 +812,15 @@ function Locations({locations,setLocations}) {
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Location"}</button>
     </div>
     {showForm&&<div className="add-form">
-      <div className="sect-label" style={{marginBottom:"0.8rem"}}>New Location</div>
       <div className="col">
         <input className="g-input" placeholder="Location name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addLoc()}/>
         <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.45,borderColor:form.type===t?"#8a6830":"",color:form.type===t?"#e2b94e":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{t}</button>)}</div>
-        <textarea className="g-textarea" rows={3} placeholder="Description, atmosphere, notable features…" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
+        <textarea className="g-textarea" rows={3} placeholder="Description…" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
         <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addLoc}>⊕ Add</button></div>
       </div>
     </div>}
     <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-    {locations.length===0&&<div className="card empty-state">No locations recorded.<br/><span style={{fontSize:"0.62rem"}}>Mark the first place your party visited.</span></div>}
+    {locations.length===0&&<div className="card empty-state">No locations recorded.</div>}
     {visible.map(loc=>{const open=!!expanded[loc.id];return(
       <div key={loc.id} className={`card${loc.pinned?" pinned":""}`} style={{padding:"1rem 1.1rem"}}>
         <div className="entity-header">
@@ -763,7 +836,7 @@ function Locations({locations,setLocations}) {
         <TagsEditor tags={loc.tags||[]} onChange={v=>upd(loc.id,"tags",v)}/>
         {open&&<div style={{marginTop:"0.8rem"}}>
           <div className="row" style={{gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.7rem"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:loc.type===t?1:0.4,borderColor:loc.type===t?"#8a6830":"",color:loc.type===t?"#e2b94e":""}} onClick={()=>upd(loc.id,"type",t)}>{t}</button>)}</div>
-          <textarea className="g-textarea" rows={4} placeholder="Geography, atmosphere, notable features, dangers…" value={loc.notes||""} onChange={e=>upd(loc.id,"notes",e.target.value)}/>
+          <textarea className="g-textarea" rows={4} placeholder="Geography, atmosphere, dangers…" value={loc.notes||""} onChange={e=>upd(loc.id,"notes",e.target.value)}/>
           <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(loc.id)}>Remove</button></div>
         </div>}
       </div>
@@ -863,7 +936,7 @@ function SessionLog({sessions,setSessions,npcs,locations,quests,inventory,skills
         </div>
         {open&&<div className="sess-body">
           {editing?<>
-            <textarea className="g-textarea" rows={6} autoFocus placeholder="Write your session notes… NPC names, locations, quests, items and skills become coloured links." value={sess.notes} onChange={e=>upd(sess.id,"notes",e.target.value)}/>
+            <textarea className="g-textarea" rows={6} autoFocus placeholder="Write your session notes… named entities become coloured links." value={sess.notes} onChange={e=>upd(sess.id,"notes",e.target.value)}/>
             <div className="row mt05" style={{justifyContent:"space-between"}}>
               <button className="btn-ghost" onClick={()=>del(sess.id)}>Expunge Record</button>
               <button className="btn-gold" onClick={()=>setEditingId(null)}>✓ Done</button>
@@ -890,10 +963,9 @@ function QuestTracker({quests,setQuests}) {
   const del=id=>setQuests(q=>q.filter(x=>x.id!==id));
   const upd=(id,f,v)=>setQuests(q=>q.map(x=>x.id===id?{...x,[f]:v}:x));
   const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
-  const addStep=(id)=>setQuests(q=>q.map(x=>x.id===id?{...x,steps:[...(x.steps||[]),{id:Date.now(),text:"",done:false}]}:x));
+  const addStep=id=>setQuests(q=>q.map(x=>x.id===id?{...x,steps:[...(x.steps||[]),{id:Date.now(),text:"",done:false}]}:x));
   const updStep=(id,sid,f,v)=>setQuests(q=>q.map(x=>x.id===id?{...x,steps:(x.steps||[]).map(s=>s.id===sid?{...s,[f]:v}:s)}:x));
   const delStep=(id,sid)=>setQuests(q=>q.map(x=>x.id===id?{...x,steps:(x.steps||[]).filter(s=>s.id!==sid)}:x));
-
   return <>
     <div className="card">
       <div className="sect-label">Issue New Mandate</div>
@@ -904,44 +976,40 @@ function QuestTracker({quests,setQuests}) {
         <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addQuest}>⊕ Add Quest</button></div>
       </div>
     </div>
-    {quests.length===0&&<div className="card empty-state">No mandates issued.<br/><span style={{fontSize:"0.62rem"}}>The board awaits your first quest.</span></div>}
+    {quests.length===0&&<div className="card empty-state">No mandates issued.</div>}
     {["Active","Completed","Failed"].map(status=>{
       const filtered=quests.filter(q=>q.status===status); if(!filtered.length)return null;
       const lc=status==="Active"?"#e2b94e":status==="Completed"?"#6acc6a":"#cc4444";
       return <div key={status} style={{display:"flex",flexDirection:"column",gap:"0.5rem"}}>
         <div className="sect-label" style={{color:lc}}>{status} <span style={{color:"#4a3a20"}}>({filtered.length})</span></div>
         {filtered.map(quest=>{
-          const open=!!expanded[quest.id];
-          const steps=quest.steps||[];
+          const open=!!expanded[quest.id]; const steps=quest.steps||[];
           const doneCount=steps.filter(s=>s.done).length;
           return <div key={quest.id} className={`quest-entry ${status.toLowerCase()}`}>
             <div className="row" style={{alignItems:"flex-start"}}>
               <div className="flex1">
                 <div className="row" style={{marginBottom:"0.3rem",flexWrap:"wrap",gap:"0.4rem"}}>
                   <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e0d6b4",fontWeight:700}} value={quest.name} onChange={e=>upd(quest.id,"name",e.target.value)} placeholder="Quest name…"/>
-                  <span className={`badge ${status.toLowerCase()}`} onClick={()=>cycle(quest.id)} title="Tap to cycle">{status}</span>
+                  <span className={`badge ${status.toLowerCase()}`} onClick={()=>cycle(quest.id)}>{status}</span>
                 </div>
                 <input className="iedit" style={{fontSize:"0.92rem",color:"#9a8050",fontStyle:"italic"}} value={quest.description||""} onChange={e=>upd(quest.id,"description",e.target.value)} placeholder="Description…"/>
                 {quest.reward&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",color:"#6acc6a",marginTop:"0.3rem"}}>⭐ {quest.reward}</div>}
-                {steps.length>0&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",color:"#7a6840",marginTop:"0.25rem"}}>{doneCount}/{steps.length} steps done</div>}
+                {steps.length>0&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",color:"#7a6840",marginTop:"0.2rem"}}>{doneCount}/{steps.length} steps</div>}
               </div>
               <button className="entity-toggle" onClick={()=>toggle(quest.id)} style={{marginTop:"0.1rem"}}>{open?"▲":"▼"}</button>
               <button onClick={()=>del(quest.id)} style={{background:"transparent",border:"none",color:"#4a3a2a",cursor:"pointer",fontSize:"0.85rem",padding:"0.1rem 0.2rem",transition:"color 0.15s",flexShrink:0}} onMouseEnter={e=>e.currentTarget.style.color="#c04040"} onMouseLeave={e=>e.currentTarget.style.color="#4a3a2a"}>✕</button>
             </div>
             {open&&<div style={{marginTop:"0.7rem"}}>
-              {/* Steps checklist */}
               {steps.map(step=><div key={step.id} className="checklist-item">
                 <div className={`check-box${step.done?" checked":""}`} onClick={()=>updStep(quest.id,step.id,"done",!step.done)}/>
                 <input className={`iedit flex1 checklist-text${step.done?" done":""}`} style={{fontSize:"0.92rem",color:step.done?"#5a4a28":"#ccc0a0"}} value={step.text} onChange={e=>updStep(quest.id,step.id,"text",e.target.value)} placeholder="Step description…"/>
                 <button style={{background:"transparent",border:"none",color:"#3a2a1a",cursor:"pointer",fontSize:"0.75rem",transition:"color 0.15s"}} onMouseEnter={e=>e.currentTarget.style.color="#c04040"} onMouseLeave={e=>e.currentTarget.style.color="#3a2a1a"} onClick={()=>delStep(quest.id,step.id)}>✕</button>
               </div>)}
-              <div className="row mt05" style={{justifyContent:"space-between"}}>
+              <div className="row mt05" style={{justifyContent:"space-between",alignItems:"flex-end"}}>
                 <button className="btn-sm" onClick={()=>addStep(quest.id)}>+ Step</button>
-                <div className="row" style={{gap:"0.4rem"}}>
-                  <div style={{display:"flex",flexDirection:"column",gap:"0.15rem"}}>
-                    <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",color:"#6a5830",textTransform:"uppercase"}}>Reward</span>
-                    <input className="iedit" style={{fontSize:"0.88rem",color:"#6acc6a",minWidth:120}} value={quest.reward||""} onChange={e=>upd(quest.id,"reward",e.target.value)} placeholder="Gold, items, XP…"/>
-                  </div>
+                <div style={{display:"flex",flexDirection:"column",gap:"0.1rem"}}>
+                  <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",color:"#6a5830",textTransform:"uppercase"}}>Reward</span>
+                  <input className="iedit" style={{fontSize:"0.88rem",color:"#6acc6a",minWidth:120}} value={quest.reward||""} onChange={e=>upd(quest.id,"reward",e.target.value)} placeholder="Gold, items, XP…"/>
                 </div>
               </div>
             </div>}
@@ -973,6 +1041,7 @@ export default function HeroJournal() {
   const [skills,   setSkills]   = useState(()=>load("hj_skills",    []));
   const [sessions, setSessions] = useState(()=>load("hj_sessions",  []));
   const [quests,   setQuests]   = useState(()=>load("hj_quests",    []));
+  const [showReset,setShowReset]= useState(false);
 
   useEffect(()=>{save("hj_char",      char);},[char]);
   useEffect(()=>{save("hj_inventory", inventory);},[inventory]);
@@ -984,14 +1053,31 @@ export default function HeroJournal() {
 
   const handleNavigate=useCallback(t=>setTab(t),[]);
 
+  const handleReset=()=>{
+    ALL_KEYS.forEach(k=>localStorage.removeItem(k));
+    setChar(DEFAULT_CHAR);
+    setInventory([]); setNPCs([]); setLocations([]);
+    setSkills([]); setSessions([]); setQuests([]);
+    setTab("character");
+    setShowReset(false);
+  };
+
   return <>
     <style>{CSS}</style>
+    {showReset&&<ResetModal onConfirm={handleReset} onCancel={()=>setShowReset(false)}/>}
     <div className="hj-root">
       <header className="hj-header">
-        <div style={{maxWidth:780,margin:"0 auto"}}>
+        <div style={{maxWidth:780,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div className="hj-logo"><span style={{fontSize:"1rem",opacity:0.85}}>⚔</span>Hero Journal</div>
+          <button
+            className="btn-danger"
+            style={{fontSize:"0.55rem",padding:"0.2rem 0.55rem",letterSpacing:"0.1em"}}
+            onClick={()=>setShowReset(true)}
+            title="Reset all data"
+          >↺ Reset</button>
         </div>
       </header>
+
       <main className="hj-content">
         {tab==="character"&&<CharacterSheet char={char} setChar={setChar} inventory={inventory}/>}
         {tab==="inventory"&&<Pack inventory={inventory} setInventory={setInventory}/>}
@@ -1001,6 +1087,7 @@ export default function HeroJournal() {
         {tab==="sessions" &&<SessionLog sessions={sessions} setSessions={setSessions} npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab==="quests"   &&<QuestTracker quests={quests} setQuests={setQuests}/>}
       </main>
+
       <nav className="hj-bottom-nav">
         {TABS.map(t=><button key={t.id} className={`hj-nav-btn${tab===t.id?" active":""}`} onClick={()=>setTab(t.id)}>
           <span className="hj-nav-icon">{t.icon}</span>
