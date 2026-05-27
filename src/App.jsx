@@ -20,6 +20,9 @@ const THEMES = {
     sessEntry:"#171208", combatBox:"#130f0c",
     spellSlotBox:"#130f0c", spellSlotBorder:"#1a3a6a",
     packItem:"#1a1510", packItemBorder:"#2e2618", packFieldInput:"#0f0c09",
+    spellAccent:"#64a0e6", spellBorder:"#1a4a8a", spellMuted:"#4a7aaa",
+    spellDim:"#2a4a6a", spellText:"#c8d8f0", spellBg:"rgba(100,160,230,0.08)",
+    questReward:"#5a9a5a",
   },
   light: {
     bg:"#f0e8d5", bgCard:"#faf3e4", bgInput:"#ede3cc", bgNav:"#e8dcc8",
@@ -35,6 +38,9 @@ const THEMES = {
     sessEntry:"#f5ecda", combatBox:"#ede3cc",
     spellSlotBox:"#ede3cc", spellSlotBorder:"#8ab0d0",
     packItem:"#f0e8d5", packItemBorder:"#c8a86a", packFieldInput:"#e8dcc8",
+    spellAccent:"#3a5a9a", spellBorder:"#5a7ab0", spellMuted:"#4a5a8a",
+    spellDim:"#6a7aaa", spellText:"#2a3a6a", spellBg:"rgba(58,90,154,0.08)",
+    questReward:"#3a6a3a",
   },
 };
 
@@ -193,12 +199,12 @@ function buildCSS(t) {
   .equipped-stat { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: ${t.textMuted}; font-style: italic; }
   .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; flex-shrink: 0; }
   .equipped-skill-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #5a3a8a; color: #a87acc; background: rgba(168,122,204,0.08); flex-shrink: 0; }
-  .equipped-spell-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; }
+  .equipped-spell-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #1a4a8a; color: var(--spell-accent); background: rgba(100,160,230,0.08); flex-shrink: 0; }
 
   /* Spell slots (inside subtab) */
   .spell-slot-box { background: ${t.spellSlotBox}; border: 1px solid ${t.spellSlotBorder}; text-align: center; padding: 0.4rem 0.2rem; }
-  .spell-slot-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #4a7aaa; display: block; margin-bottom: 0.2rem; }
-  .spell-slot-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #64a0e6; text-align: center; width: 100%; }
+  .spell-slot-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: var(--spell-muted); display: block; margin-bottom: 0.2rem; }
+  .spell-slot-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: var(--spell-accent); text-align: center; width: 100%; }
 
   /* Pack items */
   .pack-item { background: ${t.packItem}; border: 1px solid ${t.packItemBorder}; padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; }
@@ -231,7 +237,9 @@ function buildCSS(t) {
   .pip.filled { background: ${t.accent}; border-color: ${t.accentBorder}; }
 
   /* Spell badges */
-  .spell-level-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; text-transform: uppercase; }
+  /* Spell color adapts to theme */
+  .hj-root { --spell-accent: ${t.spellAccent}; --spell-border: ${t.spellBorder}; --spell-muted: ${t.spellMuted}; --spell-dim: ${t.spellDim}; --spell-text: ${t.spellText}; --spell-bg: ${t.spellBg}; --quest-reward: ${t.questReward}; }
+  .spell-level-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid var(--spell-border); color: var(--spell-accent); background: var(--spell-bg); flex-shrink: 0; text-transform: uppercase; }
   .spell-school-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #2a2a5a; color: #8888cc; background: rgba(100,100,200,0.06); flex-shrink: 0; text-transform: uppercase; }
 
   /* NPC / Location */
@@ -271,10 +279,11 @@ function buildCSS(t) {
   .entity-link-skill:hover  { background:rgba(122,90,170,0.22); }
 
   /* Session log tooltip */
-  .entity-tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: ${t.bgCard}; border: 1px solid ${t.border}; padding: 0.5rem 0.7rem; min-width: 180px; max-width: 260px; z-index: 500; pointer-events: none; box-shadow: 0 4px 16px ${t.shadowBot}; }
-  .entity-tooltip-name { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.12em; font-weight: 700; color: ${t.accent}; margin-bottom: 0.25rem; }
-  .entity-tooltip-sub  { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; color: ${t.textMuted}; margin-bottom: 0.25rem; }
-  .entity-tooltip-body { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: ${t.text}; line-height: 1.45; }
+  .entity-tooltip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: ${t.bgCard}; border: 1px solid ${t.border}; padding: 0.55rem 0.75rem; min-width: 200px; max-width: 280px; z-index: 500; pointer-events: none; box-shadow: 0 6px 24px ${t.shadowBot}; display: flex; flex-direction: column; gap: 0.2rem; white-space: normal; word-break: normal; }
+  .entity-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: ${t.border}; }
+  .entity-tooltip-name { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.12em; font-weight: 700; color: ${t.accent}; display: block; line-height: 1.3; }
+  .entity-tooltip-sub  { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; color: ${t.textMuted}; display: block; opacity: 0.8; }
+  .entity-tooltip-body { font-family: 'Crimson Text', Georgia, serif; font-size: 0.9rem; color: ${t.text}; line-height: 1.5; display: block; margin-top: 0.15rem; border-top: 1px solid ${t.borderSub}; padding-top: 0.2rem; }
 
   .sess-legend { display:flex; gap:0.7rem; flex-wrap:wrap; padding:0.5rem 0.7rem; background:rgba(226,185,78,0.03); border:1px solid ${t.border}; margin-bottom:0.6rem; align-items:center; }
   .sess-legend-item { display:flex; align-items:center; gap:0.3rem; font-family:'Cinzel',serif; font-size:0.48rem; letter-spacing:0.08em; text-transform:uppercase; }
@@ -300,6 +309,42 @@ function buildCSS(t) {
   .checklist-text.done { text-decoration:line-through; color:${t.textDim}; }
 
   /* Modal */
+  /* ── Profile / character select screen ── */
+  .profile-screen { position: fixed; inset: 0; background: ${t.bg}; z-index: 200; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 6rem; overflow-y: auto; }
+  .profile-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.8rem; font-weight: 700; color: ${t.accent}; letter-spacing: 0.12em; text-align: center; margin-bottom: 0.4rem; text-shadow: 0 0 30px rgba(226,185,78,0.3); }
+  .profile-tagline { font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; color: ${t.textMuted}; font-style: italic; text-align: center; margin-bottom: 2rem; }
+  .profile-list { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .profile-card { background: ${t.bgCard}; border: 1px solid ${t.border}; padding: 0.9rem 1.1rem; display: flex; align-items: center; gap: 0.8rem; cursor: pointer; transition: all 0.18s; position: relative; }
+  .profile-card:hover { border-color: ${t.accentBorder}; box-shadow: 0 0 0 1px ${t.accentBorder}; }
+  .profile-card.active-profile { border-color: ${t.accent}; border-left: 3px solid ${t.accent}; }
+  .profile-card-icon { font-size: 1.8rem; flex-shrink: 0; line-height: 1; }
+  .profile-card-name { font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700; color: ${t.text}; }
+  .profile-card-sub { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: ${t.textMuted}; font-style: italic; margin-top: 0.1rem; }
+  .profile-card-del { position: absolute; top: 0.4rem; right: 0.5rem; background: transparent; border: none; cursor: pointer; font-size: 0.75rem; color: ${t.textDim}; opacity: 0.4; transition: all 0.15s; padding: 0.15rem 0.3rem; }
+  .profile-card-del:hover { color: #c04040; opacity: 1; }
+  .btn-new-profile { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; background: transparent; color: ${t.accent}; border: 1px dashed ${t.accentBorder}; padding: 0.75rem 1.5rem; cursor: pointer; transition: all 0.2s; width: 100%; max-width: 440px; }
+  .btn-new-profile:hover { background: rgba(226,185,78,0.08); border-style: solid; }
+
+  /* ── Wizard / creator ── */
+  .wizard-screen { position: fixed; inset: 0; background: ${t.bg}; z-index: 300; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; overflow-y: auto; }
+  .wizard-box { width: 100%; max-width: 480px; }
+  .wizard-title { font-family: 'Cinzel Decorative', serif; font-size: 1.3rem; font-weight: 700; color: ${t.accent}; margin-bottom: 0.3rem; }
+  .wizard-sub { font-family: 'Crimson Text', Georgia, serif; font-size: 1rem; color: ${t.textMuted}; font-style: italic; margin-bottom: 1.5rem; }
+  .wizard-step-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: ${t.textDim}; margin-bottom: 0.4rem; }
+  .wizard-class-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; margin-bottom: 0.6rem; }
+  .wizard-class-btn { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; padding: 0.6rem 0.3rem; cursor: pointer; transition: all 0.15s; text-align: center; }
+  .wizard-class-btn:hover { border-color: ${t.accentBorder}; }
+  .wizard-class-btn.selected { border-color: ${t.accent}; background: rgba(226,185,78,0.08); }
+  .wizard-class-icon { font-size: 1.3rem; display: block; margin-bottom: 0.2rem; }
+  .wizard-class-name { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; color: ${t.textLabel}; }
+  .wizard-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.4rem; margin-bottom: 0.8rem; }
+  .wizard-stat-box { background: ${t.bgInput}; border: 1px solid ${t.borderInput}; text-align: center; padding: 0.4rem 0.2rem; }
+  .wizard-stat-label { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.12em; color: ${t.textLabel}; display: block; margin-bottom: 0.15rem; }
+  .wizard-stat-val { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700; color: ${t.accent}; }
+  .wizard-step-dots { display: flex; gap: 0.4rem; justify-content: center; margin-bottom: 1.5rem; }
+  .wizard-dot { width: 7px; height: 7px; border-radius: 50%; background: ${t.borderInput}; transition: all 0.2s; }
+  .wizard-dot.active { background: ${t.accent}; }
+
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
   .modal-box { background:${t.modalBg}; border:1px solid #6a2a2a; padding:1.5rem; max-width:380px; width:100%; }
   .modal-title { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
@@ -382,7 +427,41 @@ const DEFAULT_CHAR = {
 
 const load = (key,fb) => { try { return JSON.parse(localStorage.getItem(key))??fb; } catch { return fb; } };
 const save = (key,val) => { try { localStorage.setItem(key,JSON.stringify(val)); } catch {} };
-const ALL_KEYS = ["hj_char","hj_inventory","hj_npcs","hj_locations","hj_skills","hj_spells","hj_sessions","hj_quests","hj_theme"];
+
+/* ═══════════════════════════════════════════════
+   MULTI-CHARACTER STORAGE
+   Global: hj_theme, hj_profiles (index of all chars)
+   Per character: hj_char_{id}, hj_inventory_{id}, etc.
+═══════════════════════════════════════════════ */
+const CHAR_SLOTS = ["char","inventory","npcs","locations","skills","spells","sessions","quests"];
+const ALL_GLOBAL_KEYS = ["hj_theme","hj_profiles","hj_active_profile"];
+
+const charKey  = (slot, id) => `hj_${slot}_${id}`;
+const loadChar = (slot, id, fb) => load(charKey(slot,id), fb);
+const saveChar = (slot, id, val) => save(charKey(slot,id), val);
+const deleteCharData = id => CHAR_SLOTS.forEach(s=>localStorage.removeItem(charKey(s,id)));
+
+const loadProfiles = () => load("hj_profiles", []);
+const saveProfiles = p => save("hj_profiles", p);
+const loadActiveId = () => load("hj_active_profile", null);
+const saveActiveId = id => save("hj_active_profile", id);
+
+// Migrate legacy data (single-char) to profile system on first run
+const migrateLegacy = () => {
+  if (loadProfiles().length > 0) return; // already migrated
+  const legacyChar = load("hj_char", null);
+  if (!legacyChar) return; // no legacy data
+  const id = "profile_" + Date.now();
+  const name = legacyChar.name?.trim() || "My Hero";
+  // copy legacy data to new profile slot
+  CHAR_SLOTS.forEach(slot => {
+    const val = load("hj_" + slot, null);
+    if (val !== null) saveChar(slot, id, val);
+  });
+  saveProfiles([{ id, name, class: (legacyChar.classes||[{name:""}])[0]?.name||"", level: (legacyChar.classes||[{level:1}])[0]?.level||1, created: Date.now() }]);
+  saveActiveId(id);
+};
+
 
 const hpBarColor = pct => pct>70?"linear-gradient(90deg,#1a5a1a,#2a8a2a,#33aa33)":pct>35?"linear-gradient(90deg,#7a4a10,#cc7020,#e08030)":"linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
 const hpNumColor = pct => pct>70?"#3a9a3a":pct>35?"#c06010":"#c03030";
@@ -427,7 +506,7 @@ function EntityLink({ match, part, onNavigate, tabLabel }) {
   const [visible, setVisible] = useState(false);
   const timerRef = useRef(null);
 
-  const show = () => { timerRef.current = setTimeout(()=>setVisible(true), 400); };
+  const show = () => { clearTimeout(timerRef.current); timerRef.current = setTimeout(()=>setVisible(true), 350); };
   const hide = () => { clearTimeout(timerRef.current); setVisible(false); };
 
   return (
@@ -436,20 +515,27 @@ function EntityLink({ match, part, onNavigate, tabLabel }) {
       onClick={() => onNavigate(match.tab)}
       onMouseEnter={show}
       onMouseLeave={hide}
-      onTouchStart={show}
+      onTouchStart={e=>{e.preventDefault();show();}}
       onTouchEnd={hide}
       title={`→ ${tabLabel}: ${match.name}`}
-      style={{position:"relative"}}
+      style={{position:"relative",display:"inline"}}
     >
       {part}
       {visible && (
-        <span className="entity-tooltip">
+        <span className="entity-tooltip" onClick={e=>e.stopPropagation()}>
           <span className="entity-tooltip-name">{match.name}</span>
-          {match.tooltip.sub && <span className="entity-tooltip-sub">{match.tooltip.sub}</span>}
+          {match.tooltip.sub && (
+            <span className="entity-tooltip-sub">
+              {tabLabel}{match.tooltip.sub ? ` · ${match.tooltip.sub}` : ""}
+            </span>
+          )}
           {match.tooltip.body && (
             <span className="entity-tooltip-body">
-              {match.tooltip.body.slice(0,120)}{match.tooltip.body.length>120?"…":""}
+              {match.tooltip.body.slice(0,140)}{match.tooltip.body.length>140?"…":""}
             </span>
+          )}
+          {!match.tooltip.sub && !match.tooltip.body && (
+            <span className="entity-tooltip-sub">{tabLabel}</span>
           )}
         </span>
       )}
@@ -547,26 +633,71 @@ function RestModal({ type, char, setChar, onClose }) {
       <div className="modal-box" onClick={e=>e.stopPropagation()}>
         <div className="modal-title">{isShort?"☽ Short Rest":"☀ Long Rest"}</div>
         {isShort ? <>
-          <p className="modal-text">Spend Hit Dice to recover HP. You have <strong>{available}</strong> of <strong>{hd.max}</strong> {hd.type} remaining.</p>
-          <div className="row" style={{marginBottom:"1rem",gap:"0.5rem"}}>
-            <select className="g-select" style={{width:"auto",fontSize:"0.9rem",padding:"0.3rem 0.5rem"}} value={hd.type} onChange={e=>setChar(c=>({...c,hitDice:{...hd,type:e.target.value}}))}>
+          {/* Short Rest — available dice info */}
+          <p className="modal-text">
+            Spend Hit Dice to recover HP.{" "}
+            <strong style={{color:"inherit"}}>{available}</strong> of <strong style={{color:"inherit"}}>{hd.max}</strong> {hd.type} available.
+          </p>
+          {/* Die type + max editor */}
+          <div style={{display:"flex",alignItems:"center",gap:"0.6rem",marginBottom:"0.8rem",flexWrap:"wrap"}}>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.7}}>Die type</span>
+            <select className="g-select" style={{width:"auto",fontSize:"0.9rem",padding:"0.3rem 0.5rem"}} value={hd.type}
+              onChange={e=>setChar(c=>({...c,hitDice:{...hd,type:e.target.value}}))}>
               {["d4","d6","d8","d10","d12"].map(d=><option key={d} value={d}>{d}</option>)}
             </select>
-            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.6rem"}}>Max:</span>
-            <input type="number" min={1} value={hd.max} onChange={e=>setChar(c=>({...c,hitDice:{...hd,max:parseInt(e.target.value)||1}}))} style={{width:44,fontFamily:"Cinzel,serif",fontSize:"0.9rem",background:"transparent",border:"none",borderBottom:"1px dashed currentColor",outline:"none",textAlign:"center"}}/>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.7}}>Max</span>
+            <input type="number" min={1} value={hd.max}
+              onChange={e=>setChar(c=>({...c,hitDice:{...hd,max:parseInt(e.target.value)||1}}))}
+              style={{width:44,fontFamily:"Cinzel,serif",fontSize:"0.9rem",background:"transparent",border:"none",borderBottom:"1px dashed currentColor",outline:"none",textAlign:"center"}}/>
           </div>
+          {/* Spend stepper */}
           <div className="modal-detail">
-            Spend <input type="number" min={0} max={available} value={hdSpend} onChange={e=>setHdSpend(clamp(parseInt(e.target.value)||0,0,available))} style={{width:36,fontFamily:"Cinzel,serif",fontSize:"1rem",background:"transparent",border:"none",borderBottom:"1px solid currentColor",outline:"none",textAlign:"center"}}/> {hd.type} → ~{clamp(hdSpend,0,available)*Math.ceil(parseInt(hd.type.replace("d",""))/2)+clamp(hdSpend,0,available)*Math.floor((char.stats.CON-10)/2)} HP healed (avg + CON)
+            <div style={{display:"flex",alignItems:"center",gap:"0.5rem",marginBottom:"0.35rem"}}>
+              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase",opacity:0.8}}>Spend</span>
+              <button onClick={()=>setHdSpend(s=>Math.max(0,s-1))} style={{width:26,height:26,background:"transparent",border:"1px solid currentColor",cursor:"pointer",fontFamily:"monospace",fontSize:"1rem",opacity:0.7}}>−</button>
+              <input type="number" min={0} max={available} value={hdSpend}
+                onChange={e=>setHdSpend(clamp(parseInt(e.target.value)||0,0,available))}
+                style={{width:36,fontFamily:"Cinzel,serif",fontSize:"1.1rem",fontWeight:700,background:"transparent",border:"none",borderBottom:"1px solid currentColor",outline:"none",textAlign:"center"}}/>
+              <button onClick={()=>setHdSpend(s=>Math.min(available,s+1))} style={{width:26,height:26,background:"transparent",border:"1px solid currentColor",cursor:"pointer",fontFamily:"monospace",fontSize:"1rem",opacity:0.7}}>+</button>
+              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.72rem",opacity:0.7}}>{hd.type}</span>
+            </div>
+            {(() => {
+              const spend = clamp(hdSpend, 0, available);
+              const dieMax = parseInt(hd.type.replace("d",""))||8;
+              const conMod = Math.floor((char.stats.CON-10)/2);
+              const avg = spend * Math.ceil(dieMax/2) + spend * conMod;
+              const min = spend * 1 + spend * conMod;
+              const max = spend * dieMax + spend * conMod;
+              return <span style={{fontFamily:"Crimson Text,Georgia,serif",fontSize:"0.95rem",fontStyle:"italic",opacity:0.85}}>
+                Heals ~<strong>{Math.max(0,avg)}</strong> HP (range {Math.max(0,min)}–{Math.max(0,max)}, avg + CON {conMod>=0?"+":""}{conMod})
+              </span>;
+            })()}
           </div>
-          <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
+          <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem",marginTop:"0.8rem"}}>
             <button className="btn-ghost" onClick={onClose}>Cancel</button>
-            <button className="btn-gold" onClick={doShortRest}>Rest</button>
+            <button className="btn-gold" onClick={doShortRest}>☽ Rest</button>
           </div>
         </> : <>
-          <p className="modal-text">A full night's rest. You will recover to <strong>full HP</strong>, reset all <strong>Spell Slots</strong>, and regain <strong>{Math.max(1,Math.floor((char.hitDice?.max||1)/2))} Hit Dice</strong>.</p>
+          {/* Long Rest — summary */}
+          <div style={{display:"flex",flexDirection:"column",gap:"0.5rem",marginBottom:"1rem"}}>
+            {[
+              ["❤️","Restore full HP","From " + char.hp.current + " → " + char.hp.max],
+              ["💫","Reset all Spell Slots","Used slots restored to 0"],
+              ["🎲","Recover Hit Dice", (() => { const rec=Math.max(1,Math.floor((char.hitDice?.max||1)/2)); const cur=(char.hitDice?.max||1)-(char.hitDice?.used||0); return `${cur} → ${Math.min(char.hitDice?.max||1, cur+rec)} (regain ${rec})`; })()],
+              ["☠️","Clear Death Saves","Successes & failures reset"],
+            ].map(([icon,label,detail])=>(
+              <div key={label} style={{display:"flex",alignItems:"center",gap:"0.6rem",padding:"0.35rem 0",borderBottom:`1px solid rgba(128,128,128,0.15)`}}>
+                <span style={{fontSize:"1rem",flexShrink:0}}>{icon}</span>
+                <div>
+                  <div style={{fontFamily:"Cinzel,serif",fontSize:"0.65rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>{label}</div>
+                  <div style={{fontFamily:"Crimson Text,Georgia,serif",fontSize:"0.88rem",opacity:0.65,fontStyle:"italic"}}>{detail}</div>
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
             <button className="btn-ghost" onClick={onClose}>Cancel</button>
-            <button className="btn-gold" onClick={doLongRest}>Long Rest</button>
+            <button className="btn-gold" onClick={doLongRest}>☀ Long Rest</button>
           </div>
         </>}
       </div>
@@ -577,8 +708,8 @@ function RestModal({ type, char, setChar, onClose }) {
 function ResetModal({onConfirm,onCancel}) {
   return <div className="modal-overlay" onClick={onCancel}>
     <div className="modal-box" onClick={e=>e.stopPropagation()}>
-      <div className="modal-title">⚠ Full Reset</div>
-      <p className="modal-text">This will permanently erase all character data. This cannot be undone.</p>
+      <div className="modal-title">"⚠ Full Reset"</div>
+      <p className="modal-text">"This will permanently erase all character data. This cannot be undone."</p>
       <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
         <button className="btn-ghost" onClick={onCancel}>Cancel</button>
         <button className="btn-danger" onClick={onConfirm}>Erase Everything</button>
@@ -604,12 +735,12 @@ function SpellSlotsWidget({ char, setChar, spells }) {
               <input className="spell-slot-input" type="number" min={0} value={sl.used||0}
                 onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),used:Math.max(0,parseInt(e.target.value)||0)}}}))}
                 style={{width:28,fontSize:"0.9rem"}}/>
-              <span style={{color:"#2a5a8a",fontSize:"0.7rem"}}>/</span>
+              <span style={{color:"var(--spell-border)",fontSize:"0.7rem"}}>/</span>
               <input className="spell-slot-input" type="number" min={0} value={sl.max||0}
                 onChange={e=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lv]:{...((c.spellSlots||{})[lv]||{max:0,used:0}),max:Math.max(0,parseInt(e.target.value)||0)}}}))}
-                style={{width:28,fontSize:"0.9rem",color:"#4a7aaa"}}/>
+                style={{width:28,fontSize:"0.9rem",color:"var(--spell-muted)"}}/>
             </div>
-            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",color:"#2a4a6a",textTransform:"uppercase",marginTop:"0.1rem",display:"block"}}>{count} spell{count!==1?"s":""}</span>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",color:"var(--spell-dim)",textTransform:"uppercase",marginTop:"0.1rem",display:"block"}}>{count} spell{count!==1?"s":""}</span>
           </div>
         );
       })}
@@ -670,7 +801,7 @@ function CharacterSheet({ char, setChar, inventory, skills, spells }) {
 
     {/* ══ CHARACTER card ══ */}
     <div className="card">
-      <div className="sect-label">Character</div>
+      <div className="sect-label">"Character"</div>
 
       {/* Name */}
       <div style={{marginBottom:"1rem"}}>
@@ -706,28 +837,31 @@ function CharacterSheet({ char, setChar, inventory, skills, spells }) {
         </div>
       </div>
 
-      {/* ─ Attributes ─ */}
+      {/* ─ Attributes + ST inline — one grid, ST sits inside each stat box ─ */}
       <hr className="inner-divider" data-label="Attributes — tap to edit" style={{marginTop:"1.1rem"}}/>
-      <div className="stat-grid-6" style={{marginTop:"0.8rem"}}>{STAT_KEYS.map(k=><StatBox key={k} label={k} value={char.stats[k]} onChange={v=>updSt(k,v)}/>)}</div>
-
-      {/* ST row under attributes */}
-      <div className="stat-grid-6" style={{gap:"0.5rem",marginTop:"0.2rem"}}>
+      <div className="stat-grid-6" style={{marginTop:"0.8rem"}}>
         {SAVING_THROWS.map(st=>{
           const prof=!!(char.savingThrows||{})[st.key];
           const exp =!!(char.savingThrowExp||{})[st.key];
           const base=Math.floor((char.stats[st.attr]-10)/2);
           const auto=exp?base+pb*2:prof?base+pb:base;
           const over=(char.savingThrowOverride||{})[st.key];
-          const val=over!==undefined?over:auto;
+          const stVal=over!==undefined?over:auto;
+          const stColor=exp?"#64c8e0":prof?"#c9a84c":"inherit";
           return (
-            <div key={st.key} style={{textAlign:"center"}}>
-              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",textTransform:"uppercase",display:"block",marginBottom:"1px"}}>ST</span>
-              <input type="number" value={val}
-                title={over!==undefined?"Manual override — double-click to reset":"Auto from stats"}
-                style={{background:over!==undefined?"rgba(226,185,78,0.06)":"transparent",border:"none",borderBottom:over!==undefined?"1px solid currentColor":"1px dashed rgba(128,128,128,0.3)",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.82rem",fontWeight:700,color:exp?"#64c8e0":prof?"#c9a84c":"inherit",textAlign:"center",width:"100%",padding:"0.1rem 0"}}
-                onChange={e=>{const n=parseInt(e.target.value);setChar(c=>({...c,savingThrowOverride:{...(c.savingThrowOverride||{}),[st.key]:isNaN(n)?undefined:n}}));}}
-                onDoubleClick={()=>setChar(c=>{const o={...(c.savingThrowOverride||{})};delete o[st.key];return{...c,savingThrowOverride:o};})}
-              />
+            <div key={st.key} style={{display:"flex",flexDirection:"column",gap:0}}>
+              {/* Stat box — tap to edit */}
+              <StatBox label={st.key.toUpperCase()} value={char.stats[st.attr]} onChange={v=>updSt(st.attr,v)}/>
+              {/* ST value — directly below, same width */}
+              <div className="stat-box" style={{borderTop:"none",textAlign:"center",padding:"0.2rem 0.1rem",cursor:"default"}}>
+                <span style={{fontFamily:"Cinzel,serif",fontSize:"0.44rem",letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.45,display:"block",lineHeight:1}}>ST</span>
+                <input type="number" value={stVal}
+                  title={over!==undefined?"Manual override — double-click to reset":"Auto · double-click to reset"}
+                  style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.85rem",fontWeight:700,color:stColor,textAlign:"center",width:"100%",padding:"0.1rem 0",lineHeight:1}}
+                  onChange={e=>{const n=parseInt(e.target.value);setChar(c=>({...c,savingThrowOverride:{...(c.savingThrowOverride||{}),[st.key]:isNaN(n)?undefined:n}}));}}
+                  onDoubleClick={()=>setChar(c=>{const o={...(c.savingThrowOverride||{})};delete o[st.key];return{...c,savingThrowOverride:o};})}
+                />
+              </div>
             </div>
           );
         })}
@@ -735,37 +869,63 @@ function CharacterSheet({ char, setChar, inventory, skills, spells }) {
 
       {/* ─ Vitality ─ */}
       <hr className="inner-divider" data-label="Vitality" style={{marginTop:"1.1rem"}}/>
-      <div style={{marginTop:"0.8rem",display:"grid",gridTemplateColumns:"auto 1fr",gap:"0.6rem",alignItems:"center"}}>
-        <div style={{display:"flex",alignItems:"center",gap:"0.4rem",whiteSpace:"nowrap"}}>
-          <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-          <div className="hp-display">
-            <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-            <span className="hp-sep">/</span>
-            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
-          </div>
-          <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
-          <span className="hp-label">HP</span>
+      {/* HP row — minus | cur/max | plus | Temp HP inline */}
+      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"center",gap:"0.4rem"}}>
+        <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+        <div className="hp-display">
+          <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+          <span className="hp-sep">/</span>
+          <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.4rem"}}>
-          <div className="combat-box"><span className="combat-box-label">Temp HP</span><input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/></div>
-          <div className="combat-box"><span className="combat-box-label">Armor Class</span><input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/></div>
-          <div className="combat-box" title="DEX mod by default — edit to override"><span className="combat-box-label">Initiative</span><input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/></div>
+        <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+        {/* Temp HP — uses combat-box class for consistent styling */}
+        <div className="combat-box" style={{marginLeft:"0.3rem",minWidth:56,padding:"0.25rem 0.4rem"}}>
+          <span className="combat-box-label">Tmp HP</span>
+          <input className="combat-box-input" type="number" value={char.hp.temp||0}
+            onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
         </div>
       </div>
+      {/* HP bar + pct */}
       <div className="hp-bar-bg" style={{marginTop:"0.5rem"}}><div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/></div>
       <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
+      {/* AC + Initiative — full width below bar */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem",marginTop:"0.5rem"}}>
+        <div className="combat-box"><span className="combat-box-label">Armor Class</span><input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/></div>
+        <div className="combat-box" title="DEX mod by default — edit to override"><span className="combat-box-label">Initiative</span><input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/></div>
+      </div>
 
-      {/* Hit Dice + Rest buttons */}
-      <div style={{display:"flex",alignItems:"center",gap:"0.6rem",marginTop:"0.7rem",flexWrap:"wrap"}}>
-        <div className="hd-box" style={{display:"flex",alignItems:"center",gap:"0.4rem",padding:"0.3rem 0.7rem",flex:"0 0 auto"}}>
-          <span className="hd-label" style={{marginBottom:0}}>Hit Dice</span>
-          <select style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.78rem",cursor:"pointer",color:"inherit"}} value={(char.hitDice||{type:"d8"}).type} onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),type:e.target.value}}))}>{["d4","d6","d8","d10","d12"].map(d=><option key={d} value={d}>{d}</option>)}</select>
-          <input type="number" min={0} value={(char.hitDice||{used:0}).used||0} onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),used:parseInt(e.target.value)||0}}))} style={{width:28,background:"transparent",border:"none",borderBottom:"1px dashed currentColor",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.82rem",textAlign:"center",color:"inherit"}}/>
-          <span style={{fontSize:"0.7rem"}}>/</span>
-          <input type="number" min={1} value={(char.hitDice||{max:1}).max||1} onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),max:parseInt(e.target.value)||1}}))} style={{width:28,background:"transparent",border:"none",borderBottom:"1px dashed currentColor",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.82rem",textAlign:"center",color:"inherit"}}/>
+      {/* Hit Dice + Rest — grid: [HD tracker] [Short] [Long] */}
+      <div style={{display:"grid",gridTemplateColumns:"auto 1fr 1fr",gap:"0.5rem",marginTop:"0.6rem",alignItems:"stretch"}}>
+        {/* Hit Dice tracker — combat-box for consistent bg/border */}
+        <div className="combat-box" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0.3rem 0.6rem",gap:"0.15rem"}}>
+          <span className="combat-box-label">Hit Dice</span>
+          <div style={{display:"flex",alignItems:"center",gap:"0.25rem"}}>
+            <select className="combat-box-input" style={{width:"auto",cursor:"pointer",fontSize:"0.78rem"}}
+              value={(char.hitDice||{type:"d8"}).type}
+              onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),type:e.target.value}}))}>
+              {["d4","d6","d8","d10","d12"].map(d=><option key={d} value={d}>{d}</option>)}
+            </select>
+            <input type="number" min={0} value={(char.hitDice||{used:0}).used||0}
+              onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),used:parseInt(e.target.value)||0}}))}
+              className="combat-box-input" style={{width:26,borderBottom:"1px dashed currentColor"}}/>
+            <span style={{fontSize:"0.65rem",opacity:0.4}}>/</span>
+            <input type="number" min={1} value={(char.hitDice||{max:1}).max||1}
+              onChange={e=>setChar(c=>({...c,hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),max:parseInt(e.target.value)||1}}))}
+              className="combat-box-input" style={{width:26,opacity:0.55}}/>
+          </div>
         </div>
-        <button className="btn-rest short" onClick={()=>setRestModal("short")}>☽ Short Rest</button>
-        <button className="btn-rest long"  onClick={()=>setRestModal("long")}>☀ Long Rest</button>
+        {/* Short Rest */}
+        <button className="btn-rest short" onClick={()=>setRestModal("short")}
+          style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"0.1rem",padding:"0.4rem 0.5rem"}}>
+          <span style={{fontSize:"1.1rem",lineHeight:1}}>☽</span>
+          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Short Rest</span>
+        </button>
+        {/* Long Rest */}
+        <button className="btn-rest long" onClick={()=>setRestModal("long")}
+          style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"0.1rem",padding:"0.4rem 0.5rem"}}>
+          <span style={{fontSize:"1.1rem",lineHeight:1}}>☀</span>
+          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Long Rest</span>
+        </button>
       </div>
 
       {/* ─ Saving Throws ─ */}
@@ -858,7 +1018,7 @@ function CharacterSheet({ char, setChar, inventory, skills, spells }) {
           const usedLevels=[...new Set((spells||[]).map(s=>s.level).filter(l=>l!=="Cantrip"))];
           if (!usedLevels.length) return null;
           return <div style={{marginBottom:"1rem"}}>
-            <div style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"0.4rem",opacity:0.6}}>Spell Slots</div>
+            <div style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.16em",textTransform:"uppercase",marginBottom:"0.4rem",color:"var(--spell-muted)"}}>Spell Slots</div>
             <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
           </div>;
         })()}
@@ -1060,24 +1220,24 @@ function SpellsTab({spells,setSpells,char,setChar}) {
 
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#4a7aaa"}}>{spells.length} spells{inUseCount>0?` · ${inUseCount} prepared`:""}</span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"var(--spell-muted)"}}>{spells.length} spells{inUseCount>0?` · ${inUseCount} prepared`:""}</span>
       <div className="row" style={{gap:"0.5rem"}}>
-        <button className="btn-sm" style={{borderColor:"#1a4a8a",color:"#64a0e6"}} onClick={()=>setShowSlots(s=>!s)}>{showSlots?"✕ Slots":"⚙ Slots"}</button>
+        <button className="btn-sm" style={{borderColor:"var(--spell-border)",color:"var(--spell-accent)"}} onClick={()=>setShowSlots(s=>!s)}>{showSlots?"✕ Slots":"⚙ Slots"}</button>
         <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Spell"}</button>
       </div>
     </div>
 
-    {showSlots&&<div className="card" style={{borderColor:"#1a3a6a"}}>
-      <div className="sect-label" style={{color:"#64a0e6"}}>Spell Slots & Casting</div>
+    {showSlots&&<div className="card" style={{borderColor:"var(--spell-border)"}}>
+      <div className="sect-label" style={{color:"var(--spell-accent)"}}>Spell Slots & Casting</div>
       <div style={{display:"flex",alignItems:"center",gap:"0.6rem",marginBottom:"0.7rem",flexWrap:"wrap"}}>
-        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.14em",color:"#4a7aaa",textTransform:"uppercase"}}>Casting Ability</span>
+        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.14em",color:"var(--spell-muted)",textTransform:"uppercase"}}>Casting Ability</span>
         <select className="g-select" style={{width:"auto",fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={char.spellcastingAbility||"INT"} onChange={e=>setChar(c=>({...c,spellcastingAbility:e.target.value}))}>{STAT_KEYS.map(s=><option key={s} value={s}>{s}</option>)}</select>
-        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.72rem",color:"#64a0e6"}}>DC {8+pb+spMod} · Atk {numMod(pb+spMod)}</span>
+        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.72rem",color:"var(--spell-accent)"}}>DC {8+pb+spMod} · Atk {numMod(pb+spMod)}</span>
       </div>
       <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
     </div>}
 
-    {showForm&&<div className="add-form" style={{borderColor:"#1a3a6a"}}><div className="col">
+    {showForm&&<div className="add-form" style={{borderColor:"var(--spell-border)"}}><div className="col">
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
         <input className="g-input" placeholder="Spell name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSpell()}/>
         <select className="g-select" value={form.school} onChange={e=>setForm(f=>({...f,school:e.target.value}))}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select>
@@ -1105,11 +1265,11 @@ function SpellsTab({spells,setSpells,char,setChar}) {
         <div className="entity-header">
           <div className="flex1">
             <div className="row" style={{gap:"0.5rem",marginBottom:"0.3rem",flexWrap:"wrap"}}>
-              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.98rem",color:"#c8d8f0",fontWeight:700}} value={sp.name} onChange={e=>upd(sp.id,"name",e.target.value)} placeholder="Spell name…"/>
+              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.98rem",color:"var(--spell-text)",fontWeight:700}} value={sp.name} onChange={e=>upd(sp.id,"name",e.target.value)} placeholder="Spell name…"/>
               <span className="spell-level-badge">{sp.level}</span>
               {sp.school&&<span className="spell-school-badge">{sp.school}</span>}
             </div>
-            {!open&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",color:"#4a7aaa"}}>
+            {!open&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",color:"var(--spell-muted)"}}>
               {[sp.castingTime,sp.range&&`Range: ${sp.range}`,sp.duration&&`Duration: ${sp.duration}`].filter(Boolean).join(" · ")}
             </div>}
           </div>
@@ -1117,12 +1277,12 @@ function SpellsTab({spells,setSpells,char,setChar}) {
           <PinBtn pinned={sp.pinned} onToggle={()=>upd(sp.id,"pinned",!sp.pinned)}/>
           <button className="entity-toggle" onClick={()=>toggle(sp.id)}>{open?"▲":"▼"}</button>
         </div>
-        {!open&&sp.description&&<p style={{fontSize:"0.9rem",color:"#7a9abb",fontStyle:"italic",marginTop:"0.3rem",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sp.description}</p>}
+        {!open&&sp.description&&<p style={{fontSize:"0.9rem",color:"var(--spell-muted)",fontStyle:"italic",marginTop:"0.3rem",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sp.description}</p>}
         <TagsEditor tags={sp.tags||[]} onChange={v=>upd(sp.id,"tags",v)}/>
         {open&&<div style={{marginTop:"0.8rem"}}>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem",marginBottom:"0.7rem"}}>
-            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>Level</span><select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.level} onChange={e=>upd(sp.id,"level",e.target.value)}>{SPELL_LEVELS.map(lv=><option key={lv} value={lv}>{lv}</option>)}</select></div>
-            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>School</span><select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.school} onChange={e=>upd(sp.id,"school",e.target.value)}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"var(--spell-muted)",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>Level</span><select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"var(--spell-border)"}} value={sp.level} onChange={e=>upd(sp.id,"level",e.target.value)}>{SPELL_LEVELS.map(lv=><option key={lv} value={lv}>{lv}</option>)}</select></div>
+            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"var(--spell-muted)",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>School</span><select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"var(--spell-border)"}} value={sp.school} onChange={e=>upd(sp.id,"school",e.target.value)}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select></div>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.5rem",marginBottom:"0.7rem"}}>
             <div className="pack-field"><span className="pack-field-label">Casting Time</span><input className="pack-field-input" value={sp.castingTime||""} onChange={e=>upd(sp.id,"castingTime",e.target.value)}/></div>
@@ -1132,7 +1292,7 @@ function SpellsTab({spells,setSpells,char,setChar}) {
           <div className="pack-field" style={{marginBottom:"0.6rem"}}><span className="pack-field-label">Components</span><input className="pack-field-input" value={sp.components||""} placeholder="V, S, M (material)" onChange={e=>upd(sp.id,"components",e.target.value)}/></div>
           <textarea className="g-textarea" rows={4} placeholder="Spell description…" value={sp.description||""} onChange={e=>upd(sp.id,"description",e.target.value)}/>
           <div style={{marginTop:"0.5rem"}}>
-            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.25rem"}}>At Higher Levels / Notes</span>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"var(--spell-muted)",textTransform:"uppercase",display:"block",marginBottom:"0.25rem"}}>At Higher Levels / Notes</span>
             <textarea className="g-textarea" rows={2} value={sp.notes||""} placeholder="When cast using a higher level slot…" onChange={e=>upd(sp.id,"notes",e.target.value)}/>
           </div>
           <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(sp.id)}>Remove</button></div>
@@ -1332,7 +1492,7 @@ function QuestTracker({quests,setQuests}) {
                   <span className={`badge ${status.toLowerCase()}`} onClick={()=>cycle(quest.id)}>{status}</span>
                 </div>
                 <input className="iedit" style={{fontSize:"0.92rem",fontStyle:"italic"}} value={quest.description||""} onChange={e=>upd(quest.id,"description",e.target.value)} placeholder="Description…"/>
-                {quest.reward&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",color:"#5a8a5a",marginTop:"0.3rem"}}>⭐ {quest.reward}</div>}
+                {quest.reward&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",color:"var(--quest-reward)",marginTop:"0.3rem"}}>⭐ {quest.reward}</div>}
                 {steps.length>0&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",marginTop:"0.2rem",opacity:0.6}}>{doneCount}/{steps.length} steps</div>}
               </div>
               <button className="entity-toggle" onClick={()=>toggle(quest.id)} style={{marginTop:"0.1rem"}}>{open?"▲":"▼"}</button>
@@ -1348,7 +1508,7 @@ function QuestTracker({quests,setQuests}) {
                 <button className="btn-sm" onClick={()=>addStep(quest.id)}>+ Step</button>
                 <div style={{display:"flex",flexDirection:"column",gap:"0.1rem"}}>
                   <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",textTransform:"uppercase",opacity:0.6}}>Reward</span>
-                  <input className="iedit" style={{fontSize:"0.88rem",color:"#5a8a5a",minWidth:120}} value={quest.reward||""} onChange={e=>upd(quest.id,"reward",e.target.value)} placeholder="Gold, items, XP…"/>
+                  <input className="iedit" style={{fontSize:"0.88rem",color:"var(--quest-reward)",minWidth:120}} value={quest.reward||""} onChange={e=>upd(quest.id,"reward",e.target.value)} placeholder="Gold, items, XP…"/>
                 </div>
               </div>
             </div>}
@@ -1360,53 +1520,383 @@ function QuestTracker({quests,setQuests}) {
 }
 
 /* ═══ NAV ══════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   PROFILE SCREEN — character select
+═══════════════════════════════════════════════ */
+const DND_CLASSES = [
+  {name:"Barbarian", icon:"🪓"}, {name:"Bard",       icon:"🎶"},
+  {name:"Cleric",    icon:"✝️"}, {name:"Druid",      icon:"🌿"},
+  {name:"Fighter",   icon:"⚔️"}, {name:"Monk",       icon:"☯️"},
+  {name:"Paladin",   icon:"🛡️"}, {name:"Ranger",     icon:"🏹"},
+  {name:"Rogue",     icon:"🗡️"}, {name:"Sorcerer",   icon:"💫"},
+  {name:"Warlock",   icon:"👁️"}, {name:"Wizard",     icon:"📚"},
+  {name:"Other",     icon:"⚡"},
+];
+
+const STAT_ARRAYS = {
+  Standard: {STR:15,DEX:14,CON:13,INT:12,WIS:10,CHA:8},
+  Heroic:   {STR:16,DEX:15,CON:14,INT:13,WIS:12,CHA:11},
+  Balanced: {STR:13,DEX:13,CON:13,INT:13,WIS:13,CHA:13},
+};
+
+function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, theme }) {
+  const t = THEMES[theme]||THEMES.dark;
+  return (
+    <div className="profile-screen">
+      <div style={{position:"absolute",top:"1rem",right:"1rem"}}>
+        <button
+          onClick={()=>{ const next=theme==="dark"?"light":"dark"; localStorage.setItem("hj_theme",JSON.stringify(next)); window.location.reload(); }}
+          style={{background:"transparent",border:`1px solid ${t.borderInput}`,color:t.textMuted,fontFamily:"Cinzel,serif",fontSize:"0.55rem",letterSpacing:"0.1em",padding:"0.2rem 0.5rem",cursor:"pointer",textTransform:"uppercase"}}
+        >{theme==="dark"?"☀ Parchment":"🌙 Dark"}</button>
+      </div>
+
+      <div className="profile-logo">⚔ Hero Journal</div>
+      <div className="profile-tagline">Choose your hero to continue the adventure</div>
+
+      <div className="profile-list">
+        {profiles.map(p => (
+          <div key={p.id} className={`profile-card${p.id===activeId?" active-profile":""}`}
+            onClick={() => onSelect(p.id)}>
+            <span className="profile-card-icon">
+              {DND_CLASSES.find(c=>c.name===p.class)?.icon || "⚔️"}
+            </span>
+            <div style={{flex:1,minWidth:0}}>
+              <div className="profile-card-name">{p.name||"Unnamed Hero"}</div>
+              <div className="profile-card-sub">
+                {[p.class, p.level&&`Level ${p.level}`].filter(Boolean).join(" · ")}
+                {p.id===activeId&&<span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.1em",textTransform:"uppercase",color:t.accent,marginLeft:"0.6rem"}}>● Active</span>}
+              </div>
+            </div>
+            {profiles.length > 1 && (
+              <button className="profile-card-del" onClick={e=>{e.stopPropagation();onDelete(p.id);}}>✕</button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <button className="btn-new-profile" onClick={onCreate}>
+        ⊕ Create New Hero
+      </button>
+
+      <div style={{marginTop:"2rem",fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.1em",color:t.textDim,textTransform:"uppercase",textAlign:"center"}}>
+        {profiles.length} hero{profiles.length!==1?"es":""} in journal
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   CHARACTER WIZARD — new hero creator
+═══════════════════════════════════════════════ */
+function CharacterWizard({ onFinish, onCancel, theme }) {
+  const t = THEMES[theme]||THEMES.dark;
+  const [step, setStep] = useState(0);
+  const [name, setName] = useState("");
+  const [cls,  setCls]  = useState(null);
+  const [level,setLevel]= useState(1);
+  const [bg,   setBg]   = useState("");
+  const [align,setAlign]= useState("True Neutral");
+  const [statArray, setStatArray] = useState("Standard");
+  const [customStats, setCustomStats] = useState({STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10});
+  const [useCustom, setUseCustom] = useState(false);
+
+  const STEPS = ["Name", "Class", "Stats", "Details"];
+  const stats = useCustom ? customStats : (STAT_ARRAYS[statArray]||STAT_ARRAYS.Standard);
+
+  const canNext = [
+    name.trim().length > 0,
+    cls !== null,
+    true,
+    true,
+  ][step];
+
+  const handleFinish = () => {
+    const id = "profile_" + Date.now();
+    const newChar = {
+      ...DEFAULT_CHAR,
+      name: name.trim(),
+      classes: [{ name: cls?.name||"Adventurer", level }],
+      background: bg.trim(),
+      alignment: align,
+      stats: { ...stats },
+    };
+    onFinish(id, newChar, { name:name.trim(), class:cls?.name||"", level, created:Date.now() });
+  };
+
+  const inputStyle = {
+    background:t.bgInput, border:`1px solid ${t.borderInput}`, color:t.text,
+    fontFamily:"Crimson Text,Georgia,serif", fontSize:"1.05rem",
+    padding:"0.5rem 0.85rem", outline:"none", width:"100%",
+  };
+
+  return (
+    <div className="wizard-screen">
+      <div className="wizard-box">
+        {/* Step dots */}
+        <div className="wizard-step-dots">
+          {STEPS.map((s,i)=><div key={s} className={`wizard-dot${i<=step?" active":""}`}/>)}
+        </div>
+
+        <div className="wizard-title">New Hero</div>
+        <div className="wizard-sub">{STEPS[step]} — step {step+1} of {STEPS.length}</div>
+
+        {/* Step 0: Name */}
+        {step===0&&<>
+          <div className="wizard-step-label">What is your hero's name?</div>
+          <input autoFocus style={inputStyle} placeholder="Enter name…"
+            value={name} onChange={e=>setName(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&canNext&&setStep(1)}/>
+          <div style={{marginTop:"0.6rem",fontFamily:"Crimson Text,serif",fontSize:"0.9rem",color:t.textDim,fontStyle:"italic"}}>
+            This will appear at the top of your journal.
+          </div>
+        </>}
+
+        {/* Step 1: Class */}
+        {step===1&&<>
+          <div className="wizard-step-label">Choose your class</div>
+          <div className="wizard-class-grid">
+            {DND_CLASSES.map(c=>(
+              <button key={c.name} className={`wizard-class-btn${cls?.name===c.name?" selected":""}`}
+                onClick={()=>setCls(c)}>
+                <span className="wizard-class-icon">{c.icon}</span>
+                <span className="wizard-class-name">{c.name}</span>
+              </button>
+            ))}
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:"0.6rem",marginTop:"0.4rem"}}>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",letterSpacing:"0.14em",color:t.textLabel,textTransform:"uppercase"}}>Level</span>
+            <input type="number" min={1} max={20} value={level}
+              onChange={e=>setLevel(clamp(parseInt(e.target.value)||1,1,20))}
+              style={{...inputStyle,width:64,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"1rem"}}/>
+          </div>
+        </>}
+
+        {/* Step 2: Stats */}
+        {step===2&&<>
+          <div className="wizard-step-label">Choose stat array</div>
+          <div style={{display:"flex",gap:"0.4rem",marginBottom:"0.8rem",flexWrap:"wrap"}}>
+            {Object.keys(STAT_ARRAYS).map(arr=>(
+              <button key={arr}
+                style={{fontFamily:"Cinzel,serif",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase",background:"transparent",border:`1px solid ${!useCustom&&statArray===arr?t.accent:t.borderInput}`,color:!useCustom&&statArray===arr?t.accent:t.textMuted,padding:"0.3rem 0.7rem",cursor:"pointer",transition:"all 0.15s"}}
+                onClick={()=>{setStatArray(arr);setUseCustom(false);}}>
+                {arr}
+              </button>
+            ))}
+            <button
+              style={{fontFamily:"Cinzel,serif",fontSize:"0.6rem",letterSpacing:"0.1em",textTransform:"uppercase",background:"transparent",border:`1px solid ${useCustom?t.accent:t.borderInput}`,color:useCustom?t.accent:t.textMuted,padding:"0.3rem 0.7rem",cursor:"pointer",transition:"all 0.15s"}}
+              onClick={()=>setUseCustom(true)}>
+              Custom
+            </button>
+          </div>
+          <div className="wizard-stat-grid">
+            {STAT_KEYS.map(k=>(
+              <div key={k} className="wizard-stat-box">
+                <span className="wizard-stat-label">{k}</span>
+                {useCustom
+                  ? <input type="number" min={1} max={30} value={customStats[k]}
+                      onChange={e=>setCustomStats(s=>({...s,[k]:clamp(parseInt(e.target.value)||10,1,30)}))}
+                      style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",fontSize:"1.1rem",fontWeight:700,color:t.accent,textAlign:"center",width:"100%"}}/>
+                  : <span className="wizard-stat-val">{stats[k]}</span>}
+                <div style={{fontFamily:"Cinzel,serif",fontSize:"0.55rem",color:t.textMuted}}>{statMod(stats[k])}</div>
+              </div>
+            ))}
+          </div>
+        </>}
+
+        {/* Step 3: Details */}
+        {step===3&&<>
+          <div className="wizard-step-label">Background</div>
+          <input style={{...inputStyle,marginBottom:"0.6rem"}} placeholder="e.g. Soldier, Noble, Outlander…"
+            value={bg} onChange={e=>setBg(e.target.value)}/>
+          <div className="wizard-step-label">Alignment</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"0.3rem",marginBottom:"0.6rem"}}>
+            {ALIGNMENTS.map(a=>(
+              <button key={a}
+                style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.06em",textTransform:"uppercase",background:"transparent",border:`1px solid ${align===a?t.accent:t.borderInput}`,color:align===a?t.accent:t.textMuted,padding:"0.35rem 0.2rem",cursor:"pointer",transition:"all 0.15s",lineHeight:1.3,textAlign:"center"}}
+                onClick={()=>setAlign(a)}>{a}</button>
+            ))}
+          </div>
+          <div style={{fontFamily:"Crimson Text,serif",fontSize:"0.9rem",color:t.textDim,fontStyle:"italic",marginTop:"0.5rem",lineHeight:1.6}}>
+            Your hero is ready. You can change everything later.
+          </div>
+        </>}
+
+        {/* Navigation */}
+        <div style={{display:"flex",justifyContent:"space-between",marginTop:"1.5rem",gap:"0.6rem"}}>
+          <button
+            onClick={step===0?onCancel:()=>setStep(s=>s-1)}
+            style={{fontFamily:"Cinzel,serif",fontSize:"0.68rem",letterSpacing:"0.1em",textTransform:"uppercase",background:"transparent",border:`1px solid ${t.borderInput}`,color:t.textMuted,padding:"0.5rem 1rem",cursor:"pointer",flex:"0 0 auto"}}>
+            {step===0?"Cancel":"← Back"}
+          </button>
+          {step<STEPS.length-1
+            ? <button disabled={!canNext}
+                onClick={()=>setStep(s=>s+1)}
+                style={{fontFamily:"Cinzel,serif",fontSize:"0.68rem",letterSpacing:"0.1em",textTransform:"uppercase",background:canNext?"rgba(226,185,78,0.1)":"transparent",border:`1px solid ${canNext?t.accent:t.borderInput}`,color:canNext?t.accent:t.textDim,padding:"0.5rem 1.5rem",cursor:canNext?"pointer":"default",flex:1,transition:"all 0.15s"}}>
+                Next →
+              </button>
+            : <button
+                onClick={handleFinish}
+                style={{fontFamily:"Cinzel,serif",fontSize:"0.68rem",letterSpacing:"0.1em",textTransform:"uppercase",background:"rgba(226,185,78,0.12)",border:`1px solid ${t.accent}`,color:t.accent,padding:"0.5rem 1.5rem",cursor:"pointer",flex:1,boxShadow:`0 0 16px rgba(226,185,78,0.2)`}}>
+                ⚔ Begin Adventure
+              </button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 const TABS=[
-  {id:"character", label:"Hero",    icon:"⚔️"},
-  {id:"inventory", label:"Pack",    icon:"🎒"},
-  {id:"skills",    label:"Skills",  icon:"✨"},
-  {id:"spells",    label:"Spells",  icon:"🔮"},
-  {id:"npcs",      label:"People",  icon:"👥"},
-  {id:"locations", label:"Places",  icon:"🗺️"},
-  {id:"sessions",  label:"Log",     icon:"📜"},
-  {id:"quests",    label:"Quests",  icon:"⚡"},
+  {id:"character", label:"Hero",     icon:"⚔️"},
+  {id:"inventory", label:"Pack",     icon:"🎒"},
+  {id:"skills",    label:"Skills",   icon:"✨"},
+  {id:"spells",    label:"Spells",   icon:"🔮"},
+  {id:"npcs",      label:"People",   icon:"👥"},
+  {id:"locations", label:"Places",   icon:"🗺️"},
+  {id:"sessions",  label:"Log",      icon:"📜"},
+  {id:"quests",    label:"Quests",   icon:"⚡"},
 ];
 
 /* ═══ ROOT APP ═════════════════════════════════ */
 export default function HeroJournal() {
-  const [tab,       setTab]       = useState("character");
+  // ── Global state ──
   const [theme,     setTheme]     = useState(()=>load("hj_theme","dark"));
-  const [char,      setChar]      = useState(()=>load("hj_char",      DEFAULT_CHAR));
-  const [inventory, setInventory] = useState(()=>load("hj_inventory", []));
-  const [npcs,      setNPCs]      = useState(()=>load("hj_npcs",      []));
-  const [locations, setLocations] = useState(()=>load("hj_locations", []));
-  const [skills,    setSkills]    = useState(()=>load("hj_skills",    []));
-  const [spells,    setSpells]    = useState(()=>load("hj_spells",    []));
-  const [sessions,  setSessions]  = useState(()=>load("hj_sessions",  []));
-  const [quests,    setQuests]    = useState(()=>load("hj_quests",    []));
+  const [profiles,  setProfilesState] = useState(()=>{ migrateLegacy(); return loadProfiles(); });
+  const [activeId,  setActiveId]  = useState(()=>{ migrateLegacy(); return loadActiveId(); });
+  const [screen,    setScreen]    = useState(() => {
+    migrateLegacy();
+    const profs = loadProfiles();
+    const aid   = loadActiveId();
+    if (profs.length===0) return "wizard";
+    if (!aid || !profs.find(p=>p.id===aid)) return "profiles";
+    return "app";
+  });
+
+  // ── Per-character state (loaded when activeId changes) ──
+  const [tab,       setTab]       = useState("character");
+  const [char,      setChar]      = useState(()=>activeId?loadChar("char",activeId,DEFAULT_CHAR):DEFAULT_CHAR);
+  const [inventory, setInventory] = useState(()=>activeId?loadChar("inventory",activeId,[]):[]);
+  const [npcs,      setNPCs]      = useState(()=>activeId?loadChar("npcs",activeId,[]):[]);
+  const [locations, setLocations] = useState(()=>activeId?loadChar("locations",activeId,[]):[]);
+  const [skills,    setSkills]    = useState(()=>activeId?loadChar("skills",activeId,[]):[]);
+  const [spells,    setSpells]    = useState(()=>activeId?loadChar("spells",activeId,[]):[]);
+  const [sessions,  setSessions]  = useState(()=>activeId?loadChar("sessions",activeId,[]):[]);
+  const [quests,    setQuests]    = useState(()=>activeId?loadChar("quests",activeId,[]):[]);
   const [showReset, setShowReset] = useState(false);
 
-  useEffect(()=>{save("hj_theme",     theme);},[theme]);
-  useEffect(()=>{save("hj_char",      char);},[char]);
-  useEffect(()=>{save("hj_inventory", inventory);},[inventory]);
-  useEffect(()=>{save("hj_npcs",      npcs);},[npcs]);
-  useEffect(()=>{save("hj_locations", locations);},[locations]);
-  useEffect(()=>{save("hj_skills",    skills);},[skills]);
-  useEffect(()=>{save("hj_spells",    spells);},[spells]);
-  useEffect(()=>{save("hj_sessions",  sessions);},[sessions]);
-  useEffect(()=>{save("hj_quests",    quests);},[quests]);
+  // ── Persist theme globally ──
+  useEffect(()=>{save("hj_theme", theme);},[theme]);
 
-  const handleNavigate = useCallback(t=>setTab(t),[]);
+  // ── Persist per-character data ──
+  useEffect(()=>{ if(activeId) saveChar("char",      activeId, char);      },[char,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("inventory", activeId, inventory); },[inventory,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("npcs",      activeId, npcs);      },[npcs,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("locations", activeId, locations); },[locations,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("skills",    activeId, skills);    },[skills,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("spells",    activeId, spells);    },[spells,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("sessions",  activeId, sessions);  },[sessions,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("quests",    activeId, quests);    },[quests,activeId]);
+
+  // ── Keep profiles index updated when char name/class changes ──
+  useEffect(()=>{
+    if (!activeId) return;
+    setProfilesState(prev=>{
+      const updated = prev.map(p=>p.id===activeId
+        ? {...p, name:char.name?.trim()||p.name, class:(char.classes||[])[0]?.name||p.class, level:(char.classes||[])[0]?.level||p.level}
+        : p);
+      saveProfiles(updated);
+      return updated;
+    });
+  },[char.name, char.classes, activeId]);
+
+  const handleNavigate = useCallback(tt=>setTab(tt),[]);
   const t = THEMES[theme]||THEMES.dark;
 
+  // ── Switch to a different profile ──
+  const switchProfile = useCallback(id => {
+    saveActiveId(id);
+    setActiveId(id);
+    setChar(loadChar("char",id,DEFAULT_CHAR));
+    setInventory(loadChar("inventory",id,[]));
+    setNPCs(loadChar("npcs",id,[]));
+    setLocations(loadChar("locations",id,[]));
+    setSkills(loadChar("skills",id,[]));
+    setSpells(loadChar("spells",id,[]));
+    setSessions(loadChar("sessions",id,[]));
+    setQuests(loadChar("quests",id,[]));
+    setTab("character");
+    setScreen("app");
+  },[]);
+
+  // ── Create new hero from wizard ──
+  const handleWizardFinish = useCallback((id, newChar, profileMeta) => {
+    CHAR_SLOTS.forEach(slot => saveChar(slot, id, slot==="char"?newChar:[]));
+    const newProfile = {...profileMeta, id};
+    const updated = [...loadProfiles(), newProfile];
+    saveProfiles(updated);
+    saveActiveId(id);
+    setProfilesState(updated);
+    setChar(newChar);
+    setInventory([]); setNPCs([]); setLocations([]);
+    setSkills([]); setSpells([]); setSessions([]); setQuests([]);
+    setActiveId(id);
+    setTab("character");
+    setScreen("app");
+  },[]);
+
+  // ── Delete profile ──
+  const deleteProfile = useCallback(id => {
+    deleteCharData(id);
+    const updated = loadProfiles().filter(p=>p.id!==id);
+    saveProfiles(updated);
+    setProfilesState(updated);
+    if (id===activeId) {
+      if (updated.length>0) {
+        switchProfile(updated[0].id);
+      } else {
+        saveActiveId(null);
+        setActiveId(null);
+        setScreen("wizard");
+      }
+    }
+  },[activeId,switchProfile]);
+
+  // ── Reset current character ──
   const handleReset = () => {
-    ALL_KEYS.forEach(k=>localStorage.removeItem(k));
+    if (!activeId) return;
+    CHAR_SLOTS.forEach(s=>saveChar(s,activeId,s==="char"?DEFAULT_CHAR:[]));
     setChar(DEFAULT_CHAR); setInventory([]); setNPCs([]); setLocations([]);
     setSkills([]); setSpells([]); setSessions([]); setQuests([]);
-    setTab("character"); setShowReset(false);
+    setShowReset(false);
   };
 
   const charName = char.name?.trim()||"";
 
+  // ── SCREENS ──
+  if (screen==="profiles") {
+    return <>
+      <style>{buildCSS(t)}</style>
+      <ProfileScreen
+        profiles={profiles} activeId={activeId} theme={theme}
+        onSelect={switchProfile}
+        onCreate={()=>setScreen("wizard")}
+        onDelete={deleteProfile}
+      />
+    </>;
+  }
+
+  if (screen==="wizard") {
+    return <>
+      <style>{buildCSS(t)}</style>
+      <CharacterWizard
+        theme={theme}
+        onFinish={handleWizardFinish}
+        onCancel={profiles.length>0?()=>setScreen("profiles"):undefined}
+      />
+    </>;
+  }
+
+  // ── APP ──
   return <>
     <style>{buildCSS(t)}</style>
     {showReset&&<ResetModal onConfirm={handleReset} onCancel={()=>setShowReset(false)}/>}
@@ -1414,18 +1904,17 @@ export default function HeroJournal() {
 
       <header className="hj-header">
         <div style={{maxWidth:780,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"0.75rem"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"0.75rem",minWidth:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:"0.75rem",minWidth:0,cursor:"pointer"}} onClick={()=>setScreen("profiles")} title="Switch character">
             <div className="hj-logo"><span style={{fontSize:"0.9rem",opacity:0.75}}>⚔</span>HJ</div>
-            {charName&&<span className="hj-char-name">{charName}</span>}
+            <span className="hj-char-name">{charName||"Hero"}</span>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",color:t.textDim,letterSpacing:"0.08em",textTransform:"uppercase",flexShrink:0}}>▾ switch</span>
           </div>
-          <div style={{display:"flex",alignItems:"center",gap:"0.5rem",flexShrink:0}}>
-            {/* Theme toggle */}
+          <div style={{display:"flex",alignItems:"center",gap:"0.4rem",flexShrink:0}}>
             <button
-              onClick={()=>setTheme(t=>t==="dark"?"light":"dark")}
+              onClick={()=>setTheme(tm=>tm==="dark"?"light":"dark")}
               style={{background:"transparent",border:`1px solid ${t.borderInput}`,color:t.textMuted,fontFamily:"Cinzel,serif",fontSize:"0.55rem",letterSpacing:"0.1em",padding:"0.2rem 0.5rem",cursor:"pointer",textTransform:"uppercase",transition:"all 0.2s"}}
-              title="Toggle parchment / dark theme"
             >{theme==="dark"?"☀ Parchment":"🌙 Dark"}</button>
-            <button className="btn-danger" style={{fontSize:"0.55rem",padding:"0.2rem 0.55rem",letterSpacing:"0.1em"}} onClick={()=>setShowReset(true)} title="Reset all data">↺ Reset</button>
+            <button className="btn-danger" style={{fontSize:"0.55rem",padding:"0.2rem 0.55rem",letterSpacing:"0.1em"}} onClick={()=>setShowReset(true)} title="Reset current character">↺ Reset</button>
           </div>
         </div>
       </header>
@@ -1442,9 +1931,9 @@ export default function HeroJournal() {
       </main>
 
       <nav className="hj-bottom-nav">
-        {TABS.map(t=><button key={t.id} className={`hj-nav-btn${tab===t.id?" active":""}`} onClick={()=>setTab(t.id)}>
-          <span className="hj-nav-icon">{t.icon}</span>
-          <span className="hj-nav-label">{t.label}</span>
+        {TABS.map(tb=><button key={tb.id} className={`hj-nav-btn${tab===tb.id?" active":""}`} onClick={()=>setTab(tb.id)}>
+          <span className="hj-nav-icon">{tb.icon}</span>
+          <span className="hj-nav-label">{tb.label}</span>
         </button>)}
       </nav>
     </div>
