@@ -17,21 +17,30 @@ const CSS = `
   .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; font-weight: 700; color: #e2b94e; letter-spacing: 0.12em; text-shadow: 0 0 22px rgba(226,185,78,0.4); display: flex; align-items: center; gap: 0.5rem; }
 
   .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(0deg,#0d0b08 0%,#161210 100%); border-top: 1px solid #302818; box-shadow: 0 -4px 32px rgba(0,0,0,0.8); display: flex; align-items: stretch; height: 68px; padding-bottom: env(safe-area-inset-bottom,0px); }
-  .hj-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.35rem 0.1rem; position: relative; }
-  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 2px; background: #e2b94e; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
+  .hj-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.3rem 0.05rem; position: relative; }
+  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px; background: #e2b94e; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
   .hj-nav-btn.active::before { transform: scaleX(1); }
-  .hj-nav-icon { font-size: 1.25rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
+  .hj-nav-icon { font-size: 1.1rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
   .hj-nav-btn.active .hj-nav-icon { filter: grayscale(0) brightness(1); }
-  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6a5830; transition: color 0.18s; }
+  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.4rem; letter-spacing: 0.06em; text-transform: uppercase; color: #6a5830; transition: color 0.18s; }
   .hj-nav-btn.active .hj-nav-label { color: #e2b94e; }
   .hj-nav-btn:hover:not(.active) .hj-nav-label { color: #9a7840; }
 
   .hj-content { max-width: 780px; margin: 0 auto; padding: 1.4rem 1rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
 
+  /* ── Cards ── */
   .card { background: #1c1810; border: 1px solid #352e1e; box-shadow: 0 3px 0 #0a0806, inset 0 1px 0 rgba(226,185,78,0.05); padding: 1.25rem; position: relative; }
   .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(226,185,78,0.03) 0%,transparent 55%); pointer-events: none; }
   .card.pinned { border-color: #7a6030; }
   .card.pinned::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#e2b94e,transparent); pointer-events: none; }
+  .card.inuse-active { border-color: #5a3a8a; box-shadow: 0 3px 0 #0a0806, 0 0 0 1px rgba(168,122,204,0.15); }
+  .card.inuse-active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#a87acc,transparent); pointer-events: none; }
+  .card.spell-active { border-color: #1a3a6a; box-shadow: 0 3px 0 #0a0806, 0 0 0 1px rgba(100,160,230,0.18); }
+  .card.spell-active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,#64a0e6,transparent); pointer-events: none; }
+
+  /* ── Inner section divider inside merged card ── */
+  .inner-divider { border: none; border-top: 1px solid #2a2418; margin: 1.1rem 0; position: relative; }
+  .inner-divider::before { content: attr(data-label); position: absolute; top: 50%; left: 0; transform: translateY(-50%); background: #1c1810; padding-right: 0.6rem; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: #b09050; }
 
   .sect-label { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: #b09050; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
   .sect-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,#352e1e,transparent); }
@@ -110,7 +119,6 @@ const CSS = `
   @media (max-width:480px) { .save-grid { grid-template-columns: 1fr; } }
   .check-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.22rem 0.3rem; border-bottom: 1px solid #231e12; }
   .check-row:last-child { border-bottom: none; }
-  /* FIX: use button element instead of div to avoid event issues */
   .prof-dot-btn { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #5a4a28; background: transparent; cursor: pointer; flex-shrink: 0; transition: all 0.15s; padding: 0; appearance: none; -webkit-appearance: none; }
   .prof-dot-btn.prof { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 6px rgba(226,185,78,0.55); }
   .prof-dot-btn:hover:not(.prof) { border-color: #9a8050; background: rgba(226,185,78,0.1); }
@@ -127,23 +135,26 @@ const CSS = `
   .trait-ta:focus { border-color: #7a6030; }
   .trait-ta::placeholder { color: #5a4e34; font-style: italic; }
 
-  /* ── Class rows ── */
   .class-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #231e12; }
   .class-row:last-child { border-bottom: none; }
 
-  /* ── Equipped items ── */
-  .equipped-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.55rem 0; border-bottom: 1px solid #231e12; }
+  /* ── Equipped items on Hero tab ── */
+  .equipped-section { margin-bottom: 0; }
+  .equipped-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid #231e12; }
   .equipped-item:last-child { border-bottom: none; }
-  .equipped-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1.2; }
-  .equipped-name { font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 700; color: #e0d6b4; }
+  .equipped-icon { font-size: 1.05rem; flex-shrink: 0; line-height: 1.3; }
+  .equipped-name { font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 700; color: #e0d6b4; }
   .equipped-stat { font-family: 'Crimson Text', Georgia, serif; font-size: 0.88rem; color: #9a8050; font-style: italic; }
-  .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.4rem; border: 1px solid #3a3220; color: #8a7040; flex-shrink: 0; }
+  .equipped-type-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #3a3220; color: #8a7040; flex-shrink: 0; }
+  /* Purple badge for skills/traits/feats in use */
+  .equipped-skill-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #5a3a8a; color: #a87acc; background: rgba(168,122,204,0.08); flex-shrink: 0; }
+  /* Blue badge for active spells */
+  .equipped-spell-badge { font-family: 'Cinzel', serif; font-size: 0.46rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.1rem 0.35rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; }
 
   /* ── Pack items ── */
   .pack-item { background: #1a1510; border: 1px solid #2e2618; padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; }
   .pack-item.equipped-active { border-color: #7a6030; border-left: 3px solid #e2b94e; }
   .pack-item-header { display: flex; align-items: center; gap: 0.5rem; }
-  .pack-item-name { font-family: 'Cinzel', serif; font-size: 0.88rem; font-weight: 700; color: #e0d6b4; flex: 1; min-width: 0; }
   .pack-item-body { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
   .pack-item-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .pack-field { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; min-width: 80px; }
@@ -156,18 +167,42 @@ const CSS = `
   .toggle-wrap { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; user-select: none; }
   .toggle-track { width: 32px; height: 17px; border-radius: 9px; background: #2a2418; border: 1px solid #3a3220; position: relative; transition: all 0.2s; flex-shrink: 0; }
   .toggle-track.on { background: rgba(226,185,78,0.25); border-color: #c9a84c; }
+  .toggle-track.on-purple { background: rgba(168,122,204,0.25); border-color: #9a6acc; }
+  .toggle-track.on-blue   { background: rgba(100,160,230,0.22); border-color: #4a90d6; }
   .toggle-thumb { width: 11px; height: 11px; border-radius: 50%; background: #5a4a28; position: absolute; top: 2px; left: 2px; transition: all 0.2s; }
-  .toggle-track.on .toggle-thumb { background: #e2b94e; left: 17px; box-shadow: 0 0 5px rgba(226,185,78,0.6); }
+  .toggle-track.on .toggle-thumb, .toggle-track.on-purple .toggle-thumb, .toggle-track.on-blue .toggle-thumb { left: 17px; }
+  .toggle-track.on .toggle-thumb { background: #e2b94e; box-shadow: 0 0 5px rgba(226,185,78,0.6); }
+  .toggle-track.on-purple .toggle-thumb { background: #a87acc; box-shadow: 0 0 5px rgba(168,122,204,0.6); }
+  .toggle-track.on-blue .toggle-thumb   { background: #64a0e6; box-shadow: 0 0 5px rgba(100,160,230,0.6); }
   .toggle-label { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase; color: #7a6840; transition: color 0.15s; }
-  .toggle-track.on + .toggle-label { color: #e2b94e; }
 
-  /* ── Checklist ── */
-  .checklist-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #231e12; }
-  .checklist-item:last-child { border-bottom: none; }
-  .check-box { width: 14px; height: 14px; border: 1px solid #5a4a28; background: transparent; flex-shrink: 0; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-  .check-box.checked { background: rgba(226,185,78,0.2); border-color: #c9a84c; }
-  .check-box.checked::after { content: '✓'; font-size: 0.6rem; color: #e2b94e; }
-  .checklist-text.done { text-decoration: line-through; color: #6a5a38; }
+  /* ── Skill pips ── */
+  .skill-pips { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
+  .pip { width: 8px; height: 8px; border: 1px solid #3a3018; cursor: pointer; transition: all 0.15s; }
+  .pip.filled { background: #e2b94e; border-color: #c9a84c; box-shadow: 0 0 4px rgba(226,185,78,0.4); }
+
+  /* ── Spell level badge ── */
+  .spell-level-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #1a4a8a; color: #64a0e6; background: rgba(100,160,230,0.08); flex-shrink: 0; text-transform: uppercase; }
+  .spell-school-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #2a2a5a; color: #8888cc; background: rgba(100,100,200,0.06); flex-shrink: 0; text-transform: uppercase; }
+  .spell-slot-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.4rem; }
+  @media (max-width:420px) { .spell-slot-grid { grid-template-columns: repeat(3,1fr); } }
+  .spell-slot-box { background: #130f0c; border: 1px solid #1a3a6a; text-align: center; padding: 0.4rem 0.2rem; }
+  .spell-slot-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; color: #4a7aaa; display: block; margin-bottom: 0.2rem; }
+  .spell-slot-input { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: #64a0e6; text-align: center; width: 100%; }
+
+  /* ── NPC / Location ── */
+  .entity-header { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.5rem; }
+  .pin-btn { background: transparent; border: none; cursor: pointer; font-size: 0.9rem; padding: 0.1rem; opacity: 0.4; transition: opacity 0.15s; flex-shrink: 0; line-height: 1; }
+  .pin-btn.pinned { opacity: 1; }
+  .entity-toggle { background: transparent; border: none; color: #6a5830; cursor: pointer; font-size: 0.6rem; padding: 0; transition: color 0.15s; flex-shrink: 0; font-family: 'Cinzel', serif; }
+  .entity-toggle:hover { color: #9a8050; }
+  .rel-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; cursor: pointer; flex-shrink: 0; transition: all 0.15s; user-select: none; text-transform: uppercase; }
+  .rel-ally    { border: 1px solid #3a6a3a; color: #6acc6a; background: rgba(74,122,74,0.08); }
+  .rel-neutral { border: 1px solid #4a4030; color: #b09050; background: rgba(74,64,48,0.08); }
+  .rel-hostile { border: 1px solid #6a2a2a; color: #cc4444; background: rgba(122,44,44,0.08); }
+  .rel-unknown { border: 1px solid #2e2618; color: #7a6040; background: transparent; }
+  .rel-badge:hover { filter: brightness(1.2); }
+  .loc-type { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.15rem 0.55rem; border: 1px solid #352e1e; color: #9a8050; background: rgba(226,185,78,0.04); flex-shrink: 0; }
 
   /* ── Session ── */
   .sess-entry { border: 1px solid #2a2416; background: #171208; overflow: hidden; box-shadow: 0 2px 0 #0a0806; }
@@ -206,24 +241,15 @@ const CSS = `
   .badge.failed    { border:1px solid #6a2a2a; color:#cc4444; background:rgba(122,44,44,0.1); }
   .badge:hover { filter:brightness(1.25); }
 
-  /* ── NPC / Location ── */
-  .entity-header { display:flex; align-items:flex-start; gap:0.6rem; margin-bottom:0.5rem; }
-  .pin-btn { background:transparent; border:none; cursor:pointer; font-size:0.9rem; padding:0.1rem; opacity:0.4; transition:opacity 0.15s; flex-shrink:0; line-height:1; }
-  .pin-btn.pinned { opacity:1; }
-  .entity-toggle { background:transparent; border:none; color:#6a5830; cursor:pointer; font-size:0.6rem; padding:0; transition:color 0.15s; flex-shrink:0; font-family:'Cinzel',serif; }
-  .entity-toggle:hover { color:#9a8050; }
-  .skill-pips { display:flex; gap:3px; align-items:center; flex-shrink:0; }
-  .pip { width:8px; height:8px; border:1px solid #3a3018; cursor:pointer; transition:all 0.15s; }
-  .pip.filled { background:#e2b94e; border-color:#c9a84c; box-shadow:0 0 4px rgba(226,185,78,0.4); }
-  .rel-badge { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.1em; padding:0.15rem 0.5rem; cursor:pointer; flex-shrink:0; transition:all 0.15s; user-select:none; text-transform:uppercase; }
-  .rel-ally    { border:1px solid #3a6a3a; color:#6acc6a; background:rgba(74,122,74,0.08); }
-  .rel-neutral { border:1px solid #4a4030; color:#b09050; background:rgba(74,64,48,0.08); }
-  .rel-hostile { border:1px solid #6a2a2a; color:#cc4444; background:rgba(122,44,44,0.08); }
-  .rel-unknown { border:1px solid #2e2618; color:#7a6040; background:transparent; }
-  .rel-badge:hover { filter:brightness(1.2); }
-  .loc-type { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.15rem 0.55rem; border:1px solid #352e1e; color:#9a8050; background:rgba(226,185,78,0.04); flex-shrink:0; }
+  /* ── Checklist ── */
+  .checklist-item { display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0; border-bottom:1px solid #231e12; }
+  .checklist-item:last-child { border-bottom:none; }
+  .check-box { width:14px; height:14px; border:1px solid #5a4a28; background:transparent; flex-shrink:0; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
+  .check-box.checked { background:rgba(226,185,78,0.2); border-color:#c9a84c; }
+  .check-box.checked::after { content:'✓'; font-size:0.6rem; color:#e2b94e; }
+  .checklist-text.done { text-decoration:line-through; color:#6a5a38; }
 
-  /* ── Reset modal ── */
+  /* ── Modal ── */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
   .modal-box { background:#1c1810; border:1px solid #6a2a2a; padding:1.5rem; max-width:340px; width:100%; box-shadow:0 0 40px rgba(192,64,64,0.25); }
   .modal-title { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
@@ -231,7 +257,6 @@ const CSS = `
 
   .add-form { background:#171208; border:1px dashed #352e1e; padding:1.1rem; }
   .empty-state { text-align:center; padding:2.5rem; color:#6a5a38; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.12em; line-height:1.9; }
-
   .row   { display:flex; align-items:center; gap:0.6rem; }
   .col   { display:flex; flex-direction:column; gap:0.5rem; }
   .flex1 { flex:1; min-width:0; }
@@ -250,11 +275,17 @@ const STAT_KEYS    = ["STR","DEX","CON","INT","WIS","CHA"];
 const STATUS_CYCLE = { Active:"Completed", Completed:"Failed", Failed:"Active" };
 const REL_CYCLE    = { unknown:"ally", ally:"neutral", neutral:"hostile", hostile:"unknown" };
 const REL_LABELS   = { ally:"Ally", neutral:"Neutral", hostile:"Hostile", unknown:"Unknown" };
-const SKILL_CATS   = ["Skill","Trait","Feat","Spell","Ability","Other"];
 const LOC_TYPES    = ["Settlement","Dungeon","Wilderness","Building","Ruin","Landmark","Other"];
 const ALIGNMENTS   = ["Lawful Good","Neutral Good","Chaotic Good","Lawful Neutral","True Neutral","Chaotic Neutral","Lawful Evil","Neutral Evil","Chaotic Evil"];
 const ITEM_TYPES   = ["General","Weapon","Armor","Spell Scroll","Wondrous Item","Consumable","Tool","Other"];
 const ITEM_ICONS   = { General:"📦", Weapon:"⚔️", Armor:"🛡️", "Spell Scroll":"📜", "Wondrous Item":"✨", Consumable:"🧪", Tool:"🔧", Other:"◈" };
+
+/* Skills tab: only Skill, Trait, Feat */
+const SKILL_CATS = ["Skill","Trait","Feat"];
+
+const SPELL_SCHOOLS = ["Abjuration","Conjuration","Divination","Enchantment","Evocation","Illusion","Necromancy","Transmutation","Other"];
+const SPELL_LEVELS  = ["Cantrip","1st","2nd","3rd","4th","5th","6th","7th","8th","9th"];
+const SPELL_SLOT_LABELS = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th"];
 
 const SAVING_THROWS = [
   {key:"str",label:"Strength",    attr:"STR"},
@@ -264,7 +295,6 @@ const SAVING_THROWS = [
   {key:"wis",label:"Wisdom",      attr:"WIS"},
   {key:"cha",label:"Charisma",    attr:"CHA"},
 ];
-
 const GENERIC_SKILLS = [
   {key:"acrobatics",    label:"Acrobatics",     attr:"DEX"},
   {key:"athletics",     label:"Athletics",      attr:"STR"},
@@ -286,45 +316,31 @@ const GENERIC_SKILLS = [
   {key:"animalhandling",label:"Animal Handling",attr:"WIS"},
 ];
 
-/* ═══ DEFAULT STATE ═════════════════════════════ */
 const DEFAULT_CHAR = {
-  name: "",
-  classes: [{ name:"Adventurer", level:1 }],
-  stats: {STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10},
-  profBonus: 2,
-  hp: {current:10,max:10,temp:0},
-  ac: 10,
-  savingThrows: {},
-  skills: {},
-  alignment: "True Neutral",
-  background: "",
-  traits: { personality:"", ideals:"", bonds:"", flaws:"" },
-  personalNotes: "",
-  backstory: "",
+  name:"", classes:[{name:"Adventurer",level:1}],
+  stats:{STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10},
+  profBonus:2, hp:{current:10,max:10,temp:0}, ac:10,
+  savingThrows:{}, skills:{},
+  alignment:"True Neutral", background:"",
+  traits:{personality:"",ideals:"",bonds:"",flaws:""},
+  personalNotes:"", backstory:"",
+  spellSlots:{}, // { "1st": {max:2,used:0}, ... }
+  spellcastingAbility:"INT",
 };
 
-/* ═══ STORAGE ═══════════════════════════════════ */
 const load = (key,fb) => { try { return JSON.parse(localStorage.getItem(key))??fb; } catch { return fb; } };
 const save = (key,val) => { try { localStorage.setItem(key,JSON.stringify(val)); } catch {} };
+const ALL_KEYS = ["hj_char","hj_inventory","hj_npcs","hj_locations","hj_skills","hj_spells","hj_sessions","hj_quests"];
 
-const ALL_KEYS = ["hj_char","hj_inventory","hj_npcs","hj_locations","hj_skills","hj_sessions","hj_quests"];
+const hpBarColor = pct => pct>70?"linear-gradient(90deg,#1a5a1a,#2a8a2a,#33aa33)":pct>35?"linear-gradient(90deg,#7a4a10,#cc7020,#e08030)":"linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
+const hpNumColor = pct => pct>70?"#5acc5a":pct>35?"#e08030":"#cc3a3a";
 
-/* ═══ HP COLOR HELPERS ══════════════════════════ */
-const hpBarColor = pct =>
-  pct > 70 ? "linear-gradient(90deg,#1a5a1a,#2a8a2a,#33aa33)"
-  : pct > 35 ? "linear-gradient(90deg,#7a4a10,#cc7020,#e08030)"
-  : "linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
-
-const hpNumColor = pct =>
-  pct > 70 ? "#5acc5a" : pct > 35 ? "#e08030" : "#cc3a3a";
-
-/* ═══ ENTITY LINK PARSER ════════════════════════ */
 const LEGEND_ITEMS = [
   {type:"npc",      color:"rgba(226,185,78,0.35)", border:"rgba(226,185,78,0.7)",  label:"People"},
   {type:"location", color:"rgba(122,172,204,0.35)",border:"rgba(122,172,204,0.7)", label:"Places"},
   {type:"quest",    color:"rgba(204,102,102,0.35)",border:"rgba(204,102,102,0.7)", label:"Quests"},
   {type:"inventory",color:"rgba(122,204,154,0.35)",border:"rgba(122,204,154,0.7)", label:"Pack"},
-  {type:"skill",    color:"rgba(168,122,204,0.35)",border:"rgba(168,122,204,0.7)", label:"Abilities"},
+  {type:"skill",    color:"rgba(168,122,204,0.35)",border:"rgba(168,122,204,0.7)", label:"Skills"},
 ];
 
 function parseEntityLinks(text,npcs,locations,quests,inventory,skills,onNavigate) {
@@ -338,7 +354,7 @@ function parseEntityLinks(text,npcs,locations,quests,inventory,skills,onNavigate
   ].filter(e=>e.name&&e.name.trim().length>1).sort((a,b)=>b.name.length-a.name.length);
   if (!entities.length) return text;
   const pattern=new RegExp(`(${entities.map(e=>e.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')})`,'gi');
-  const TAB_LABELS={npc:"People",location:"Places",quest:"Quests",inventory:"Pack",skill:"Abilities"};
+  const TAB_LABELS={npc:"People",location:"Places",quest:"Quests",inventory:"Pack",skill:"Skills"};
   return text.split(pattern).map((part,i)=>{
     const match=entities.find(e=>e.name.toLowerCase()===part.toLowerCase());
     if (match) return <span key={i} className={`entity-link entity-link-${match.type}`} onClick={()=>onNavigate(match.tab)} title={`→ ${TAB_LABELS[match.type]}: ${match.name}`}>{part}</span>;
@@ -346,7 +362,7 @@ function parseEntityLinks(text,npcs,locations,quests,inventory,skills,onNavigate
   });
 }
 
-/* ═══ SHARED COMPONENTS ════════════════════════ */
+/* ═══ SHARED ════════════════════════════════════ */
 function TagsEditor({tags,onChange}) {
   const [adding,setAdding]=useState(false); const [draft,setDraft]=useState("");
   const commit=()=>{const t=draft.trim().toLowerCase();if(t&&!tags.includes(t))onChange([...tags,t]);setDraft("");setAdding(false);};
@@ -370,9 +386,10 @@ function PinBtn({pinned,onToggle}) {
   return <button className={`pin-btn${pinned?" pinned":""}`} onClick={onToggle} title={pinned?"Unpin":"Pin"}>{pinned?"📌":"📍"}</button>;
 }
 
-function Toggle({on,onToggle,label}) {
+function Toggle({on,onToggle,label,color}) {
+  const cls = on ? (color==="purple"?"on-purple":color==="blue"?"on-blue":"on") : "";
   return <div className="toggle-wrap" onClick={onToggle}>
-    <div className={`toggle-track${on?" on":""}`}><div className="toggle-thumb"/></div>
+    <div className={`toggle-track${cls?" "+cls:""}`}><div className="toggle-thumb"/></div>
     <span className="toggle-label">{label}</span>
   </div>;
 }
@@ -392,12 +409,11 @@ function SkillPips({value,onChange}) {
   return <div className="skill-pips">{[1,2,3,4,5].map(i=><div key={i} className={`pip${i<=value?" filled":""}`} onClick={()=>onChange(i===value?0:i)}/>)}</div>;
 }
 
-/* ═══ RESET MODAL ═══════════════════════════════ */
 function ResetModal({onConfirm,onCancel}) {
   return <div className="modal-overlay" onClick={onCancel}>
     <div className="modal-box" onClick={e=>e.stopPropagation()}>
       <div className="modal-title">⚠ Full Reset</div>
-      <p className="modal-text">This will permanently erase all character data, inventory, NPCs, locations, sessions, quests and abilities. This action cannot be undone.</p>
+      <p className="modal-text">This will permanently erase all character data, inventory, NPCs, locations, sessions, quests, skills and spells. This cannot be undone.</p>
       <div className="row" style={{justifyContent:"flex-end",gap:"0.6rem"}}>
         <button className="btn-ghost" onClick={onCancel}>Cancel</button>
         <button className="btn-danger" onClick={onConfirm}>Erase Everything</button>
@@ -406,178 +422,129 @@ function ResetModal({onConfirm,onCancel}) {
   </div>;
 }
 
-/* ═══ CHARACTER SHEET ══════════════════════════ */
-function CharacterSheet({char,setChar,inventory}) {
+/* ═══ CHARACTER SHEET (merged card) ════════════ */
+function CharacterSheet({char,setChar,inventory,skills,spells}) {
   const upd  = (f,v) => setChar(c=>({...c,[f]:v}));
   const updSt= (s,v) => setChar(c=>({...c,stats:{...c.stats,[s]:v}}));
   const hpPct= Math.round(clamp((char.hp.current/char.hp.max)*100,0,100));
   const pb   = char.profBonus||2;
 
-  /* FIX: use functional update, never read stale state from closure */
-  const toggleSave = useCallback((key) => {
-    setChar(c => ({...c, savingThrows: {...(c.savingThrows||{}), [key]: !(c.savingThrows||{})[key]}}));
-  }, [setChar]);
+  const toggleSave = useCallback(key=>setChar(c=>({...c,savingThrows:{...(c.savingThrows||{}),[key]:!(c.savingThrows||{})[key]}})),[setChar]);
+  const toggleSkill= useCallback(key=>setChar(c=>({...c,skills:{...(c.skills||{}),[key]:!(c.skills||{})[key]}})),[setChar]);
 
-  const toggleSkill = useCallback((key) => {
-    setChar(c => ({...c, skills: {...(c.skills||{}), [key]: !(c.skills||{})[key]}}));
-  }, [setChar]);
-
-  const equippedItems=(inventory||[]).filter(i=>i.equipped);
+  const equippedItems  = (inventory||[]).filter(i=>i.equipped);
+  const activeSkills   = (skills||[]).filter(s=>s.inUse);
+  const activeSpells   = (spells||[]).filter(s=>s.inUse);
+  const hasActive      = equippedItems.length||activeSkills.length||activeSpells.length;
 
   return <>
-    {/* ── Identity: name + classes ── */}
+    {/* ══ Single merged CHARACTER card ══ */}
     <div className="card">
-      <div className="sect-label">Identity</div>
+      <div className="sect-label">Character</div>
 
-      {/* Character name — single, prominent */}
+      {/* Name */}
       <div style={{marginBottom:"1rem"}}>
-        <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Character Name</div>
-        <input
-          className="iedit"
-          style={{fontFamily:"Cinzel,serif",fontSize:"1.4rem",color:"#ede5c5",fontWeight:700,letterSpacing:"0.04em"}}
-          value={char.name||""}
-          onChange={e=>upd("name",e.target.value)}
-          placeholder="Enter your hero's name…"
-        />
+        <input className="iedit" style={{fontFamily:"Cinzel,serif",fontSize:"1.4rem",color:"#ede5c5",fontWeight:700,letterSpacing:"0.04em"}} value={char.name||""} onChange={e=>upd("name",e.target.value)} placeholder="Enter your hero's name…"/>
       </div>
 
-      {/* Classes — separate from name */}
-      <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.5rem"}}>Class & Level</div>
-      <div style={{display:"flex",flexDirection:"column",gap:"0.3rem",marginBottom:"0.65rem"}}>
+      {/* Classes */}
+      <div style={{display:"flex",flexDirection:"column",gap:"0.3rem",marginBottom:"0.8rem"}}>
         {(char.classes||[]).map((cls,i)=>(
           <div key={i} className="class-row">
-            <input
-              className="iedit flex1"
-              style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:i===0?"#e2b94e":"#c8bfa0",fontWeight:600}}
-              value={cls.name}
-              onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return{...c,classes:cl};})}
-              placeholder={`Class ${i+1}…`}
-            />
+            <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:i===0?"#e2b94e":"#c8bfa0",fontWeight:600}} value={cls.name} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return{...c,classes:cl};})} placeholder={`Class ${i+1}…`}/>
             <span style={{fontFamily:"Cinzel,serif",fontSize:"0.56rem",color:"#8a7040",letterSpacing:"0.1em",flexShrink:0}}>LVL</span>
-            <input
-              type="number"
-              className="iedit"
-              style={{width:38,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e2b94e"}}
-              value={cls.level}
-              min={1} max={20}
-              onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}
-            />
+            <input type="number" className="iedit" style={{width:38,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e2b94e"}} value={cls.level} min={1} max={20} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}/>
             {i>0&&<button className="btn-ghost" style={{padding:"0.1rem 0.35rem",fontSize:"0.65rem"}} onClick={()=>setChar(c=>({...c,classes:c.classes.filter((_,j)=>j!==i)}))}>✕</button>}
           </div>
         ))}
-        {(char.classes||[]).length<4&&
-          <button className="btn-sm" style={{alignSelf:"flex-start",marginTop:"0.2rem"}} onClick={()=>setChar(c=>({...c,classes:[...(c.classes||[]),{name:"",level:1}]}))}>+ Multiclass</button>}
+        {(char.classes||[]).length<4&&<button className="btn-sm" style={{alignSelf:"flex-start",marginTop:"0.2rem"}} onClick={()=>setChar(c=>({...c,classes:[...(c.classes||[]),{name:"",level:1}]}))}>+ Multiclass</button>}
       </div>
 
-      {/* Background / Prof Bonus / Alignment */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 90px 1fr",gap:"0.6rem",alignItems:"end"}}>
+      {/* Background / ProfBonus / Alignment */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 90px 1fr",gap:"0.6rem",alignItems:"end",marginBottom:"0"}}>
         <div>
-          <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Background</div>
+          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",color:"#8a7040",marginBottom:"0.25rem"}}>Background</div>
           <input className="iedit" style={{fontSize:"0.9rem",color:"#c8bfa0"}} value={char.background||""} onChange={e=>upd("background",e.target.value)} placeholder="Background…"/>
         </div>
         <div>
-          <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Prof. Bonus</div>
+          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",color:"#8a7040",marginBottom:"0.25rem"}}>Prof. Bonus</div>
           <input type="number" className="iedit" style={{textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem",color:"#e2b94e"}} value={pb} onChange={e=>upd("profBonus",parseInt(e.target.value)||2)}/>
         </div>
         <div>
-          <div className="sect-label" style={{fontSize:"0.54rem",marginBottom:"0.3rem"}}>Alignment</div>
-          <select className="g-select" value={char.alignment||"True Neutral"} onChange={e=>upd("alignment",e.target.value)} style={{fontSize:"0.78rem",padding:"0.3rem 0.5rem"}}>
-            {ALIGNMENTS.map(a=><option key={a} value={a}>{a}</option>)}
-          </select>
+          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",color:"#8a7040",marginBottom:"0.25rem"}}>Alignment</div>
+          <select className="g-select" value={char.alignment||"True Neutral"} onChange={e=>upd("alignment",e.target.value)} style={{fontSize:"0.78rem",padding:"0.3rem 0.5rem"}}>{ALIGNMENTS.map(a=><option key={a} value={a}>{a}</option>)}</select>
         </div>
       </div>
-    </div>
 
-    {/* ── Attributes ── */}
-    <div className="card">
-      <div className="sect-label">Attributes <span style={{fontFamily:"Crimson Text,serif",textTransform:"none",letterSpacing:0,fontSize:"0.85rem",color:"#8a7040"}}>— tap to edit</span></div>
-      <div className="stat-grid-6">{STAT_KEYS.map(k=><StatBox key={k} label={k} value={char.stats[k]} onChange={v=>updSt(k,v)}/>)}</div>
-    </div>
+      {/* ─ Attributes ─ */}
+      <hr className="inner-divider" data-label="Attributes — tap to edit" style={{marginTop:"1.1rem"}}/>
+      <div className="stat-grid-6" style={{marginTop:"0.8rem"}}>{STAT_KEYS.map(k=><StatBox key={k} label={k} value={char.stats[k]} onChange={v=>updSt(k,v)}/>)}</div>
 
-    {/* ── Vitality ── */}
-    <div className="card">
-      <div className="sect-label">Vitality</div>
-      <div className="hp-row">
-        <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-        <div className="hp-display">
-          <input
-            className="hp-cur-input"
-            type="number"
-            value={char.hp.current}
-            style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}}
-            onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}
-          />
-          <span className="hp-sep">/</span>
-          <input
-            className="hp-max-input"
-            type="number"
-            value={char.hp.max}
-            style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}}
-            onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}
-          />
-        </div>
-        <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
-        <span className="hp-label">HP</span>
-      </div>
-      <div className="hp-bar-bg">
-        <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
-      </div>
-      <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
-      <div className="combat-grid">
-        <div className="combat-box">
-          <span className="combat-box-label">Temp HP</span>
-          <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
-        </div>
-        <div className="combat-box">
-          <span className="combat-box-label">Armor Class</span>
-          <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
-        </div>
-        <div className="combat-box">
-          <span className="combat-box-label">Initiative</span>
-          <span className="combat-box-val">{numMod(Math.floor((char.stats.DEX-10)/2))}</span>
-        </div>
-      </div>
-    </div>
+      {/* ─ Vitality ─ */}
+      <hr className="inner-divider" data-label="Vitality" style={{marginTop:"1.1rem"}}/>
+      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"stretch",gap:"0.5rem",flexWrap:"wrap"}}>
 
-    {/* ── Saving Throws ── */}
-    <div className="card">
-      <div className="sect-label">Saving Throws</div>
-      <div className="save-grid">
+        {/* HP controls — left group */}
+        <div style={{display:"flex",flexDirection:"column",gap:"0.4rem",flex:"0 0 auto"}}>
+          <div style={{display:"flex",alignItems:"center",gap:"0.4rem"}}>
+            <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+            <div className="hp-display">
+              <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+              <span className="hp-sep">/</span>
+              <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+            </div>
+            <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+            <span className="hp-label">HP</span>
+          </div>
+          <div className="hp-bar-bg" style={{marginTop:0}}>
+            <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
+          </div>
+          <div className="hp-pct" style={{color:hpNumColor(hpPct),marginTop:0}}>{hpPct}% vitality remaining</div>
+        </div>
+
+        {/* Combat boxes — right, same row */}
+        <div style={{display:"flex",gap:"0.4rem",flex:"1 1 auto",alignItems:"stretch"}}>
+          <div className="combat-box" style={{flex:1}}>
+            <span className="combat-box-label">Temp HP</span>
+            <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
+          </div>
+          <div className="combat-box" style={{flex:1}}>
+            <span className="combat-box-label">Armor Class</span>
+            <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
+          </div>
+          <div className="combat-box" style={{flex:1}}>
+            <span className="combat-box-label">Initiative</span>
+            <span className="combat-box-val">{numMod(Math.floor((char.stats.DEX-10)/2))}</span>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ─ Saving Throws ─ */}
+      <hr className="inner-divider" data-label="Saving Throws" style={{marginTop:"1.1rem"}}/>
+      <div className="save-grid" style={{marginTop:"0.8rem"}}>
         {SAVING_THROWS.map(st=>{
           const prof=!!(char.savingThrows||{})[st.key];
           const base=Math.floor((char.stats[st.attr]-10)/2);
           const bonus=prof?base+pb:base;
           return <div key={st.key} className="check-row">
-            {/* FIX: button element with type="button" prevents form-submit behaviour and event issues */}
-            <button
-              type="button"
-              className={`prof-dot-btn${prof?" prof":""}`}
-              onClick={()=>toggleSave(st.key)}
-              title="Toggle proficiency"
-            />
+            <button type="button" className={`prof-dot-btn${prof?" prof":""}`} onClick={()=>toggleSave(st.key)} title="Toggle proficiency"/>
             <span className="check-attr">{st.attr}</span>
             <span className="check-label">{st.label}</span>
             <span className="check-bonus">{numMod(bonus)}</span>
           </div>;
         })}
       </div>
-    </div>
 
-    {/* ── Skills ── */}
-    <div className="card">
-      <div className="sect-label">Skills</div>
-      <div className="save-grid">
+      {/* ─ Skills ─ */}
+      <hr className="inner-divider" data-label="Skills" style={{marginTop:"1.1rem"}}/>
+      <div className="save-grid" style={{marginTop:"0.8rem"}}>
         {GENERIC_SKILLS.map(sk=>{
           const prof=!!(char.skills||{})[sk.key];
           const base=Math.floor((char.stats[sk.attr]-10)/2);
           const bonus=prof?base+pb:base;
           return <div key={sk.key} className="check-row">
-            <button
-              type="button"
-              className={`prof-dot-btn${prof?" prof":""}`}
-              onClick={()=>toggleSkill(sk.key)}
-              title="Toggle proficiency"
-            />
+            <button type="button" className={`prof-dot-btn${prof?" prof":""}`} onClick={()=>toggleSkill(sk.key)} title="Toggle proficiency"/>
             <span className="check-attr">{sk.attr}</span>
             <span className="check-label">{sk.label}</span>
             <span className="check-bonus">{numMod(bonus)}</span>
@@ -586,28 +553,47 @@ function CharacterSheet({char,setChar,inventory}) {
       </div>
     </div>
 
-    {/* ── Equipped Gear from Pack ── */}
-    {equippedItems.length>0&&<div className="card">
-      <div className="sect-label">Equipped Gear</div>
+    {/* ══ Active / Equipped (from all tabs) ══ */}
+    {hasActive>0&&<div className="card">
+      <div className="sect-label">Active & Equipped</div>
       {equippedItems.map(item=>(
         <div key={item.id} className="equipped-item">
           <span className="equipped-icon">{ITEM_ICONS[item.type]||"◈"}</span>
           <div className="flex1">
-            <div className="row" style={{gap:"0.4rem",marginBottom:"0.15rem"}}>
-              <span className="equipped-name">{item.name}</span>
-              <span className="equipped-type-badge">{item.type}</span>
-            </div>
+            <div className="row" style={{gap:"0.4rem",marginBottom:"0.15rem"}}><span className="equipped-name">{item.name}</span><span className="equipped-type-badge">{item.type}</span></div>
             {item.damage&&<div className="equipped-stat">Damage: {item.damage}{item.damageType?` ${item.damageType}`:""}</div>}
             {item.modifier!==undefined&&item.modifier!==""&&<div className="equipped-stat">To Hit: {numMod(parseInt(item.modifier)||0)}</div>}
             {item.charges&&<div className="equipped-stat">Charges: {item.charges}</div>}
             {item.effect&&<div className="equipped-stat" style={{color:"#a87acc"}}>{item.effect}</div>}
-            {item.note&&<div className="equipped-stat">{item.note}</div>}
+          </div>
+        </div>
+      ))}
+      {activeSkills.map(sk=>(
+        <div key={sk.id} className="equipped-item">
+          <span className="equipped-icon">✨</span>
+          <div className="flex1">
+            <div className="row" style={{gap:"0.4rem",marginBottom:"0.15rem"}}><span className="equipped-name">{sk.name}</span><span className="equipped-skill-badge">{sk.category}</span></div>
+            {sk.description&&<div className="equipped-stat">{sk.description}</div>}
+          </div>
+        </div>
+      ))}
+      {activeSpells.map(sp=>(
+        <div key={sp.id} className="equipped-item">
+          <span className="equipped-icon">🔮</span>
+          <div className="flex1">
+            <div className="row" style={{gap:"0.4rem",marginBottom:"0.15rem",flexWrap:"wrap"}}>
+              <span className="equipped-name">{sp.name}</span>
+              <span className="equipped-spell-badge">{sp.level}</span>
+              {sp.school&&<span className="equipped-spell-badge">{sp.school}</span>}
+            </div>
+            {sp.castingTime&&<div className="equipped-stat">Cast: {sp.castingTime} · Range: {sp.range||"—"}</div>}
+            {sp.description&&<div className="equipped-stat">{sp.description}</div>}
           </div>
         </div>
       ))}
     </div>}
 
-    {/* ── Character Traits ── */}
+    {/* ══ Traits ══ */}
     <div className="card">
       <div className="sect-label">Character Traits</div>
       <div className="trait-grid">
@@ -623,13 +609,11 @@ function CharacterSheet({char,setChar,inventory}) {
       </div>
     </div>
 
-    {/* ── Personal Notes ── */}
     <div className="card">
       <div className="sect-label">Personal Notes</div>
       <textarea className="g-textarea" rows={4} placeholder="Session reminders, GM hints, party notes…" value={char.personalNotes||""} onChange={e=>upd("personalNotes",e.target.value)}/>
     </div>
 
-    {/* ── Backstory ── */}
     <div className="card">
       <div className="sect-label">Backstory</div>
       <textarea className="g-textarea" rows={6} placeholder="Where did your hero come from? What shaped them? What do they seek?…" value={char.backstory||""} onChange={e=>upd("backstory",e.target.value)}/>
@@ -643,13 +627,7 @@ function Pack({inventory,setInventory}) {
   const [form,setForm]=useState({name:"",type:"General",qty:"1",damage:"",damageType:"",modifier:"",charges:"",effect:"",note:""});
   const [expanded,setExpanded]=useState({});
   const [filterType,setFilterType]=useState(null);
-
-  const addItem=()=>{
-    const n=form.name.trim(); if(!n)return;
-    setInventory(inv=>[...inv,{id:Date.now(),equipped:false,...form,name:n}]);
-    setForm({name:"",type:"General",qty:"1",damage:"",damageType:"",modifier:"",charges:"",effect:"",note:""});
-    setShowForm(false);
-  };
+  const addItem=()=>{const n=form.name.trim();if(!n)return;setInventory(inv=>[...inv,{id:Date.now(),equipped:false,...form,name:n}]);setForm({name:"",type:"General",qty:"1",damage:"",damageType:"",modifier:"",charges:"",effect:"",note:""});setShowForm(false);};
   const upd=(id,f,v)=>setInventory(inv=>inv.map(x=>x.id===id?{...x,[f]:v}:x));
   const del=id=>setInventory(inv=>inv.filter(x=>x.id!==id));
   const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
@@ -657,25 +635,15 @@ function Pack({inventory,setInventory}) {
   const visible=filterType?inventory.filter(i=>i.type===filterType):inventory;
   const equippedCount=inventory.filter(i=>i.equipped).length;
   const needsExtras=t=>["Weapon","Spell Scroll","Wondrous Item","Consumable"].includes(t);
-
   return <>
     <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>
-        {inventory.length} items{equippedCount>0?` · ${equippedCount} equipped`:""}
-      </span>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{inventory.length} items{equippedCount>0?` · ${equippedCount} equipped`:""}</span>
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Item"}</button>
     </div>
-
     {showForm&&<div className="add-form">
-      <div className="sect-label" style={{marginBottom:"0.8rem"}}>New Item</div>
       <div className="col">
-        <div className="row">
-          <input className="g-input flex1" placeholder="Item name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addItem()}/>
-          <input className="g-input" style={{width:60}} placeholder="Qty" value={form.qty} onChange={e=>setForm(f=>({...f,qty:e.target.value}))}/>
-        </div>
-        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>
-          {ITEM_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.5,borderColor:form.type===t?"#8a6830":"",color:form.type===t?"#e2b94e":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{ITEM_ICONS[t]} {t}</button>)}
-        </div>
+        <div className="row"><input className="g-input flex1" placeholder="Item name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addItem()}/><input className="g-input" style={{width:60}} placeholder="Qty" value={form.qty} onChange={e=>setForm(f=>({...f,qty:e.target.value}))}/></div>
+        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{ITEM_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.5,borderColor:form.type===t?"#8a6830":"",color:form.type===t?"#e2b94e":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{ITEM_ICONS[t]} {t}</button>)}</div>
         {needsExtras(form.type)&&<>
           {form.type==="Weapon"&&<div className="pack-item-row">
             <div className="pack-field"><span className="pack-field-label">Damage Dice</span><input className="pack-field-input" placeholder="e.g. 1d8" value={form.damage} onChange={e=>setForm(f=>({...f,damage:e.target.value}))}/></div>
@@ -691,22 +659,18 @@ function Pack({inventory,setInventory}) {
         <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addItem}>⊕ Add Item</button></div>
       </div>
     </div>}
-
     <div className="filter-bar">
       <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={()=>setFilterType(null)}>All</button>
       {ITEM_TYPES.map(t=>{const c=inventory.filter(i=>i.type===t).length;if(!c)return null;return<button key={t} className={`filter-tag${filterType===t?" active-filter":""}`} onClick={()=>setFilterType(filterType===t?null:t)}>{ITEM_ICONS[t]} {t} ({c})</button>;})}
     </div>
-
     {inventory.length===0&&<div className="card empty-state">Your pack lies empty…</div>}
-
-    {visible.map(item=>{
-      const open=!!expanded[item.id];
-      return <div key={item.id} className={`pack-item${item.equipped?" equipped-active":""}`}>
+    {visible.map(item=>{const open=!!expanded[item.id];return(
+      <div key={item.id} className={`pack-item${item.equipped?" equipped-active":""}`}>
         <div className="pack-item-header">
           <span style={{fontSize:"1.1rem",flexShrink:0}}>{ITEM_ICONS[item.type]||"◈"}</span>
           <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.9rem",fontWeight:700,color:"#e0d6b4"}} value={item.name} onChange={e=>upd(item.id,"name",e.target.value)}/>
           <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",letterSpacing:"0.08em",color:"#7a6040",border:"1px solid #2e2618",padding:"0.1rem 0.35rem",flexShrink:0}}>{item.type}</span>
-          <Toggle on={!!item.equipped} onToggle={()=>toggleEquip(item.id)} label={item.equipped?"Equipped":"Stowed"}/>
+          <Toggle on={!!item.equipped} onToggle={()=>toggleEquip(item.id)} label={item.equipped?"Equipped":"Stowed"} color="gold"/>
           <button className="entity-toggle" onClick={()=>toggle(item.id)}>{open?"▲":"▼"}</button>
         </div>
         {open&&<div className="pack-item-body">
@@ -725,17 +689,212 @@ function Pack({inventory,setInventory}) {
           <div className="pack-field"><span className="pack-field-label">Notes</span><input className="pack-field-input" value={item.note||""} placeholder="Notes…" onChange={e=>upd(item.id,"note",e.target.value)}/></div>
           <div className="row" style={{justifyContent:"flex-end",marginTop:"0.3rem"}}><button className="btn-ghost" onClick={()=>del(item.id)}>Remove</button></div>
         </div>}
-      </div>;
-    })}
+      </div>
+    );})}
+  </>;
+}
+
+/* ═══ SKILLS TAB (Skill / Trait / Feat only, + in-use) ═ */
+function SkillsTab({skills,setSkills}) {
+  const [form,setForm]=useState({name:"",category:"Skill",description:"",level:0});
+  const [showForm,setShowForm]=useState(false);
+  const [expanded,setExpanded]=useState({});
+  const [activeTag,setActiveTag]=useState(null);
+  const [activeCat,setActiveCat]=useState(null);
+  const allTags=[...new Set(skills.flatMap(s=>s.tags||[]))].sort();
+  const addSkill=()=>{const n=form.name.trim();if(!n)return;setSkills(l=>[...l,{id:Date.now(),name:n,category:form.category,description:form.description.trim(),level:form.level,tags:[],pinned:false,inUse:false}]);setForm({name:"",category:"Skill",description:"",level:0});setShowForm(false);};
+  const upd=(id,f,v)=>setSkills(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
+  const del=id=>setSkills(l=>l.filter(x=>x.id!==id));
+  const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
+  const toggleInUse=id=>setSkills(l=>l.map(x=>x.id===id?{...x,inUse:!x.inUse}:x));
+  const visible=skills.filter(s=>(!activeTag||(s.tags||[]).includes(activeTag))&&(!activeCat||s.category===activeCat)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+  const catColor=cat=>({Skill:"#e2b94e",Trait:"#7aaccc",Feat:"#cc8844"})[cat]||"#8a7848";
+  const inUseCount=skills.filter(s=>s.inUse).length;
+  return <>
+    <div className="row" style={{justifyContent:"space-between"}}>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{skills.length} entries{inUseCount>0?` · ${inUseCount} active`:""}</span>
+      <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Entry"}</button>
+    </div>
+    {showForm&&<div className="add-form">
+      <div className="col">
+        <input className="g-input" placeholder="Name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSkill()}/>
+        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{SKILL_CATS.map(c=><button key={c} className="filter-tag" style={{opacity:form.category===c?1:0.45,borderColor:form.category===c?catColor(c)+"88":"",color:form.category===c?catColor(c):""}} onClick={()=>setForm(f=>({...f,category:c}))}>{c}</button>)}</div>
+        <div className="row" style={{gap:"0.6rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",color:"#8a7040",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={form.level} onChange={v=>setForm(f=>({...f,level:v}))}/></div>
+        <textarea className="g-textarea" rows={3} placeholder="Description, effect, source, prerequisites…" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
+        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addSkill}>⊕ Add</button></div>
+      </div>
+    </div>}
+    <div className="filter-bar">
+      <button className={`filter-tag${!activeCat?" active-filter":""}`} onClick={()=>setActiveCat(null)}>All</button>
+      {SKILL_CATS.map(c=>{const count=skills.filter(s=>s.category===c).length;if(!count)return null;return<button key={c} className={`filter-tag${activeCat===c?" active-filter":""}`} style={{borderColor:activeCat===c?catColor(c)+"88":"",color:activeCat===c?catColor(c):""}} onClick={()=>setActiveCat(activeCat===c?null:c)}>{c} ({count})</button>;})}
+    </div>
+    <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
+    {skills.length===0&&<div className="card empty-state">No skills, traits or feats recorded.<br/><span style={{fontSize:"0.62rem"}}>Add your first entry above.</span></div>}
+    {visible.map(sk=>{const open=!!expanded[sk.id];const cc=catColor(sk.category);return(
+      <div key={sk.id} className={`card${sk.pinned?" pinned":""}${sk.inUse?" inuse-active":""}`} style={{padding:"1rem 1.1rem",borderLeftColor:cc+"55",borderLeftWidth:2}}>
+        <div className="entity-header">
+          <div className="flex1">
+            <div className="row" style={{gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
+              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.98rem",color:"#e0d6b4",fontWeight:700}} value={sk.name} onChange={e=>upd(sk.id,"name",e.target.value)} placeholder="Name…"/>
+              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.1em",textTransform:"uppercase",color:cc,border:`1px solid ${cc}55`,padding:"0.15rem 0.5rem",background:`${cc}0d`,flexShrink:0}}>{sk.category}</span>
+            </div>
+            {sk.level>0&&<SkillPips value={sk.level} onChange={v=>upd(sk.id,"level",v)}/>}
+          </div>
+          <Toggle on={!!sk.inUse} onToggle={()=>toggleInUse(sk.id)} label={sk.inUse?"Active":"Inactive"} color="purple"/>
+          <PinBtn pinned={sk.pinned} onToggle={()=>upd(sk.id,"pinned",!sk.pinned)}/>
+          <button className="entity-toggle" onClick={()=>toggle(sk.id)}>{open?"▲":"▼"}</button>
+        </div>
+        {!open&&sk.description&&<p style={{fontSize:"0.92rem",color:"#9a8a68",fontStyle:"italic",marginTop:"0.3rem",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sk.description}</p>}
+        <TagsEditor tags={sk.tags||[]} onChange={v=>upd(sk.id,"tags",v)}/>
+        {open&&<div style={{marginTop:"0.8rem"}}>
+          <div className="row" style={{gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.5rem"}}>{SKILL_CATS.map(c=><button key={c} className="filter-tag" style={{opacity:sk.category===c?1:0.4,borderColor:sk.category===c?catColor(c)+"88":"",color:sk.category===c?catColor(c):""}} onClick={()=>upd(sk.id,"category",c)}>{c}</button>)}</div>
+          <div className="row" style={{gap:"0.6rem",marginBottom:"0.7rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",color:"#8a7040",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={sk.level} onChange={v=>upd(sk.id,"level",v)}/></div>
+          <textarea className="g-textarea" rows={4} placeholder="Description, effect, source, requirements…" value={sk.description||""} onChange={e=>upd(sk.id,"description",e.target.value)}/>
+          <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(sk.id)}>Remove</button></div>
+        </div>}
+      </div>
+    );})}
+  </>;
+}
+
+/* ═══ SPELLS TAB ════════════════════════════════ */
+function SpellsTab({spells,setSpells,char,setChar}) {
+  const [form,setForm]=useState({name:"",level:"Cantrip",school:"Evocation",castingTime:"1 action",range:"",duration:"",components:"",description:"",notes:""});
+  const [showForm,setShowForm]=useState(false);
+  const [expanded,setExpanded]=useState({});
+  const [activeLevel,setActiveLevel]=useState(null);
+  const [showSlots,setShowSlots]=useState(false);
+
+  const addSpell=()=>{const n=form.name.trim();if(!n)return;setSpells(l=>[...l,{id:Date.now(),...form,name:n,tags:[],pinned:false,inUse:false}]);setForm({name:"",level:"Cantrip",school:"Evocation",castingTime:"1 action",range:"",duration:"",components:"",description:"",notes:""});setShowForm(false);};
+  const upd=(id,f,v)=>setSpells(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
+  const del=id=>setSpells(l=>l.filter(x=>x.id!==id));
+  const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
+  const toggleInUse=id=>setSpells(l=>l.map(x=>x.id===id?{...x,inUse:!x.inUse}:x));
+
+  // Spell slots management
+  const updSlot=(lvl,field,val)=>setChar(c=>({...c,spellSlots:{...(c.spellSlots||{}),[lvl]:{...((c.spellSlots||{})[lvl]||{max:0,used:0}),[field]:parseInt(val)||0}}}));
+  const slots=char.spellSlots||{};
+
+  const visible=activeLevel?spells.filter(s=>s.level===activeLevel):spells;
+  const levelColor=lv=>lv==="Cantrip"?"#8aaccc":"#9a6acc";
+  const inUseCount=spells.filter(s=>s.inUse).length;
+
+  return <>
+    <div className="row" style={{justifyContent:"space-between"}}>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#5a8ab0"}}>{spells.length} spells known{inUseCount>0?` · ${inUseCount} prepared`:""}</span>
+      <div className="row" style={{gap:"0.5rem"}}>
+        <button className="btn-sm" style={{borderColor:"#1a4a8a",color:"#64a0e6"}} onClick={()=>setShowSlots(s=>!s)}>{showSlots?"✕ Slots":"⚙ Slots"}</button>
+        <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Spell"}</button>
+      </div>
+    </div>
+
+    {/* Spell slots tracker */}
+    {showSlots&&<div className="card" style={{borderColor:"#1a3a6a"}}>
+      <div className="sect-label" style={{color:"#64a0e6"}}>Spell Slots</div>
+      <div style={{display:"flex",alignItems:"center",gap:"0.6rem",marginBottom:"0.7rem",flexWrap:"wrap"}}>
+        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.54rem",letterSpacing:"0.14em",color:"#4a7aaa",textTransform:"uppercase"}}>Spellcasting Ability</span>
+        <select className="g-select" style={{width:"auto",fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={char.spellcastingAbility||"INT"} onChange={e=>setChar(c=>({...c,spellcastingAbility:e.target.value}))}>
+          {STAT_KEYS.map(s=><option key={s} value={s}>{s}</option>)}
+        </select>
+        <span style={{fontFamily:"Cinzel,serif",fontSize:"0.72rem",color:"#64a0e6"}}>
+          DC {8+(char.profBonus||2)+Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2} · Attack {numMod((char.profBonus||2)+Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2)}
+        </span>
+      </div>
+      <div className="spell-slot-grid">
+        {SPELL_SLOT_LABELS.map(lv=>{
+          const sl=slots[lv]||{max:0,used:0};
+          return <div key={lv} className="spell-slot-box">
+            <span className="spell-slot-label">{lv}</span>
+            <div className="row" style={{justifyContent:"center",gap:"0.2rem"}}>
+              <input className="spell-slot-input" type="number" min={0} max={sl.max||0} value={sl.used||0} onChange={e=>updSlot(lv,"used",e.target.value)} style={{width:28,fontSize:"0.9rem"}}/>
+              <span style={{color:"#2a5a8a",fontSize:"0.7rem"}}>/</span>
+              <input className="spell-slot-input" type="number" min={0} value={sl.max||0} onChange={e=>updSlot(lv,"max",e.target.value)} style={{width:28,fontSize:"0.9rem",color:"#4a7aaa"}}/>
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>}
+
+    {/* Add spell form */}
+    {showForm&&<div className="add-form" style={{borderColor:"#1a3a6a"}}>
+      <div className="col">
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
+          <input className="g-input" placeholder="Spell name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSpell()}/>
+          <select className="g-select" value={form.school} onChange={e=>setForm(f=>({...f,school:e.target.value}))}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select>
+        </div>
+        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>
+          {SPELL_LEVELS.map(lv=><button key={lv} className="filter-tag" style={{opacity:form.level===lv?1:0.45,borderColor:form.level===lv?"#1a5a9a":"",color:form.level===lv?"#64a0e6":""}} onClick={()=>setForm(f=>({...f,level:lv}))}>{lv}</button>)}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.5rem"}}>
+          <div className="pack-field"><span className="pack-field-label">Casting Time</span><input className="pack-field-input" placeholder="1 action" value={form.castingTime} onChange={e=>setForm(f=>({...f,castingTime:e.target.value}))}/></div>
+          <div className="pack-field"><span className="pack-field-label">Range</span><input className="pack-field-input" placeholder="60 ft" value={form.range} onChange={e=>setForm(f=>({...f,range:e.target.value}))}/></div>
+          <div className="pack-field"><span className="pack-field-label">Duration</span><input className="pack-field-input" placeholder="Instantaneous" value={form.duration} onChange={e=>setForm(f=>({...f,duration:e.target.value}))}/></div>
+        </div>
+        <input className="g-input" placeholder="Components (V, S, M — material…)" value={form.components} onChange={e=>setForm(f=>({...f,components:e.target.value}))}/>
+        <textarea className="g-textarea" rows={3} placeholder="Spell description and effects…" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
+        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addSpell}>⊕ Add Spell</button></div>
+      </div>
+    </div>}
+
+    {/* Level filter */}
+    <div className="filter-bar">
+      <button className={`filter-tag${!activeLevel?" active-filter":""}`} onClick={()=>setActiveLevel(null)}>All</button>
+      {SPELL_LEVELS.map(lv=>{const count=spells.filter(s=>s.level===lv).length;if(!count)return null;return<button key={lv} className={`filter-tag${activeLevel===lv?" active-filter":""}`} style={{borderColor:activeLevel===lv?"#1a5a9a":"",color:activeLevel===lv?"#64a0e6":""}} onClick={()=>setActiveLevel(activeLevel===lv?null:lv)}>{lv} ({count})</button>;})}
+    </div>
+
+    {spells.length===0&&<div className="card empty-state">No spells recorded.<br/><span style={{fontSize:"0.62rem"}}>Add your first spell above.</span></div>}
+
+    {visible.map(sp=>{const open=!!expanded[sp.id];return(
+      <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{padding:"1rem 1.1rem",borderLeftColor:"#1a4a8a",borderLeftWidth:2}}>
+        <div className="entity-header">
+          <div className="flex1">
+            <div className="row" style={{gap:"0.5rem",marginBottom:"0.3rem",flexWrap:"wrap"}}>
+              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.98rem",color:"#c8d8f0",fontWeight:700}} value={sp.name} onChange={e=>upd(sp.id,"name",e.target.value)} placeholder="Spell name…"/>
+              <span className="spell-level-badge">{sp.level}</span>
+              {sp.school&&<span className="spell-school-badge">{sp.school}</span>}
+            </div>
+            {!open&&<div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.08em",color:"#4a7aaa"}}>
+              {[sp.castingTime,sp.range&&`Range: ${sp.range}`,sp.duration&&`Duration: ${sp.duration}`].filter(Boolean).join(" · ")}
+            </div>}
+          </div>
+          <Toggle on={!!sp.inUse} onToggle={()=>toggleInUse(sp.id)} label={sp.inUse?"Prepared":"Known"} color="blue"/>
+          <PinBtn pinned={sp.pinned} onToggle={()=>upd(sp.id,"pinned",!sp.pinned)}/>
+          <button className="entity-toggle" onClick={()=>toggle(sp.id)}>{open?"▲":"▼"}</button>
+        </div>
+        {!open&&sp.description&&<p style={{fontSize:"0.9rem",color:"#7a9abb",fontStyle:"italic",marginTop:"0.3rem",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sp.description}</p>}
+        <TagsEditor tags={sp.tags||[]} onChange={v=>upd(sp.id,"tags",v)}/>
+        {open&&<div style={{marginTop:"0.8rem"}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem",marginBottom:"0.7rem"}}>
+            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>Level</span>
+              <select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.level} onChange={e=>upd(sp.id,"level",e.target.value)}>{SPELL_LEVELS.map(lv=><option key={lv} value={lv}>{lv}</option>)}</select>
+            </div>
+            <div><span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.2rem"}}>School</span>
+              <select className="g-select" style={{fontSize:"0.82rem",padding:"0.25rem 0.5rem",borderColor:"#1a3a6a"}} value={sp.school} onChange={e=>upd(sp.id,"school",e.target.value)}>{SPELL_SCHOOLS.map(s=><option key={s} value={s}>{s}</option>)}</select>
+            </div>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.5rem",marginBottom:"0.7rem"}}>
+            <div className="pack-field"><span className="pack-field-label">Casting Time</span><input className="pack-field-input" value={sp.castingTime||""} onChange={e=>upd(sp.id,"castingTime",e.target.value)}/></div>
+            <div className="pack-field"><span className="pack-field-label">Range</span><input className="pack-field-input" value={sp.range||""} onChange={e=>upd(sp.id,"range",e.target.value)}/></div>
+            <div className="pack-field"><span className="pack-field-label">Duration</span><input className="pack-field-input" value={sp.duration||""} onChange={e=>upd(sp.id,"duration",e.target.value)}/></div>
+          </div>
+          <div className="pack-field" style={{marginBottom:"0.6rem"}}><span className="pack-field-label">Components</span><input className="pack-field-input" value={sp.components||""} placeholder="V, S, M (material)" onChange={e=>upd(sp.id,"components",e.target.value)}/></div>
+          <textarea className="g-textarea" rows={4} placeholder="Spell description and effects…" value={sp.description||""} onChange={e=>upd(sp.id,"description",e.target.value)}/>
+          {/* Notes / upcast */}
+          <div style={{marginTop:"0.5rem"}}>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.12em",color:"#4a7aaa",textTransform:"uppercase",display:"block",marginBottom:"0.25rem"}}>At Higher Levels / Notes</span>
+            <textarea className="g-textarea" rows={2} placeholder="When cast using a higher level slot…" value={sp.notes||""} onChange={e=>upd(sp.id,"notes",e.target.value)}/>
+          </div>
+          <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(sp.id)}>Remove</button></div>
+        </div>}
+      </div>
+    );})}
   </>;
 }
 
 /* ═══ NPC TRACKER ══════════════════════════════ */
 function NPCTracker({npcs,setNPCs}) {
   const [formState,setForm]=useState({name:"",role:"",relation:"unknown",affiliation:"",metAt:"",connections:"",notes:""});
-  const [showForm,setShowForm]=useState(false);
-  const [expanded,setExpanded]=useState({});
-  const [activeTag,setActiveTag]=useState(null);
+  const [showForm,setShowForm]=useState(false); const [expanded,setExpanded]=useState({}); const [activeTag,setActiveTag]=useState(null);
   const allTags=[...new Set(npcs.flatMap(n=>n.tags||[]))].sort();
   const addNPC=()=>{const n=formState.name.trim();if(!n)return;setNPCs(l=>[...l,{id:Date.now(),...formState,name:n,tags:[],pinned:false}]);setForm({name:"",role:"",relation:"unknown",affiliation:"",metAt:"",connections:"",notes:""});setShowForm(false);};
   const upd=(id,f,v)=>setNPCs(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
@@ -748,22 +907,18 @@ function NPCTracker({npcs,setNPCs}) {
       <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{npcs.length} {npcs.length===1?"character":"characters"} known</span>
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add NPC"}</button>
     </div>
-    {showForm&&<div className="add-form">
-      <div className="col">
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
-          <input className="g-input" placeholder="Name…" value={formState.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addNPC()}/>
-          <input className="g-input" placeholder="Role / occupation…" value={formState.role} onChange={e=>setForm(f=>({...f,role:e.target.value}))}/>
-          <input className="g-input" placeholder="Affiliation…" value={formState.affiliation} onChange={e=>setForm(f=>({...f,affiliation:e.target.value}))}/>
-          <input className="g-input" placeholder="First met at…" value={formState.metAt} onChange={e=>setForm(f=>({...f,metAt:e.target.value}))}/>
-        </div>
-        <input className="g-input" placeholder="Connections…" value={formState.connections} onChange={e=>setForm(f=>({...f,connections:e.target.value}))}/>
-        <div className="row" style={{gap:"0.5rem",flexWrap:"wrap"}}>
-          {["unknown","ally","neutral","hostile"].map(r=><button key={r} className={`rel-badge rel-${r}`} style={{opacity:formState.relation===r?1:0.45}} onClick={()=>setForm(f=>({...f,relation:r}))}>{REL_LABELS[r]}</button>)}
-        </div>
-        <textarea className="g-textarea" rows={3} placeholder="Notes…" value={formState.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
-        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addNPC}>⊕ Add</button></div>
+    {showForm&&<div className="add-form"><div className="col">
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
+        <input className="g-input" placeholder="Name…" value={formState.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addNPC()}/>
+        <input className="g-input" placeholder="Role / occupation…" value={formState.role} onChange={e=>setForm(f=>({...f,role:e.target.value}))}/>
+        <input className="g-input" placeholder="Affiliation…" value={formState.affiliation} onChange={e=>setForm(f=>({...f,affiliation:e.target.value}))}/>
+        <input className="g-input" placeholder="First met at…" value={formState.metAt} onChange={e=>setForm(f=>({...f,metAt:e.target.value}))}/>
       </div>
-    </div>}
+      <input className="g-input" placeholder="Connections…" value={formState.connections} onChange={e=>setForm(f=>({...f,connections:e.target.value}))}/>
+      <div className="row" style={{gap:"0.5rem",flexWrap:"wrap"}}>{["unknown","ally","neutral","hostile"].map(r=><button key={r} className={`rel-badge rel-${r}`} style={{opacity:formState.relation===r?1:0.45}} onClick={()=>setForm(f=>({...f,relation:r}))}>{REL_LABELS[r]}</button>)}</div>
+      <textarea className="g-textarea" rows={3} placeholder="Notes…" value={formState.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
+      <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addNPC}>⊕ Add</button></div>
+    </div></div>}
     <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
     {npcs.length===0&&<div className="card empty-state">No characters recorded.</div>}
     {visible.map(npc=>{const open=!!expanded[npc.id];const rel=npc.relation||"unknown";return(
@@ -797,9 +952,7 @@ function NPCTracker({npcs,setNPCs}) {
 /* ═══ LOCATIONS ════════════════════════════════ */
 function Locations({locations,setLocations}) {
   const [form,setForm]=useState({name:"",type:"Settlement",notes:""});
-  const [showForm,setShowForm]=useState(false);
-  const [expanded,setExpanded]=useState({});
-  const [activeTag,setActiveTag]=useState(null);
+  const [showForm,setShowForm]=useState(false); const [expanded,setExpanded]=useState({}); const [activeTag,setActiveTag]=useState(null);
   const allTags=[...new Set(locations.flatMap(l=>l.tags||[]))].sort();
   const addLoc=()=>{const n=form.name.trim();if(!n)return;setLocations(l=>[...l,{id:Date.now(),name:n,type:form.type,notes:form.notes.trim(),tags:[],pinned:false}]);setForm({name:"",type:"Settlement",notes:""});setShowForm(false);};
   const upd=(id,f,v)=>setLocations(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
@@ -811,14 +964,12 @@ function Locations({locations,setLocations}) {
       <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{locations.length} {locations.length===1?"location":"locations"} mapped</span>
       <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Location"}</button>
     </div>
-    {showForm&&<div className="add-form">
-      <div className="col">
-        <input className="g-input" placeholder="Location name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addLoc()}/>
-        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.45,borderColor:form.type===t?"#8a6830":"",color:form.type===t?"#e2b94e":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{t}</button>)}</div>
-        <textarea className="g-textarea" rows={3} placeholder="Description…" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
-        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addLoc}>⊕ Add</button></div>
-      </div>
-    </div>}
+    {showForm&&<div className="add-form"><div className="col">
+      <input className="g-input" placeholder="Location name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addLoc()}/>
+      <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:form.type===t?1:0.45,borderColor:form.type===t?"#8a6830":"",color:form.type===t?"#e2b94e":""}} onClick={()=>setForm(f=>({...f,type:t}))}>{t}</button>)}</div>
+      <textarea className="g-textarea" rows={3} placeholder="Description, atmosphere, notable features…" value={form.notes} onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
+      <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addLoc}>⊕ Add</button></div>
+    </div></div>}
     <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
     {locations.length===0&&<div className="card empty-state">No locations recorded.</div>}
     {visible.map(loc=>{const open=!!expanded[loc.id];return(
@@ -836,68 +987,8 @@ function Locations({locations,setLocations}) {
         <TagsEditor tags={loc.tags||[]} onChange={v=>upd(loc.id,"tags",v)}/>
         {open&&<div style={{marginTop:"0.8rem"}}>
           <div className="row" style={{gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.7rem"}}>{LOC_TYPES.map(t=><button key={t} className="filter-tag" style={{opacity:loc.type===t?1:0.4,borderColor:loc.type===t?"#8a6830":"",color:loc.type===t?"#e2b94e":""}} onClick={()=>upd(loc.id,"type",t)}>{t}</button>)}</div>
-          <textarea className="g-textarea" rows={4} placeholder="Geography, atmosphere, dangers…" value={loc.notes||""} onChange={e=>upd(loc.id,"notes",e.target.value)}/>
+          <textarea className="g-textarea" rows={4} placeholder="Geography, atmosphere, notable features, dangers…" value={loc.notes||""} onChange={e=>upd(loc.id,"notes",e.target.value)}/>
           <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(loc.id)}>Remove</button></div>
-        </div>}
-      </div>
-    );})}
-  </>;
-}
-
-/* ═══ SKILLS & TRAITS TAB ══════════════════════ */
-function SkillsTraits({skills,setSkills}) {
-  const [form,setForm]=useState({name:"",category:"Skill",description:"",level:0});
-  const [showForm,setShowForm]=useState(false);
-  const [expanded,setExpanded]=useState({});
-  const [activeTag,setActiveTag]=useState(null);
-  const [activeCat,setActiveCat]=useState(null);
-  const allTags=[...new Set(skills.flatMap(s=>s.tags||[]))].sort();
-  const addSkill=()=>{const n=form.name.trim();if(!n)return;setSkills(l=>[...l,{id:Date.now(),name:n,category:form.category,description:form.description.trim(),level:form.level,tags:[],pinned:false}]);setForm({name:"",category:"Skill",description:"",level:0});setShowForm(false);};
-  const upd=(id,f,v)=>setSkills(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
-  const del=id=>setSkills(l=>l.filter(x=>x.id!==id));
-  const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
-  const visible=skills.filter(s=>(!activeTag||(s.tags||[]).includes(activeTag))&&(!activeCat||s.category===activeCat)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
-  const catColor=cat=>({Skill:"#e2b94e",Trait:"#7aaccc",Feat:"#cc8844",Spell:"#9a6acc",Ability:"#6acc9a",Other:"#8a8a8a"})[cat]||"#8a7848";
-  return <>
-    <div className="row" style={{justifyContent:"space-between"}}>
-      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em",color:"#8a7040"}}>{skills.length} {skills.length===1?"entry":"entries"}</span>
-      <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Cancel":"⊕ Add Entry"}</button>
-    </div>
-    {showForm&&<div className="add-form">
-      <div className="col">
-        <input className="g-input" placeholder="Name…" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&addSkill()}/>
-        <div className="row" style={{gap:"0.4rem",flexWrap:"wrap"}}>{SKILL_CATS.map(c=><button key={c} className="filter-tag" style={{opacity:form.category===c?1:0.45,borderColor:form.category===c?catColor(c)+"88":"",color:form.category===c?catColor(c):""}} onClick={()=>setForm(f=>({...f,category:c}))}>{c}</button>)}</div>
-        <div className="row" style={{gap:"0.6rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",color:"#8a7040",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={form.level} onChange={v=>setForm(f=>({...f,level:v}))}/></div>
-        <textarea className="g-textarea" rows={3} placeholder="Description, effect, source…" value={form.description} onChange={e=>setForm(f=>({...f,description:e.target.value}))}/>
-        <div className="row" style={{justifyContent:"flex-end"}}><button className="btn-gold" onClick={addSkill}>⊕ Add</button></div>
-      </div>
-    </div>}
-    <div className="filter-bar">
-      <button className={`filter-tag${!activeCat?" active-filter":""}`} onClick={()=>setActiveCat(null)}>All</button>
-      {SKILL_CATS.map(c=>{const count=skills.filter(s=>s.category===c).length;if(!count)return null;return<button key={c} className={`filter-tag${activeCat===c?" active-filter":""}`} style={{borderColor:activeCat===c?catColor(c)+"88":"",color:activeCat===c?catColor(c):""}} onClick={()=>setActiveCat(activeCat===c?null:c)}>{c} ({count})</button>;})}
-    </div>
-    <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-    {skills.length===0&&<div className="card empty-state">No abilities recorded.</div>}
-    {visible.map(sk=>{const open=!!expanded[sk.id];const cc=catColor(sk.category);return(
-      <div key={sk.id} className={`card${sk.pinned?" pinned":""}`} style={{padding:"1rem 1.1rem",borderLeftColor:cc+"55",borderLeftWidth:2}}>
-        <div className="entity-header">
-          <div className="flex1">
-            <div className="row" style={{gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
-              <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.98rem",color:"#e0d6b4",fontWeight:700}} value={sk.name} onChange={e=>upd(sk.id,"name",e.target.value)} placeholder="Name…"/>
-              <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.1em",textTransform:"uppercase",color:cc,border:`1px solid ${cc}55`,padding:"0.15rem 0.5rem",background:`${cc}0d`,flexShrink:0}}>{sk.category}</span>
-            </div>
-            {sk.level>0&&<SkillPips value={sk.level} onChange={v=>upd(sk.id,"level",v)}/>}
-          </div>
-          <PinBtn pinned={sk.pinned} onToggle={()=>upd(sk.id,"pinned",!sk.pinned)}/>
-          <button className="entity-toggle" onClick={()=>toggle(sk.id)}>{open?"▲":"▼"}</button>
-        </div>
-        {!open&&sk.description&&<p style={{fontSize:"0.92rem",color:"#9a8a68",fontStyle:"italic",marginTop:"0.3rem",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{sk.description}</p>}
-        <TagsEditor tags={sk.tags||[]} onChange={v=>upd(sk.id,"tags",v)}/>
-        {open&&<div style={{marginTop:"0.8rem"}}>
-          <div className="row" style={{gap:"0.4rem",flexWrap:"wrap",marginBottom:"0.5rem"}}>{SKILL_CATS.map(c=><button key={c} className="filter-tag" style={{opacity:sk.category===c?1:0.4,borderColor:sk.category===c?catColor(c)+"88":"",color:sk.category===c?catColor(c):""}} onClick={()=>upd(sk.id,"category",c)}>{c}</button>)}</div>
-          <div className="row" style={{gap:"0.6rem",marginBottom:"0.7rem"}}><span style={{fontFamily:"Cinzel,serif",fontSize:"0.58rem",color:"#8a7040",textTransform:"uppercase",letterSpacing:"0.12em"}}>Mastery</span><SkillPips value={sk.level} onChange={v=>upd(sk.id,"level",v)}/></div>
-          <textarea className="g-textarea" rows={4} placeholder="Description, effect, source, requirements…" value={sk.description||""} onChange={e=>upd(sk.id,"description",e.target.value)}/>
-          <div className="row mt05" style={{justifyContent:"flex-end"}}><button className="btn-ghost" onClick={()=>del(sk.id)}>Remove</button></div>
         </div>}
       </div>
     );})}
@@ -906,8 +997,7 @@ function SkillsTraits({skills,setSkills}) {
 
 /* ═══ SESSION LOG ═══════════════════════════════ */
 function SessionLog({sessions,setSessions,npcs,locations,quests,inventory,skills,onNavigate}) {
-  const [openIds,setOpenIds]=useState({});
-  const [editingId,setEditingId]=useState(null);
+  const [openIds,setOpenIds]=useState({}); const [editingId,setEditingId]=useState(null);
   const addSession=()=>{const e={id:Date.now(),number:sessions.length+1,date:today(),title:`Session ${sessions.length+1}`,notes:""};setSessions(s=>[e,...s]);setOpenIds(o=>({...o,[e.id]:true}));setEditingId(e.id);};
   const upd=(id,f,v)=>setSessions(s=>s.map(x=>x.id===id?{...x,[f]:v}:x));
   const del=id=>{setSessions(s=>s.filter(x=>x.id!==id));if(editingId===id)setEditingId(null);};
@@ -982,9 +1072,7 @@ function QuestTracker({quests,setQuests}) {
       const lc=status==="Active"?"#e2b94e":status==="Completed"?"#6acc6a":"#cc4444";
       return <div key={status} style={{display:"flex",flexDirection:"column",gap:"0.5rem"}}>
         <div className="sect-label" style={{color:lc}}>{status} <span style={{color:"#4a3a20"}}>({filtered.length})</span></div>
-        {filtered.map(quest=>{
-          const open=!!expanded[quest.id]; const steps=quest.steps||[];
-          const doneCount=steps.filter(s=>s.done).length;
+        {filtered.map(quest=>{const open=!!expanded[quest.id];const steps=quest.steps||[];const doneCount=steps.filter(s=>s.done).length;
           return <div key={quest.id} className={`quest-entry ${status.toLowerCase()}`}>
             <div className="row" style={{alignItems:"flex-start"}}>
               <div className="flex1">
@@ -1022,13 +1110,14 @@ function QuestTracker({quests,setQuests}) {
 
 /* ═══ NAV ══════════════════════════════════════ */
 const TABS=[
-  {id:"character",label:"Hero",     icon:"⚔️"},
-  {id:"inventory",label:"Backpack",     icon:"🎒"},
-  {id:"skills",   label:"Abilities",icon:"✨"},
-  {id:"npcs",     label:"People",   icon:"👥"},
-  {id:"locations",label:"Places",   icon:"🗺️"},
-  {id:"quests",   label:"Quests",   icon:"⚡"},
-  {id:"sessions", label:"Sessions",      icon:"📜"},
+  {id:"character", label:"Hero",    icon:"⚔️"},
+  {id:"inventory", label:"Pack",    icon:"🎒"},
+  {id:"skills",    label:"Skills",  icon:"✨"},
+  {id:"spells",    label:"Spells",  icon:"🔮"},
+  {id:"npcs",      label:"People",  icon:"👥"},
+  {id:"locations", label:"Places",  icon:"🗺️"},
+  {id:"sessions",  label:"Log",     icon:"📜"},
+  {id:"quests",    label:"Quests",  icon:"⚡"},
 ];
 
 /* ═══ ROOT APP ═════════════════════════════════ */
@@ -1039,6 +1128,7 @@ export default function HeroJournal() {
   const [npcs,     setNPCs]     = useState(()=>load("hj_npcs",      []));
   const [locations,setLocations]= useState(()=>load("hj_locations", []));
   const [skills,   setSkills]   = useState(()=>load("hj_skills",    []));
+  const [spells,   setSpells]   = useState(()=>load("hj_spells",    []));
   const [sessions, setSessions] = useState(()=>load("hj_sessions",  []));
   const [quests,   setQuests]   = useState(()=>load("hj_quests",    []));
   const [showReset,setShowReset]= useState(false);
@@ -1048,6 +1138,7 @@ export default function HeroJournal() {
   useEffect(()=>{save("hj_npcs",      npcs);},[npcs]);
   useEffect(()=>{save("hj_locations", locations);},[locations]);
   useEffect(()=>{save("hj_skills",    skills);},[skills]);
+  useEffect(()=>{save("hj_spells",    spells);},[spells]);
   useEffect(()=>{save("hj_sessions",  sessions);},[sessions]);
   useEffect(()=>{save("hj_quests",    quests);},[quests]);
 
@@ -1055,11 +1146,9 @@ export default function HeroJournal() {
 
   const handleReset=()=>{
     ALL_KEYS.forEach(k=>localStorage.removeItem(k));
-    setChar(DEFAULT_CHAR);
-    setInventory([]); setNPCs([]); setLocations([]);
-    setSkills([]); setSessions([]); setQuests([]);
-    setTab("character");
-    setShowReset(false);
+    setChar(DEFAULT_CHAR); setInventory([]); setNPCs([]); setLocations([]);
+    setSkills([]); setSpells([]); setSessions([]); setQuests([]);
+    setTab("character"); setShowReset(false);
   };
 
   return <>
@@ -1069,25 +1158,19 @@ export default function HeroJournal() {
       <header className="hj-header">
         <div style={{maxWidth:780,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div className="hj-logo"><span style={{fontSize:"1rem",opacity:0.85}}>⚔</span>Hero Journal</div>
-          <button
-            className="btn-danger"
-            style={{fontSize:"0.55rem",padding:"0.2rem 0.55rem",letterSpacing:"0.1em"}}
-            onClick={()=>setShowReset(true)}
-            title="Reset all data"
-          >↺ Reset</button>
+          <button className="btn-danger" style={{fontSize:"0.55rem",padding:"0.2rem 0.55rem",letterSpacing:"0.1em"}} onClick={()=>setShowReset(true)} title="Reset all data">↺ Reset</button>
         </div>
       </header>
-
       <main className="hj-content">
-        {tab==="character"&&<CharacterSheet char={char} setChar={setChar} inventory={inventory}/>}
-        {tab==="inventory"&&<Pack inventory={inventory} setInventory={setInventory}/>}
-        {tab==="npcs"     &&<NPCTracker npcs={npcs} setNPCs={setNPCs}/>}
-        {tab==="locations"&&<Locations locations={locations} setLocations={setLocations}/>}
-        {tab==="skills"   &&<SkillsTraits skills={skills} setSkills={setSkills}/>}
-        {tab==="sessions" &&<SessionLog sessions={sessions} setSessions={setSessions} npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
-        {tab==="quests"   &&<QuestTracker quests={quests} setQuests={setQuests}/>}
+        {tab==="character" &&<CharacterSheet char={char} setChar={setChar} inventory={inventory} skills={skills} spells={spells}/>}
+        {tab==="inventory" &&<Pack inventory={inventory} setInventory={setInventory}/>}
+        {tab==="skills"    &&<SkillsTab skills={skills} setSkills={setSkills}/>}
+        {tab==="spells"    &&<SpellsTab spells={spells} setSpells={setSpells} char={char} setChar={setChar}/>}
+        {tab==="npcs"      &&<NPCTracker npcs={npcs} setNPCs={setNPCs}/>}
+        {tab==="locations" &&<Locations locations={locations} setLocations={setLocations}/>}
+        {tab==="sessions"  &&<SessionLog sessions={sessions} setSessions={setSessions} npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
+        {tab==="quests"    &&<QuestTracker quests={quests} setQuests={setQuests}/>}
       </main>
-
       <nav className="hj-bottom-nav">
         {TABS.map(t=><button key={t.id} className={`hj-nav-btn${tab===t.id?" active":""}`} onClick={()=>setTab(t.id)}>
           <span className="hj-nav-icon">{t.icon}</span>
