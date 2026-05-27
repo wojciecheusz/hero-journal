@@ -482,43 +482,43 @@ function CharacterSheet({char,setChar,inventory,skills,spells}) {
 
       {/* ─ Vitality ─ */}
       <hr className="inner-divider" data-label="Vitality" style={{marginTop:"1.1rem"}}/>
-      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"stretch",gap:"0.5rem",flexWrap:"wrap"}}>
+      <div style={{marginTop:"0.8rem",display:"grid",gridTemplateColumns:"auto 1fr",gap:"0.6rem",alignItems:"center"}}>
 
-        {/* HP controls — left group */}
-        <div style={{display:"flex",flexDirection:"column",gap:"0.4rem",flex:"0 0 auto"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"0.4rem"}}>
-            <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-            <div className="hp-display">
-              <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-              <span className="hp-sep">/</span>
-              <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
-            </div>
-            <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
-            <span className="hp-label">HP</span>
+        {/* Left: − num/max + HP label */}
+        <div style={{display:"flex",alignItems:"center",gap:"0.4rem",whiteSpace:"nowrap"}}>
+          <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+          <div className="hp-display">
+            <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+            <span className="hp-sep">/</span>
+            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44,color:"#8a5a5a"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
           </div>
-          <div className="hp-bar-bg" style={{marginTop:0}}>
-            <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
-          </div>
-          <div className="hp-pct" style={{color:hpNumColor(hpPct),marginTop:0}}>{hpPct}% vitality remaining</div>
+          <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+          <span className="hp-label">HP</span>
         </div>
 
-        {/* Combat boxes — right, same row */}
-        <div style={{display:"flex",gap:"0.4rem",flex:"1 1 auto",alignItems:"stretch"}}>
-          <div className="combat-box" style={{flex:1}}>
+        {/* Right: three combat boxes */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.4rem"}}>
+          <div className="combat-box">
             <span className="combat-box-label">Temp HP</span>
             <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
           </div>
-          <div className="combat-box" style={{flex:1}}>
+          <div className="combat-box">
             <span className="combat-box-label">Armor Class</span>
             <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
           </div>
-          <div className="combat-box" style={{flex:1}}>
+          <div className="combat-box">
             <span className="combat-box-label">Initiative</span>
             <span className="combat-box-val">{numMod(Math.floor((char.stats.DEX-10)/2))}</span>
           </div>
         </div>
 
       </div>
+
+      {/* HP bar + pct below the whole row */}
+      <div className="hp-bar-bg" style={{marginTop:"0.5rem"}}>
+        <div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/>
+      </div>
+      <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
 
       {/* ─ Saving Throws ─ */}
       <hr className="inner-divider" data-label="Saving Throws" style={{marginTop:"1.1rem"}}/>
