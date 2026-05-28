@@ -1025,17 +1025,17 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
           <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
         </div>
         {/* Tmp HP */}
-        <div className="combat-box" style={{flex:"1 1 50px",minWidth:48}}>
+        <div className="combat-box" style={{flex:"1 1 40px",minWidth:36}}>
           <span className="combat-box-label">Tmp HP</span>
           <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
         </div>
         {/* AC */}
-        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}}>
+        <div className="combat-box" style={{flex:"1 1 40px",minWidth:36}}>
           <span className="combat-box-label">AC</span>
           <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
         </div>
         {/* Inicjatywa */}
-        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}} title="DEX mod — edit to override">
+        <div className="combat-box" style={{flex:"1 1 40px",minWidth:36}} title="DEX mod — edit to override">
           <span className="combat-box-label">Init</span>
           <input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/>
         </div>
@@ -1045,7 +1045,7 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
       <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
 
       {/* Kości Wytrzymałości + Rest — grid: [HD tracker] [Short] [Long] */}
-      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:"0.5rem",marginTop:"0.6rem",alignItems:"stretch"}}>
+      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:"0.5rem",marginTop:"0.6rem",alignItems:"wrap"}}>
         {/* Kości Wytrzymałości tracker — combat-box for consistent bg/border */}
         <div className="combat-box" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0.3rem 0.6rem",gap:"0.15rem"}}>
           <span className="combat-box-label">Kości Wytrzymałości</span>
