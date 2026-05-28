@@ -187,7 +187,7 @@ function buildCSS(t) {
   .btn-pm.plus:hover  { border-color: #2a6a2a; color: #5acc5a; }
 
   /* Rest buttons */
-  .btn-rest { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; padding: 0.35rem 0.75rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-rest { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; padding: 0.3rem 0.4rem; cursor: pointer; transition: all 0.15s; white-space: normal; min-width: 0; overflow: hidden; }
   .btn-rest.short:hover { border-color: #8a7030; color: #d4a030; background: rgba(212,160,48,0.08); }
   .btn-rest.long:hover  { border-color: #2a5a8a; color: #64a0d4; background: rgba(100,160,212,0.08); }
 
@@ -1025,17 +1025,17 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
           <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
         </div>
         {/* Tmp HP */}
-        <div className="combat-box" style={{flex:"1 1 40px",minWidth:36}}>
+        <div className="combat-box" style={{flex:"1 1 50px",minWidth:48}}>
           <span className="combat-box-label">Tmp HP</span>
           <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
         </div>
         {/* AC */}
-        <div className="combat-box" style={{flex:"1 1 40px",minWidth:36}}>
+        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}}>
           <span className="combat-box-label">AC</span>
           <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
         </div>
         {/* Inicjatywa */}
-        <div className="combat-box" style={{flex:"1 1 40px",minWidth:36}} title="DEX mod — edit to override">
+        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}} title="DEX mod — edit to override">
           <span className="combat-box-label">Init</span>
           <input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/>
         </div>
@@ -1045,7 +1045,7 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
       <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
 
       {/* Kości Wytrzymałości + Rest — grid: [HD tracker] [Short] [Long] */}
-      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:"0.5rem",marginTop:"0.6rem",alignItems:"wrap"}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"0.4rem",marginTop:"0.6rem",alignItems:"stretch"}}>
         {/* Kości Wytrzymałości tracker — combat-box for consistent bg/border */}
         <div className="combat-box" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0.3rem 0.6rem",gap:"0.15rem"}}>
           <span className="combat-box-label">Kości Wytrzymałości</span>
@@ -1068,13 +1068,13 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
         <button className="btn-rest short" onClick={()=>setRestModal("short")}
           style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"0.1rem",padding:"0.4rem 0.5rem"}}>
           <span style={{fontSize:"1.1rem",lineHeight:1}}>☽</span>
-          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Krótki Odpoczynek</span>
+          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.06em",textTransform:"uppercase",lineHeight:1.3}}>Krótki Odp.</span>
         </button>
         {/* Długi Odpoczynek */}
         <button className="btn-rest long" onClick={()=>setRestModal("long")}
           style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"0.1rem",padding:"0.4rem 0.5rem"}}>
           <span style={{fontSize:"1.1rem",lineHeight:1}}>☀</span>
-          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Długi Odpoczynek</span>
+          <span style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.1em",textTransform:"uppercase"}}>Długi Odp.</span>
         </button>
       </div>
 
