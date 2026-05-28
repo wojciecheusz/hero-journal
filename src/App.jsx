@@ -845,23 +845,31 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
     />
   );
 
-  const cycleSave = key => setChar(c=>{
+  const cycleSave = useCallback(key => setChar(c=>{
     const wasP=!!(c.savingThrows||{})[key]; const wasE=!!(c.savingThrowExp||{})[key];
-    if(!wasP&&!wasE) return {...c,savingThrows:{...(c.savingThrows||{}),[key]:true}};
-    if(wasP&&!wasE)  return {...c,savingThrowExp:{...(c.savingThrowExp||{}),[key]:true}};
+    if(!wasP&&!wasE) return {...c,
+      savingThrows:{...(c.savingThrows||{}),[key]:true},
+      savingThrowExp:{...(c.savingThrowExp||{}),[key]:false}};
+    if(wasP&&!wasE)  return {...c,
+      savingThrows:{...(c.savingThrows||{}),[key]:true},
+      savingThrowExp:{...(c.savingThrowExp||{}),[key]:true}};
     const s2={...(c.savingThrows||{})};delete s2[key];
     const e2={...(c.savingThrowExp||{})};delete e2[key];
     return {...c,savingThrows:s2,savingThrowExp:e2};
-  });
+  }),[setChar]);
 
-  const cycleSkill = key => setChar(c=>{
+  const cycleSkill = useCallback(key => setChar(c=>{
     const wasP=!!(c.skills||{})[key]; const wasE=!!(c.skillExp||{})[key];
-    if(!wasP&&!wasE) return {...c,skills:{...(c.skills||{}),[key]:true}};
-    if(wasP&&!wasE)  return {...c,skillExp:{...(c.skillExp||{}),[key]:true}};
+    if(!wasP&&!wasE) return {...c,
+      skills:{...(c.skills||{}),[key]:true},
+      skillExp:{...(c.skillExp||{}),[key]:false}};
+    if(wasP&&!wasE)  return {...c,
+      skills:{...(c.skills||{}),[key]:true},
+      skillExp:{...(c.skillExp||{}),[key]:true}};
     const s2={...(c.skills||{})};delete s2[key];
     const e2={...(c.skillExp||{})};delete e2[key];
     return {...c,skills:s2,skillExp:e2};
-  });
+  }),[setChar]);
 
   return <>
     {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={()=>setRestModal(null)}/>}
@@ -1003,16 +1011,15 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
           const pipClip=exp?"polygon(50% 0%,100% 50%,50% 100%,0% 50%)":"none";
           const statColor=exp?"#64c8e0":prz?"#c9a84c":"inherit";
           return (
-            <div key={sk.key} className="stat-box" style={{position:"relative",cursor:"default",padding:"0.35rem 0.25rem 0.3rem",textAlign:"center",minHeight:0}}>
-              {/* Pip top-right — click to cycle prof/expertise */}
-              <button type="button" onClick={e=>{e.stopPropagation();cycleSkill(sk.key);}}
-                title="none → proficient → expertise → none"
-                style={{position:"absolute",top:"0.22rem",right:"0.22rem",width:10,height:10,
+            <div key={sk.key} className={`stat-box${exp?" stat-box-exp":prz?" stat-box-prz":""}`}
+              onClick={()=>cycleSkill(sk.key)}
+              style={{position:"relative",cursor:"pointer",padding:"0.35rem 0.25rem 0.3rem",textAlign:"center",minHeight:0,userSelect:"none"}}>
+              {/* Pip top-right — visual indicator only */}
+              <div style={{position:"absolute",top:"0.22rem",right:"0.22rem",width:10,height:10,
                   borderRadius:"50%",border:pipBorder,background:pipColor,
-                  clipPath:pipClip,cursor:"pointer",padding:0,
-                  appearance:"none",WebkitAppearance:"none",
+                  clipPath:pipClip,
                   boxShadow:exp?"0 0 4px rgba(100,200,224,0.5)":prz?"0 0 4px rgba(201,168,76,0.5)":"none",
-                  transition:"all 0.15s",flexShrink:0}}/>
+                  transition:"all 0.15s",pointerEvents:"none"}}/>
               {/* Skill name */}
               <span style={{fontFamily:"Cinzel,serif",fontSize:"0.42rem",letterSpacing:"0.08em",textTransform:"uppercase",opacity:0.55,display:"block",marginBottom:"0.15rem",lineHeight:1.2,paddingRight:"0.7rem"}}>{sk.label}</span>
               {/* Bonus — large */}
