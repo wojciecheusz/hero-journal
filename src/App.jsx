@@ -424,6 +424,73 @@ function buildCSS(t) {
   .modal-detail { font-family:'Crimson Text',serif; font-size:0.9rem; color:${t.text}; background:${t.bgInput}; border:1px solid ${t.borderInput}; padding:0.5rem 0.75rem; margin-bottom:1rem; line-height:1.6; }
 
   .add-form { background:${t.addForm}; border:1px dashed ${t.border}; padding:1.1rem; }
+
+  /* ── Visual polish ── */
+  /* Smoother card corners + subtle top-light effect */
+  .card { border-radius: 2px; }
+  .card::before { border-radius: 2px; }
+
+  /* Section labels — slightly more breathing room */
+  .sect-label { margin-bottom: 0.85rem; }
+
+  /* Stat box — tighter on mobile, rounder feel */
+  .stat-box { border-radius: 2px; }
+
+  /* Combat box */
+  .combat-box { border-radius: 2px; }
+
+  /* Equipped items — subtle left accent */
+  .equipped-item { border-left: 2px solid transparent; padding-left: 0.4rem; transition: border-color 0.15s; }
+  .equipped-item:hover { border-left-color: ${t.accent}; }
+
+  /* Pack items */
+  .pack-item { border-radius: 2px; }
+
+  /* Subtab bar polish */
+  .subtab-bar { margin-bottom: 0.85rem; }
+  .subtab-btn { border-radius: 2px 2px 0 0; }
+
+  /* Inner divider text — no padding needed on mobile */
+  @media (max-width: 400px) {
+    .inner-divider::before { font-size: 0.5rem; letter-spacing: 0.14em; }
+  }
+
+  /* Rest buttons */
+  .btn-rest { border-radius: 2px; }
+  .btn-rest.short { border-color: ${t.borderInput}; color: ${t.textMuted}; }
+  .btn-rest.short:hover { border-color: #8a7030; color: #d4a030; background: rgba(212,160,48,0.08); }
+  .btn-rest.long  { border-color: ${t.borderInput}; color: ${t.textMuted}; }
+  .btn-rest.long:hover  { border-color: #2a5a8a; color: #64a0d4; background: rgba(100,160,212,0.08); }
+
+  /* HP display — better vertical alignment */
+  .hp-display { align-items: center; }
+
+  /* Nav label — slightly larger on desktop */
+  @media (min-width: 600px) {
+    .hj-nav-label { font-size: 0.46rem; }
+    .hj-nav-icon  { font-size: 1.2rem; }
+  }
+
+  /* Skill pips — stat-box-prz/exp glow */
+  .stat-box.stat-box-prz { border-color: ${t.accentBorder}; background: rgba(226,185,78,0.05); }
+  .stat-box.stat-box-exp  { border-color: var(--spell-border); background: var(--spell-bg); }
+
+  /* Quest entry */
+  .quest-entry { border-radius: 2px; }
+
+  /* Tags */
+  .tag { border-radius: 2px; }
+
+  /* Input focus rings */
+  .g-input:focus, .g-textarea:focus, .g-select:focus { box-shadow: 0 0 0 1px ${t.accentBorder}; }
+
+  /* Sess entry */
+  .sess-entry { border-radius: 2px; }
+
+  /* Profile card */
+  .profile-card { border-radius: 2px; }
+  .wizard-class-btn { border-radius: 2px; }
+  .wizard-stat-box { border-radius: 2px; }
   .empty-state { text-align:center; padding:2.5rem; color:${t.emptyColor}; font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.12em; line-height:1.9; }
   .row   { display:flex; align-items:center; gap:0.6rem; }
   .col   { display:flex; flex-direction:column; gap:0.5rem; }
@@ -821,7 +888,13 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
   const updSt= (s,v) => setChar(c=>({...c,stats:{...c.stats,[s]:v}}));
   const hpPct= Math.round(clamp((char.hp.current/char.hp.max)*100,0,100));
   const pb   = char.profBonus||2;
-  const [restModal, setRestModal] = useState(null); // "short"|"long"|null
+  const [restModal, setRestModal] = useState(null);
+  const [activeTab, setActiveTab] = useState(()=>{
+    // default to first tab with content, fallback to spells
+    if ((inventory||[]).some(i=>i.equipped)) return "items";
+    if ((skills||[]).some(s=>s.inUse)) return "skills";
+    return "spells";
+  }); // "short"|"long"|null
    // subtab in Aktywne i Wyposażone
 
   const toggleSave = useCallback(key=>setChar(c=>({...c,savingThrows:{...(c.savingThrows||{}),[key]:!(c.savingThrows||{})[key]}})),[setChar]);
@@ -917,17 +990,17 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
           const auto=exp?base+pb*2:prz?base+pb:base;
           const over=(char.savingThrowOverride||{})[st.key];
           const stVal=over!==undefined?over:auto;
-          const stColor=exp?"#64c8e0":prz?"#c9a84c":"inherit";
+          const stColor=exp?"var(--spell-accent)":prz?"#c9a84c":"inherit";
           return (
             <div key={st.key} style={{display:"flex",flexDirection:"column",gap:0}}>
               {/* Stat box — tap to edit */}
               <StatBox label={st.key.toUpperCase()} value={char.stats[st.attr]} onChange={v=>updSt(st.attr,v)}/>
               {/* ST value — directly below, same width */}
-              <div className="stat-box" style={{borderTop:"none",textAlign:"center",padding:"0.2rem 0.1rem",cursor:"default"}}>
-                <span style={{fontFamily:"Cinzel,serif",fontSize:"0.44rem",letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.45,display:"block",lineHeight:1}}>ST</span>
+              <div className="stat-box" style={{borderTop:"none",textAlign:"center",padding:"0.25rem 0.1rem 0.2rem",cursor:"default",display:"flex",flexDirection:"column",alignItems:"center",gap:0}}>
+                <span style={{fontFamily:"Cinzel,serif",fontSize:"0.44rem",letterSpacing:"0.12em",textTransform:"uppercase",opacity:0.45,lineHeight:1}}>ST</span>
                 <input type="number" value={stVal}
                   title={over!==undefined?"Ręczna wartość — podwójne kliknięcie resetuje":"Auto · podwójne kliknięcie resetuje"}
-                  style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.85rem",fontWeight:700,color:stColor,textAlign:"center",width:"100%",padding:"0.1rem 0",lineHeight:1}}
+                  style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",fontSize:"0.85rem",fontWeight:700,color:stColor,textAlign:"center",width:"100%",padding:"0.15rem 0",lineHeight:1,display:"block"}}
                   onChange={e=>{const n=parseInt(e.target.value);setChar(c=>({...c,savingThrowOverride:{...(c.savingThrowOverride||{}),[st.key]:isNaN(n)?undefined:n}}));}}
                   onDoubleClick={()=>setChar(c=>{const o={...(c.savingThrowOverride||{})};delete o[st.key];return{...c,savingThrowOverride:o};})}
                 />
@@ -939,30 +1012,37 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
 
       {/* ─ Żywotność ─ */}
       <hr className="inner-divider" data-label="Żywotność" style={{marginTop:"1.1rem"}}/>
-      {/* HP row — minus | cur/max | plus | Temp HP inline */}
-      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"center",gap:"0.4rem"}}>
-        <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-        <div className="hp-display">
-          <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-          <span className="hp-sep">/</span>
-          <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+      {/* HP row + TmpHP + AC + Inicjatywa — all in one flex row */}
+      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"stretch",gap:"0.4rem",flexWrap:"wrap"}}>
+        {/* − cur/max + */}
+        <div style={{display:"flex",alignItems:"center",gap:"0.4rem",flex:"0 0 auto"}}>
+          <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+          <div className="hp-display">
+            <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+            <span className="hp-sep">/</span>
+            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+          </div>
+          <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
         </div>
-        <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
-        {/* Temp HP — uses combat-box class for consistent styling */}
-        <div className="combat-box" style={{marginLeft:"0.3rem",minWidth:56,padding:"0.25rem 0.4rem"}}>
+        {/* Tmp HP */}
+        <div className="combat-box" style={{flex:"1 1 50px",minWidth:48}}>
           <span className="combat-box-label">Tmp HP</span>
-          <input className="combat-box-input" type="number" value={char.hp.temp||0}
-            onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
+          <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
+        </div>
+        {/* AC */}
+        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}}>
+          <span className="combat-box-label">AC</span>
+          <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
+        </div>
+        {/* Inicjatywa */}
+        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}} title="DEX mod — edit to override">
+          <span className="combat-box-label">Init</span>
+          <input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/>
         </div>
       </div>
       {/* HP bar + pct */}
       <div className="hp-bar-bg" style={{marginTop:"0.5rem"}}><div className="hp-bar-fill" style={{width:`${hpPct}%`,background:hpBarColor(hpPct)}}/></div>
       <div className="hp-pct" style={{color:hpNumColor(hpPct)}}>{hpPct}% vitality remaining</div>
-      {/* AC + Inicjatywa — full width below bar */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem",marginTop:"0.5rem"}}>
-        <div className="combat-box"><span className="combat-box-label">Klasa Pancerza</span><input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/></div>
-        <div className="combat-box" title="DEX mod by default — edit to override"><span className="combat-box-label">Inicjatywa</span><input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/></div>
-      </div>
 
       {/* Kości Wytrzymałości + Rest — grid: [HD tracker] [Short] [Long] */}
       <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:"0.5rem",marginTop:"0.6rem",alignItems:"stretch"}}>
@@ -1031,27 +1111,22 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
         })}
       </div>
 
-      {/* ─ Miejsca na Czary ─ */}
-      {(()=>{
-        const usedPozioms=[...new Set((spells||[]).map(s=>s.level).filter(l=>l!=="Cantrip"))];
-        if (!usedPozioms.length) return null;
-        return <>
-          <hr className="inner-divider" data-label="Miejsca na Czary" style={{marginTop:"1.1rem"}}/>
-          <div style={{marginTop:"0.8rem"}}><SpellSlotsWidget char={char} setChar={setChar} spells={spells}/></div>
-        </>;
-      })()}
-
     </div>
 
-    {/* ══ Aktywne i Wyposażone — all sections, no subtabs ══ */}
+    {/* ══ Aktywne i Wyposażone — subtabs ══ */}
     {hasAktywny>0&&<div className="card">
       <div className="sect-label">Aktywne i Wyposażone</div>
+      {/* Subtab bar — only show tabs with content */}
+      <div className="subtab-bar">
+        {equippedPrzedmioty.length>0&&<button className={`subtab-btn${activeTab==="items"?" active":""}`} onClick={()=>setActiveTab("items")}>Przedmioty ({equippedPrzedmioty.length})</button>}
+        {activeUmiejętności.length>0&&<button className={`subtab-btn${activeTab==="skills"?" active":""}`} onClick={()=>setActiveTab("skills")}>Umiejętności ({activeUmiejętności.length})</button>}
+        <button className={`subtab-btn${activeTab==="spells"?" active":""}`} onClick={()=>setActiveTab("spells")}>Czary{activeCzary.length>0?` (${activeCzary.length})`:""}</button>
+      </div>
 
-      {/* Items */}
-      {equippedPrzedmioty.length>0&&<>
-        {equippedPrzedmioty.length>0&&activeUmiejętności.length+activeCzary.length>0&&
-          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",opacity:0.5,marginBottom:"0.5rem"}}>Przedmioty</div>}
-        {equippedPrzedmioty.map(item=>(
+      {/* Items tab */}
+      {activeTab==="items"&&(equippedPrzedmioty.length===0
+        ? <div className="empty-state" style={{padding:"1.5rem"}}>Brak wyposażonych przedmiotów.</div>
+        : equippedPrzedmioty.map(item=>(
           <div key={item.id} className="equipped-item">
             <span className="equipped-icon">{ITEM_ICONS[item.type]||"◈"}</span>
             <div className="flex1">
@@ -1062,20 +1137,18 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
               </div>
               {item.damage&&<div className="equipped-stat">⚔ {item.damage}{item.damageType?` ${item.damageType}`:""}{item.modifier?` · +${parseInt(item.modifier)||0} to hit`:""}</div>}
               {!item.damage&&item.modifier!==undefined&&item.modifier!==""&&<div className="equipped-stat">To Hit: {numMod(parseInt(item.modifier)||0)}</div>}
-              {item.charges&&<div className="equipped-stat">Charges: {item.charges}</div>}
+              {item.charges&&<div className="equipped-stat">Ładunki: {item.charges}</div>}
               {item.effect&&<div className="equipped-stat" style={{color:"var(--spell-muted)"}}>{item.effect}</div>}
               {item.note&&<div className="equipped-stat" style={{fontStyle:"italic",opacity:0.7}}>{item.note}</div>}
             </div>
           </div>
-        ))}
-      </>}
+        ))
+      )}
 
-      {/* Skills & Traits & Feats */}
-      {activeUmiejętności.length>0&&<>
-        {equippedPrzedmioty.length>0&&<div style={{borderTop:"1px solid rgba(128,128,128,0.15)",margin:"0.6rem 0"}}/>}
-        {activeUmiejętności.length>0&&activeCzary.length+equippedPrzedmioty.length>0&&
-          <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",opacity:0.5,marginBottom:"0.5rem"}}>Umiejętności</div>}
-        {activeUmiejętności.map(sk=>(
+      {/* Skills tab */}
+      {activeTab==="skills"&&(activeUmiejętności.length===0
+        ? <div className="empty-state" style={{padding:"1.5rem"}}>Zaznacz umiejętności jako aktywne w zakładce Skills.</div>
+        : activeUmiejętności.map(sk=>(
           <div key={sk.id} className="equipped-item">
             <span className="equipped-icon">✨</span>
             <div className="flex1">
@@ -1088,40 +1161,34 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
               {sk.tags&&sk.tags.length>0&&<div className="equipped-stat" style={{opacity:0.55,fontSize:"0.8rem"}}>{sk.tags.join(" · ")}</div>}
             </div>
           </div>
-        ))}
-      </>}
+        ))
+      )}
 
-      {/* Spells */}
-      {activeCzary.length>0&&<>
-        {(equippedPrzedmioty.length>0||activeUmiejętności.length>0)&&<div style={{borderTop:"1px solid rgba(128,128,128,0.15)",margin:"0.6rem 0"}}/>}
-        {/* Spell slots summary */}
-        {(()=>{
-          const usedPozioms=[...new Set((spells||[]).map(s=>s.level).filter(l=>l!=="Cantrip"))];
-          if (!usedPozioms.length) return null;
-          return <div style={{marginBottom:"0.75rem"}}>
-            <div style={{fontFamily:"Cinzel,serif",fontSize:"0.52rem",letterSpacing:"0.18em",textTransform:"uppercase",opacity:0.5,marginBottom:"0.4rem"}}>Czary</div>
-            <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
-          </div>;
-        })()}
-        {activeCzary.map(sp=>(
-          <div key={sp.id} className="equipped-item">
-            <span className="equipped-icon">🔮</span>
-            <div className="flex1">
-              <div className="row" style={{gap:"0.4rem",marginBottom:"0.2rem",flexWrap:"wrap"}}>
-                <span className="equipped-name" style={{color:"var(--spell-text)"}}>{sp.name}</span>
-                <span className="equipped-spell-badge">{sp.level}</span>
-                {sp.school&&<span className="equipped-spell-badge">{sp.school}</span>}
+      {/* Spells tab — Spell Slots + prepared spells */}
+      {activeTab==="spells"&&<>
+        <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
+        {activeCzary.length>0&&<div style={{marginTop:"0.8rem"}}>
+          {activeCzary.map(sp=>(
+            <div key={sp.id} className="equipped-item">
+              <span className="equipped-icon">🔮</span>
+              <div className="flex1">
+                <div className="row" style={{gap:"0.4rem",marginBottom:"0.2rem",flexWrap:"wrap"}}>
+                  <span className="equipped-name" style={{color:"var(--spell-text)"}}>{sp.name}</span>
+                  <span className="equipped-spell-badge">{sp.level}</span>
+                  {sp.school&&<span className="equipped-spell-badge">{sp.school}</span>}
+                </div>
+                {(sp.castingTime||sp.range||sp.duration)&&
+                  <div className="equipped-stat" style={{color:"var(--spell-muted)"}}>
+                    {[sp.castingTime&&`⏱ ${sp.castingTime}`,sp.range&&`↗ ${sp.range}`,sp.duration&&`⧗ ${sp.duration}`].filter(Boolean).join("  ·  ")}
+                  </div>}
+                {sp.components&&<div className="equipped-stat" style={{opacity:0.6,fontSize:"0.85rem"}}>{sp.components}</div>}
+                {sp.description&&<div className="equipped-stat">{sp.description}</div>}
+                {sp.notes&&<div className="equipped-stat" style={{fontStyle:"italic",opacity:0.7,borderTop:"1px solid rgba(128,128,128,0.12)",paddingTop:"0.2rem",marginTop:"0.2rem"}}>{sp.notes}</div>}
               </div>
-              {(sp.castingTime||sp.range||sp.duration)&&
-                <div className="equipped-stat" style={{color:"var(--spell-muted)"}}>
-                  {[sp.castingTime&&`⏱ ${sp.castingTime}`,sp.range&&`↗ ${sp.range}`,sp.duration&&`⧗ ${sp.duration}`].filter(Boolean).join("  ·  ")}
-                </div>}
-              {sp.components&&<div className="equipped-stat" style={{opacity:0.6,fontSize:"0.85rem"}}>{sp.components}</div>}
-              {sp.description&&<div className="equipped-stat">{sp.description}</div>}
-              {sp.notes&&<div className="equipped-stat" style={{fontStyle:"italic",opacity:0.7,borderTop:"1px solid rgba(128,128,128,0.12)",paddingTop:"0.2rem",marginTop:"0.2rem"}}>{sp.notes}</div>}
             </div>
-          </div>
-        ))}
+          ))}
+        </div>}
+        {activeCzary.length===0&&<div className="empty-state" style={{padding:"1rem"}}>Zaznacz czary jako przygotowane w zakładce Spells.</div>}
       </>}
     </div>}
 
