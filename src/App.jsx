@@ -1,4 +1,10 @@
 
+const getSelectedTabStyle = (theme) => ({
+  background: theme?.selectedBg || "rgba(255,255,255,0.08)",
+  borderColor: theme?.accent || "rgba(255,255,255,0.12)"
+});
+
+
 const getSelectedTabBackground = (theme) => {
   return theme?.selectedBg || "rgba(255,255,255,0.08)";
 };
@@ -2146,29 +2152,3 @@ export default function HeroJournal() {
   </>;
 }
 
-/* XP UI BLOCK */
-
-<div style={{
-  border: `1px solid ${currentTheme?.border || "#555"}`,
-  background: currentTheme?.panel || "rgba(255,255,255,0.04)",
-  borderRadius: "10px",
-  padding: "10px",
-  marginTop: "10px",
-  textAlign: "center"
-}}>
-  <div style={{
-    fontSize: "11px",
-    opacity: 0.7,
-    marginBottom: "4px",
-    letterSpacing: "1px"
-  }}>
-    PUNKTY DOŚWIADCZENIA
-  </div>
-
-  <div style={{
-    fontSize: "28px",
-    fontWeight: "700"
-  }}>
-    {character?.xp || 0}
-  </div>
-</div>
