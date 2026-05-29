@@ -1,4 +1,3 @@
-
 const getSelectedTabStyle = (theme) => ({
   background: theme?.selectedBg || "rgba(255,255,255,0.08)",
   borderColor: theme?.accent || "rgba(255,255,255,0.12)"
@@ -713,6 +712,7 @@ function RestModal({ type, char, setChar, onClose }) {
             Wydaj Kości Wytrzymałości, aby odzyskać punkty życia.{" "}
             <strong style={{color: "inherit"}}>{available}</strong> z <strong style={{color: "inherit"}}>{hd.max}</strong> kości {hd.type} dostępnych.
           </p>
+
           <div style={{display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.8rem", flexWrap: "wrap"}}>
             <span style={{fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.7}}>Typ kości</span>
             <select className="g-select" style={{width: "auto", fontSize: "0.9rem", padding: "0.3rem 0.5rem"}} value={hd.type}
