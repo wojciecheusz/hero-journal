@@ -38,7 +38,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 ═══════════════════════════════════════════════ */
 const PALETTES = ["mrok", "obsydian", "drewno", "wschod", "las", "lupek", "pergamin", "kosc"];
 const PALETTE_LABELS = {
-  mrok:     "🌑 Mrok",       obsydian: "🔮 Obsydian",
+  mrok:     "🩸 Mrok",       obsydian: "🔮 Obsydian",
   drewno:   "🪵 Drewno",     wschod:   "🌅 Wschód",
   las:      "🌿 Las",        lupek:    "🌊 Łupek",
   pergamin: "📜 Pergamin",   kosc:     "🤍 Kość Słoniowa",
@@ -56,6 +56,7 @@ import LocationsScreen from "./features/world/LocationsScreen";
 import FactionsPanel from "./features/factions/FactionsPanel";
 import SessionsScreen from "./features/sessions/SessionsScreen";
 import QuestScreen from "./features/quests/QuestScreen";
+import { createSampleHero } from "./constants/sampleHero";
 
 import { auth, googleProvider, firebaseReady } from "./firebase/index";
 import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
@@ -1900,6 +1901,39 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
     setScreen("app");
   }, []);
 
+  const handleSampleCreate = useCallback(() => {
+    const { id, profile, char: sChar, inventory: sInv, npcs: sNpcs, locations: sLoc, skills: sSk, spells: sSp, sessions: sSes, quests: sQ, factions: sFac } = createSampleHero();
+    saveChar("char",      id, sChar);
+    saveChar("inventory", id, sInv);
+    saveChar("npcs",      id, sNpcs);
+    saveChar("locations", id, sLoc);
+    saveChar("skills",    id, sSk);
+    saveChar("spells",    id, sSp);
+    saveChar("sessions",  id, sSes);
+    saveChar("quests",    id, sQ);
+    saveChar("factions",  id, sFac);
+    const updated = [...loadProfiles(), profile];
+    saveProfiles(updated);
+    saveActiveId(id);
+    setProfilesState(updated);
+    setChar(sChar);
+    setInventory(sInv); setNPCs(sNpcs); setLocations(sLoc);
+    setUmiejętności(sSk); setCzary(sSp); setSesjas(sSes);
+    setZadania(sQ); setFactions(sFac);
+    setActiveIdState(id);
+    setTab("character");
+    setScreen("app");
+  }, []);
+
+  const handleRenameProfile = useCallback((profileId, newName) => {
+    const updated = loadProfiles().map(p => p.id === profileId ? { ...p, name: newName } : p);
+    saveProfiles(updated);
+    setProfilesState(updated);
+    if (profileId === activeId) {
+      setChar(c => ({ ...c, name: newName }));
+    }
+  }, [activeId]);
+
   const deleteProfile = useCallback(id => {
     deleteCharData(id);
     const updated = loadProfiles().filter(p => p.id !== id);
@@ -1931,6 +1965,8 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
         onSelect={switchProfile}
         onCreate={() => setScreen("wizard")}
         onDelete={deleteProfile}
+        onCreateSample={handleSampleCreate}
+        onRename={handleRenameProfile}
       />
     </>;
   }
@@ -1958,15 +1994,17 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
             <span className="hj-char-name">{char.name?.trim() || "Bohater"}</span>
             <span style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0}}>▾ Zmień</span>
           </div>
-          <div style={{display: "flex", alignItems: "center", gap: "0.4rem", flexShrink: 0}}>
+          <div style={{display: "flex", alignItems: "center", gap: "0.35rem", flexShrink: 0}}>
             <div style={{position: "relative"}}>
               <button
                 onClick={() => setShowPalette(s => !s)}
-                style={{background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.08em", padding: "0.22rem 0.5rem", cursor: "pointer", textTransform: "uppercase", transition: "all 0.2s", whiteSpace: "nowrap"}}
-              >{(PALETTE_LABELS[theme] || "🎨").split(" ").slice(0,2).join(" ")}</button>
+                title={PALETTE_LABELS[theme] || "Motyw"}
+                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontSize:"1rem", lineHeight:1, padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26}}>
+                {(PALETTE_LABELS[theme] || "🎨").split(" ")[0]}
+              </button>
               {showPalette && <>
                 <div style={{position: "fixed", inset: 0, zIndex: 199}} onClick={() => setShowPalette(false)}/>
-                <div style={{position: "absolute", top: "calc(100% + 6px)", right: 0, background: t.modalBg, border: `1px solid ${t.border}`, boxShadow: `0 8px 24px ${t.shadowBot}`, zIndex: 200, minWidth: 148}}>
+                <div style={{position: "absolute", top: "calc(100% + 6px)", right: 0, background: t.modalBg, border: `1px solid ${t.border}`, boxShadow: `0 8px 24px ${t.shadowBot}`, zIndex: 200, minWidth: 160}}>
                   {PALETTES.map(p => (
                     <button key={p} onClick={() => { setTheme(p); save("hj_theme", p); setShowPalette(false); }} style={{display: "block", width: "100%", background: theme === p ? `rgba(226,185,78,0.1)` : "transparent", border: "none", borderBottom: `1px solid ${t.borderSub}`, color: theme === p ? t.accent : t.text, fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.08em", padding: "0.45rem 0.8rem", cursor: "pointer", textAlign: "left", transition: "background 0.12s"}}>
                       {PALETTE_LABELS[p]}
@@ -1975,16 +2013,25 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
                 </div>
               </>}
             </div>
-            <button className="btn-danger" style={{fontSize: "0.55rem", padding: "0.2rem 0.55rem", letterSpacing: "0.1em"}} onClick={() => setShowReset(true)} title="Zresetuj aktualną postać">↺ Reset</button>
+            <button
+              onClick={() => setShowReset(true)}
+              title="Zresetuj aktualną postać"
+              style={{background:"transparent", border:"1px solid #6a2a2a", color:"#c04040", fontSize:"0.9rem", lineHeight:1, padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26}}>
+              ↺
+            </button>
             {user && onCloudRefresh && (
-              <button onClick={onCloudRefresh} title="Pobierz najnowsze dane z chmury"
-                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textDim, fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.08em", padding:"0.22rem 0.45rem", cursor:"pointer", transition:"all 0.2s", whiteSpace:"nowrap"}}>
+              <button
+                onClick={onCloudRefresh}
+                title="Pobierz najnowsze dane z chmury"
+                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textDim, fontSize:"0.9rem", lineHeight:1, padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26}}>
                 ☁
               </button>
             )}
             {user && onLogout && (
-              <button onClick={onLogout} title={`Zalogowany jako ${user.displayName || user.email}`}
-                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.06em", padding:"0.22rem 0.45rem", cursor:"pointer", transition:"all 0.2s", whiteSpace:"nowrap", maxWidth:90, overflow:"hidden", textOverflow:"ellipsis"}}>
+              <button
+                onClick={onLogout}
+                title={`Zalogowany jako ${user.displayName || user.email}`}
+                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.05em", padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26, maxWidth:80, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>
                 {(user.displayName || user.email || "").split(/[\s@]/)[0]}
               </button>
             )}

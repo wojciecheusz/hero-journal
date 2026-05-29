@@ -2,7 +2,7 @@
 export const PALETTES = ["mrok", "obsydian", "drewno", "wschod", "las", "lupek", "pergamin", "kosc"];
 
 export const PALETTE_LABELS = {
-  mrok:    "🌑 Mrok",
+  mrok:    "🩸 Mrok",
   obsydian:"🔮 Obsydian",
   drewno:  "🪵 Drewno",
   wschod:  "🌅 Wschód",
@@ -16,22 +16,22 @@ export const THEMES = {
 
   /* ── MROK – czernie i czerwienie ─────────────────────────── */
   mrok: {
-    bg: "#0c0508",        bgCard: "#180b0e",      bgInput: "#120608",     bgNav: "#090304",
-    border: "#3e1820",    borderSub: "#2c1218",   borderInput: "#3e181e",
-    text: "#ecdadc",      textMuted: "#a87878",   textDim: "#784848",     textLabel: "#c89888",
-    accent: "#c83a48",    accentBorder: "#8c2430",
-    headerBg: "linear-gradient(180deg,#180b0e 0%,#100608 100%)",
-    navBg:    "linear-gradient(0deg,#090304 0%,#140a0c 100%)",
-    scrollTrack: "#060304",   scrollThumb: "#3e181e",
-    noise: "0.05",  shadowBot: "rgba(0,0,0,0.95)", shadowCard: "#060304",
-    innerDivBg: "#180b0e", hpBg: "#060304", addForm: "#200e12",
-    modalBg: "#180b0e", emptyColor: "#7a4858",
-    sessEntry: "#200e12",  combatBox: "#120608",
-    spellSlotBox: "#120608", spellSlotBorder: "#3e181e",
-    packItem: "#200e12",   packItemBorder: "#2c1218", packFieldInput: "#0c0508",
-    spellAccent: "#e06878", spellBorder: "#8c2430", spellMuted: "#b85060",
-    spellDim: "#603040",    spellText: "#ffd8e0",   spellBg: "rgba(200,58,72,0.08)",
-    questReward: "#c08050", selectedBg: "rgba(200,58,72,0.1)",
+    bg: "#080304",        bgCard: "#110507",      bgInput: "#0d0405",     bgNav: "#060202",
+    border: "#3a0e0e",    borderSub: "#280c0c",   borderInput: "#3a0e0e",
+    text: "#f0d8d5",      textMuted: "#c07070",   textDim: "#804040",     textLabel: "#d89888",
+    accent: "#cc2233",    accentBorder: "#941525",
+    headerBg: "linear-gradient(180deg,#110507 0%,#090404 100%)",
+    navBg:    "linear-gradient(0deg,#060202 0%,#110505 100%)",
+    scrollTrack: "#040202",   scrollThumb: "#3a0e0e",
+    noise: "0.055", shadowBot: "rgba(0,0,0,0.97)", shadowCard: "#040202",
+    innerDivBg: "#110507", hpBg: "#040202", addForm: "#180909",
+    modalBg: "#110507", emptyColor: "#7a3838",
+    sessEntry: "#180909",  combatBox: "#0d0405",
+    spellSlotBox: "#0d0405", spellSlotBorder: "#3a0e0e",
+    packItem: "#180909",   packItemBorder: "#280c0c", packFieldInput: "#090404",
+    spellAccent: "#ee5060", spellBorder: "#941525", spellMuted: "#c03040",
+    spellDim: "#6a2030",    spellText: "#ffe0e4",   spellBg: "rgba(204,34,51,0.08)",
+    questReward: "#b87840", selectedBg: "rgba(204,34,51,0.1)",
   },
 
   /* ── OBSYDIAN – ciemne fiolety ────────────────────────────── */

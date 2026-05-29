@@ -3,8 +3,23 @@ import { ALIGNMENTS, STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants
 import { clamp } from '../../utils/math';
 import { THEMES, PALETTES } from '../../theme/themes';
 
-export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, theme }) {
+export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, onCreateSample, onRename, theme }) {
   const t = THEMES[theme] || THEMES.mrok;
+  const [editingId, setEditingId] = useState(null);
+  const [editName, setEditName]   = useState("");
+
+  const startEdit = (e, p) => {
+    e.stopPropagation();
+    setEditingId(p.id);
+    setEditName(p.name || "");
+  };
+
+  const commitEdit = (id) => {
+    const trimmed = editName.trim();
+    if (trimmed && onRename) onRename(id, trimmed);
+    setEditingId(null);
+  };
+
   return (
     <div className="profile-screen">
       <div style={{ position: "absolute", top: "1rem", right: "1rem" }}>
@@ -20,26 +35,83 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 
       <div className="profile-list">
         {profiles.map(p => (
-          <div key={p.id} className={`profile-card${p.id === activeId ? " active-profile" : ""}`} onClick={() => onSelect(p.id)}>
-            <span className="profile-card-icon">{DND_CLASSES.find(c => c.name === p.class)?.icon || "⚔️"}</span>
+          <div key={p.id}
+            className={`profile-card${p.id === activeId ? " active-profile" : ""}`}
+            onClick={() => editingId !== p.id && onSelect(p.id)}>
+
+            <span className="profile-card-icon">
+              {DND_CLASSES.find(c => c.name === p.class)?.icon || "⚔️"}
+            </span>
+
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="profile-card-name">{p.name || "Bezimienny Bohater"}</div>
+              {editingId === p.id ? (
+                <input
+                  autoFocus
+                  value={editName}
+                  onChange={e => setEditName(e.target.value)}
+                  onBlur={() => commitEdit(p.id)}
+                  onKeyDown={e => {
+                    if (e.key === "Enter") { e.preventDefault(); commitEdit(p.id); }
+                    if (e.key === "Escape") setEditingId(null);
+                  }}
+                  onClick={e => e.stopPropagation()}
+                  style={{ fontFamily: "Cinzel,serif", fontSize: "0.95rem", fontWeight: 700, color: t.text, background: "transparent", border: "none", borderBottom: `1px solid ${t.accent}`, outline: "none", width: "100%", padding: "0.1rem 0" }}/>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  <div className="profile-card-name">{p.name || "Bezimienny Bohater"}</div>
+                  {onRename && (
+                    <button
+                      onClick={e => startEdit(e, p)}
+                      title="Zmień imię bohatera"
+                      style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "0.7rem", color: t.textDim, padding: "0", lineHeight: 1, opacity: 0.5, transition: "opacity 0.15s", flexShrink: 0 }}
+                      onMouseEnter={e => e.currentTarget.style.opacity = "1"}
+                      onMouseLeave={e => e.currentTarget.style.opacity = "0.5"}>
+                      ✎
+                    </button>
+                  )}
+                </div>
+              )}
               <div className="profile-card-sub">
                 {[p.class, p.level && `Poziom ${p.level}`].filter(Boolean).join(" · ")}
-                {p.id === activeId && <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase", color: t.accent, marginLeft: "0.6rem" }}>● Aktywny</span>}
+                {p.id === activeId && (
+                  <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase", color: t.accent, marginLeft: "0.6rem" }}>● Aktywny</span>
+                )}
               </div>
             </div>
-            {profiles.length > 1 && (
+
+            {profiles.length > 1 && editingId !== p.id && (
               <button className="profile-card-del" onClick={e => { e.stopPropagation(); onDelete(p.id); }}>✕</button>
             )}
           </div>
         ))}
       </div>
 
-      <button className="btn-new-profile" onClick={onCreate}>⊕ Stwórz Nowego Bohatera</button>
+      <button className="btn-new-profile" onClick={onCreate}>
+        ⊕ Stwórz Nowego Bohatera
+      </button>
 
-      <div style={{ marginTop: "2rem", fontFamily: "Cinzel,serif", fontSize: "0.5rem", letterSpacing: "0.1em", color: t.textDim, textTransform: "uppercase", textAlign: "center" }}>
-        {profiles.length} herosów w dzienniku
+      {onCreateSample && (
+        <button
+          onClick={onCreateSample}
+          style={{
+            width: "100%", maxWidth: "440px",
+            fontFamily: "Cinzel,serif", fontSize: "0.6rem",
+            letterSpacing: "0.1em", textTransform: "uppercase",
+            background: "transparent",
+            color: t.textMuted,
+            border: `1px dashed ${t.border}`,
+            padding: "0.6rem 1.5rem",
+            cursor: "pointer", marginTop: "0.6rem",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = t.accentBorder; e.currentTarget.style.color = t.textLabel; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = t.border; e.currentTarget.style.color = t.textMuted; }}>
+          ✦ Stwórz przykładowego bohatera
+        </button>
+      )}
+
+      <div style={{ marginTop: "1.5rem", fontFamily: "Cinzel,serif", fontSize: "0.5rem", letterSpacing: "0.1em", color: t.textDim, textTransform: "uppercase", textAlign: "center" }}>
+        {profiles.length} {profiles.length === 1 ? "heros" : "herosów"} w dzienniku
       </div>
     </div>
   );
@@ -65,7 +137,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
 
   const handleFinish = () => {
     const id = "profile_" + Date.now();
-    const DEFAULT_CHAR = {
+    const newChar = {
       name: name.trim(), classes: [{ name: cls?.name || "Poszukiwacz przygód", level }],
       stats: { ...stats }, profBonus: 2, hp: { current: 10, max: 10, temp: 0 }, ac: 10,
       initiativeBonus: undefined, savingThrows: {}, savingThrowExp: {}, savingThrowOverride: {},
@@ -74,7 +146,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
       personalNotes: "", backstory: "", spellSlots: {}, spellcastingAbility: "INT",
       hitDice: { type: "d8", max: 1, used: 0 }, xp: 0, deathSaves: { successes: 0, failures: 0 },
     };
-    onFinish(id, DEFAULT_CHAR, { name: name.trim(), class: cls?.name || "", level, created: Date.now() });
+    onFinish(id, newChar, { name: name.trim(), class: cls?.name || "", level, created: Date.now() });
   };
 
   const inputStyle = {
