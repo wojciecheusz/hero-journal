@@ -230,11 +230,11 @@ export function RestModal({ type, char, setChar, onClose }) {
             <div className="modal-detail">
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.9 }}>Wydaj</span>
-                <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem" }}>−</button>
+                <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>−</button>
                 <input type="number" min={0} max={available} value={hdWydaj}
                   onChange={e => setHdWydaj(clamp(parseInt(e.target.value) || 0, 0, available))}
                   style={{ width: 36, fontFamily: "Cinzel,serif", fontSize: "1.1rem", fontWeight: 700, background: "transparent", border: "none", borderBottom: "1px solid currentColor", outline: "none", textAlign: "center", color: "inherit" }}/>
-                <button onClick={() => setHdWydaj(s => Math.min(available, s + 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem" }}>+</button>
+                <button onClick={() => setHdWydaj(s => Math.min(available, s + 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>+</button>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.72rem", opacity: 0.9 }}>{hd.type}</span>
               </div>
               {(() => {
