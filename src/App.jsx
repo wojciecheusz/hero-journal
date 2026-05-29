@@ -222,7 +222,7 @@ function buildCSS(t) {
   .skill-pips { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
   .pip { width: 8px; height: 8px; border: 1px solid ${t.borderInput}; cursor: pointer; transition: all 0.15s; }
   .pip.filled { background: ${t.accent}; border-color: ${t.accentBorder}; }
-  .hj-root { --spell-accent: ${t.spellAccent}; --spell-border: ${t.spellBorder}; --spell-muted: ${t.spellMuted}; --spell-dim: ${t.spellDim}; --spell-text: ${t.spellText}; --spell-bg: ${t.spellBg}; --quest-reward: ${t.questReward}; --pip-prof: ${t.accent}; --pip-exp: ${t.spellAccent}; --pip-empty: ${t.borderInput}; }
+  .hj-root { --spell-accent: ${t.spellAccent}; --spell-border: ${t.spellBorder}; --spell-muted: ${t.spellMuted}; --spell-dim: ${t.spellDim}; --spell-text: ${t.spellText}; --spell-bg: ${t.spellBg}; --quest-reward: ${t.questReward}; --pip-prof: ${t.accent}; --pip-exp: ${t.spellAccent}; --pip-empty: ${t.borderInput}; --text-label: ${t.textLabel}; --text-muted: ${t.textMuted}; --text-dim: ${t.textDim}; }
   .spell-level-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid var(--spell-border); color: var(--spell-accent); background: var(--spell-bg); flex-shrink: 0; text-transform: uppercase; }
   .spell-school-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #2a2a5a; color: #8888cc; background: rgba(100,100,200,0.06); flex-shrink: 0; text-transform: uppercase; }
   .entity-header { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.5rem; }

@@ -132,7 +132,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 <StatBox label={st.attr} value={char.stats[st.attr]} onChange={v => updSt(st.attr, v)}/>
                 <div className="stat-box"
                   style={{ borderTop: "none", textAlign: "center", padding: "0.25rem 0.1rem 0.2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
-                  <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.4, lineHeight: 1 }}>ST</span>
+                  <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", lineHeight: 1 }}>ST</span>
                   <input type="number" value={stVal}
                     title="Edytuj ręcznie · dwuklik = reset"
                     style={{ background: "transparent", border: "none", outline: "none", fontFamily: "Cinzel,serif", fontSize: "0.85rem", fontWeight: 700, color: stColor, textAlign: "center", width: "100%", padding: "0.1rem 0", lineHeight: 1, display: "block", cursor: "text" }}
@@ -285,9 +285,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 onClick={() => cycleSkill(sk.key)}
                 style={{ position: "relative", cursor: "pointer", padding: "0.35rem 0.25rem 0.3rem", textAlign: "center", minHeight: 0, userSelect: "none", minWidth: 0 }}>
                 <div style={{ position: "absolute", top: "0.22rem", right: "0.22rem", width: 10, height: 10, borderRadius: "50%", border: pipBorder, background: pipColor, clipPath: pipClip, boxShadow: exp ? "0 0 4px var(--pip-exp)" : prz ? "0 0 4px var(--pip-prof)" : "none", transition: "all 0.15s", pointerEvents: "none" }}/>
-                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", letterSpacing: "0.08em", textTransform: "uppercase", opacity: 0.55, display: "block", marginBottom: "0.15rem", lineHeight: 1.2, paddingRight: "0.7rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sk.label}</span>
+                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-label)", display: "block", marginBottom: "0.15rem", lineHeight: 1.2, paddingRight: "0.7rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sk.label}</span>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.9rem", fontWeight: 700, color: statColor, display: "block", lineHeight: 1 }}>{numMod(bonus)}</span>
-                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.38rem", opacity: 0.35, display: "block", marginTop: "0.1rem" }}>{sk.attr}</span>
+                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.38rem", color: "var(--text-muted)", display: "block", marginTop: "0.1rem" }}>{sk.attr}</span>
               </div>
             );
           })}
