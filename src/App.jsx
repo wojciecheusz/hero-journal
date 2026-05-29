@@ -463,7 +463,7 @@ const GENERIC_SKILLS = [
   {key:"performance",   label:"Występy",          attr:"CHA"},
   {key:"persuasion",    label:"Perswazja",        attr:"CHA"},
   {key:"religion",      label:"Religia",          attr:"INT"},
-  {key:"sleightOfHand",  label:"Zwinne dłonie",    attr:"DEX"},
+  {key:"sleightzhand",  label:"Zręczne dłonie",    attr:"DEX"},
   {key:"stealth",       label:"Skradanie",        attr:"DEX"},
   {key:"survival",      label:"Sztuka przetrwania", attr:"WIS"},
   {key:"animalhandling",label:"Opieka nad zwierzętami", attr:"WIS"},
@@ -1665,7 +1665,7 @@ function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, theme
     <div className="profile-screen">
       <div style={{position: "absolute", top: "1rem", right: "1rem"}}>
         <button
-          onClick={() => { const idx = PALETTES.indexOf(theme); const dalej = PALETTES[(idx + 1) % PALETTES.length]; localStorage.setItem("hj_theme", JSON.stringify(dalej)); window.location.reload(); }}
+          onClick={() => { const idx = PALETTES.indexOf(theme); const next = PALETTES[(idx + 1) % PALETTES.length]; localStorage.setItem("hj_theme", JSON.stringify(next)); window.location.reload(); }}
           style={{background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, fontFamily: "Cinzel,serif", fontSize: "0.55rem", letterSpacing: "0.1em", padding: "0.2rem 0.5rem", cursor: pointer, textTransform: "uppercase"}}
         >Zmień motyw</button>
       </div>
