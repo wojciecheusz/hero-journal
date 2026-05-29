@@ -7,6 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true  // service worker also active during npm run dev
+      },
       includeAssets: ['icon-192.png', 'icon-512.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'Hero Journal',
@@ -17,19 +20,24 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
-        start_url: '/',
+        start_url: '/?source=pwa',
+        categories: ['games', 'utilities'],
         icons: [
           {
-            src: 'icon-192.png',
+            src: '/icon-192.png',
             sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable'
+            type: 'image/png'
           },
           {
-            src: 'icon-512.png',
+            src: '/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'maskable'
           }
         ]
       },
@@ -41,7 +49,10 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'google-fonts-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 }
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
             }
           },
           {
@@ -49,7 +60,10 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: {
               cacheName: 'gstatic-fonts-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 }
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
             }
           }
         ]
