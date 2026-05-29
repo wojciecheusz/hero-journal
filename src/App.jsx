@@ -1457,7 +1457,7 @@ function SesjaDziennik({sessions, setSesjas, npcs, locations, quests, inventory,
       <button className="btn-rgba(255,255,255,0.06)" onClick={addSesja}>⊕ Nowy wpis</button>
     </div>
     {hasAny && hasNotes && <div className="sess-legend">
-      <span style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase"}}>Podgląd encyklopedyczny linku po najechaniu →</span>
+      <span style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase"}}>Kliknij kolorowy link aby otworzyć wpis →</span>
       {LEGEND_ITEMS.map(li => { const counts = {npc: npcs.length, location: locations.length, quest: quests.length, inventory: inventory.length, skill: skills.length}; if (!counts[li.type]) return null; return <div key={li.type} className="sess-legend-item"><div className="legend-dot" style={{background: li.color, border: `1px solid ${li.border}`}}/><span style={{color: li.border}}>{li.label}</span></div>; })}
     </div>}
     {sessions.length === 0 && <div className="card empty-state">Brak spisanych przygód w kronikach kampanii.</div>}

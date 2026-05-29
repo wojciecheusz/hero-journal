@@ -30,7 +30,7 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
 
       {hasAny && hasNotes && (
         <div className="sess-legend">
-          <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Podgląd encyklopedyczny linku po najechaniu →</span>
+          <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Kliknij kolorowy link aby otworzyć wpis →</span>
           {LEGEND_ITEMS.map(li => {
             const counts = { npc: npcs.length, location: locations.length, quest: quests.length, inventory: inventory.length, skill: skills.length };
             if (!counts[li.type]) return null;

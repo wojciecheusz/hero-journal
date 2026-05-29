@@ -266,26 +266,26 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
 
         {/* HP */}
-        <div style={{ display:"grid", gridTemplateColumns:"32px auto 32px 1fr 1fr", gap:"0.3rem", alignItems:"stretch" }}>
-          <button className="btn-pm minus" style={{ height:"100%", minHeight:50 }}
+        <div style={{ display:"grid", gridTemplateColumns:"36px auto 36px 1fr", gap:"0.3rem", alignItems:"stretch" }}>
+          <button className="btn-pm minus" style={{ height:"100%", minHeight:52 }}
             onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.3rem", gap:0 }}>
+          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.4rem", gap:0 }}>
             <span className="combat-box-label">Punkty Życia</span>
-            <div style={{ display:"flex", alignItems:"baseline", gap:"0.1rem" }}>
+            <div style={{ display:"flex", alignItems:"baseline", gap:"0.15rem" }}>
               <input type="number" value={char.hp.current}
-                style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"1.25rem", fontWeight:700, width:46, color:hpNumColor(hpPct), transition:"color 0.5s" }}
+                style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"1.4rem", fontWeight:700, width:52, color:hpNumColor(hpPct), transition:"color 0.5s" }}
                 onFocus={e => e.target.select()}
                 onChange={e => setChar(c => ({...c, hp:{...c.hp, current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}
                 onBlur={e => setChar(c => ({...c, hp:{...c.hp, current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-              <span style={{ color:"inherit", opacity:0.3, fontSize:"0.75rem" }}>/</span>
+              <span style={{ color:"inherit", opacity:0.35, fontSize:"0.85rem" }}>/</span>
               <input type="number" value={char.hp.max}
-                style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"0.82rem", width:36, opacity:0.8, color:"inherit" }}
+                style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"0.9rem", width:40, opacity:0.75, color:"inherit" }}
                 onFocus={e => e.target.select()}
                 onChange={e => setChar(c => ({...c, hp:{...c.hp, max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}))}
                 onBlur={e => setChar(c => ({...c, hp:{...c.hp, max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
             </div>
           </div>
-          <button className="btn-pm plus" style={{ height:"100%", minHeight:50 }}
+          <button className="btn-pm plus" style={{ height:"100%", minHeight:52 }}
             onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
           <div className="combat-box">
             <span className="combat-box-label">Tym. PŻ</span>
@@ -293,10 +293,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
               onFocus={e => e.target.select()}
               onChange={e => setChar(c => ({...c, hp:{...c.hp, temp:e.target.value===""?0:parseInt(e.target.value)||0}}))}
               onBlur={e => setChar(c => ({...c, hp:{...c.hp, temp:parseInt(e.target.value)||0}}))}/>
-          </div>
-          <div className="combat-box" style={{ display:"flex", flexDirection:"column", justifyContent:"center", gap:"0.2rem", padding:"0.4rem 0.3rem" }}>
-            <span className="combat-box-label">PŻ maks.</span>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, textAlign:"center", color:"inherit" }}>{char.hp.max}</span>
           </div>
         </div>
 
