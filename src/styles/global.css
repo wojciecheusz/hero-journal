@@ -9,6 +9,15 @@
 
 * {
   box-sizing: border-box;
+  /* Blokuje zoom przez podwójne kliknięcie i powiększenie przycisków */
+  touch-action: manipulation;
+}
+
+html {
+  /* Blokuje poziomy scroll (zapobiega "rubber band" efektowi na iOS) */
+  overflow-x: hidden;
+  /* Szerokość zawsze = szerokość viewportu */
+  width: 100%;
 }
 
 html, body, #root {
@@ -16,10 +25,15 @@ html, body, #root {
   min-height: 100%;
   background: var(--bg);
   color: var(--text);
+  /* Pełna szerokość na mobile */
+  max-width: 100vw;
 }
 
 body {
   font-family: Inter, sans-serif;
+  /* Zapobiega zoomowi przez podwójne kliknięcie na iOS Safari */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 .hj-root {

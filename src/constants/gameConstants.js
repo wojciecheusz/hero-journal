@@ -139,7 +139,7 @@ export const STAT_ARRAYS = {
 
 export const NAV_GROUPS = [
   {
-    id: "hero", label: "Postać", icon: "⚔️", defaultTab: "character",
+    id: "hero", label: "Bohater", icon: "⚔️", defaultTab: "character",
     tabs: [
       { id: "character", label: "Postać",    icon: "⚔️" },
       { id: "inventory", label: "Plecak",    icon: "🎒" },

@@ -72,7 +72,9 @@ function buildCSS(t) {
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body, #root { min-height: 100vh; background: ${t.bg}; }
-  .hj-root { position: relative; min-height: 100vh; background: ${t.bg}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .hj-root { position: relative; min-height: 100vh; background: ${t.bg}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); width: 100%; overflow-x: hidden; }
+  input, select, textarea { font-size: max(1rem, 16px); }
+  input[type="number"] { font-size: inherit; }
   .hj-root::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: ${t.noise}; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-repeat: repeat; }
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: ${t.scrollTrack}; }
@@ -1775,7 +1777,7 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
 const NAV_GROUPS = [
   {
     id: "hero",
-    label: "Postać",
+    label: "Bohater",
     icon: "⚔️",
     defaultTab: "character",
     tabs: [
