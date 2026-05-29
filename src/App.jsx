@@ -1012,30 +1012,37 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
 
       {/* ─ Żywotność ─ */}
       <hr className="inner-divider" data-label="Żywotność" style={{marginTop:"1.1rem"}}/>
-      {/* HP row + TmpHP + AC + Inicjatywa — all in one flex row */}
-      <div style={{marginTop:"0.8rem",display:"flex",alignItems:"stretch",gap:"0.4rem",flexWrap:"wrap"}}>
-        {/* − cur/max + */}
-        <div style={{display:"flex",alignItems:"center",gap:"0.4rem",flex:"0 0 auto"}}>
-          <button className="btn-pm minus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-          <div className="hp-display">
-            <input type="number" value={char.hp.current} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.5rem",width:52,color:hpNumColor(hpPct),transition:"color 0.5s"}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-            <span className="hp-sep">/</span>
-            <input type="number" value={char.hp.max} style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1rem",width:44}} onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+      {/* Vitality — single row: [−] [cur/max] [+] [TmpHP] [AC] [Init] */}
+      <div style={{marginTop:"0.8rem",display:"grid",gridTemplateColumns:"34px auto 34px 1fr 1fr 1fr",gap:"0.35rem",alignItems:"stretch"}}>
+        {/* − */}
+        <button className="btn-pm minus" style={{height:"100%"}} onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+        {/* cur / max */}
+        <div className="combat-box" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0.2rem 0.3rem",gap:0}}>
+          <span className="combat-box-label">HP</span>
+          <div style={{display:"flex",alignItems:"baseline",gap:"0.15rem"}}>
+            <input type="number" value={char.hp.current}
+              style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.3rem",fontWeight:700,width:40,color:hpNumColor(hpPct),transition:"color 0.5s"}}
+              onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+            <span style={{color:"inherit",opacity:0.35,fontSize:"0.8rem"}}>/</span>
+            <input type="number" value={char.hp.max}
+              style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"0.85rem",width:34,opacity:0.6}}
+              onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
           </div>
-          <button className="btn-pm plus" onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
         </div>
+        {/* + */}
+        <button className="btn-pm plus" style={{height:"100%"}} onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
         {/* Tmp HP */}
-        <div className="combat-box" style={{flex:"1 1 50px",minWidth:48}}>
+        <div className="combat-box">
           <span className="combat-box-label">Tmp HP</span>
           <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
         </div>
         {/* AC */}
-        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}}>
+        <div className="combat-box">
           <span className="combat-box-label">AC</span>
           <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
         </div>
-        {/* Inicjatywa */}
-        <div className="combat-box" style={{flex:"1 1 60px",minWidth:56}} title="DEX mod — edit to override">
+        {/* Init */}
+        <div className="combat-box" title="DEX mod — edit to override">
           <span className="combat-box-label">Init</span>
           <input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/>
         </div>
