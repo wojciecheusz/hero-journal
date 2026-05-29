@@ -144,7 +144,11 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
       skills: {}, skillExp: {}, alignment: align, background: bg.trim(),
       traits: { personality: "", ideals: "", bonds: "", flaws: "" },
       personalNotes: "", backstory: "", spellSlots: {}, spellcastingAbility: "INT",
-      hitDice: { type: "d8", max: 1, used: 0 }, xp: 0, deathSaves: { successes: 0, failures: 0 },
+      hitDice: { type: "d8", max: 1, used: 0 }, xp: 0,
+      coins: { gold: 0, silver: 0, copper: 0 },
+      appearance: { age: "", height: "", weight: "", eyes: "", skin: "", hair: "" },
+      conditions: {}, proficiencies: { weapons: "", armor: "", languages: "", tools: "" },
+      deathSaves: { successes: 0, failures: 0 },
     };
     onFinish(id, newChar, { name: name.trim(), class: cls?.name || "", level, created: Date.now() });
   };

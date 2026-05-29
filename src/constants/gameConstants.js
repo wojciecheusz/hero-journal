@@ -43,6 +43,23 @@ export const SPELL_SCHOOLS = ["Odrzucanie", "Przywoływanie", "Wieszczenie", "Su
 export const SPELL_LEVELS = ["Sztuczka", "1. poziom", "2. poziom", "3. poziom", "4. poziom", "5. poziom", "6. poziom", "7. poziom", "8. poziom", "9. poziom"];
 export const SPELL_SLOT_LABELS = ["1. poziom", "2. poziom", "3. poziom", "4. poziom", "5. poziom", "6. poziom", "7. poziom", "8. poziom", "9. poziom"];
 
+export const CONDITIONS = [
+  { key: "blinded",       label: "Oślepiony" },
+  { key: "charmed",       label: "Oczarowany" },
+  { key: "deafened",      label: "Ogłuchy" },
+  { key: "frightened",    label: "Przestraszony" },
+  { key: "grappled",      label: "Chwycony" },
+  { key: "incapacitated", label: "Ubezwłasnowolniony" },
+  { key: "invisible",     label: "Niewidzialny" },
+  { key: "paralyzed",     label: "Sparaliżowany" },
+  { key: "petrified",     label: "Skamieniały" },
+  { key: "poisoned",      label: "Zatruty" },
+  { key: "prone",         label: "Leżący" },
+  { key: "restrained",    label: "Obezwładniony" },
+  { key: "stunned",       label: "Ogłuszony" },
+  { key: "unconscious",   label: "Nieprzytomny" },
+];
+
 export const SAVING_THROWS = [
   { key: "str", label: "Siła",       attr: "STR" },
   { key: "dex", label: "Zręczność",  attr: "DEX" },
@@ -86,6 +103,10 @@ export const DEFAULT_CHAR = {
   spellSlots: {}, spellcastingAbility: "INT",
   hitDice: { type: "d8", max: 1, used: 0 },
   xp: 0,
+  coins: { gold: 0, silver: 0, copper: 0 },
+  appearance: { age: "", height: "", weight: "", eyes: "", skin: "", hair: "" },
+  conditions: {},
+  proficiencies: { weapons: "", armor: "", languages: "", tools: "" },
   deathSaves: { successes: 0, failures: 0 },
 };
 

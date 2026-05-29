@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { clamp, numMod } from '../../utils/math';
-import { SAVING_THROWS, GENERIC_SKILLS, ALIGNMENTS, ITEM_ICONS, XP_THRESHOLDS } from '../../constants/gameConstants';
+import { SAVING_THROWS, GENERIC_SKILLS, ALIGNMENTS, ITEM_ICONS, XP_THRESHOLDS, CONDITIONS } from '../../constants/gameConstants';
 import { StatBox, SkillPips, Toggle, RestModal, SpellSlotsWidget } from '../../shared/ui';
 
 const hpBarColor = pct => pct > 70
@@ -10,7 +10,8 @@ const hpBarColor = pct => pct > 70
     : "linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
 const hpNumColor = pct => pct > 70 ? "#3a9a3a" : pct > 35 ? "#c06010" : "#c03030";
 
-const LABEL = { fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: "0.25rem", opacity: 0.75 };
+const LABEL = { fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: "0.25rem", color: "var(--text-label)" };
+const LABEL_SM = { fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)" };
 
 export default function CharacterScreen({ char, setChar, inventory, skills, spells }) {
   const upd   = (f, v) => setChar(c => ({ ...c, [f]: v }));
@@ -18,9 +19,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
   const hpPct = Math.round(clamp((char.hp.current / char.hp.max) * 100, 0, 100));
   const pb    = char.profBonus || 2;
   const ds    = char.deathSaves || { successes: 0, failures: 0 };
-
-  const totalLevel = Math.min(Math.max((char.classes || []).reduce((s, c) => s + (c.level || 1), 0), 1), 20);
-  const xpMax      = totalLevel < 20 ? XP_THRESHOLDS[totalLevel] : null;
 
   const [restModal, setRestModal] = useState(null);
   const [activeTab, setActiveTab] = useState(() => {
@@ -32,7 +30,19 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
   const equippedItems = (inventory || []).filter(i => i.equipped);
   const activeSkills  = (skills || []).filter(s => s.inUse);
   const activeSpells  = (spells || []).filter(s => s.inUse);
-  const hasActive     = equippedItems.length || activeSkills.length || activeSpells.length;
+
+  const totalLevel = Math.min(Math.max((char.classes || []).reduce((s, c) => s + (c.level || 1), 0), 1), 20);
+  const xpMax      = totalLevel < 20 ? XP_THRESHOLDS[totalLevel] : null;
+
+  // Calculated values
+  const wisBonus = Math.floor((char.stats.WIS - 10) / 2);
+  const percProf = !!(char.skills || {}).perception;
+  const percExp  = !!(char.skillExp || {}).perception;
+  const percBonus = percExp ? wisBonus + pb * 2 : percProf ? wisBonus + pb : wisBonus;
+  const passivePerception = 10 + percBonus;
+  const spellAbilityBonus = Math.floor(((char.stats || {})[char.spellcastingAbility || "INT"] || 10) - 10) / 2;
+  const spellDC = 8 + pb + spellAbilityBonus;
+  const spellAttack = pb + spellAbilityBonus;
 
   const cycleSkill = useCallback(key => setChar(c => {
     const wasP = !!(c.skills || {})[key]; const wasE = !!(c.skillExp || {})[key];
@@ -49,6 +59,16 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
     return { ...c, deathSaves: { ...(c.deathSaves || {}), [type]: Math.min(3, Math.max(0, next)) } };
   }), [setChar]);
 
+  const toggleCondition = useCallback(key => setChar(c => {
+    const conds = { ...(c.conditions || {}) };
+    if (conds[key]) { delete conds[key]; } else { conds[key] = true; }
+    return { ...c, conditions: conds };
+  }), [setChar]);
+
+  const updCoins = useCallback((type, val) => setChar(c => ({
+    ...c, coins: { ...(c.coins || { gold: 0, silver: 0, copper: 0 }), [type]: Math.max(0, parseInt(val) || 0) }
+  })), [setChar]);
+
   return (
     <>
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
@@ -57,19 +77,16 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         <div className="sect-label">Bohater</div>
 
         {/* ── Imię postaci ── */}
-        <input
-          className="iedit"
+        <input className="iedit"
           style={{ fontFamily: "Cinzel,serif", fontSize: "1.35rem", fontWeight: 700, letterSpacing: "0.04em", width: "100%", marginBottom: "0.7rem" }}
-          value={char.name || ""}
-          onChange={e => upd("name", e.target.value)}
-          placeholder="Imię bohatera…"/>
+          value={char.name || ""} onChange={e => upd("name", e.target.value)} placeholder="Imię bohatera…"/>
 
         {/* ── Klasy ── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", marginBottom: "0.8rem" }}>
           {(char.classes || []).map((cls, i) => (
             <div key={i} className="class-row" style={{ alignItems: "baseline", gap: "0.4rem" }}>
               <input className="iedit flex1"
-                style={{ fontFamily: "Cinzel,serif", fontSize: i === 0 ? "1.15rem" : "0.95rem", fontWeight: 700, letterSpacing: "0.03em" }}
+                style={{ fontFamily: "Cinzel,serif", fontSize: i === 0 ? "1.1rem" : "0.95rem", fontWeight: 700, letterSpacing: "0.03em" }}
                 value={cls.name} placeholder={`Klasa ${i + 1}…`}
                 onChange={e => setChar(c => { const cl = [...c.classes]; cl[i] = { ...cl[i], name: e.target.value }; return { ...c, classes: cl }; })}/>
               <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.5rem", letterSpacing: "0.14em", opacity: 0.45, flexShrink: 0, textTransform: "uppercase" }}>Poz.</span>
@@ -77,21 +94,17 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 style={{ width: 32, textAlign: "center", fontFamily: "Cinzel,serif", fontSize: i === 0 ? "1rem" : "0.88rem", fontWeight: 600, opacity: 0.85 }}
                 value={cls.level} min={1} max={20}
                 onChange={e => setChar(c => { const cl = [...c.classes]; cl[i] = { ...cl[i], level: clamp(parseInt(e.target.value) || 1, 1, 20) }; return { ...c, classes: cl }; })}/>
-              {i > 0 && (
-                <button className="btn-ghost" style={{ padding: "0.1rem 0.35rem", fontSize: "0.65rem" }}
-                  onClick={() => setChar(c => ({ ...c, classes: c.classes.filter((_, j) => j !== i) }))}>✕</button>
-              )}
+              {i > 0 && <button className="btn-ghost" style={{ padding: "0.1rem 0.35rem", fontSize: "0.65rem" }}
+                onClick={() => setChar(c => ({ ...c, classes: c.classes.filter((_, j) => j !== i) }))}>✕</button>}
             </div>
           ))}
           {(char.classes || []).length < 4 && (
             <button className="btn-sm" style={{ alignSelf: "flex-start", marginTop: "0.2rem" }}
-              onClick={() => setChar(c => ({ ...c, classes: [...(c.classes || []), { name: "", level: 1 }] }))}>
-              + Wieloklasowość
-            </button>
+              onClick={() => setChar(c => ({ ...c, classes: [...(c.classes || []), { name: "", level: 1 }] }))}>+ Wieloklasowość</button>
           )}
         </div>
 
-        {/* ── Przeszłość | Charakter | XP — 3 kolumny ── */}
+        {/* ── Przeszłość | Charakter | XP ── */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 100px", gap: "0.5rem", alignItems: "end" }}>
           <div>
             <div style={LABEL}>Przeszłość</div>
@@ -108,13 +121,10 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           <div>
             <div style={LABEL}>XP</div>
             <input type="number" min={0} className="iedit"
-              style={{ fontFamily: "Cinzel,serif", fontSize: "0.9rem", textAlign: "center", width: "100%" }}
-              value={char.xp ?? 0}
-              onChange={e => upd("xp", Math.max(0, parseInt(e.target.value) || 0))}/>
-            <div style={{ fontFamily: "Cinzel,serif", fontSize: "0.44rem", letterSpacing: "0.06em", marginTop: "0.2rem", opacity: 0.65, textAlign: "center", whiteSpace: "nowrap" }}>
-              {xpMax !== null
-                ? `→ lvl ${totalLevel + 1}: ${xpMax.toLocaleString("pl-PL")}`
-                : "— poziom MAX —"}
+              style={{ fontFamily: "Cinzel,serif", fontSize: "0.9rem", textAlign: "center", width: "100%", color: "inherit" }}
+              value={char.xp ?? 0} onChange={e => upd("xp", Math.max(0, parseInt(e.target.value) || 0))}/>
+            <div style={{ ...LABEL_SM, fontSize: "0.42rem", marginTop: "0.18rem", textAlign: "center" }}>
+              {xpMax !== null ? `→ lvl ${totalLevel + 1}: ${xpMax.toLocaleString("pl-PL")}` : "— MAX —"}
             </div>
           </div>
         </div>
@@ -126,12 +136,11 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             const base = Math.floor((char.stats[st.attr] - 10) / 2);
             const over = (char.savingThrowOverride || {})[st.key];
             const stVal = over !== undefined ? over : base;
-            const stColor = over !== undefined ? "#c9a84c" : "inherit";
+            const stColor = over !== undefined ? "var(--pip-prof)" : "inherit";
             return (
               <div key={st.key} style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 <StatBox label={st.attr} value={char.stats[st.attr]} onChange={v => updSt(st.attr, v)}/>
-                <div className="stat-box"
-                  style={{ borderTop: "none", textAlign: "center", padding: "0.25rem 0.1rem 0.2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
+                <div className="stat-box" style={{ borderTop: "none", textAlign: "center", padding: "0.25rem 0.1rem 0.2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
                   <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted)", lineHeight: 1 }}>ST</span>
                   <input type="number" value={stVal}
                     title="Edytuj ręcznie · dwuklik = reset"
@@ -148,11 +157,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         {/* ── Żywotność i Walka ── */}
         <hr className="inner-divider" data-label="Żywotność i Walka" style={{ marginTop: "1.1rem" }}/>
 
-        {/* Wiersz 1: HP z ± + TmpHP + KP + INI */}
         <div style={{ marginTop: "0.8rem", display: "grid", gridTemplateColumns: "32px auto 32px 1fr 1fr 1fr", gap: "0.3rem", alignItems: "stretch" }}>
           <button className="btn-pm minus" style={{ height: "100%", minHeight: 50 }}
             onClick={() => setChar(c => ({ ...c, hp: { ...c.hp, current: clamp(c.hp.current - 1, 0, c.hp.max) } }))}>−</button>
-
           <div className="combat-box" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0.2rem 0.3rem", gap: 0 }}>
             <span className="combat-box-label">PŻ (HP)</span>
             <div style={{ display: "flex", alignItems: "baseline", gap: "0.1rem" }}>
@@ -169,10 +176,8 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 onBlur={e => setChar(c => ({ ...c, hp: { ...c.hp, max: Math.max(1, parseInt(e.target.value) || 1) } }))}/>
             </div>
           </div>
-
           <button className="btn-pm plus" style={{ height: "100%", minHeight: 50 }}
             onClick={() => setChar(c => ({ ...c, hp: { ...c.hp, current: clamp(c.hp.current + 1, 0, c.hp.max) } }))}>+</button>
-
           <div className="combat-box">
             <span className="combat-box-label">Tym. PŻ</span>
             <input className="combat-box-input" type="number" value={char.hp.temp || 0}
@@ -187,7 +192,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
               onChange={e => setChar(c => ({ ...c, ac: e.target.value === "" ? 0 : parseInt(e.target.value) || 0 }))}
               onBlur={e => setChar(c => ({ ...c, ac: parseInt(e.target.value) || 0 }))}/>
           </div>
-          <div className="combat-box" title="Domyślnie mod. Zręczności — edytuj aby nadpisać">
+          <div className="combat-box" title="Domyślnie mod. Zręczności">
             <span className="combat-box-label">INI</span>
             <input className="combat-box-input" type="number"
               value={char.initiativeBonus !== undefined ? char.initiativeBonus : Math.floor((char.stats.DEX - 10) / 2)}
@@ -197,38 +202,29 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        {/* Pasek HP */}
         <div className="hp-bar-bg" style={{ marginTop: "0.5rem" }}>
           <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpBarColor(hpPct) }}/>
         </div>
         <div className="hp-pct" style={{ color: hpNumColor(hpPct) }}>{hpPct}% żywotności pozostało</div>
 
-        {/* ── Rzuty obronne vs śmierć ── */}
+        {/* Death Saves */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.55rem", padding: "0.4rem 0.6rem", borderRadius: "2px", border: "1px solid rgba(128,128,128,0.12)", background: "rgba(128,128,128,0.04)" }}>
-          <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.55, flexShrink: 0 }}>
-            ☠ vs śmierć
-          </span>
+          <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)", flexShrink: 0 }}>☠ vs śmierć</span>
           <div style={{ display: "flex", gap: "1rem" }}>
-            {/* Sukcesy */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
               <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.46rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#4a9a5a", flexShrink: 0 }}>S</span>
-              {[0, 1, 2].map(i => (
-                <div key={i} onClick={() => toggleDeath("successes", i)}
-                  style={{ width: 15, height: 15, borderRadius: "50%", border: `1.5px solid #4a9a5a`, background: i < ds.successes ? "#4a9a5a" : "transparent", cursor: "pointer", transition: "background 0.15s", flexShrink: 0 }}/>
-              ))}
+              {[0, 1, 2].map(i => <div key={i} onClick={() => toggleDeath("successes", i)}
+                style={{ width: 15, height: 15, borderRadius: "50%", border: "1.5px solid #4a9a5a", background: i < ds.successes ? "#4a9a5a" : "transparent", cursor: "pointer", transition: "background 0.15s", flexShrink: 0 }}/>)}
             </div>
-            {/* Porażki */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
               <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.46rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#9a3a3a", flexShrink: 0 }}>P</span>
-              {[0, 1, 2].map(i => (
-                <div key={i} onClick={() => toggleDeath("failures", i)}
-                  style={{ width: 15, height: 15, borderRadius: "50%", border: `1.5px solid #9a3a3a`, background: i < ds.failures ? "#9a3a3a" : "transparent", cursor: "pointer", transition: "background 0.15s", flexShrink: 0 }}/>
-              ))}
+              {[0, 1, 2].map(i => <div key={i} onClick={() => toggleDeath("failures", i)}
+                style={{ width: 15, height: 15, borderRadius: "50%", border: "1.5px solid #9a3a3a", background: i < ds.failures ? "#9a3a3a" : "transparent", cursor: "pointer", transition: "background 0.15s", flexShrink: 0 }}/>)}
             </div>
           </div>
         </div>
 
-        {/* Wiersz 2: KW | Krótki | Długi | Biegłość — szyrokość 2:1:1:1 */}
+        {/* KW + Odpoczynek + Biegłość */}
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.4rem", marginTop: "0.5rem", alignItems: "stretch" }}>
           <div className="combat-box" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0.25rem 0.4rem", gap: "0.1rem" }}>
             <span className="combat-box-label">Kości Wyt.</span>
@@ -247,28 +243,41 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 style={{ width: 24, background: "transparent", border: "none", borderBottom: "1px dashed currentColor", outline: "none", fontFamily: "Cinzel,serif", fontSize: "0.9rem", textAlign: "center", color: "inherit", opacity: 0.65 }}/>
             </div>
           </div>
-
           <button className="btn-rest short" onClick={() => setRestModal("short")}
             style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.1rem", padding: "0.35rem 0.2rem" }}>
             <span style={{ fontSize: "1rem", lineHeight: 1 }}>☽</span>
             <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.43rem", letterSpacing: "0.05em", textTransform: "uppercase", lineHeight: 1.3 }}>Krótki</span>
           </button>
-
           <button className="btn-rest long" onClick={() => setRestModal("long")}
             style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.1rem", padding: "0.35rem 0.2rem" }}>
             <span style={{ fontSize: "1rem", lineHeight: 1 }}>☀</span>
             <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.43rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>Długi</span>
           </button>
-
           <div className="combat-box" title="Premia z Biegłości">
             <span className="combat-box-label">Biegłość</span>
             <input className="combat-box-input" type="number" value={pb}
-              onFocus={e => e.target.select()}
-              onChange={e => upd("profBonus", parseInt(e.target.value) || 2)}/>
+              onFocus={e => e.target.select()} onChange={e => upd("profBonus", parseInt(e.target.value) || 2)}/>
           </div>
         </div>
 
-        {/* ── Umiejętności ── */}
+        {/* Wartości obliczone */}
+        <hr className="inner-divider" data-label="Wartości" style={{ marginTop: "1.1rem" }}/>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.4rem", marginTop: "0.7rem" }}>
+          <div className="combat-box">
+            <span className="combat-box-label">Pas. Percepcja</span>
+            <span style={{ fontFamily: "Cinzel,serif", fontSize: "1.2rem", fontWeight: 700, display: "block", textAlign: "center", lineHeight: 1.2, color: "inherit" }}>{passivePerception}</span>
+          </div>
+          <div className="combat-box" title={`8 + Biegłość (${pb}) + mod. ${char.spellcastingAbility||"INT"} (${spellAbilityBonus >= 0 ? "+" : ""}${spellAbilityBonus})`}>
+            <span className="combat-box-label">DC czarów</span>
+            <span style={{ fontFamily: "Cinzel,serif", fontSize: "1.2rem", fontWeight: 700, display: "block", textAlign: "center", lineHeight: 1.2, color: "var(--spell-accent)" }}>{spellDC}</span>
+          </div>
+          <div className="combat-box" title={`Biegłość (${pb}) + mod. ${char.spellcastingAbility||"INT"} (${spellAbilityBonus >= 0 ? "+" : ""}${spellAbilityBonus})`}>
+            <span className="combat-box-label">Atak czarami</span>
+            <span style={{ fontFamily: "Cinzel,serif", fontSize: "1.2rem", fontWeight: 700, display: "block", textAlign: "center", lineHeight: 1.2, color: "var(--spell-accent)" }}>{numMod(spellAttack)}</span>
+          </div>
+        </div>
+
+        {/* Umiejętności */}
         <hr className="inner-divider" data-label="Umiejętności" style={{ marginTop: "1.1rem" }}/>
         <div style={{ marginTop: "0.6rem", display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: "0.3rem" }}>
           {GENERIC_SKILLS.map(sk => {
@@ -294,84 +303,190 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
       </div>
 
-      {/* ── Aktywne i wyposażone ── */}
-      {hasActive > 0 && (
-        <div className="card">
-          <div className="sect-label">Aktywne i wyposażone</div>
-          <div className="subtab-bar">
-            {equippedItems.length > 0 && <button className={`subtab-btn${activeTab === "items" ? " active" : ""}`} onClick={() => setActiveTab("items")}>Przedmioty ({equippedItems.length})</button>}
-            {activeSkills.length > 0  && <button className={`subtab-btn${activeTab === "skills" ? " active" : ""}`} onClick={() => setActiveTab("skills")}>Zdolności ({activeSkills.length})</button>}
-            <button className={`subtab-btn${activeTab === "spells" ? " active" : ""}`} onClick={() => setActiveTab("spells")}>Czary{activeSpells.length > 0 ? ` (${activeSpells.length})` : ""}</button>
-          </div>
-
-          {activeTab === "items" && (equippedItems.length === 0
-            ? <div className="empty-state" style={{ padding: "1.5rem" }}>Brak wyposażonych przedmiotów.</div>
-            : equippedItems.map(item => (
-              <div key={item.id} className="equipped-item">
-                <span className="equipped-icon">{ITEM_ICONS[item.type] || "◈"}</span>
-                <div className="flex1">
-                  <div className="row" style={{ gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
-                    <span className="equipped-name">{item.name}</span>
-                    <span className="equipped-type-badge">{item.type}</span>
-                    {item.qty && item.qty !== "1" && <span className="equipped-type-badge">×{item.qty}</span>}
-                  </div>
-                  {item.damage && <div className="equipped-stat">⚔ {item.damage}{item.damageType ? ` (${item.damageType})` : ""}{item.modifier ? ` · +${parseInt(item.modifier)||0}` : ""}</div>}
-                  {!item.damage && item.modifier !== undefined && item.modifier !== "" && <div className="equipped-stat">Mod. trafienia: {numMod(parseInt(item.modifier) || 0)}</div>}
-                  {item.charges && <div className="equipped-stat">Ładunki: {item.charges}</div>}
-                  {item.effect && <div className="equipped-stat" style={{ color: "var(--spell-muted)" }}>{item.effect}</div>}
-                  {item.note && <div className="equipped-stat" style={{ fontStyle: "italic", opacity: 0.7 }}>{item.note}</div>}
-                </div>
-              </div>
-            ))
-          )}
-
-          {activeTab === "skills" && (activeSkills.length === 0
-            ? <div className="empty-state" style={{ padding: "1.5rem" }}>Zaznacz zdolności jako aktywne w zakładce „Zdolności".</div>
-            : activeSkills.map(sk => (
-              <div key={sk.id} className="equipped-item">
-                <span className="equipped-icon">✨</span>
-                <div className="flex1">
-                  <div className="row" style={{ gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
-                    <span className="equipped-name">{sk.name}</span>
-                    <span className="equipped-skill-badge">{sk.category}</span>
-                    {sk.level > 0 && <span className="equipped-skill-badge">{"●".repeat(sk.level)}</span>}
-                  </div>
-                  {sk.description && <div className="equipped-stat">{sk.description}</div>}
-                </div>
-              </div>
-            ))
-          )}
-
-          {activeTab === "spells" && (
-            <>
-              <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
-              {activeSpells.length > 0 && (
-                <div style={{ marginTop: "0.8rem" }}>
-                  {activeSpells.map(sp => (
-                    <div key={sp.id} className="equipped-item">
-                      <span className="equipped-icon">🔮</span>
-                      <div className="flex1">
-                        <div className="row" style={{ gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
-                          <span className="equipped-name" style={{ color: "var(--spell-text)" }}>{sp.name}</span>
-                          <span className="equipped-spell-badge">{sp.level}</span>
-                          {sp.school && <span className="equipped-spell-badge">{sp.school}</span>}
-                        </div>
-                        {(sp.castingTime || sp.range || sp.duration) && (
-                          <div className="equipped-stat" style={{ color: "var(--spell-muted)" }}>
-                            {[sp.castingTime, sp.range && `↗ ${sp.range}`, sp.duration && `⧗ ${sp.duration}`].filter(Boolean).join("  ·  ")}
-                          </div>
-                        )}
-                        {sp.description && <div className="equipped-stat">{sp.description}</div>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {activeSpells.length === 0 && <div className="empty-state" style={{ padding: "1rem" }}>Zaznacz czary jako przygotowane w zakładce „Czary".</div>}
-            </>
-          )}
+      {/* ── Aktywne i Wyposażone + Sakiewka (zawsze widoczne) ── */}
+      <div className="card">
+        <div className="sect-label">Aktywne i Wyposażone</div>
+        <div className="subtab-bar">
+          <button className={`subtab-btn${activeTab === "items" ? " active" : ""}`} onClick={() => setActiveTab("items")}>
+            Przedmioty{equippedItems.length > 0 ? ` (${equippedItems.length})` : ""}
+          </button>
+          <button className={`subtab-btn${activeTab === "skills" ? " active" : ""}`} onClick={() => setActiveTab("skills")}>
+            Zdolności{activeSkills.length > 0 ? ` (${activeSkills.length})` : ""}
+          </button>
+          <button className={`subtab-btn${activeTab === "spells" ? " active" : ""}`} onClick={() => setActiveTab("spells")}>
+            Czary{activeSpells.length > 0 ? ` (${activeSpells.length})` : ""}
+          </button>
         </div>
-      )}
+
+        {activeTab === "items" && (equippedItems.length === 0
+          ? <div className="empty-state">Brak wyposażonych przedmiotów.</div>
+          : equippedItems.map(item => (
+            <div key={item.id} className="equipped-item">
+              <span className="equipped-icon">{ITEM_ICONS[item.type] || "◈"}</span>
+              <div className="flex1">
+                <div className="row" style={{ gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
+                  <span className="equipped-name">{item.name}</span>
+                  <span className="equipped-type-badge">{item.type}</span>
+                  {item.qty && item.qty !== "1" && <span className="equipped-type-badge">×{item.qty}</span>}
+                </div>
+                {item.damage && <div className="equipped-stat">⚔ {item.damage}{item.damageType ? ` (${item.damageType})` : ""}{item.modifier ? ` · +${parseInt(item.modifier)||0}` : ""}</div>}
+                {item.charges && <div className="equipped-stat">Ładunki: {item.charges}</div>}
+                {item.effect && <div className="equipped-stat" style={{ color: "var(--spell-muted)" }}>{item.effect}</div>}
+                {item.note && <div className="equipped-stat" style={{ fontStyle: "italic", opacity: 0.7 }}>{item.note}</div>}
+              </div>
+            </div>
+          ))
+        )}
+
+        {activeTab === "skills" && (activeSkills.length === 0
+          ? <div className="empty-state">Zaznacz zdolności jako aktywne w zakładce „Zdolności".</div>
+          : activeSkills.map(sk => (
+            <div key={sk.id} className="equipped-item">
+              <span className="equipped-icon">✨</span>
+              <div className="flex1">
+                <div className="row" style={{ gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
+                  <span className="equipped-name">{sk.name}</span>
+                  <span className="equipped-skill-badge">{sk.category}</span>
+                  {sk.level > 0 && <span className="equipped-skill-badge">{"●".repeat(sk.level)}</span>}
+                </div>
+                {sk.description && <div className="equipped-stat">{sk.description}</div>}
+              </div>
+            </div>
+          ))
+        )}
+
+        {activeTab === "spells" && (
+          <>
+            <SpellSlotsWidget char={char} setChar={setChar} spells={spells}/>
+            {activeSpells.length > 0 && (
+              <div style={{ marginTop: "0.8rem" }}>
+                {activeSpells.map(sp => (
+                  <div key={sp.id} className="equipped-item">
+                    <span className="equipped-icon">🔮</span>
+                    <div className="flex1">
+                      <div className="row" style={{ gap: "0.4rem", marginBottom: "0.2rem", flexWrap: "wrap" }}>
+                        <span className="equipped-name" style={{ color: "var(--spell-text)" }}>{sp.name}</span>
+                        <span className="equipped-spell-badge">{sp.level}</span>
+                        {sp.school && <span className="equipped-spell-badge">{sp.school}</span>}
+                      </div>
+                      {sp.description && <div className="equipped-stat">{sp.description}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {activeSpells.length === 0 && <div className="empty-state">Zaznacz czary jako przygotowane w zakładce „Czary".</div>}
+          </>
+        )}
+
+        {/* Sakiewka — złoto, srebro, miedź */}
+        <div style={{ borderTop: "1px solid rgba(128,128,128,0.15)", marginTop: "0.8rem", paddingTop: "0.75rem" }}>
+          <div style={{ ...LABEL_SM, marginBottom: "0.5rem" }}>💰 Sakiewka</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+            {[["gold","🪙","Złoto","#c8a820"],["silver","⚪","Srebro","#8898a8"],["copper","🟤","Miedź","#b07040"]].map(([type, icon, label, color]) => {
+              const val = (char.coins || {})[type] || 0;
+              return (
+                <div key={type} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.25rem" }}>
+                  <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.08em", textTransform: "uppercase", color, lineHeight: 1 }}>{icon} {label}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.2rem" }}>
+                    <button onClick={() => updCoins(type, val - 1)}
+                      style={{ width: 22, height: 22, background: "transparent", border: "1px solid var(--pip-empty)", cursor: "pointer", fontFamily: "monospace", fontSize: "0.85rem", color: "inherit", lineHeight: 1 }}>−</button>
+                    <input type="number" min={0} value={val}
+                      onChange={e => updCoins(type, parseInt(e.target.value) || 0)}
+                      onFocus={e => e.target.select()}
+                      style={{ width: 46, fontFamily: "Cinzel,serif", fontSize: "0.9rem", fontWeight: 700, textAlign: "center", background: "transparent", border: "none", borderBottom: `1px dashed ${color}`, outline: "none", color: "inherit" }}/>
+                    <button onClick={() => updCoins(type, val + 1)}
+                      style={{ width: 22, height: 22, background: "transparent", border: "1px solid var(--pip-empty)", cursor: "pointer", fontFamily: "monospace", fontSize: "0.85rem", color: "inherit", lineHeight: 1 }}>+</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Stany postaci ── */}
+      <div className="card">
+        <div className="sect-label">Stany postaci</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+          {CONDITIONS.map(cond => {
+            const active = !!(char.conditions || {})[cond.key];
+            return (
+              <button key={cond.key} onClick={() => toggleCondition(cond.key)}
+                style={{
+                  fontFamily: "Cinzel,serif", fontSize: "0.5rem", letterSpacing: "0.08em", textTransform: "uppercase",
+                  padding: "0.25rem 0.5rem", border: `1px solid ${active ? "#cc3030" : "var(--pip-empty)"}`,
+                  background: active ? "rgba(200,48,48,0.2)" : "transparent",
+                  color: active ? "#ee5050" : "var(--text-muted)",
+                  cursor: "pointer", transition: "all 0.15s", borderRadius: "2px",
+                }}>
+                {cond.label}
+              </button>
+            );
+          })}
+        </div>
+        {/* Wyczerpanie */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "0.8rem", paddingTop: "0.6rem", borderTop: "1px solid rgba(128,128,128,0.12)" }}>
+          <span style={{ ...LABEL_SM, flexShrink: 0 }}>Wyczerpanie</span>
+          <div style={{ display: "flex", gap: "0.25rem" }}>
+            {[0, 1, 2, 3, 4, 5, 6].map(level => {
+              const current = (char.conditions || {}).exhaustion || 0;
+              const filled = level > 0 && level <= current;
+              return (
+                <button key={level}
+                  onClick={() => setChar(c => ({ ...c, conditions: { ...(c.conditions || {}), exhaustion: level === current ? 0 : level } }))}
+                  style={{ width: 22, height: 22, borderRadius: "50%", border: `1.5px solid ${filled ? "#cc5020" : "var(--pip-empty)"}`, background: filled ? "rgba(200,80,32,0.3)" : "transparent", cursor: "pointer", fontFamily: "Cinzel,serif", fontSize: "0.46rem", fontWeight: 700, color: filled ? "#ee7040" : "var(--text-dim)", lineHeight: 1 }}>
+                  {level === 0 ? "✓" : level}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Biegłości (Proficiencies) ── */}
+      <div className="card">
+        <div className="sect-label">Biegłości</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+          {[
+            ["weapons",  "Bronie"],
+            ["armor",    "Zbroje"],
+            ["languages","Języki"],
+            ["tools",    "Narzędzia i inne"],
+          ].map(([key, label]) => (
+            <div key={key}>
+              <div style={LABEL}>{label}</div>
+              <textarea className="g-textarea" rows={2}
+                placeholder={`np. ${key === "weapons" ? "broń prosta, długi miecz" : key === "armor" ? "lekka, średnia, tarcze" : key === "languages" ? "wspólny, elficki" : "zestaw gier, instrumenty"}`}
+                value={(char.proficiencies || {})[key] || ""}
+                onChange={e => setChar(c => ({ ...c, proficiencies: { ...(c.proficiencies || {}), [key]: e.target.value } }))}
+                style={{ fontSize: "0.9rem", minHeight: "2.5rem" }}/>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Wygląd ── */}
+      <div className="card">
+        <div className="sect-label">Wygląd</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
+          {[
+            ["age",    "Wiek",    "np. 25 lat"],
+            ["height", "Wzrost",  "np. 178 cm"],
+            ["weight", "Waga",    "np. 75 kg"],
+            ["eyes",   "Oczy",    "np. niebieskie"],
+            ["skin",   "Skóra",   "np. oliwkowa"],
+            ["hair",   "Włosy",   "np. ciemne"],
+          ].map(([key, label, ph]) => (
+            <div key={key}>
+              <div style={LABEL}>{label}</div>
+              <input className="iedit" style={{ fontSize: "0.88rem" }}
+                value={(char.appearance || {})[key] || ""} placeholder={ph}
+                onChange={e => setChar(c => ({ ...c, appearance: { ...(c.appearance || {}), [key]: e.target.value } }))}/>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* ── Cechy osobowości ── */}
       <div className="card">
@@ -379,7 +494,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         <div className="trait-grid">
           {[
             ["personality", "Cechy charakteru", "Jak Twoja postać się zachowuje…"],
-            ["ideals",      "Ideały",            "W co wierzy i jakimi zasadami się kieruje…"],
+            ["ideals",      "Ideały",            "W co wierzy i jakimi zasadami…"],
             ["bonds",       "Więzi",             "Co łączy Twoją postać ze światem…"],
             ["flaws",       "Wady i słabości",   "Największe skazy i słabości…"],
           ].map(([key, label, ph]) => (

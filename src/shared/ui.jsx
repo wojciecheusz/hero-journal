@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { clamp } from '../utils/math';
 
 export function TagsEditor({ tags, onChange }) {
@@ -90,28 +90,12 @@ export function SkillPips({ value, onChange }) {
 }
 
 export function EntityLink({ match, part, onNavigate }) {
-  const [visible, setVisible] = useState(false);
-  const timerRef = useRef(null);
-  const show = () => { clearTimeout(timerRef.current); timerRef.current = setTimeout(() => setVisible(true), 350); };
-  const hide = () => { clearTimeout(timerRef.current); setVisible(false); };
   return (
-    <span className={`entity-link entity-link-${match.type}`}
+    <span
+      className={`entity-link entity-link-${match.type}`}
       onClick={() => onNavigate(match.tab)}
-      onMouseEnter={show} onMouseLeave={hide}
-      onTouchStart={e => { e.preventDefault(); show(); }} onTouchEnd={hide}
-      title={match.name} style={{ position: "relative", display: "inline" }}>
+      title={match.name}>
       {part}
-      {visible && (
-        <span className="entity-tooltip" onClick={e => e.stopPropagation()}>
-          <span className="entity-tooltip-name">{match.name}</span>
-          {match.tooltip.sub && <span className="entity-tooltip-sub">{match.tooltip.sub}</span>}
-          {match.tooltip.body && (
-            <span className="entity-tooltip-body">
-              {match.tooltip.body.slice(0, 140)}{match.tooltip.body.length > 140 ? "…" : ""}
-            </span>
-          )}
-        </span>
-      )}
     </span>
   );
 }
@@ -119,13 +103,13 @@ export function EntityLink({ match, part, onNavigate }) {
 export function parseEntityLinksWithTooltips(text, npcs, locations, quests, inventory, skills, onNavigate) {
   if (!text) return null;
   const entityMap = new Map();
-  const addEntities = (list, tab, type, getTooltip) =>
-    list.forEach(e => e.name?.trim().length > 1 && entityMap.set(e.name.toLowerCase(), { name: e.name, tab, type, tooltip: getTooltip(e) }));
-  addEntities(npcs,      "npcs",      "npc",       e => ({ sub: e.role || "",        body: e.notes || "" }));
-  addEntities(locations, "locations", "location",  e => ({ sub: e.type || "",        body: e.notes || "" }));
-  addEntities(quests,    "quests",    "quest",     e => ({ sub: e.status || "",      body: e.description || "" }));
-  addEntities(inventory, "inventory", "inventory", e => ({ sub: e.type || "",        body: e.note || "" }));
-  addEntities(skills,    "skills",    "skill",     e => ({ sub: e.category || "",    body: e.description || "" }));
+  const add = (list, tab, type) =>
+    list.forEach(e => e.name?.trim().length > 1 && entityMap.set(e.name.toLowerCase(), { name: e.name, tab, type }));
+  add(npcs,      "npcs",      "npc");
+  add(locations, "locations", "location");
+  add(quests,    "quests",    "quest");
+  add(inventory, "inventory", "inventory");
+  add(skills,    "skills",    "skill");
   const sorted = [...entityMap.values()].sort((a, b) => b.name.length - a.name.length);
   if (!sorted.length) return text;
   const pattern = new RegExp(`(${sorted.map(e => e.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
