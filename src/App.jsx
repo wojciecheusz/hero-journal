@@ -132,15 +132,31 @@ function buildCSS(t) {
   .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.05rem; font-weight: 700; color: ${t.accent}; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem; }
   .hj-char-name { font-family: 'Cinzel', serif; font-size: 0.72rem; color: ${t.textMuted}; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
 
+  /* ── Bottom nav bar ── */
   .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: ${t.navBg}; border-top: 1px solid ${t.border}; box-shadow: 0 -4px 32px ${t.shadowBot}; display: flex; align-items: stretch; height: 68px; padding-bottom: env(safe-area-inset-bottom,0px); }
-  .hj-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.3rem 0.05rem; position: relative; }
-  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px; background: ${t.accent}; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
+
+  /* Group button — one of 3 main tabs */
+  .hj-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.3rem 0.25rem; position: relative; }
+  .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 2px; background: ${t.accent}; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
   .hj-nav-btn.active::before { transform: scaleX(1); }
-  .hj-nav-icon { font-size: 1.1rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
-  .hj-nav-btn.active .hj-nav-icon { filter: grayscale(0) brightness(1); }
-  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.4rem; letter-spacing: 0.06em; text-transform: uppercase; color: ${t.textDim}; transition: color 0.18s; }
-  .hj-nav-btn.active .hj-nav-label { color: ${t.accent}; }
-  .hj-nav-btn:hover:not(.active) .hj-nav-label { color: ${t.textMuted}; }
+  .hj-nav-icon { font-size: 1.2rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
+  .hj-nav-btn.active .hj-nav-icon, .hj-nav-btn.group-active .hj-nav-icon { filter: grayscale(0) brightness(1); }
+  .hj-nav-label { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.1em; text-transform: uppercase; color: ${t.textDim}; transition: color 0.18s; }
+  .hj-nav-btn.active .hj-nav-label, .hj-nav-btn.group-active .hj-nav-label { color: ${t.accent}; }
+  .hj-nav-sub { font-family: 'Cinzel', serif; font-size: 0.38rem; letter-spacing: 0.06em; text-transform: uppercase; color: ${t.textDim}; opacity: 0.6; transition: color 0.18s; margin-top: 0.05rem; }
+  .hj-nav-btn.active .hj-nav-sub, .hj-nav-btn.group-active .hj-nav-sub { color: ${t.textMuted}; opacity: 0.8; }
+
+  /* Drawer overlay */
+  .nav-drawer-overlay { position: fixed; inset: 0; z-index: 98; background: transparent; }
+
+  /* Drawer panel — slides up from bottom nav */
+  .nav-drawer { position: fixed; bottom: 68px; left: 0; right: 0; z-index: 99; background: ${t.navBg}; border-top: 1px solid ${t.border}; border-bottom: none; box-shadow: 0 -8px 32px ${t.shadowBot}; padding: 0.6rem 0.5rem calc(0.6rem + env(safe-area-inset-bottom,0px)); display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .nav-drawer-item { flex: 1; min-width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; background: transparent; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; padding: 0.5rem 0.4rem; border-radius: 2px; }
+  .nav-drawer-item:hover { background: rgba(226,185,78,0.06); border-color: ${t.border}; }
+  .nav-drawer-item.active { background: rgba(226,185,78,0.1); border-color: ${t.accentBorder}; }
+  .nav-drawer-icon { font-size: 1.3rem; line-height: 1; }
+  .nav-drawer-label { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase; color: ${t.textMuted}; }
+  .nav-drawer-item.active .nav-drawer-label { color: ${t.accent}; }
 
   .hj-content { max-width: 780px; margin: 0 auto; padding: 1.4rem 1rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
 
@@ -2074,17 +2090,51 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
 }
 
 
-const TABS=[
-  {id:"character", label:"Bohater",      icon:"⚔️"},
-  {id:"inventory", label:"Plecak",       icon:"🎒"},
-  {id:"spells",    label:"Czary",        icon:"🔮"},
-  {id:"skills",    label:"Umiejętności", icon:"✨"},
-  {id:"npcs",      label:"Postacie",     icon:"👥"},
-  {id:"locations", label:"Miejsca",      icon:"🗺️"},
-  {id:"factions",  label:"Frakcje",      icon:"⚜️"},
-  {id:"quests",    label:"Zadania",      icon:"⚡"},
-  {id:"sessions",  label:"Dziennik",     icon:"📜"},
+/* ── 3-group drawer navigation ──
+   Bohater  → direct tab (hero sheet)
+              drawer: Plecak, Czary, Umiejętności
+   Świat    → drawer: Postacie, Miejsca, Frakcje
+   Dziennik → drawer: Wpisy (sessions), Zadania
+*/
+const NAV_GROUPS = [
+  {
+    id: "hero",
+    label: "Bohater",
+    icon: "⚔️",
+    defaultTab: "character",
+    tabs: [
+      {id:"character", label:"Bohater",      icon:"⚔️"},
+      {id:"inventory", label:"Plecak",        icon:"🎒"},
+      {id:"spells",    label:"Czary",         icon:"🔮"},
+      {id:"skills",    label:"Umiejętności",  icon:"✨"},
+    ],
+  },
+  {
+    id: "world",
+    label: "Świat",
+    icon: "🌍",
+    defaultTab: "npcs",
+    tabs: [
+      {id:"npcs",      label:"Postacie",  icon:"👥"},
+      {id:"locations", label:"Miejsca",   icon:"🗺️"},
+      {id:"factions",  label:"Frakcje",   icon:"⚜️"},
+    ],
+  },
+  {
+    id: "log",
+    label: "Dziennik",
+    icon: "📜",
+    defaultTab: "sessions",
+    tabs: [
+      {id:"sessions",  label:"Wpisy",    icon:"📖"},
+      {id:"quests",    label:"Zadania",  icon:"⚡"},
+    ],
+  },
 ];
+
+// Helper — which group does a tab belong to?
+const tabGroup = id => NAV_GROUPS.find(g=>g.tabs.some(t=>t.id===id))?.id||"hero";
+
 
 /* ═══ ROOT APP ═════════════════════════════════ */
 export default function BohaterJournal() {
@@ -2114,6 +2164,7 @@ export default function BohaterJournal() {
   const [factions,  setFactions]  = useState(()=>activeId?loadChar("factions",activeId,[]):[]);
   const [showReset, setShowReset] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
+  const [openGroup, setOpenGroup] = useState(null); // which group drawer is open
 
   // ── Persist theme globally ──
   useEffect(()=>{save("hj_theme", theme);},[theme]);
@@ -2275,11 +2326,52 @@ export default function BohaterJournal() {
         {tab==="quests"    &&<QuestTracker quests={quests} setZadania={setZadania}/>}
       </main>
 
+      {/* ── Drawer overlay — closes drawer on outside tap ── */}
+      {openGroup&&<div className="nav-drawer-overlay" onClick={()=>setOpenGroup(null)}/>}
+
+      {/* ── Drawer panel ── */}
+      {openGroup&&(()=>{
+        const group=NAV_GROUPS.find(g=>g.id===openGroup);
+        if(!group)return null;
+        return(
+          <div className="nav-drawer" onClick={e=>e.stopPropagation()}>
+            {group.tabs.map(t=>(
+              <button key={t.id} className={`nav-drawer-item${tab===t.id?" active":""}`}
+                onClick={()=>{setTab(t.id);setOpenGroup(null);}}>
+                <span className="nav-drawer-icon">{t.icon}</span>
+                <span className="nav-drawer-label">{t.label}</span>
+              </button>
+            ))}
+          </div>
+        );
+      })()}
+
+      {/* ── Bottom nav bar — 3 group buttons ── */}
       <nav className="hj-bottom-nav">
-        {TABS.map(tb=><button key={tb.id} className={`hj-nav-btn${tab===tb.id?" active":""}`} onClick={()=>setTab(tb.id)}>
-          <span className="hj-nav-icon">{tb.icon}</span>
-          <span className="hj-nav-label">{tb.label}</span>
-        </button>)}
+        {NAV_GROUPS.map(g=>{
+          const isGroupActive = g.tabs.some(t=>t.id===tab);
+          const activeTabInGroup = g.tabs.find(t=>t.id===tab);
+          const isOpen = openGroup===g.id;
+          return(
+            <button key={g.id}
+              className={`hj-nav-btn${isGroupActive?" group-active":""}${isOpen?" active":""}`}
+              onClick={()=>{
+                if(isOpen){setOpenGroup(null);}
+                else if(g.tabs.length===1){setTab(g.tabs[0].id);setOpenGroup(null);}
+                else{setOpenGroup(g.id);}
+              }}>
+              <span className="hj-nav-icon">
+                {activeTabInGroup?activeTabInGroup.icon:g.icon}
+              </span>
+              <span className="hj-nav-label">
+                {activeTabInGroup?activeTabInGroup.label:g.label}
+              </span>
+              {!activeTabInGroup&&<span className="hj-nav-sub">
+                {g.tabs.map(t=>t.icon).join(" ")}
+              </span>}
+            </button>
+          );
+        })}
       </nav>
     </div>
   </>;
