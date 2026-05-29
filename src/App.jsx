@@ -1,4 +1,10 @@
 
+const getSelectedTabBackground = (theme) => {
+  return theme?.selectedBg || "rgba(255,255,255,0.08)";
+};
+
+
+
 
 const characterUnifiedCardStyle = (theme) => ({
   borderRadius: "12px",
@@ -205,8 +211,8 @@ function buildCSS(t) {
   .g-textarea:focus { border-color: ${t.accentBorder}; box-shadow: 0 0 0 1px ${t.accentBorder}; }
   .g-textarea::placeholder { color: ${t.textDim}; font-style: italic; }
 
-  .btn-gold { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: ${t.accent}; border: 1px solid ${t.accentBorder}; padding: 0.48rem 1.1rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .btn-gold:hover { background: rgba(226,185,78,0.12); border-color: ${t.accent}; }
+  .btn-rgba(255,255,255,0.06) { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: ${t.accent}; border: 1px solid ${t.accentBorder}; padding: 0.48rem 1.1rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-rgba(255,255,255,0.06):hover { background: rgba(226,185,78,0.12); border-color: ${t.accent}; }
   .btn-ghost { background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; font-size: 0.72rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
   .btn-ghost:hover { border-color: #9b2c2c; color: #c04040; }
   .btn-danger { background: transparent; border: 1px solid #6a2a2a; color: #c04040; font-size: 0.68rem; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; font-family: 'Cinzel', serif; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -736,7 +742,7 @@ function RestModal({ type, char, setChar, onClose }) {
           </div>
           <div className="row" style={{justifyContent: "flex-end", gap: "0.6rem", marginTop: "0.8rem"}}>
             <button className="btn-ghost" onClick={onClose}>Anuluj</button>
-            <button className="btn-gold" onClick={doShortRest}>☽ Odpoczywaj</button>
+            <button className="btn-rgba(255,255,255,0.06)" onClick={doShortRest}>☽ Odpoczywaj</button>
           </div>
         </> : <>
           <div style={{display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem"}}>
@@ -757,7 +763,7 @@ function RestModal({ type, char, setChar, onClose }) {
           </div>
           <div className="row" style={{justifyContent: "flex-end", gap: "0.6rem"}}>
             <button className="btn-ghost" onClick={onClose}>Anuluj</button>
-            <button className="btn-gold" onClick={doLongRest}>☀ Odpocznij Długo</button>
+            <button className="btn-rgba(255,255,255,0.06)" onClick={doLongRest}>☀ Odpocznij Długo</button>
           </div>
         </>}
       </div>
@@ -1134,7 +1140,7 @@ function Plecak({inventory, setInventory}) {
   return <>
     <div className="row" style={{justifyContent: "space-between"}}>
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em"}}>{inventory.length} przedmiotów{equippedCount > 0 ? ` · ${equippedCount} wyposażonych` : ""}</span>
-      <button className="btn-gold" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj przedmiot"}</button>
+      <button className="btn-rgba(255,255,255,0.06)" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj przedmiot"}</button>
     </div>
     
     {showForm && <div className="add-form"><div className="col">
@@ -1152,7 +1158,7 @@ function Plecak({inventory, setInventory}) {
         </div>}
       </>}
       <input className="g-input" placeholder="Własne notatki…" value={form.note} onChange={e => setForm(f => ({...f, note: e.target.value}))}/>
-      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-gold" onClick={addItem}>⊕ Zapisz przedmiot</button></div>
+      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-rgba(255,255,255,0.06)" onClick={addItem}>⊕ Zapisz przedmiot</button></div>
     </div></div>}
 
     <div className="filter-bar">
@@ -1167,7 +1173,7 @@ function Plecak({inventory, setInventory}) {
           <span style={{fontSize: "1.1rem", flexShrink: 0}}>{ITEM_ICONS[item.type] || "◈"}</span>
           <input className="iedit flex1" style={{fontFamily: "Cinzel,serif", fontSize: "0.9rem", fontWeight: 700}} value={item.name} onChange={e => upd(item.id, "name", e.target.value)}/>
           <span style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.08em", border: "1px solid currentColor", padding: "0.1rem 0.35rem", flexShrink: 0, opacity: 0.6}}>{item.type}</span>
-          <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? "Wyposażony" : "W plecaku"} color="gold"/>
+          <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? "Wyposażony" : "W plecaku"} color="rgba(255,255,255,0.06)"/>
           <button className="entity-toggle" onClick={() => toggle(item.id)}>{open ? "▲" : "▼"}</button>
         </div>
         {open && <div className="pack-item-body">
@@ -1210,14 +1216,14 @@ function UmiejętnościTab({skills, setUmiejętności}) {
   return <>
     <div className="row" style={{justifyContent: "space-between"}}>
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em"}}>{skills.length} wpisów{inUseCount > 0 ? ` · ${inUseCount} aktywnych` : ""}</span>
-      <button className="btn-gold" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj wpis"}</button>
+      <button className="btn-rgba(255,255,255,0.06)" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj wpis"}</button>
     </div>
     {showForm && <div className="add-form"><div className="col">
       <input className="g-input" placeholder="Nazwa zdolności…" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} onKeyDown={e => e.key === "Enter" && addSkill()}/>
       <div className="row" style={{gap: "0.4rem", flexWrap: "wrap"}}>{SKILL_CATS.map(c => <button key={c} className="filter-tag" style={{opacity: form.category === c ? 1 : 0.45, borderColor: form.category === c ? catColor(c) + "88" : "", color: form.category === c ? catColor(c) : ""}} onClick={() => setForm(f => ({...f, category: c}))}>{c}</button>)}</div>
       <div className="row" style={{gap: "0.6rem"}}><span style={{fontFamily: "Cinzel,serif", fontSize: "0.58rem", textTransform: "uppercase", letterSpacing: "0.12em"}}>Poziom Mistrzostwa</span><SkillPips value={form.level} onChange={v => setForm(f => ({...f, level: v}))}/></div>
       <textarea className="g-textarea" rows={3} placeholder="Opis działania, wymagania, modyfikatory mechaniczne…" value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))}/>
-      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-gold" onClick={addSkill}>⊕ Dodaj</button></div>
+      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-rgba(255,255,255,0.06)" onClick={addSkill}>⊕ Dodaj</button></div>
     </div></div>}
     
     <div className="filter-bar">
@@ -1275,7 +1281,7 @@ function CzaryTab({spells, setCzary, char, setChar}) {
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em", color: "var(--spell-muted)"}}>{spells.length} czarów{inUseCount > 0 ? ` · ${inUseCount} przygotowanych` : ""}</span>
       <div className="row" style={{gap: "0.5rem"}}>
         <button className="btn-shadow" style={{borderColor: "var(--spell-border)", color: "var(--spell-accent)", background: "transparent", cursor: "pointer"}} onClick={() => setShowSlots(s => !s)}>{showSlots ? "✕ Ukryj komórki" : "⚙ Zarządzaj komórkami"}</button>
-        <button className="btn-gold" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj czar"}</button>
+        <button className="btn-rgba(255,255,255,0.06)" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj czar"}</button>
       </div>
     </div>
 
@@ -1302,7 +1308,7 @@ function CzaryTab({spells, setCzary, char, setChar}) {
       </div>
       <input className="g-input" placeholder="Komponenty (V, S, M…)" value={form.components} onChange={e => setForm(f => ({...f, components: e.target.value}))}/>
       <textarea className="g-textarea" rows={3} placeholder="Opis działania czaru i jego efekty rzutu…" value={form.description} onChange={e => setForm(f => ({...f, description: e.target.value}))}/>
-      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-gold" onClick={addSpell}>⊕ Zapisz czar</button></div>
+      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-rgba(255,255,255,0.06)" onClick={addSpell}>⊕ Zapisz czar</button></div>
     </div></div>}
 
     <div className="filter-bar">
@@ -1369,7 +1375,7 @@ function NPCTracker({npcs, setNPCs}) {
   return <>
     <div className="row" style={{justifyContent: "space-between"}}>
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em"}}>{npcs.length} znanych postaci</span>
-      <button className="btn-gold" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj postać"}</button>
+      <button className="btn-rgba(255,255,255,0.06)" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj postać"}</button>
     </div>
     {showForm && <div className="add-form"><div className="col">
       <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem"}}>
@@ -1381,7 +1387,7 @@ function NPCTracker({npcs, setNPCs}) {
       <input className="g-input" placeholder="Powiązania z innymi bohaterami…" value={formState.connections} onChange={e => setForm(f => ({...f, connections: e.target.value}))}/>
       <div className="row" style={{gap: "0.5rem", flexWrap: "wrap"}}>{["unknown", "ally", "neutral", "hostile"].map(r => <button key={r} className={`rel-badge rel-${r}`} style={{opacity: formState.relation === r ? 1 : 0.45}} onClick={() => setForm(f => ({...f, relation: r}))}>{REL_LABELS[r]}</button>)}</div>
       <textarea className="g-textarea" rows={3} placeholder="Notatki dodatkowe, sekrety postawy…" value={formState.notes} onChange={e => setForm(f => ({...f, notes: e.target.value}))}/>
-      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-gold" onClick={addNPC}>⊕ Dodaj postać</button></div>
+      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-rgba(255,255,255,0.06)" onClick={addNPC}>⊕ Dodaj postać</button></div>
     </div></div>}
     
     <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setAktywnyTag}/>
@@ -1429,13 +1435,13 @@ function Locations({locations, setLocations}) {
   return <>
     <div className="row" style={{justifyContent: "space-between"}}>
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em"}}>{locations.length} lokacji naniesionych na mapę</span>
-      <button className="btn-gold" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj lokację"}</button>
+      <button className="btn-rgba(255,255,255,0.06)" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj lokację"}</button>
     </div>
     {showForm && <div className="add-form"><div className="col">
       <input className="g-input" placeholder="Nazwa geograficzna lokacji…" value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} onKeyDown={e => e.key === "Enter" && addLoc()}/>
       <div className="row" style={{gap: "0.4rem", flexWrap: "wrap"}}>{LOC_TYPES.map(t => <button key={t} className="filter-tag" style={{opacity: form.type === t ? 1 : 0.45, borderColor: form.type === t ? "currentColor" : ""}} onClick={() => setForm(f => ({...f, type: t}))}>{t}</button>)}</div>
       <textarea className="g-textarea" rows={3} placeholder="Opis, klimat, geografia, niebezpieczeństwa, ważne punkty…" value={form.notes} onChange={e => setForm(f => ({...f, notes: e.target.value}))}/>
-      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-gold" onClick={addLoc}>⊕ Dodaj</button></div>
+      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-rgba(255,255,255,0.06)" onClick={addLoc}>⊕ Dodaj</button></div>
     </div></div>}
     
     <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setAktywnyTag}/>
@@ -1490,7 +1496,7 @@ function Factions({factions, setFactions}) {
   return <>
     <div className="row" style={{justifyContent: "space-between"}}>
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em"}}>{factions.length} udokumentowanych frakcji</span>
-      <button className="btn-gold" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj frakcję"}</button>
+      <button className="btn-rgba(255,255,255,0.06)" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj frakcję"}</button>
     </div>
 
     {showForm && <div className="add-form"><div className="col">
@@ -1503,7 +1509,7 @@ function Factions({factions, setFactions}) {
       <div className="row" style={{gap: "0.35rem", flexWrap: "wrap"}}>{FACTION_TYPES.map(t => <button key={t} className="filter-tag" style={{opacity: form.type === t ? 1 : 0.45, borderColor: form.type === t ? "currentColor" : ""}} onClick={() => setForm(f => ({...f, type: t}))}>{t}</button>)}</div>
       <div className="row" style={{gap: "0.35rem", flexWrap: "wrap"}}>{FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{opacity: form.rank === r ? 1 : 0.4, borderColor: form.rank === r ? rankColor(r) + "88" : "", color: form.rank === r ? rankColor(r) : ""}} onClick={() => setForm(f => ({...f, rank: r}))}>{r}</button>)}</div>
       <textarea className="g-textarea" rows={3} placeholder="Historia ugrupowania, dogmaty wewnętrzne, sekrety kapituły…" value={form.notes} onChange={e => setForm(f => ({...f, notes: e.target.value}))}/>
-      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-gold" onClick={addFaction}>⊕ Dodaj ugrupowanie</button></div>
+      <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-rgba(255,255,255,0.06)" onClick={addFaction}>⊕ Dodaj ugrupowanie</button></div>
     </div></div>}
 
     <div className="filter-bar">
@@ -1560,7 +1566,7 @@ function SesjaDziennik({sessions, setSesjas, npcs, locations, quests, inventory,
   return <>
     <div className="row" style={{justifyContent: "space-between"}}>
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em"}}>{sessions.length} sesji udokumentowanych</span>
-      <button className="btn-gold" onClick={addSesja}>⊕ Nowy wpis</button>
+      <button className="btn-rgba(255,255,255,0.06)" onClick={addSesja}>⊕ Nowy wpis</button>
     </div>
     {hasAny && hasNotes && <div className="sess-legend">
       <span style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase"}}>Podgląd encyklopedyczny linku po najechaniu →</span>
@@ -1582,7 +1588,7 @@ function SesjaDziennik({sessions, setSesjas, npcs, locations, quests, inventory,
             <textarea className="g-textarea" rows={6} autoFocus placeholder="Zapisuj szczegóły z gry. Imiona postaci, nazwy miast lub zadań automatycznie zamienią się w interaktywne hiperłącza encyklopedyczne…" value={sess.notes} onChange={e => upd(sess.id, "notes", e.target.value)}/>
             <div className="row mt05" style={{justifyContent: "space-between"}}>
               <button className="btn-ghost" onClick={() => del(sess.id)}>Usuń wpis</button>
-              <button className="btn-gold" onClick={() => setEditingId(null)}>✓ Gotowe</button>
+              <button className="btn-rgba(255,255,255,0.06)" onClick={() => setEditingId(null)}>✓ Gotowe</button>
             </div>
           </> : <>
             <div className="sess-rendered" data-placeholder="Brak sporządzonych notatek. Dotknij, aby zacząć pisać kronikę sesji…" onClick={() => setEditingId(sess.id)}>{sess.notes ? parsed : null}</div>
@@ -1618,7 +1624,7 @@ function QuestTracker({quests, setZadania}) {
         <input className="g-input" placeholder="Nazwa zlecenia / misji głównej…" value={name} onChange={e => setImie(e.target.value)} onKeyDown={e => e.key === "Enter" && addQuest()}/>
         <input className="g-input" placeholder="Krótki opis celów zlecenia…" value={desc} onChange={e => setDesc(e.target.value)}/>
         <input className="g-input" placeholder="Przewidziana nagroda (np. złoto, unikalny artefakt, PD)…" value={reward} onChange={e => setNagroda(e.target.value)}/>
-        <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-gold" onClick={addQuest}>⊕ Aktywuj zadanie</button></div>
+        <div className="row" style={{justifyContent: "flex-end"}}><button className="btn-rgba(255,255,255,0.06)" onClick={addQuest}>⊕ Aktywuj zadanie</button></div>
       </div>
     </div>
     
@@ -2139,3 +2145,30 @@ export default function HeroJournal() {
     </div>
   </>;
 }
+
+/* XP UI BLOCK */
+
+<div style={{
+  border: `1px solid ${currentTheme?.border || "#555"}`,
+  background: currentTheme?.panel || "rgba(255,255,255,0.04)",
+  borderRadius: "10px",
+  padding: "10px",
+  marginTop: "10px",
+  textAlign: "center"
+}}>
+  <div style={{
+    fontSize: "11px",
+    opacity: 0.7,
+    marginBottom: "4px",
+    letterSpacing: "1px"
+  }}>
+    PUNKTY DOŚWIADCZENIA
+  </div>
+
+  <div style={{
+    fontSize: "28px",
+    fontWeight: "700"
+  }}>
+    {character?.xp || 0}
+  </div>
+</div>
