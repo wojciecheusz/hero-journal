@@ -122,21 +122,21 @@ function buildCSS(t) {
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body, #root { min-height: 100vh; background: ${t.bg}; }
-  .hj-root { position: relative; min-height: 100vh; background: ${t.bg}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: 80px; }
+  .hj-root { position: relative; min-height: 100vh; background: ${t.bg}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
   .hj-root::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: ${t.noise}; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-repeat: repeat; }
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: ${t.scrollTrack}; }
   ::-webkit-scrollbar-thumb { background: ${t.scrollThumb}; }
 
-  .hj-header { position: sticky; top: 0; z-index: 50; background: ${t.headerBg}; border-bottom: 1px solid ${t.border}; box-shadow: 0 4px 32px ${t.shadowBot}; padding: 0.75rem 1.25rem; }
+  .hj-header { position: sticky; top: 0; z-index: 50; background: ${t.headerBg}; border-bottom: 1px solid ${t.border}; box-shadow: 0 4px 32px ${t.shadowBot}; padding: calc(env(safe-area-inset-top,0px) + 0.75rem) 1.25rem 0.75rem; }
   .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.05rem; font-weight: 700; color: ${t.accent}; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem; }
   .hj-char-name { font-family: 'Cinzel', serif; font-size: 0.72rem; color: ${t.textMuted}; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
 
   /* ── Bottom nav bar ── */
-  .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: ${t.navBg}; border-top: 1px solid ${t.border}; box-shadow: 0 -4px 32px ${t.shadowBot}; display: flex; align-items: stretch; height: 68px; padding-bottom: env(safe-area-inset-bottom,0px); }
+  .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: ${t.navBg}; border-top: 1px solid ${t.border}; box-shadow: 0 -4px 32px ${t.shadowBot}; display: flex; align-items: flex-start; padding-top: 0; padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
 
   /* Group button — one of 3 main tabs */
-  .hj-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.3rem 0.25rem; position: relative; }
+  .hj-nav-btn { flex: 1; height: 68px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem; background: transparent; border: none; cursor: pointer; transition: all 0.18s; padding: 0.3rem 0.25rem; position: relative; }
   .hj-nav-btn::before { content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 2px; background: ${t.accent}; transform: scaleX(0); transition: transform 0.2s; border-radius: 0 0 2px 2px; }
   .hj-nav-btn.active::before { transform: scaleX(1); }
   .hj-nav-icon { font-size: 1.2rem; line-height: 1; filter: grayscale(1) brightness(0.45); transition: filter 0.18s; }
@@ -150,7 +150,7 @@ function buildCSS(t) {
   .nav-drawer-overlay { position: fixed; inset: 0; z-index: 98; background: transparent; }
 
   /* Drawer panel — slides up from bottom nav */
-  .nav-drawer { position: fixed; bottom: 68px; left: 0; right: 0; z-index: 99; background: ${t.navBg}; border-top: 1px solid ${t.border}; border-bottom: none; box-shadow: 0 -8px 32px ${t.shadowBot}; padding: 0.6rem 0.5rem calc(0.6rem + env(safe-area-inset-bottom,0px)); display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .nav-drawer { position: fixed; bottom: calc(68px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; z-index: 99; background: ${t.navBg}; border-top: 1px solid ${t.border}; border-bottom: none; box-shadow: 0 -8px 32px ${t.shadowBot}; padding: 0.6rem 0.5rem calc(0.6rem + env(safe-area-inset-bottom,0px)); display: flex; gap: 0.4rem; flex-wrap: wrap; }
   .nav-drawer-item { flex: 1; min-width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; background: transparent; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; padding: 0.5rem 0.4rem; border-radius: 2px; }
   .nav-drawer-item:hover { background: rgba(226,185,78,0.06); border-color: ${t.border}; }
   .nav-drawer-item.active { background: rgba(226,185,78,0.1); border-color: ${t.accentBorder}; }
