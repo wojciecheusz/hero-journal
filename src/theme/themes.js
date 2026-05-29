@@ -1,3 +1,11 @@
+
+export const PALETTES = ["obsidian", "dark", "slate", "parchment", "ivory", "daylight"];
+
+export const PALETTE_LABELS = {
+  obsidian: "⬛ Obsydian", dark: "🌑 Mrok", slate: "🌊 Łupek",
+  parchment: "📜 Pergamin", ivory: "🪶 Kość Słoniowa", daylight: "☀ Światło Dnia",
+};
+
 export const THEMES = {
   obsidian: {
     bg: "#080608", bgCard: "#110d12", bgInput: "#0d0a0f", bgNav: "#07050a",
@@ -14,7 +22,7 @@ export const THEMES = {
     packItem: "#130f18", packItemBorder: "#1e1830", packFieldInput: "#0a0810",
     spellAccent: "#c89eff", spellBorder: "#6040a0", spellMuted: "#9070c0",
     spellDim: "#4a3070", spellText: "#e8d8ff", spellBg: "rgba(200,158,255,0.08)",
-    questReward: "#5a9a5a",
+    questReward: "#5a9a5a", selectedBg: "rgba(200,158,255,0.1)",
   },
   dark: {
     bg: "#0f0d0b", bgCard: "#1c1810", bgInput: "#130f0c", bgNav: "#0d0b08",
@@ -31,7 +39,7 @@ export const THEMES = {
     packItem: "#1a1510", packItemBorder: "#2e2618", packFieldInput: "#0f0c09",
     spellAccent: "#64a0e6", spellBorder: "#1a4a8a", spellMuted: "#4a7aaa",
     spellDim: "#2a4a6a", spellText: "#c8d8f0", spellBg: "rgba(100,160,230,0.08)",
-    questReward: "#5a9a5a",
+    questReward: "#5a9a5a", selectedBg: "rgba(255,255,255,0.08)",
   },
   slate: {
     bg: "#0d1117", bgCard: "#161b22", bgInput: "#0d1117", bgNav: "#090d13",
@@ -48,7 +56,7 @@ export const THEMES = {
     packItem: "#161b22", packItemBorder: "#21262d", packFieldInput: "#090d13",
     spellAccent: "#58a6ff", spellBorder: "#1f6feb", spellMuted: "#388bfd",
     spellDim: "#0a2a5a", spellText: "#cae8ff", spellBg: "rgba(88,166,255,0.08)",
-    questReward: "#3fb950",
+    questReward: "#3fb950", selectedBg: "rgba(88,166,255,0.1)",
   },
   parchment: {
     bg: "#f0e8d5", bgCard: "#faf3e4", bgInput: "#ede3cc", bgNav: "#e8dcc8",
@@ -65,7 +73,7 @@ export const THEMES = {
     packItem: "#f0e8d5", packItemBorder: "#c8a86a", packFieldInput: "#e8dcc8",
     spellAccent: "#3a5a9a", spellBorder: "#5a7ab0", spellMuted: "#4a5a8a",
     spellDim: "#6a7aaa", spellText: "#2a3a6a", spellBg: "rgba(58,90,154,0.08)",
-    questReward: "#3a6a3a",
+    questReward: "#3a6a3a", selectedBg: "rgba(154,90,16,0.1)",
   },
   ivory: {
     bg: "#f8f6f0", bgCard: "#ffffff", bgInput: "#f2ede4", bgNav: "#ede8de",
@@ -82,7 +90,7 @@ export const THEMES = {
     packItem: "#f8f6f0", packItemBorder: "#d4c8a8", packFieldInput: "#f0ece0",
     spellAccent: "#0f8a78", spellBorder: "#0a6a58", spellMuted: "#2a7a6a",
     spellDim: "#0a4a3a", spellText: "#e0f8f4", spellBg: "rgba(15,122,106,0.08)",
-    questReward: "#2a7a3a",
+    questReward: "#2a7a3a", selectedBg: "rgba(15,122,106,0.1)",
   },
   daylight: {
     bg: "#ffffff", bgCard: "#f8f8fc", bgInput: "#f0f0f8", bgNav: "#e8e8f4",
@@ -99,6 +107,6 @@ export const THEMES = {
     packItem: "#f8f8fc", packItemBorder: "#d8d0f0", packFieldInput: "#ebebf5",
     spellAccent: "#2980b9", spellBorder: "#1a6a9a", spellMuted: "#3a90c9",
     spellDim: "#0a3a5a", spellText: "#d0eeff", spellBg: "rgba(41,128,185,0.08)",
-    questReward: "#27ae60",
+    questReward: "#27ae60", selectedBg: "rgba(192,57,43,0.08)",
   },
 };
