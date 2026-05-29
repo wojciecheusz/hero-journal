@@ -1775,11 +1775,11 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
 const NAV_GROUPS = [
   {
     id: "hero",
-    label: "Bohater",
+    label: "Postać",
     icon: "⚔️",
     defaultTab: "character",
     tabs: [
-      {id:"character", label:"Bohater",      icon:"⚔️"},
+      {id:"character", label:"Postać",       icon:"⚔️"},
       {id:"inventory", label:"Plecak",       icon:"🎒"},
       {id:"spells",    label:"Czary",        icon:"🔮"},
       {id:"skills",    label:"Zdolności",    icon:"✨"},

@@ -92,10 +92,10 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
 
       {/* ════════════════════════════════════════
-          KARTA 1: BOHATER — dane postaci
+          KARTA 1: POSTAĆ — dane postaci
       ════════════════════════════════════════ */}
       <div className="card">
-        <div className="sect-label">Bohater</div>
+        <div className="sect-label">Postać</div>
 
         <input className="iedit"
           style={{ fontFamily:"Cinzel,serif", fontSize:"1.35rem", fontWeight:700, letterSpacing:"0.04em", width:"100%", marginBottom:"0.7rem" }}
@@ -143,6 +143,26 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             </div>
           </div>
         </div>
+
+        {/* Wygląd — w karcie Postać */}
+        <hr className="inner-divider" data-label="Wygląd" style={{ marginTop:"1rem" }}/>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem", marginTop:"0.7rem" }}>
+          {[
+            ["age","Wiek","np. 25 lat"],
+            ["height","Wzrost","np. 178 cm"],
+            ["weight","Waga","np. 75 kg"],
+            ["eyes","Oczy","np. niebieskie"],
+            ["skin","Skóra","np. oliwkowa"],
+            ["hair","Włosy","np. ciemne"],
+          ].map(([key,label,ph]) => (
+            <div key={key}>
+              <div style={LBL}>{label}</div>
+              <input className="iedit" style={{ fontSize:"0.88rem" }}
+                value={(char.appearance||{})[key]||""} placeholder={ph}
+                onChange={e => setChar(c => ({...c, appearance:{...(c.appearance||{}),[key]:e.target.value}}))}/>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ════════════════════════════════════════
@@ -177,7 +197,39 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       </div>
 
       {/* ════════════════════════════════════════
-          KARTA 3: WALKA
+          KARTA 3: UMIEJĘTNOŚCI
+      ════════════════════════════════════════ */}
+      <div className="card">
+        <div className="sect-label">Umiejętności</div>
+        <p style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"var(--text-muted)", marginBottom:"0.6rem", letterSpacing:"0.08em" }}>
+          Kliknij: biegłość → ekspertyza → brak
+        </p>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,minmax(0,1fr))", gap:"0.3rem" }}>
+          {GENERIC_SKILLS.map(sk => {
+            const prz = !!(char.skills||{})[sk.key];
+            const exp = !!(char.skillExp||{})[sk.key];
+            const base = Math.floor((char.stats[sk.attr]-10)/2);
+            const bonus = exp ? base+pb*2 : prz ? base+pb : base;
+            const pipColor  = exp ? "var(--pip-exp)"  : prz ? "var(--pip-prof)" : "transparent";
+            const pipBorder = exp ? "2px solid var(--pip-exp)" : prz ? "1.5px solid var(--pip-prof)" : "1.5px solid var(--pip-empty)";
+            const pipClip   = exp ? "polygon(50% 0%,100% 50%,50% 100%,0% 50%)" : "none";
+            const statColor = exp ? "var(--pip-exp)"  : prz ? "var(--pip-prof)" : "inherit";
+            return (
+              <div key={sk.key} title={sk.label} className={`stat-box${exp?" stat-box-exp":prz?" stat-box-prz":""}`}
+                onClick={() => cycleSkill(sk.key)}
+                style={{ position:"relative", cursor:"pointer", padding:"0.35rem 0.25rem 0.3rem", textAlign:"center", userSelect:"none", minWidth:0 }}>
+                <div style={{ position:"absolute", top:"0.22rem", right:"0.22rem", width:10, height:10, borderRadius:"50%", border:pipBorder, background:pipColor, clipPath:pipClip, boxShadow:exp?"0 0 4px var(--pip-exp)":prz?"0 0 4px var(--pip-prof)":"none", transition:"all 0.15s", pointerEvents:"none" }}/>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.08em", textTransform:"uppercase", color:"var(--text-label)", display:"block", marginBottom:"0.15rem", lineHeight:1.2, paddingRight:"0.7rem", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{sk.label}</span>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, color:statColor, display:"block", lineHeight:1 }}>{numMod(bonus)}</span>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.38rem", color:"var(--text-muted)", display:"block", marginTop:"0.1rem" }}>{sk.attr}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ════════════════════════════════════════
+          KARTA 4: WALKA
       ════════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">Walka</div>
@@ -354,38 +406,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       </div>
 
       {/* ════════════════════════════════════════
-          KARTA 4: UMIEJĘTNOŚCI
-      ════════════════════════════════════════ */}
-      <div className="card">
-        <div className="sect-label">Umiejętności</div>
-        <p style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"var(--text-muted)", marginBottom:"0.6rem", letterSpacing:"0.08em" }}>
-          Kliknij: biegłość → ekspertyza → brak
-        </p>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,minmax(0,1fr))", gap:"0.3rem" }}>
-          {GENERIC_SKILLS.map(sk => {
-            const prz = !!(char.skills||{})[sk.key];
-            const exp = !!(char.skillExp||{})[sk.key];
-            const base = Math.floor((char.stats[sk.attr]-10)/2);
-            const bonus = exp ? base+pb*2 : prz ? base+pb : base;
-            const pipColor  = exp ? "var(--pip-exp)"  : prz ? "var(--pip-prof)" : "transparent";
-            const pipBorder = exp ? "2px solid var(--pip-exp)" : prz ? "1.5px solid var(--pip-prof)" : "1.5px solid var(--pip-empty)";
-            const pipClip   = exp ? "polygon(50% 0%,100% 50%,50% 100%,0% 50%)" : "none";
-            const statColor = exp ? "var(--pip-exp)"  : prz ? "var(--pip-prof)" : "inherit";
-            return (
-              <div key={sk.key} title={sk.label} className={`stat-box${exp?" stat-box-exp":prz?" stat-box-prz":""}`}
-                onClick={() => cycleSkill(sk.key)}
-                style={{ position:"relative", cursor:"pointer", padding:"0.35rem 0.25rem 0.3rem", textAlign:"center", userSelect:"none", minWidth:0 }}>
-                <div style={{ position:"absolute", top:"0.22rem", right:"0.22rem", width:10, height:10, borderRadius:"50%", border:pipBorder, background:pipColor, clipPath:pipClip, boxShadow:exp?"0 0 4px var(--pip-exp)":prz?"0 0 4px var(--pip-prof)":"none", transition:"all 0.15s", pointerEvents:"none" }}/>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.08em", textTransform:"uppercase", color:"var(--text-label)", display:"block", marginBottom:"0.15rem", lineHeight:1.2, paddingRight:"0.7rem", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{sk.label}</span>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, color:statColor, display:"block", lineHeight:1 }}>{numMod(bonus)}</span>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.38rem", color:"var(--text-muted)", display:"block", marginTop:"0.1rem" }}>{sk.attr}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ════════════════════════════════════════
           KARTA 5: AKTYWNE I WYPOSAŻONE + SAKIEWKA
       ════════════════════════════════════════ */}
       <div className="card">
@@ -485,30 +505,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 value={(char.proficiencies||{})[key]||""}
                 onChange={e => setChar(c => ({...c, proficiencies:{...(c.proficiencies||{}),[key]:e.target.value}}))}
                 style={{ fontSize:"0.9rem", minHeight:"2.5rem" }}/>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ════════════════════════════════════════
-          KARTA 7: WYGLĄD
-      ════════════════════════════════════════ */}
-      <div className="card">
-        <div className="sect-label">Wygląd</div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem" }}>
-          {[
-            ["age","Wiek","np. 25 lat"],
-            ["height","Wzrost","np. 178 cm"],
-            ["weight","Waga","np. 75 kg"],
-            ["eyes","Oczy","np. niebieskie"],
-            ["skin","Skóra","np. oliwkowa"],
-            ["hair","Włosy","np. ciemne"],
-          ].map(([key,label,ph]) => (
-            <div key={key}>
-              <div style={LBL}>{label}</div>
-              <input className="iedit" style={{ fontSize:"0.88rem" }}
-                value={(char.appearance||{})[key]||""} placeholder={ph}
-                onChange={e => setChar(c => ({...c, appearance:{...(c.appearance||{}),[key]:e.target.value}}))}/>
             </div>
           ))}
         </div>
