@@ -5,10 +5,10 @@ import { THEMES } from "./themes";
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  const [themeName, setThemeName] = useState("dark");
+  const [themeName, setThemeName] = useState("mrok");
 
   const theme = useMemo(() => {
-    return THEMES[themeName] || THEMES.dark;
+    return THEMES[themeName] || THEMES.mrok;
   }, [themeName]);
 
   useEffect(() => {

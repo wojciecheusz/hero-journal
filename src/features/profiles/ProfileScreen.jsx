@@ -4,7 +4,7 @@ import { clamp } from '../../utils/math';
 import { THEMES, PALETTES } from '../../theme/themes';
 
 export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, theme }) {
-  const t = THEMES[theme] || THEMES.dark;
+  const t = THEMES[theme] || THEMES.mrok;
   return (
     <div className="profile-screen">
       <div style={{ position: "absolute", top: "1rem", right: "1rem" }}>
@@ -46,7 +46,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 }
 
 export function PostaćWizard({ onFinish, onAnuluj, theme }) {
-  const t = THEMES[theme] || THEMES.dark;
+  const t = THEMES[theme] || THEMES.mrok;
   const [krok, setStep] = useState(0);
   const [name, setImie] = useState("");
   const [cls, setCls] = useState(null);

@@ -36,10 +36,12 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 /* ═══════════════════════════════════════════════
    SYSTEM MOTYWÓW GRAFICZNYCH
 ═══════════════════════════════════════════════ */
-const PALETTES = ["obsidian", "dark", "slate", "parchment", "ivory", "daylight"];
+const PALETTES = ["mrok", "obsydian", "drewno", "wschod", "las", "lupek", "pergamin", "kosc"];
 const PALETTE_LABELS = {
-  obsidian: "⬛ Obsydian", dark: "🌑 Mrok", slate: "🌊 Łupek",
-  parchment: "📜 Pergamin", ivory: "🪶 Kość Słoniowa", daylight: "☀ Światło Dnia",
+  mrok:     "🌑 Mrok",       obsydian: "🔮 Obsydian",
+  drewno:   "🪵 Drewno",     wschod:   "🌅 Wschód",
+  las:      "🌿 Las",        lupek:    "🌊 Łupek",
+  pergamin: "📜 Pergamin",   kosc:     "🤍 Kość Słoniowa",
 };
 
 import { THEMES } from "./theme/themes";
@@ -131,7 +133,7 @@ function buildCSS(t) {
   .btn-rest { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; padding: 0.3rem 0.4rem; cursor: pointer; transition: all 0.15s; white-space: normal; min-width: 0; overflow: hidden; border-radius: 2px; }
   .btn-rest.short:hover { border-color: #8a7030; color: #d4a030; background: rgba(212,160,48,0.08); }
   .btn-rest.long:hover  { border-color: #2a5a8a; color: #64a0d4; background: rgba(100,160,212,0.08); }
-  .btn-rgba\\(255\\,255\\,255\\,0\\.06\\) { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(255,255,255,0.06); border: 1px solid ${t.borderInput}; color: ${t.textLabel}; padding: 0.3rem 0.75rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-rgba\\(255\\,255\\,255\\,0\\.06\\) { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; background: ${t.bgInput}; border: 1px solid ${t.borderInput}; color: ${t.textLabel}; padding: 0.3rem 0.75rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
   .btn-shadow { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; border: 1px solid ${t.borderInput}; color: ${t.textMuted}; padding: 0.28rem 0.65rem; cursor: pointer; transition: all 0.15s; }
   .tags-row { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-top: 0.55rem; }
   .tag { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.18rem 0.55rem; display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap; border-radius: 2px; }
@@ -1553,7 +1555,7 @@ const STAT_ARRAYS = {
 };
 
 function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, theme }) {
-  const t = THEMES[theme] || THEMES.dark;
+  const t = THEMES[theme] || THEMES.mrok;
   return (
     <div className="profile-screen">
       <div style={{position: "absolute", top: "1rem", right: "1rem"}}>
@@ -1600,7 +1602,7 @@ function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, theme
 
 /* ═══ KREATOR POSTACI (WIZARD KROKOWY) ════════════ */
 function PostaćWizard({ onFinish, onAnuluj, theme }) {
-  const t = THEMES[theme] || THEMES.dark;
+  const t = THEMES[theme] || THEMES.mrok;
   const [krok, setStep] = useState(0);
   const [name, setImie] = useState("");
   const [cls, setCls] = useState(null);
@@ -1789,7 +1791,7 @@ const NAV_GROUPS = [
 
 /* ═══ KORZEŃ APLIKACJI (MAIN NODE) ═══════════════ */
 export default function HeroJournal() {
-  const [theme, setTheme] = useState(() => { const s = load("hj_theme", "dark"); return PALETTES.includes(s) ? s : "dark"; });
+  const [theme, setTheme] = useState(() => { const s = load("hj_theme", "mrok"); return PALETTES.includes(s) ? s : "mrok"; });
   const [profiles, setProfilesState] = useState(() => { migrateLegacy(); return loadProfiles(); });
   const [activeId, setActiveIdState] = useState(() => { migrateLegacy(); return loadActiveId(); });
   const [screen, setScreen] = useState(() => {
@@ -1839,7 +1841,7 @@ export default function HeroJournal() {
   }, [char.name, char.classes, activeId]);
 
   const handleNavigate = useCallback(tt => setTab(tt), []);
-  const t = THEMES[theme] || THEMES.dark;
+  const t = THEMES[theme] || THEMES.mrok;
 
   const switchProfile = useCallback(id => {
     saveActiveId(id);
