@@ -1836,7 +1836,7 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
   const [factions, setFactions] = useState(() => activeId ? loadChar("factions", activeId, []) : []);
   
   const [showReset, setShowReset] = useState(false);
-  const [showPalette, setShowPalette] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [openGroup, setOpenGroup] = useState(null);
 
   useEffect(() => { save("hj_theme", theme); }, [theme]);
@@ -2001,54 +2001,76 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
     <div className="hj-root">
 
       <header className="hj-header">
-        <div style={{maxWidth: 780, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem"}}>
-          <div style={{display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0, cursor: "pointer"}} onClick={() => setScreen("profiles")} title="Zmień bohatera">
+        <div style={{maxWidth: 780, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem"}}>
+
+          {/* Lewa strona: logo + imię + zmień */}
+          <div style={{display:"flex", alignItems:"center", gap:"0.6rem", flex:1, minWidth:0, cursor:"pointer"}}
+            onClick={() => setScreen("profiles")} title="Zmień bohatera">
             <div className="hj-logo">⚔ HJ</div>
-            <span className="hj-char-name">{char.name?.trim() || "Bohater"}</span>
-            <span style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", color: t.textDim, letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0}}>▾ Zmień</span>
-          </div>
-          <div style={{display: "flex", alignItems: "center", gap: "0.35rem", flexShrink: 0}}>
-            <div style={{position: "relative"}}>
-              <button
-                onClick={() => setShowPalette(s => !s)}
-                title={PALETTE_LABELS[theme] || "Motyw"}
-                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontSize:"1rem", lineHeight:1, padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26}}>
-                {(PALETTE_LABELS[theme] || "🎨").split(" ")[0]}
-              </button>
-              {showPalette && <>
-                <div style={{position: "fixed", inset: 0, zIndex: 199}} onClick={() => setShowPalette(false)}/>
-                <div style={{position: "absolute", top: "calc(100% + 6px)", right: 0, background: t.modalBg, border: `1px solid ${t.border}`, boxShadow: `0 8px 24px ${t.shadowBot}`, zIndex: 200, minWidth: 160}}>
-                  {PALETTES.map(p => (
-                    <button key={p} onClick={() => { setTheme(p); save("hj_theme", p); setShowPalette(false); }} style={{display: "block", width: "100%", background: theme === p ? `rgba(226,185,78,0.1)` : "transparent", border: "none", borderBottom: `1px solid ${t.borderSub}`, color: theme === p ? t.accent : t.text, fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.08em", padding: "0.45rem 0.8rem", cursor: "pointer", textAlign: "left", transition: "background 0.12s"}}>
-                      {PALETTE_LABELS[p]}
-                    </button>
-                  ))}
-                </div>
-              </>}
+            <div style={{minWidth:0, flex:1}}>
+              <span className="hj-char-name" style={{display:"block", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:"none"}}>
+                {char.name?.trim() || "Bohater"}
+              </span>
             </div>
-            <button
-              onClick={() => setShowReset(true)}
-              title="Zresetuj aktualną postać"
-              style={{background:"transparent", border:"1px solid #6a2a2a", color:"#c04040", fontSize:"0.9rem", lineHeight:1, padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26}}>
-              ↺
-            </button>
-            {user && onCloudRefresh && (
-              <button
-                onClick={onCloudRefresh}
-                title="Pobierz najnowsze dane z chmury"
-                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textDim, fontSize:"0.9rem", lineHeight:1, padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26}}>
-                ☁
-              </button>
-            )}
-            {user && onLogout && (
-              <button
-                onClick={onLogout}
-                title={`Zalogowany jako ${user.displayName || user.email}`}
-                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.05em", padding:"0.24rem 0.4rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", height:26, maxWidth:80, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>
-                {(user.displayName || user.email || "").split(/[\s@]/)[0]}
-              </button>
-            )}
+            <span style={{fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:t.textDim, letterSpacing:"0.08em", textTransform:"uppercase", flexShrink:0}}>▾ Zmień</span>
           </div>
+
+          {/* Prawa strona: jeden przycisk ⚙ otwierający panel ustawień */}
+          <div style={{position:"relative", flexShrink:0}}>
+            <button
+              onClick={() => setShowSettings(s => !s)}
+              title="Ustawienia"
+              style={{background: showSettings ? `rgba(226,185,78,0.1)` : "transparent", border:`1px solid ${showSettings ? t.accentBorder : t.borderInput}`, color: showSettings ? t.accent : t.textMuted, fontSize:"1.1rem", lineHeight:1, width:32, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center"}}>
+              ⚙
+            </button>
+
+            {showSettings && <>
+              <div style={{position:"fixed", inset:0, zIndex:199}} onClick={() => setShowSettings(false)}/>
+              <div style={{position:"absolute", top:"calc(100% + 8px)", right:0, background:t.modalBg, border:`1px solid ${t.border}`, boxShadow:`0 8px 32px ${t.shadowBot}`, zIndex:200, width:230, borderRadius:"2px"}}>
+
+                {/* Motywy */}
+                <div style={{padding:"0.6rem 0.7rem 0.4rem"}}>
+                  <div style={{fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", textTransform:"uppercase", color:t.textMuted, marginBottom:"0.5rem"}}>
+                    Motyw kolorystyczny
+                  </div>
+                  <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem"}}>
+                    {PALETTES.map(p => (
+                      <button key={p}
+                        onClick={() => { setTheme(p); save("hj_theme", p); }}
+                        style={{background: theme===p ? `rgba(226,185,78,0.12)` : "transparent", border:`1px solid ${theme===p ? t.accentBorder : t.borderSub}`, color: theme===p ? t.accent : t.text, fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.04em", padding:"0.3rem 0.4rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px"}}>
+                        {PALETTE_LABELS[p]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Akcje */}
+                <div style={{borderTop:`1px solid ${t.borderSub}`, padding:"0.4rem 0.5rem", display:"flex", flexDirection:"column", gap:"0.2rem"}}>
+                  <button
+                    onClick={() => { setShowReset(true); setShowSettings(false); }}
+                    style={{background:"transparent", border:`1px solid #6a2a2a`, color:"#c04040", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s"}}>
+                    ↺ Reset postaci
+                  </button>
+                  {user && onCloudRefresh && (
+                    <button
+                      onClick={() => { onCloudRefresh(); setShowSettings(false); }}
+                      style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s"}}>
+                      ☁ Synchronizuj dane
+                    </button>
+                  )}
+                  {user && onLogout && (
+                    <button
+                      onClick={() => { onLogout(); setShowSettings(false); }}
+                      style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s"}}>
+                      ⎋ Wyloguj ({(user.displayName || user.email || "").split(/[\s@]/)[0]})
+                    </button>
+                  )}
+                </div>
+
+              </div>
+            </>}
+          </div>
+
         </div>
       </header>
 

@@ -364,40 +364,43 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        {/* Rzuty vs śmierć + Wyczerpanie — dolny rząd */}
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.5rem", marginTop:"0.8rem", padding:"0.45rem 0.6rem", border:"1px solid rgba(128,128,128,0.12)", background:"rgba(128,128,128,0.04)" }}>
-          {/* Rzuty vs śmierć */}
-          <div style={{ display:"flex", alignItems:"center", gap:"0.7rem" }}>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--text-muted)", flexShrink:0 }}>☠ vs śmierć</span>
-            <div style={{ display:"flex", gap:"0.6rem" }}>
-              {[["successes","S","#4a9a5a"],["failures","P","#9a3a3a"]].map(([type,ltr,color]) => (
-                <div key={type} style={{ display:"flex", alignItems:"center", gap:"0.25rem" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.44rem", textTransform:"uppercase", color, flexShrink:0 }}>{ltr}</span>
+        {/* Rzuty vs śmierć + Wyczerpanie — 2-kolumnowy grid */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem", marginTop:"0.8rem" }}>
+
+          {/* Lewa: Rzuty vs śmierć */}
+          <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px" }}>
+            <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>☠ Rzuty vs śmierć</div>
+            {[["successes","Sukces","#4a9a5a"],["failures","Porażka","#9a3a3a"]].map(([type,label,color]) => (
+              <div key={type} style={{ display:"flex", alignItems:"center", gap:"0.4rem", marginBottom:"0.35rem" }}>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", textTransform:"uppercase", color, flexShrink:0, minWidth:44 }}>{label}</span>
+                <div style={{ display:"flex", gap:"0.3rem" }}>
                   {[0,1,2].map(i => (
                     <div key={i} onClick={() => toggleDeath(type, i)}
-                      style={{ width:15, height:15, borderRadius:"50%", border:`1.5px solid ${color}`, background:i<(ds[type]||0)?color:"transparent", cursor:"pointer", transition:"background 0.15s", flexShrink:0 }}/>
+                      style={{ width:18, height:18, borderRadius:"50%", border:`2px solid ${color}`, background:i<(ds[type]||0)?color:"transparent", cursor:"pointer", transition:"background 0.15s", flexShrink:0 }}/>
                   ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-          {/* Wyczerpanie */}
-          <div style={{ display:"flex", alignItems:"center", gap:"0.35rem" }}>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--text-muted)", flexShrink:0 }}>Wyczerp.</span>
-            <div style={{ display:"flex", gap:"0.2rem" }}>
+
+          {/* Prawa: Wyczerpanie */}
+          <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px" }}>
+            <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>Wyczerpanie</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.25rem" }}>
               {[0,1,2,3,4,5,6].map(level => {
                 const cur = (char.conditions||{}).exhaustion || 0;
                 const filled = level > 0 && level <= cur;
                 return (
                   <button key={level}
                     onClick={() => setChar(c => ({...c, conditions:{...(c.conditions||{}), exhaustion:level===cur?0:level}}))}
-                    style={{ width:20, height:20, borderRadius:"50%", border:`1.5px solid ${filled?"#cc5020":"var(--pip-empty)"}`, background:filled?"rgba(200,80,32,0.3)":"transparent", cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.42rem", fontWeight:700, color:filled?"#ee7040":"var(--text-dim)", lineHeight:1 }}>
+                    style={{ width:"100%", aspectRatio:"1", borderRadius:"4px", border:`1.5px solid ${filled?"#cc5020":level===0&&cur===0?"#4a9a5a":"var(--pip-empty)"}`, background:filled?"rgba(200,80,32,0.25)":level===0&&cur===0?"rgba(74,154,90,0.15)":"transparent", cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.5rem", fontWeight:700, color:filled?"#ee7040":level===0&&cur===0?"#4a9a5a":"var(--text-dim)", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
                     {level===0?"✓":level}
                   </button>
                 );
               })}
             </div>
           </div>
+
         </div>
       </div>
 
