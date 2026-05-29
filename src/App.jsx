@@ -1909,12 +1909,13 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
 const TABS=[
   {id:"character", label:"Bohater",     icon:"⚔️"},
   {id:"inventory", label:"Plecak",     icon:"🎒"},
-  {id:"skills",    label:"Umiejętności",   icon:"✨"},
   {id:"spells",    label:"Czary",   icon:"🔮"},
+  {id:"skills",    label:"Umiejętności",   icon:"✨"},
   {id:"npcs",      label:"Postacie",   icon:"👥"},
   {id:"locations", label:"Miejsca",   icon:"🗺️"},
-  {id:"sessions",  label:"Dziennik",      icon:"📜"},
   {id:"quests",    label:"Zadania",   icon:"⚡"},
+  {id:"sessions",  label:"Dziennik",      icon:"📜"},
+  
 ];
 
 /* ═══ ROOT APP ═════════════════════════════════ */
