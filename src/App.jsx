@@ -2099,7 +2099,7 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
                 {activeTabInGroup ? activeTabInGroup.icon : g.icon}
               </span>
               <span className="hj-nav-label">
-                {activeTabInGroup ? activeTabInGroup.label : g.label}
+                {g.label}
               </span>
               {!activeTabInGroup && <span className="hj-nav-sub">
                 {g.tabs.map(t => t.icon).join(" ")}
