@@ -147,7 +147,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 onBlur={e => setChar(c => ({ ...c, hp: { ...c.hp, current: clamp(parseInt(e.target.value) || 0, 0, c.hp.max) } }))}/>
               <span style={{ color: "inherit", opacity: 0.3, fontSize: "0.75rem" }}>/</span>
               <input type="number" value={char.hp.max}
-                style={{ background: "transparent", border: "none", outline: "none", fontFamily: "Cinzel,serif", textAlign: "center", fontSize: "0.82rem", width: 36, opacity: 0.55 }}
+                style={{ background: "transparent", border: "none", outline: "none", fontFamily: "Cinzel,serif", textAlign: "center", fontSize: "0.82rem", width: 36, opacity: 0.8 }}
                 onFocus={e => e.target.select()}
                 onChange={e => setChar(c => ({ ...c, hp: { ...c.hp, max: e.target.value === "" ? 1 : Math.max(1, parseInt(e.target.value) || 1) } }))}
                 onBlur={e => setChar(c => ({ ...c, hp: { ...c.hp, max: Math.max(1, parseInt(e.target.value) || 1) } }))}/>

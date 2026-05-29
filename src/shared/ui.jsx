@@ -217,25 +217,25 @@ export function RestModal({ type, char, setChar, onClose }) {
               <strong style={{ color: "inherit" }}>{available}</strong> z <strong style={{ color: "inherit" }}>{hd.max}</strong> kości {hd.type} dostępnych.
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.8rem", flexWrap: "wrap" }}>
-              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.7 }}>Typ kości</span>
+              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.9 }}>Typ kości</span>
               <select className="g-select" style={{ width: "auto", fontSize: "0.9rem", padding: "0.3rem 0.5rem" }}
                 value={hd.type} onChange={e => setChar(c => ({ ...c, hitDice: { ...hd, type: e.target.value } }))}>
                 {["d4", "d6", "d8", "d10", "d12"].map(d => <option key={d} value={d}>{d}</option>)}
               </select>
-              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.7 }}>Maks.</span>
+              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.9 }}>Maks.</span>
               <input type="number" min={1} value={hd.max}
                 onChange={e => setChar(c => ({ ...c, hitDice: { ...hd, max: parseInt(e.target.value) || 1 } }))}
                 style={{ width: 44, fontFamily: "Cinzel,serif", fontSize: "0.9rem", background: "transparent", border: "none", borderBottom: "1px dashed currentColor", outline: "none", textAlign: "center" }}/>
             </div>
             <div className="modal-detail">
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
-                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.8 }}>Wydaj</span>
-                <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", opacity: 0.7 }}>−</button>
+                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.9 }}>Wydaj</span>
+                <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem" }}>−</button>
                 <input type="number" min={0} max={available} value={hdWydaj}
                   onChange={e => setHdWydaj(clamp(parseInt(e.target.value) || 0, 0, available))}
                   style={{ width: 36, fontFamily: "Cinzel,serif", fontSize: "1.1rem", fontWeight: 700, background: "transparent", border: "none", borderBottom: "1px solid currentColor", outline: "none", textAlign: "center" }}/>
-                <button onClick={() => setHdWydaj(s => Math.min(available, s + 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", opacity: 0.7 }}>+</button>
-                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.72rem", opacity: 0.7 }}>{hd.type}</span>
+                <button onClick={() => setHdWydaj(s => Math.min(available, s + 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem" }}>+</button>
+                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.72rem", opacity: 0.9 }}>{hd.type}</span>
               </div>
               {(() => {
                 const spend = clamp(hdWydaj, 0, available);
@@ -269,7 +269,7 @@ export function RestModal({ type, char, setChar, onClose }) {
                   <span style={{ fontSize: "1rem", flexShrink: 0 }}>{icon}</span>
                   <div>
                     <div style={{ fontFamily: "Cinzel,serif", fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>{label}</div>
-                    <div style={{ fontFamily: "Crimson Text,Georgia,serif", fontSize: "0.88rem", opacity: 0.65, fontStyle: "italic" }}>{detail}</div>
+                    <div style={{ fontFamily: "Crimson Text,Georgia,serif", fontSize: "0.88rem", opacity: 0.9, fontStyle: "italic" }}>{detail}</div>
                   </div>
                 </div>
               ))}

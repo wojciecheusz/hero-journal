@@ -310,7 +310,7 @@ function buildCSS(t) {
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
   .modal-box { background:${t.modalBg}; border:1px solid #6a2a2a; padding:1.5rem; max-width:380px; width:100%; }
   .modal-title { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
-  .modal-text { font-family:'Crimson Text',serif; font-size:1rem; color:${t.textMuted}; line-height:1.6; margin-bottom:1.2rem; }
+  .modal-text { font-family:'Crimson Text',serif; font-size:1rem; color:${t.text}; line-height:1.6; margin-bottom:1.2rem; }
   .modal-detail { font-family:'Crimson Text',serif; font-size:0.9rem; color:${t.text}; background:${t.bgInput}; border:1px solid ${t.borderInput}; padding:0.5rem 0.75rem; margin-bottom:1rem; line-height:1.6; }
   `;
 }
