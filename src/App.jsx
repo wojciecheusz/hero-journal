@@ -57,6 +57,7 @@ import FactionsPanel from "./features/factions/FactionsPanel";
 import SessionsScreen from "./features/sessions/SessionsScreen";
 import QuestScreen from "./features/quests/QuestScreen";
 import { createSampleHero } from "./constants/sampleHero";
+import { ProfileScreen as ProfileScreenFeature, PostaćWizard as WizardFeature } from "./features/profiles/ProfileScreen";
 
 import { auth, googleProvider, firebaseReady } from "./firebase/index";
 import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
@@ -76,7 +77,8 @@ function buildCSS(t) {
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: ${t.scrollTrack}; }
   ::-webkit-scrollbar-thumb { background: ${t.scrollThumb}; }
-  .hj-header { position: sticky; top: 0; z-index: 50; background: ${t.headerBg}; border-bottom: 1px solid ${t.border}; box-shadow: 0 4px 32px ${t.shadowBot}; padding: calc(env(safe-area-inset-top,0px) + 0.75rem) 1.25rem 0.75rem; }
+  .hj-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: ${t.headerBg}; border-bottom: 1px solid ${t.border}; box-shadow: 0 4px 32px ${t.shadowBot}; padding: calc(env(safe-area-inset-top,0px) + 0.75rem) 1.25rem 0.75rem; }
+  .hj-root { padding-top: calc(env(safe-area-inset-top, 0px) + 52px) !important; }
   .hj-logo { font-family: 'Cinzel Decorative', serif; font-size: 1.05rem; font-weight: 700; color: ${t.accent}; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem; }
   .hj-char-name { font-family: 'Cinzel', serif; font-size: 0.72rem; color: ${t.textMuted}; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
   .hj-bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: ${t.navBg}; border-top: 1px solid ${t.border}; box-shadow: 0 -4px 32px ${t.shadowBot}; display: flex; align-items: flex-start; padding-top: 0; padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
@@ -220,7 +222,7 @@ function buildCSS(t) {
   .skill-pips { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
   .pip { width: 8px; height: 8px; border: 1px solid ${t.borderInput}; cursor: pointer; transition: all 0.15s; }
   .pip.filled { background: ${t.accent}; border-color: ${t.accentBorder}; }
-  .hj-root { --spell-accent: ${t.spellAccent}; --spell-border: ${t.spellBorder}; --spell-muted: ${t.spellMuted}; --spell-dim: ${t.spellDim}; --spell-text: ${t.spellText}; --spell-bg: ${t.spellBg}; --quest-reward: ${t.questReward}; }
+  .hj-root { --spell-accent: ${t.spellAccent}; --spell-border: ${t.spellBorder}; --spell-muted: ${t.spellMuted}; --spell-dim: ${t.spellDim}; --spell-text: ${t.spellText}; --spell-bg: ${t.spellBg}; --quest-reward: ${t.questReward}; --pip-prof: ${t.accent}; --pip-exp: ${t.spellAccent}; --pip-empty: ${t.borderInput}; }
   .spell-level-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid var(--spell-border); color: var(--spell-accent); background: var(--spell-bg); flex-shrink: 0; text-transform: uppercase; }
   .spell-school-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #2a2a5a; color: #8888cc; background: rgba(100,100,200,0.06); flex-shrink: 0; text-transform: uppercase; }
   .entity-header { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.5rem; }
@@ -1960,7 +1962,7 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
   if (screen === "profiles") {
     return <>
       <style>{buildCSS(t)}</style>
-      <ProfileScreen
+      <ProfileScreenFeature
         profiles={profiles} activeId={activeId} theme={theme}
         onSelect={switchProfile}
         onCreate={() => setScreen("wizard")}
@@ -1974,7 +1976,7 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
   if (screen === "wizard") {
     return <>
       <style>{buildCSS(t)}</style>
-      <PostaćWizard
+      <WizardFeature
         theme={theme}
         onFinish={handleWizardFinish}
         onAnuluj={profiles.length > 0 ? () => setScreen("profiles") : undefined}

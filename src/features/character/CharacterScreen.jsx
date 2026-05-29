@@ -56,6 +56,14 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       <div className="card">
         <div className="sect-label">Bohater</div>
 
+        {/* ── Imię postaci ── */}
+        <input
+          className="iedit"
+          style={{ fontFamily: "Cinzel,serif", fontSize: "1.35rem", fontWeight: 700, letterSpacing: "0.04em", width: "100%", marginBottom: "0.7rem" }}
+          value={char.name || ""}
+          onChange={e => upd("name", e.target.value)}
+          placeholder="Imię bohatera…"/>
+
         {/* ── Klasy ── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem", marginBottom: "0.8rem" }}>
           {(char.classes || []).map((cls, i) => (
@@ -268,15 +276,15 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             const exp = !!(char.skillExp || {})[sk.key];
             const base = Math.floor((char.stats[sk.attr] - 10) / 2);
             const bonus = exp ? base + pb * 2 : prz ? base + pb : base;
-            const pipColor  = exp ? "#64c8e0" : prz ? "#c9a84c" : "transparent";
-            const pipBorder = exp ? "2px solid #64c8e0" : prz ? "1.5px solid #c9a84c" : "1.5px solid #5a4a28";
+            const pipColor  = exp ? "var(--pip-exp)" : prz ? "var(--pip-prof)" : "transparent";
+            const pipBorder = exp ? "2px solid var(--pip-exp)" : prz ? "1.5px solid var(--pip-prof)" : "1.5px solid var(--pip-empty)";
             const pipClip   = exp ? "polygon(50% 0%,100% 50%,50% 100%,0% 50%)" : "none";
-            const statColor = exp ? "#64c8e0" : prz ? "#c9a84c" : "inherit";
+            const statColor = exp ? "var(--pip-exp)" : prz ? "var(--pip-prof)" : "inherit";
             return (
               <div key={sk.key} title={sk.label} className={`stat-box${exp ? " stat-box-exp" : prz ? " stat-box-prz" : ""}`}
                 onClick={() => cycleSkill(sk.key)}
                 style={{ position: "relative", cursor: "pointer", padding: "0.35rem 0.25rem 0.3rem", textAlign: "center", minHeight: 0, userSelect: "none", minWidth: 0 }}>
-                <div style={{ position: "absolute", top: "0.22rem", right: "0.22rem", width: 10, height: 10, borderRadius: "50%", border: pipBorder, background: pipColor, clipPath: pipClip, boxShadow: exp ? "0 0 4px rgba(100,200,224,0.5)" : prz ? "0 0 4px rgba(201,168,76,0.5)" : "none", transition: "all 0.15s", pointerEvents: "none" }}/>
+                <div style={{ position: "absolute", top: "0.22rem", right: "0.22rem", width: 10, height: 10, borderRadius: "50%", border: pipBorder, background: pipColor, clipPath: pipClip, boxShadow: exp ? "0 0 4px var(--pip-exp)" : prz ? "0 0 4px var(--pip-prof)" : "none", transition: "all 0.15s", pointerEvents: "none" }}/>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", letterSpacing: "0.08em", textTransform: "uppercase", opacity: 0.55, display: "block", marginBottom: "0.15rem", lineHeight: 1.2, paddingRight: "0.7rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sk.label}</span>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.9rem", fontWeight: 700, color: statColor, display: "block", lineHeight: 1 }}>{numMod(bonus)}</span>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.38rem", opacity: 0.35, display: "block", marginTop: "0.1rem" }}>{sk.attr}</span>
