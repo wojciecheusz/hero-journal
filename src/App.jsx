@@ -57,6 +57,13 @@ import FactionsPanel from "./features/factions/FactionsPanel";
 import SessionsScreen from "./features/sessions/SessionsScreen";
 import QuestScreen from "./features/quests/QuestScreen";
 
+import { auth, googleProvider, firebaseReady } from "./firebase/index";
+import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import { syncFromCloud, cloudSave } from "./firebase/firestore";
+
+/* ── haczyk modułowy łączący save() z chmurą ─────── */
+let _cloudSaveHook = null;
+
 /* ═══ DYNAMICZNY CSS MOTYWU ═══════════════════════ */
 function buildCSS(t) {
   return `
@@ -379,7 +386,10 @@ const DEFAULT_CHAR = {
 };
 
 const load = (key, fb) => { try { return JSON.parse(localStorage.getItem(key)) ?? fb; } catch { return fb; } };
-const save = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} };
+const save = (key, val) => {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  _cloudSaveHook?.(key, val);
+};
 
 const CHAR_SLOTS = ["char", "inventory", "npcs", "locations", "skills", "spells", "sessions", "quests", "factions"];
 
@@ -1790,7 +1800,7 @@ const NAV_GROUPS = [
 ];
 
 /* ═══ KORZEŃ APLIKACJI (MAIN NODE) ═══════════════ */
-export default function HeroJournal() {
+function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
   const [theme, setTheme] = useState(() => { const s = load("hj_theme", "mrok"); return PALETTES.includes(s) ? s : "mrok"; });
   const [profiles, setProfilesState] = useState(() => { migrateLegacy(); return loadProfiles(); });
   const [activeId, setActiveIdState] = useState(() => { migrateLegacy(); return loadActiveId(); });
@@ -1828,6 +1838,22 @@ export default function HeroJournal() {
   useEffect(() => { if (activeId) saveChar("sessions",  activeId, sessions);  }, [sessions, activeId]);
   useEffect(() => { if (activeId) saveChar("quests",    activeId, quests);    }, [quests, activeId]);
   useEffect(() => { if (activeId) saveChar("factions",  activeId, factions);  }, [factions, activeId]);
+
+  /* ── Cloud save: debounced 1.5 s per klucz ─────── */
+  const _cloudQueue = useRef(new Map());
+  useEffect(() => {
+    if (!user?.uid) { _cloudSaveHook = null; return; }
+    const uid = user.uid;
+    const queue = _cloudQueue.current;
+    _cloudSaveHook = (key, val) => {
+      clearTimeout(queue.get(key));
+      queue.set(key, setTimeout(() => {
+        cloudSave(uid, key, val).catch(e => console.warn('[HeroJournal] cloudSave error:', e.message));
+        queue.delete(key);
+      }, 1500));
+    };
+    return () => { _cloudSaveHook = null; queue.forEach(clearTimeout); queue.clear(); };
+  }, [user?.uid]);
 
   useEffect(() => {
     if (!activeId) return;
@@ -1949,6 +1975,18 @@ export default function HeroJournal() {
               </>}
             </div>
             <button className="btn-danger" style={{fontSize: "0.55rem", padding: "0.2rem 0.55rem", letterSpacing: "0.1em"}} onClick={() => setShowReset(true)} title="Zresetuj aktualną postać">↺ Reset</button>
+            {user && onCloudRefresh && (
+              <button onClick={onCloudRefresh} title="Pobierz najnowsze dane z chmury"
+                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textDim, fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.08em", padding:"0.22rem 0.45rem", cursor:"pointer", transition:"all 0.2s", whiteSpace:"nowrap"}}>
+                ☁
+              </button>
+            )}
+            {user && onLogout && (
+              <button onClick={onLogout} title={`Zalogowany jako ${user.displayName || user.email}`}
+                style={{background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.06em", padding:"0.22rem 0.45rem", cursor:"pointer", transition:"all 0.2s", whiteSpace:"nowrap", maxWidth:90, overflow:"hidden", textOverflow:"ellipsis"}}>
+                {(user.displayName || user.email || "").split(/[\s@]/)[0]}
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -2011,5 +2049,118 @@ export default function HeroJournal() {
       </nav>
     </div>
   </>;
+}
+
+/* ═══ EKRAN LOGOWANIA ════════════════════════════════ */
+function LoginScreen({ onLogin, loading }) {
+  const savedTheme = (() => { try { return JSON.parse(localStorage.getItem("hj_theme")) || "mrok"; } catch { return "mrok"; } })();
+  const t = THEMES[savedTheme] || THEMES.mrok;
+  return (
+    <>
+      <style>{buildCSS(t)}</style>
+      <div className="profile-screen">
+        <div className="profile-logo">⚔ Hero Journal</div>
+        <div className="profile-tagline">
+          Zaloguj się, aby synchronizować kampanię<br/>między komputerem a telefonem.
+        </div>
+        <button onClick={onLogin} disabled={loading}
+          style={{display:"flex", alignItems:"center", gap:"0.75rem", background:t.bgCard, border:`1px solid ${t.accentBorder}`, color:t.text, fontFamily:"Cinzel,serif", fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase", padding:"0.9rem 1.6rem", cursor:loading?"wait":"pointer", transition:"all 0.2s", opacity:loading?0.7:1, marginTop:"0.5rem"}}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          {loading ? "Logowanie…" : "Zaloguj przez Google"}
+        </button>
+        <div style={{marginTop:"1.5rem", fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.9rem", color:t.textDim, textAlign:"center", maxWidth:"300px", lineHeight:1.7, fontStyle:"italic"}}>
+          Twoje dane kampanii są prywatne — dostępne wyłącznie na Twoim koncie Google.
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ═══ EKRAN ŁADOWANIA ════════════════════════════════ */
+function LoadingScreen() {
+  const savedTheme = (() => { try { return JSON.parse(localStorage.getItem("hj_theme")) || "mrok"; } catch { return "mrok"; } })();
+  const t = THEMES[savedTheme] || THEMES.mrok;
+  return (
+    <>
+      <style>{buildCSS(t)}</style>
+      <div style={{position:"fixed", inset:0, background:t.bg, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"1rem"}}>
+        <div style={{fontFamily:"Cinzel Decorative,serif", fontSize:"1.5rem", color:t.accent, letterSpacing:"0.1em"}}>⚔ Hero Journal</div>
+        <div style={{fontFamily:"Cinzel,serif", fontSize:"0.58rem", color:t.textDim, letterSpacing:"0.18em", textTransform:"uppercase"}}>Synchronizacja…</div>
+      </div>
+    </>
+  );
+}
+
+/* ═══ GŁÓWNY EKSPORT — obsługuje auth i sync ═════════ */
+export default function App() {
+  const [authReady, setAuthReady]     = useState(false);
+  const [user, setUser]               = useState(null);
+  const [loginLoading, setLogin]      = useState(false);
+  const [appKey, setAppKey]           = useState(0); // remount HeroJournal po sync
+  const [syncing, setSyncing]         = useState(false);
+
+  useEffect(() => {
+    if (!firebaseReady) {
+      // Firebase nie skonfigurowany — działaj tylko offline
+      setAuthReady(true);
+      return;
+    }
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        setSyncing(true);
+        await syncFromCloud(firebaseUser.uid);
+        setSyncing(false);
+        setUser(firebaseUser);
+        setAppKey(k => k + 1); // wymuszenie remount z nowymi danymi z localStorage
+      } else {
+        setUser(null);
+      }
+      setAuthReady(true);
+    });
+    return unsub;
+  }, []);
+
+  const handleLogin = async () => {
+    setLogin(true);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (e) {
+      console.error("Login error:", e);
+      setLogin(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+    setAppKey(k => k + 1);
+  };
+
+  const handleCloudRefresh = async () => {
+    if (!user?.uid) return;
+    setSyncing(true);
+    await syncFromCloud(user.uid);
+    setSyncing(false);
+    setAppKey(k => k + 1); // remount z odświeżonymi danymi
+  };
+
+  if (!authReady || syncing) return <LoadingScreen/>;
+
+  // Firebase nie skonfigurowany LUB zalogowany — pokaż aplikację
+  if (!firebaseReady || user) {
+    return <HeroJournal
+      key={appKey}
+      user={user}
+      onLogout={user ? handleLogout : null}
+      onCloudRefresh={user ? handleCloudRefresh : null}
+    />;
+  }
+
+  return <LoginScreen onLogin={handleLogin} loading={loginLoading}/>;
 }
 
