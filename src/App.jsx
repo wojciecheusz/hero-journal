@@ -386,6 +386,7 @@ const DEFAULT_CHAR = {
   spellSlots: {}, spellcastingAbility: "INT",
   hitDice: { type: "d8", max: 1, used: 0 },
   xp: 0,
+  speed: 30,
   coins: { gold: 0, silver: 0, copper: 0 },
   appearance: { age: "", height: "", weight: "", eyes: "", skin: "", hair: "" },
   conditions: {},
@@ -1874,7 +1875,11 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
     });
   }, [char.name, char.classes, activeId]);
 
-  const handleNavigate = useCallback(tt => setTab(tt), []);
+  const [openEntity, setOpenEntity] = useState(null);
+  const handleNavigate = useCallback((tt, name = null) => {
+    setTab(tt);
+    setOpenEntity(name ? { tab: tt, name } : null);
+  }, []);
   const t = THEMES[theme] || THEMES.mrok;
 
   const switchProfile = useCallback(id => {
@@ -2047,14 +2052,14 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
 
       <main className="hj-content">
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} skills={skills} spells={spells}/>}
-        {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory}/>}
-        {tab === "skills"    && <SkillsScreen skills={skills} setUmiejętności={setUmiejętności}/>}
+        {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
+        {tab === "skills"    && <SkillsScreen skills={skills} setUmiejętności={setUmiejętności} openEntity={openEntity}/>}
         {tab === "spells"    && <SpellsScreen spells={spells} setCzary={setCzary} char={char} setChar={setChar}/>}
-        {tab === "npcs"      && <NPCsScreen npcs={npcs} setNPCs={setNPCs}/>}
-        {tab === "locations" && <LocationsScreen locations={locations} setLocations={setLocations}/>}
-        {tab === "factions"  && <FactionsPanel factions={factions} setFactions={setFactions}/>}
+        {tab === "npcs"      && <NPCsScreen npcs={npcs} setNPCs={setNPCs} openEntity={openEntity}/>}
+        {tab === "locations" && <LocationsScreen locations={locations} setLocations={setLocations} openEntity={openEntity}/>}
+        {tab === "factions"  && <FactionsPanel factions={factions} setFactions={setFactions} openEntity={openEntity}/>}
         {tab === "sessions"  && <SessionsScreen sessions={sessions} setSesjas={setSesjas} npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
-        {tab === "quests"    && <QuestScreen quests={quests} setZadania={setZadania}/>}
+        {tab === "quests"    && <QuestScreen quests={quests} setZadania={setZadania} openEntity={openEntity}/>}
       </main>
 
       {openGroup && <div className="nav-drawer-overlay" onClick={() => setOpenGroup(null)}/>}

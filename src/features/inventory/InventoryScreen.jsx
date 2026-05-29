@@ -1,12 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ITEM_TYPES, ITEM_ICONS } from '../../constants/gameConstants';
 import { Toggle } from '../../shared/ui';
 
-export default function InventoryScreen({ inventory, setInventory }) {
+export default function InventoryScreen({ inventory, setInventory, openEntity }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", type: "Ogólny", qty: "1", damage: "", damageType: "", modifier: "", charges: "", effect: "", note: "" });
   const [expanded, setExpanded] = useState({});
   const [filterType, setFilterType] = useState(null);
+
+  useEffect(() => {
+    if (!openEntity?.name) return;
+    const found = inventory.find(i => i.name?.toLowerCase() === openEntity.name.toLowerCase());
+    if (found) {
+      setExpanded(e => ({ ...e, [found.id]: true }));
+      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    }
+  }, [openEntity]);
 
   const addItem = () => {
     const n = form.name.trim(); if (!n) return;
@@ -82,7 +91,7 @@ export default function InventoryScreen({ inventory, setInventory }) {
       {visible.map(item => {
         const open = !!expanded[item.id];
         return (
-          <div key={item.id} className={`pack-item${item.equipped ? " equipped-active" : ""}`}>
+          <div key={item.id} id={`entity-${item.id}`} className={`pack-item${item.equipped ? " equipped-active" : ""}`}>
             <div className="pack-item-header">
               <span style={{ fontSize: "1.1rem", flexShrink: 0 }}>{ITEM_ICONS[item.type] || "◈"}</span>
               <input className="iedit flex1" style={{ fontFamily: "Cinzel,serif", fontSize: "0.9rem", fontWeight: 700 }}

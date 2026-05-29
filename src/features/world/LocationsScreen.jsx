@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LOC_TYPES } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 
-export default function LocationsScreen({ locations, setLocations }) {
+export default function LocationsScreen({ locations, setLocations, openEntity }) {
   const [form, setForm] = useState({ name: "", type: "Osada", notes: "" });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
+
+  useEffect(() => {
+    if (!openEntity?.name) return;
+    const found = locations.find(l => l.name?.toLowerCase() === openEntity.name.toLowerCase());
+    if (found) {
+      setExpanded(e => ({ ...e, [found.id]: true }));
+      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    }
+  }, [openEntity]);
   const [activeTag, setAktywnyTag] = useState(null);
 
   const allTags = [...new Set(locations.flatMap(l => l.tags || []))].sort();
@@ -51,7 +60,7 @@ export default function LocationsScreen({ locations, setLocations }) {
       {visible.map(loc => {
         const open = !!expanded[loc.id];
         return (
-          <div key={loc.id} className={`card${loc.pinned ? " pinned" : ""}`} style={{ padding: "1rem 1.1rem" }}>
+          <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned ? " pinned" : ""}`} style={{ padding: "1rem 1.1rem" }}>
             <div className="entity-header">
               <div className="flex1">
                 <div className="row" style={{ gap: "0.5rem", marginBottom: "0.25rem" }}>

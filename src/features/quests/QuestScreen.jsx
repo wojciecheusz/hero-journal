@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { STATUS_CYCLE } from '../../constants/gameConstants';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-export default function QuestScreen({ quests, setZadania }) {
+export default function QuestScreen({ quests, setZadania, openEntity }) {
   const [name, setImie] = useState("");
   const [desc, setDesc] = useState("");
+
+  useEffect(() => {
+    if (!openEntity?.name) return;
+    const found = quests.find(q => q.name?.toLowerCase() === openEntity.name.toLowerCase());
+    if (found) {
+      setExpanded(e => ({ ...e, [found.id]: true }));
+      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    }
+  }, [openEntity]);
   const [reward, setNagroda] = useState("");
   const [expanded, setExpanded] = useState({});
 
@@ -48,7 +57,7 @@ export default function QuestScreen({ quests, setZadania }) {
               const doneCount = kroks.filter(s => s.done).length;
               const statusClass = status === "Aktywne" ? "active" : status === "Ukończone" ? "completed" : "failed";
               return (
-                <div key={quest.id} className={`quest-entry ${statusClass}`}>
+                <div key={quest.id} id={`entity-${quest.id}`} className={`quest-entry ${statusClass}`}>
                   <div className="row" style={{ alignItems: "flex-start" }}>
                     <div className="flex1">
                       <div className="row" style={{ marginBottom: "0.3rem", flexWrap: "wrap", gap: "0.4rem" }}>

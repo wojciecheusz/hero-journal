@@ -93,7 +93,7 @@ export function EntityLink({ match, part, onNavigate }) {
   return (
     <span
       className={`entity-link entity-link-${match.type}`}
-      onClick={() => onNavigate(match.tab)}
+      onClick={() => onNavigate(match.tab, match.name)}
       title={match.name}>
       {part}
     </span>

@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 
-export default function FactionsPanel({ factions, setFactions }) {
+export default function FactionsPanel({ factions, setFactions, openEntity }) {
   const [form, setForm] = useState({ name: "", type: "Gildia", rank: "Nieznany", leader: "", headquarters: "", goal: "", notes: "" });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
   const [activeTag, setActiveTag] = useState(null);
   const [filterType, setFilterType] = useState(null);
+
+  useEffect(() => {
+    if (!openEntity?.name) return;
+    const found = factions.find(f => f.name?.toLowerCase() === openEntity.name.toLowerCase());
+    if (found) {
+      setExpanded(e => ({ ...e, [found.id]: true }));
+      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    }
+  }, [openEntity]);
 
   const allTags = [...new Set(factions.flatMap(f => f.tags || []))].sort();
   const rankColor = r => FACTION_RANK_COLORS[r] || "#6a5a38";
@@ -76,7 +85,7 @@ export default function FactionsPanel({ factions, setFactions }) {
         const rc = rankColor(fac.rank || "Nieznany");
         const rep = fac.reputation || 0;
         return (
-          <div key={fac.id} className={`card${fac.pinned ? " pinned" : ""}`} style={{ padding: "1rem 1.1rem", borderLeftWidth: 2, borderLeftColor: rc + "55" }}>
+          <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned ? " pinned" : ""}`} style={{ padding: "1rem 1.1rem", borderLeftWidth: 2, borderLeftColor: rc + "55" }}>
             <div className="entity-header">
               <div className="flex1">
                 <div className="row" style={{ gap: "0.5rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>

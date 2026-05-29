@@ -103,6 +103,7 @@ export const DEFAULT_CHAR = {
   spellSlots: {}, spellcastingAbility: "INT",
   hitDice: { type: "d8", max: 1, used: 0 },
   xp: 0,
+  speed: 30,
   coins: { gold: 0, silver: 0, copper: 0 },
   appearance: { age: "", height: "", weight: "", eyes: "", skin: "", hair: "" },
   conditions: {},

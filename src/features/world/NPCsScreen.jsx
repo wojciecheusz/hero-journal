@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { REL_CYCLE, REL_LABELS } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 
-export default function NPCsScreen({ npcs, setNPCs }) {
+export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const [formState, setForm] = useState({ name: "", role: "", relation: "unknown", affiliation: "", metAt: "", connections: "", notes: "" });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
+
+  useEffect(() => {
+    if (!openEntity?.name) return;
+    const found = npcs.find(n => n.name?.toLowerCase() === openEntity.name.toLowerCase());
+    if (found) {
+      setExpanded(e => ({ ...e, [found.id]: true }));
+      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    }
+  }, [openEntity]);
   const [activeTag, setAktywnyTag] = useState(null);
 
   const allTags = [...new Set(npcs.flatMap(n => n.tags || []))].sort();
@@ -59,7 +68,7 @@ export default function NPCsScreen({ npcs, setNPCs }) {
         const open = !!expanded[npc.id];
         const rel = npc.relation || "unknown";
         return (
-          <div key={npc.id} className={`card${npc.pinned ? " pinned" : ""}`} style={{ padding: "1rem 1.1rem" }}>
+          <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned ? " pinned" : ""}`} style={{ padding: "1rem 1.1rem" }}>
             <div className="entity-header">
               <div className="flex1">
                 <div className="row" style={{ gap: "0.5rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>

@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SKILL_CATS } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../shared/ui';
 
 const catColor = cat => ({ "Umiejętność": "#c9943e", "Cecha rasowa": "#4a8aaa", "Atut": "#9a6030" })[cat] || "#8a7848";
 
-export default function SkillsScreen({ skills, setUmiejętności }) {
+export default function SkillsScreen({ skills, setUmiejętności, openEntity }) {
   const [form, setForm] = useState({ name: "", category: "Umiejętność", description: "", level: 0 });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
+
+  useEffect(() => {
+    if (!openEntity?.name) return;
+    const found = skills.find(s => s.name?.toLowerCase() === openEntity.name.toLowerCase());
+    if (found) {
+      setExpanded(e => ({ ...e, [found.id]: true }));
+      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    }
+  }, [openEntity]);
   const [activeTag, setAktywnyTag] = useState(null);
   const [activeCat, setAktywnyCat] = useState(null);
 
@@ -66,7 +75,7 @@ export default function SkillsScreen({ skills, setUmiejętności }) {
         const open = !!expanded[sk.id];
         const cc = catColor(sk.category);
         return (
-          <div key={sk.id} className={`card${sk.pinned ? " pinned" : ""}${sk.inUse ? " inuse-active" : ""}`} style={{ padding: "1rem 1.1rem", borderLeftColor: cc + "55", borderLeftWidth: 2 }}>
+          <div key={sk.id} id={`entity-${sk.id}`} className={`card${sk.pinned ? " pinned" : ""}${sk.inUse ? " inuse-active" : ""}`} style={{ padding: "1rem 1.1rem", borderLeftColor: cc + "55", borderLeftWidth: 2 }}>
             <div className="entity-header">
               <div className="flex1">
                 <div className="row" style={{ gap: "0.5rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>
