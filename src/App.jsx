@@ -1048,11 +1048,15 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
           <div style={{display:"flex",alignItems:"baseline",gap:"0.15rem"}}>
             <input type="number" value={char.hp.current}
               style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"1.3rem",fontWeight:700,width:40,color:hpNumColor(hpPct),transition:"color 0.5s"}}
-              onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+              onFocus={e=>e.target.select()}
+              onChange={e=>setChar(c=>({...c,hp:{...c.hp,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}
+              onBlur={e=>setChar(c=>({...c,hp:{...c.hp,current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
             <span style={{color:"inherit",opacity:0.35,fontSize:"0.8rem"}}>/</span>
             <input type="number" value={char.hp.max}
               style={{background:"transparent",border:"none",outline:"none",fontFamily:"Cinzel,serif",textAlign:"center",fontSize:"0.85rem",width:34,opacity:0.6}}
-              onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+              onFocus={e=>e.target.select()}
+              onChange={e=>setChar(c=>({...c,hp:{...c.hp,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}))}
+              onBlur={e=>setChar(c=>({...c,hp:{...c.hp,max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
           </div>
         </div>
         {/* + */}
@@ -1060,17 +1064,27 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
         {/* Tmp HP */}
         <div className="combat-box">
           <span className="combat-box-label">Tmp HP</span>
-          <input className="combat-box-input" type="number" value={char.hp.temp||0} onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
+          <input className="combat-box-input" type="number" value={char.hp.temp||0}
+            onFocus={e=>e.target.select()}
+            onChange={e=>setChar(c=>({...c,hp:{...c.hp,temp:e.target.value===""?0:parseInt(e.target.value)||0}}))}
+            onBlur={e=>setChar(c=>({...c,hp:{...c.hp,temp:parseInt(e.target.value)||0}}))}/>
         </div>
         {/* AC */}
         <div className="combat-box">
           <span className="combat-box-label">AC</span>
-          <input className="combat-box-input" type="number" value={char.ac||10} onChange={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||10}))}/>
+          <input className="combat-box-input" type="number" value={char.ac||0}
+            onFocus={e=>e.target.select()}
+            onChange={e=>setChar(c=>({...c,ac:e.target.value===""?0:parseInt(e.target.value)||0}))}
+            onBlur={e=>setChar(c=>({...c,ac:parseInt(e.target.value)||0}))}/>
         </div>
         {/* Init */}
         <div className="combat-box" title="DEX mod — edit to override">
           <span className="combat-box-label">Init</span>
-          <input className="combat-box-input" type="number" value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)} onChange={e=>setChar(c=>({...c,initiativeBonus:parseInt(e.target.value)||0}))}/>
+          <input className="combat-box-input" type="number"
+            value={char.initiativeBonus!==undefined?char.initiativeBonus:Math.floor((char.stats.DEX-10)/2)}
+            onFocus={e=>e.target.select()}
+            onChange={e=>setChar(c=>({...c,initiativeBonus:e.target.value===""?undefined:parseInt(e.target.value)}))}
+            onBlur={e=>{if(e.target.value==="")setChar(c=>{const o={...c};delete o.initiativeBonus;return o;});}}/>
         </div>
       </div>
       {/* HP bar + pct */}
