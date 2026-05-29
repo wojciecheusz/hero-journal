@@ -512,6 +512,12 @@ const STATUS_CYCLE = { Aktywny:"Ukończone", Ukończone:"Nieudane", Nieudane:"Ak
 const REL_CYCLE    = { unknown:"ally", ally:"neutral", neutral:"hostile", hostile:"unknown" };
 const REL_LABELS   = { ally:"Sprzymierzeniec", neutral:"Neutralny", hostile:"Wrogi", unknown:"Nieznany" };
 const LOC_TYPES    = ["Settlement","Dungeon","Wilderness","Building","Ruin","Landmark","Other"];
+const FACTION_TYPES = ["Gildia","Zakon","Kult","Rząd","Armia","Przestępcy","Kupcy","Religijna","Polityczna","Inna"];
+const FACTION_RANKS = ["Nieznany","Sojusznik","Neutralny","Wróg","Członek","Oficer","Przywódca"];
+const FACTION_RANK_COLORS = {
+  Nieznany:"#6a5a38", Sojusznik:"#5a8a5a", Neutralny:"#8a7840",
+  Wróg:"#8a3a3a", Członek:"#4a7aaa", Oficer:"#c9a84c", Przywódca:"#e2b94e"
+};
 const ALIGNMENTS   = ["Lawful Good","Neutralny Good","Chaotic Good","Lawful Neutralny","True Neutralny","Chaotic Neutralny","Lawful Evil","Neutralny Evil","Chaotic Evil"];
 const ITEM_TYPES   = ["General","Weapon","Armor","Spell Scroll","Wondrous Item","Consumable","Tool","Other"];
 const ITEM_ICONS   = { General:"📦", Weapon:"⚔️", Armor:"🛡️", "Spell Scroll":"📜", "Wondrous Item":"✨", Consumable:"🧪", Tool:"🔧", Other:"◈" };
@@ -572,7 +578,7 @@ const save = (key,val) => { try { localStorage.setItem(key,JSON.stringify(val));
    Global: hj_theme, hj_prziles (index z all chars)
    Per character: hj_char_{id}, hj_inventory_{id}, etc.
 ═══════════════════════════════════════════════ */
-const CHAR_SLOTS = ["char","inventory","npcs","locations","skills","spells","sessions","quests"];
+const CHAR_SLOTS = ["char","inventory","npcs","locations","skills","spells","sessions","quests","factions"];
 const ALL_GLOBAL_KEYS = ["hj_theme","hj_prziles","hj_active_przile"];
 
 const charKey  = (slot, id) => `hj_${slot}_${id}`;
@@ -949,15 +955,19 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
 
     {/* ══ CHARACTER card ══ */}
     <div className="card">
-      <div className="sect-label">"Postać"</div>
+      <div className="sect-label">Postać</div>
 
       {/* Classes */}
       <div style={{display:"flex",flexDirection:"column",gap:"0.3rem",marginBottom:"0.8rem"}}>
         {(char.classes||[]).map((cls,i)=>(
-          <div key={i} className="class-row">
-            <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"0.95rem",fontWeight:600}} value={cls.name} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return{...c,classes:cl};})} placeholder={`Klasa ${i+1}…`}/>
-            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.56rem",letterSpacing:"0.1em",flexShrink:0}}>LVL</span>
-            <input type="number" className="iedit" style={{width:38,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:"0.95rem"}} value={cls.level} min={1} max={20} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}/>
+          <div key={i} className="class-row" style={{alignItems:"baseline",gap:"0.4rem"}}>
+            <input className="iedit flex1" style={{
+              fontFamily:"Cinzel,serif",fontSize:i===0?"1.15rem":"0.95rem",
+              fontWeight:700,letterSpacing:"0.03em",
+              color:i===0?"inherit":"inherit"
+            }} value={cls.name} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],name:e.target.value};return{...c,classes:cl};})} placeholder={`Klasa ${i+1}…`}/>
+            <span style={{fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.14em",opacity:0.45,flexShrink:0,textTransform:"uppercase"}}>Lvl</span>
+            <input type="number" className="iedit" style={{width:32,textAlign:"center",fontFamily:"Cinzel,serif",fontSize:i===0?"1rem":"0.88rem",fontWeight:600,opacity:0.85}} value={cls.level} min={1} max={20} onChange={e=>setChar(c=>{const cl=[...c.classes];cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)};return{...c,classes:cl};})}/>
             {i>0&&<button className="btn-ghost" style={{padding:"0.1rem 0.35rem",fontSize:"0.65rem"}} onClick={()=>setChar(c=>({...c,classes:c.classes.filter((_,j)=>j!==i)}))}>✕</button>}
           </div>
         ))}
@@ -1015,7 +1025,7 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
       {/* Vitality — single row: [−] [cur/max] [+] [TmpHP] [AC] [Init] */}
       <div style={{marginTop:"0.8rem",display:"grid",gridTemplateColumns:"34px auto 34px 1fr 1fr 1fr",gap:"0.35rem",alignItems:"stretch"}}>
         {/* − */}
-        <button className="btn-pm minus" style={{height:"100%"}} onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+        <button className="btn-pm minus" style={{height:"100%",minHeight:52}} onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
         {/* cur / max */}
         <div className="combat-box" style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0.2rem 0.3rem",gap:0}}>
           <span className="combat-box-label">HP</span>
@@ -1030,7 +1040,7 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
           </div>
         </div>
         {/* + */}
-        <button className="btn-pm plus" style={{height:"100%"}} onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+        <button className="btn-pm plus" style={{height:"100%",minHeight:52}} onClick={()=>setChar(c=>({...c,hp:{...c.hp,current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
         {/* Tmp HP */}
         <div className="combat-box">
           <span className="combat-box-label">Tmp HP</span>
@@ -1566,6 +1576,164 @@ function Locations({locations,setLocations}) {
   </>;
 }
 
+/* ═══ FACTIONS ══════════════════════════════════ */
+function Factions({factions,setFactions}) {
+  const [form,setForm]=useState({name:"",type:"Gildia",rank:"Nieznany",leader:"",headquarters:"",goal:"",notes:""});
+  const [showForm,setShowForm]=useState(false);
+  const [expanded,setExpanded]=useState({});
+  const [activeTag,setActiveTag]=useState(null);
+  const [filterType,setFilterType]=useState(null);
+
+  const allTags=[...new Set(factions.flatMap(f=>f.tags||[]))].sort();
+  const addFaction=()=>{
+    const n=form.name.trim();if(!n)return;
+    setFactions(l=>[...l,{id:Date.now(),...form,name:n,tags:[],pinned:false,reputation:0}]);
+    setForm({name:"",type:"Gildia",rank:"Nieznany",leader:"",headquarters:"",goal:"",notes:""});
+    setShowForm(false);
+  };
+  const upd=(id,f,v)=>setFactions(l=>l.map(x=>x.id===id?{...x,[f]:v}:x));
+  const del=id=>setFactions(l=>l.filter(x=>x.id!==id));
+  const toggle=id=>setExpanded(e=>({...e,[id]:!e[id]}));
+  const cycleRank=id=>setFactions(l=>l.map(x=>{
+    if(x.id!==id)return x;
+    const idx=FACTION_RANKS.indexOf(x.rank||"Nieznany");
+    return {...x,rank:FACTION_RANKS[(idx+1)%FACTION_RANKS.length]};
+  }));
+
+  const visible=factions
+    .filter(f=>(!activeTag||(f.tags||[]).includes(activeTag))&&(!filterType||f.type===filterType))
+    .sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+
+  const rankColor=r=>FACTION_RANK_COLORS[r]||"#6a5a38";
+
+  return <>
+    <div className="row" style={{justifyContent:"space-between"}}>
+      <span style={{fontFamily:"Cinzel,serif",fontSize:"0.62rem",letterSpacing:"0.12em"}}>
+        {factions.length} {factions.length===1?"frakcja":"frakcji"}
+      </span>
+      <button className="btn-gold" onClick={()=>setShowForm(s=>!s)}>{showForm?"✕ Anuluj":"⊕ Dodaj Frakcję"}</button>
+    </div>
+
+    {/* Add form */}
+    {showForm&&<div className="add-form"><div className="col">
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.5rem"}}>
+        <input className="g-input" placeholder="Nazwa frakcji…" value={form.name}
+          onChange={e=>setForm(f=>({...f,name:e.target.value}))}
+          onKeyDown={e=>e.key==="Enter"&&addFaction()}/>
+        <input className="g-input" placeholder="Przywódca…" value={form.leader}
+          onChange={e=>setForm(f=>({...f,leader:e.target.value}))}/>
+        <input className="g-input" placeholder="Siedziba / terytorium…" value={form.headquarters}
+          onChange={e=>setForm(f=>({...f,headquarters:e.target.value}))}/>
+        <input className="g-input" placeholder="Cel / misja…" value={form.goal}
+          onChange={e=>setForm(f=>({...f,goal:e.target.value}))}/>
+      </div>
+      {/* Type picker */}
+      <div className="row" style={{gap:"0.35rem",flexWrap:"wrap"}}>
+        {FACTION_TYPES.map(t=>(
+          <button key={t} className="filter-tag"
+            style={{opacity:form.type===t?1:0.45,borderColor:form.type===t?"currentColor":""}}
+            onClick={()=>setForm(f=>({...f,type:t}))}>{t}</button>
+        ))}
+      </div>
+      {/* Rank picker */}
+      <div className="row" style={{gap:"0.35rem",flexWrap:"wrap"}}>
+        {FACTION_RANKS.map(r=>(
+          <button key={r} className="filter-tag"
+            style={{opacity:form.rank===r?1:0.4,borderColor:form.rank===r?rankColor(r)+"88":"",color:form.rank===r?rankColor(r):""}}
+            onClick={()=>setForm(f=>({...f,rank:r}))}>{r}</button>
+        ))}
+      </div>
+      <textarea className="g-textarea" rows={3} placeholder="Opis frakcji, historia, sekrety…" value={form.notes}
+        onChange={e=>setForm(f=>({...f,notes:e.target.value}))}/>
+      <div className="row" style={{justifyContent:"flex-end"}}>
+        <button className="btn-gold" onClick={addFaction}>⊕ Dodaj</button>
+      </div>
+    </div></div>}
+
+    {/* Type filter */}
+    <div className="filter-bar">
+      <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={()=>setFilterType(null)}>Wszystkie</button>
+      {FACTION_TYPES.map(t=>{
+        const c=factions.filter(f=>f.type===t).length;
+        if(!c)return null;
+        return <button key={t} className={`filter-tag${filterType===t?" active-filter":""}`}
+          onClick={()=>setFilterType(filterType===t?null:t)}>{t} ({c})</button>;
+      })}
+    </div>
+    <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
+
+    {factions.length===0&&<div className="card empty-state">Brak zapisanych frakcji.<br/><span style={{fontSize:"0.62rem"}}>Dodaj gildie, zakony, rządy…</span></div>}
+
+    {visible.map(fac=>{
+      const open=!!expanded[fac.id];
+      const rc=rankColor(fac.rank||"Nieznany");
+      const rep=fac.reputation||0;
+      return (
+        <div key={fac.id} className={`card${fac.pinned?" pinned":""}`} style={{padding:"1rem 1.1rem",borderLeftWidth:2,borderLeftColor:rc+"55"}}>
+          <div className="entity-header">
+            <div className="flex1">
+              {/* Name + rank badge */}
+              <div className="row" style={{gap:"0.5rem",marginBottom:"0.25rem",flexWrap:"wrap"}}>
+                <input className="iedit flex1" style={{fontFamily:"Cinzel,serif",fontSize:"1rem",fontWeight:700}}
+                  value={fac.name} onChange={e=>upd(fac.id,"name",e.target.value)} placeholder="Nazwa…"/>
+                <span onClick={()=>cycleRank(fac.id)} style={{
+                  fontFamily:"Cinzel,serif",fontSize:"0.5rem",letterSpacing:"0.1em",textTransform:"uppercase",
+                  padding:"0.15rem 0.55rem",border:`1px solid ${rc}55`,color:rc,background:`${rc}12`,
+                  cursor:"pointer",flexShrink:0,transition:"all 0.15s",userSelect:"none"
+                }}>{fac.rank||"Nieznany"}</span>
+              </div>
+              {/* Type + leader + HQ */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.2rem 0.6rem"}}>
+                <input className="iedit" style={{fontSize:"0.82rem",fontStyle:"italic",opacity:0.7}}
+                  value={fac.type||""} onChange={e=>upd(fac.id,"type",e.target.value)} placeholder="Typ…"/>
+                <input className="iedit" style={{fontSize:"0.82rem",opacity:0.7}}
+                  value={fac.leader||""} onChange={e=>upd(fac.id,"leader",e.target.value)} placeholder="Przywódca…"/>
+                <input className="iedit" style={{fontSize:"0.8rem",opacity:0.55}}
+                  value={fac.headquarters||""} onChange={e=>upd(fac.id,"headquarters",e.target.value)} placeholder="Siedziba…"/>
+                <input className="iedit" style={{fontSize:"0.8rem",opacity:0.55}}
+                  value={fac.goal||""} onChange={e=>upd(fac.id,"goal",e.target.value)} placeholder="Cel…"/>
+              </div>
+
+              {/* Reputation bar */}
+              <div style={{marginTop:"0.4rem",display:"flex",alignItems:"center",gap:"0.5rem"}}>
+                <span style={{fontFamily:"Cinzel,serif",fontSize:"0.44rem",letterSpacing:"0.1em",opacity:0.5,textTransform:"uppercase",flexShrink:0}}>Reputacja</span>
+                <input type="range" min={-100} max={100} value={rep}
+                  onChange={e=>upd(fac.id,"reputation",parseInt(e.target.value))}
+                  style={{flex:1,accentColor:rep>0?"#5a9a5a":rep<0?"#8a3a3a":"#6a5a38",cursor:"pointer"}}/>
+                <span style={{
+                  fontFamily:"Cinzel,serif",fontSize:"0.65rem",fontWeight:700,minWidth:36,textAlign:"right",
+                  color:rep>50?"#5a9a5a":rep>0?"#8a9a5a":rep<-50?"#8a3a3a":rep<0?"#9a6a3a":"#6a5a38"
+                }}>{rep>0?"+":""}{rep}</span>
+              </div>
+            </div>
+            <PrzypnijBtn pinned={fac.pinned} onToggle={()=>upd(fac.id,"pinned",!fac.pinned)}/>
+            <button className="entity-toggle" onClick={()=>toggle(fac.id)}>{open?"▲":"▼"}</button>
+          </div>
+
+          <TagsEditor tags={fac.tags||[]} onChange={v=>upd(fac.id,"tags",v)}/>
+
+          {open&&<div style={{marginTop:"0.8rem"}}>
+            {/* Rank selector */}
+            <div className="row" style={{gap:"0.35rem",flexWrap:"wrap",marginBottom:"0.6rem"}}>
+              {FACTION_RANKS.map(r=>(
+                <button key={r} className="filter-tag"
+                  style={{opacity:fac.rank===r?1:0.35,borderColor:fac.rank===r?rankColor(r)+"88":"",color:fac.rank===r?rankColor(r):""}}
+                  onClick={()=>upd(fac.id,"rank",r)}>{r}</button>
+              ))}
+            </div>
+            <textarea className="g-textarea" rows={4}
+              placeholder="Historia, dogmaty, znane członkowie, sekrety…"
+              value={fac.notes||""} onChange={e=>upd(fac.id,"notes",e.target.value)}/>
+            <div className="row mt05" style={{justifyContent:"flex-end"}}>
+              <button className="btn-ghost" onClick={()=>del(fac.id)}>Usuń</button>
+            </div>
+          </div>}
+        </div>
+      );
+    })}
+  </>;
+}
+
 /* ═══ SESSION LOG ═══════════════════════════════ */
 function SesjaDziennik({sessions,setSesjas,npcs,locations,quests,inventory,skills,onNavigate}) {
   const [openIds,setOpenIds]=useState({});const [editingId,setEditingId]=useState(null);
@@ -1907,15 +2075,15 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
 
 
 const TABS=[
-  {id:"character", label:"Bohater",     icon:"⚔️"},
-  {id:"inventory", label:"Plecak",     icon:"🎒"},
-  {id:"spells",    label:"Czary",   icon:"🔮"},
-  {id:"skills",    label:"Umiejętności",   icon:"✨"},
-  {id:"npcs",      label:"Postacie",   icon:"👥"},
-  {id:"locations", label:"Miejsca",   icon:"🗺️"},
-  {id:"quests",    label:"Zadania",   icon:"⚡"},
-  {id:"sessions",  label:"Dziennik",      icon:"📜"},
-  
+  {id:"character", label:"Bohater",      icon:"⚔️"},
+  {id:"inventory", label:"Plecak",       icon:"🎒"},
+  {id:"spells",    label:"Czary",        icon:"🔮"},
+  {id:"skills",    label:"Umiejętności", icon:"✨"},
+  {id:"npcs",      label:"Postacie",     icon:"👥"},
+  {id:"locations", label:"Miejsca",      icon:"🗺️"},
+  {id:"factions",  label:"Frakcje",      icon:"⚜️"},
+  {id:"quests",    label:"Zadania",      icon:"⚡"},
+  {id:"sessions",  label:"Dziennik",     icon:"📜"},
 ];
 
 /* ═══ ROOT APP ═════════════════════════════════ */
@@ -1943,6 +2111,7 @@ export default function BohaterJournal() {
   const [spells,    setCzary]    = useState(()=>activeId?loadChar("spells",activeId,[]):[]);
   const [sessions,  setSesjas]  = useState(()=>activeId?loadChar("sessions",activeId,[]):[]);
   const [quests,    setZadania]    = useState(()=>activeId?loadChar("quests",activeId,[]):[]);
+  const [factions,  setFactions]  = useState(()=>activeId?loadChar("factions",activeId,[]):[]);
   const [showReset, setShowReset] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
 
@@ -1958,6 +2127,7 @@ export default function BohaterJournal() {
   useEffect(()=>{ if(activeId) saveChar("spells",    activeId, spells);    },[spells,activeId]);
   useEffect(()=>{ if(activeId) saveChar("sessions",  activeId, sessions);  },[sessions,activeId]);
   useEffect(()=>{ if(activeId) saveChar("quests",    activeId, quests);    },[quests,activeId]);
+  useEffect(()=>{ if(activeId) saveChar("factions",  activeId, factions);  },[factions,activeId]);
 
   // ── Keep prziles index updated when char name/class changes ──
   useEffect(()=>{
@@ -2067,7 +2237,7 @@ export default function BohaterJournal() {
       <header className="hj-header">
         <div style={{maxWidth:780,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"0.75rem"}}>
           <div style={{display:"flex",alignItems:"center",gap:"0.75rem",minWidth:0,cursor:"pointer"}} onClick={()=>setScreen("prziles")} title="Zmień postać">
-            <div className="hj-logo"><span style={{fontSize:"0.9rem",opacity:0.75}}>⚔</span>HJ</div>
+            <div className="hj-logo">⚔ HJ</div>
             <span className="hj-char-name">{charImię||"Bohater"}</span>
             <span style={{fontFamily:"Cinzel,serif",fontSize:"0.48rem",color:t.textDim,letterSpacing:"0.08em",textTransform:"uppercase",flexShrink:0}}>▾ zmień</span>
           </div>
@@ -2100,6 +2270,7 @@ export default function BohaterJournal() {
         {tab==="spells"    &&<CzaryTab spells={spells} setCzary={setCzary} char={char} setChar={setChar}/>}
         {tab==="npcs"      &&<NPCTracker npcs={npcs} setNPCs={setNPCs}/>}
         {tab==="locations" &&<Locations locations={locations} setLocations={setLocations}/>}
+        {tab==="factions"  &&<Factions factions={factions} setFactions={setFactions}/>}
         {tab==="sessions"  &&<SesjaDziennik sessions={sessions} setSesjas={setSesjas} npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab==="quests"    &&<QuestTracker quests={quests} setZadania={setZadania}/>}
       </main>
