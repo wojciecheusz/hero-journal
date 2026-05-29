@@ -382,6 +382,7 @@ const DEFAULT_CHAR = {
   personalNotes: "", backstory: "",
   spellSlots: {}, spellcastingAbility: "INT",
   hitDice: { type: "d8", max: 1, used: 0 },
+  xp: 0,
   deathSaves: { successes: 0, failures: 0 },
 };
 
@@ -1962,7 +1963,7 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
               <button
                 onClick={() => setShowPalette(s => !s)}
                 style={{background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.08em", padding: "0.22rem 0.5rem", cursor: "pointer", textTransform: "uppercase", transition: "all 0.2s", whiteSpace: "nowrap"}}
-              >{PALETTE_LABELS[theme] || "🎨"}</button>
+              >{(PALETTE_LABELS[theme] || "🎨").split(" ").slice(0,2).join(" ")}</button>
               {showPalette && <>
                 <div style={{position: "fixed", inset: 0, zIndex: 199}} onClick={() => setShowPalette(false)}/>
                 <div style={{position: "absolute", top: "calc(100% + 6px)", right: 0, background: t.modalBg, border: `1px solid ${t.border}`, boxShadow: `0 8px 24px ${t.shadowBot}`, zIndex: 200, minWidth: 148}}>

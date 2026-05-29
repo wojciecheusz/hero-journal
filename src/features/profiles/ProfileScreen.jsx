@@ -72,7 +72,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
       skills: {}, skillExp: {}, alignment: align, background: bg.trim(),
       traits: { personality: "", ideals: "", bonds: "", flaws: "" },
       personalNotes: "", backstory: "", spellSlots: {}, spellcastingAbility: "INT",
-      hitDice: { type: "d8", max: 1, used: 0 }, deathSaves: { successes: 0, failures: 0 },
+      hitDice: { type: "d8", max: 1, used: 0 }, xp: 0, deathSaves: { successes: 0, failures: 0 },
     };
     onFinish(id, DEFAULT_CHAR, { name: name.trim(), class: cls?.name || "", level, created: Date.now() });
   };

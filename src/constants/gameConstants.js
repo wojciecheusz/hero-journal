@@ -61,6 +61,7 @@ export const DEFAULT_CHAR = {
   personalNotes: "", backstory: "",
   spellSlots: {}, spellcastingAbility: "INT",
   hitDice: { type: "d8", max: 1, used: 0 },
+  xp: 0,
   deathSaves: { successes: 0, failures: 0 },
 };
 

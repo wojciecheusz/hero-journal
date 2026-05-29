@@ -46,14 +46,15 @@ export default function QuestScreen({ quests, setZadania }) {
               const open = !!expanded[quest.id];
               const kroks = quest.kroks || [];
               const doneCount = kroks.filter(s => s.done).length;
+              const statusClass = status === "Aktywne" ? "active" : status === "Ukończone" ? "completed" : "failed";
               return (
-                <div key={quest.id} className={`quest-entry ${status.toLowerCase()}`}>
+                <div key={quest.id} className={`quest-entry ${statusClass}`}>
                   <div className="row" style={{ alignItems: "flex-start" }}>
                     <div className="flex1">
                       <div className="row" style={{ marginBottom: "0.3rem", flexWrap: "wrap", gap: "0.4rem" }}>
                         <input className="iedit flex1" style={{ fontFamily: "Cinzel,serif", fontSize: "0.95rem", fontWeight: 700 }}
                           value={quest.name} onChange={e => upd(quest.id, "name", e.target.value)} placeholder="Nazwa zlecenia…"/>
-                        <span className={`badge ${status.toLowerCase()}`} onClick={() => cycle(quest.id)}>{status}</span>
+                        <span className={`badge ${statusClass}`} onClick={() => cycle(quest.id)}>{status}</span>
                       </div>
                       <input className="iedit" style={{ fontSize: "0.92rem", fontStyle: "italic" }}
                         value={quest.description || ""} onChange={e => upd(quest.id, "description", e.target.value)} placeholder="Opis…"/>
