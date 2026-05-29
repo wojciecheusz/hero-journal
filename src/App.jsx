@@ -463,7 +463,7 @@ const GENERIC_SKILLS = [
   {key:"performance",   label:"Występy",          attr:"CHA"},
   {key:"persuasion",    label:"Perswazja",        attr:"CHA"},
   {key:"religion",      label:"Religia",          attr:"INT"},
-  {key:"sleightzhand",  label:"Zręczne dłonie",    attr:"DEX"},
+  {key:"sleightzhand",  label:"Zwinne dłonie",    attr:"DEX"},
   {key:"stealth",       label:"Skradanie",        attr:"DEX"},
   {key:"survival",      label:"Sztuka przetrwania", attr:"WIS"},
   {key:"animalhandling",label:"Opieka nad zwierzętami", attr:"WIS"},
@@ -693,11 +693,11 @@ function RestModal({ type, char, setChar, onClose }) {
           <div className="modal-detail">
             <div style={{display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem"}}>
               <span style={{fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.8}}>Wydaj</span>
-              <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} style={{width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: pointer, fontFamily: "monospace", fontSize: "1rem", opacity: 0.7}}>−</button>
+              <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} style={{width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", opacity: 0.7}}>−</button>
               <input type="number" min={0} max={available} value={hdWydaj}
                 onChange={e => setHdWydaj(clamp(parseInt(e.target.value) || 0, 0, available))}
                 style={{width: 36, fontFamily: "Cinzel,serif", fontSize: "1.1rem", fontWeight: 700, background: "transparent", border: "none", borderBottom: "1px solid currentColor", outline: "none", textAlign: "center"}}/>
-              <button onClick={() => setHdWydaj(s => Math.min(available, s + 1))} style={{width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: pointer, fontFamily: "monospace", fontSize: "1rem", opacity: 0.7}}>+</button>
+              <button onClick={() => setHdWydaj(s => Math.min(available, s + 1))} style={{width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", opacity: 0.7}}>+</button>
               <span style={{fontFamily: "Cinzel,serif", fontSize: "0.72rem", opacity: 0.7}}>{hd.type}</span>
             </div>
             {(() => {
@@ -1619,13 +1619,13 @@ function QuestTracker({quests, setZadania}) {
                 {kroks.length > 0 && <div style={{fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.08em", marginTop: "0.2rem", opacity: 0.6}}>Postęp krokowy: {doneCount}/{kroks.length} wykonanych celów</div>}
               </div>
               <button className="entity-toggle" onClick={() => toggle(quest.id)} style={{marginTop: "0.1rem"}}>{open ? "▲" : "▼"}</button>
-              <button onClick={() => del(quest.id)} style={{background: "transparent", border: "none", cursor: pointer, fontSize: "0.85rem", padding: "0.1rem 0.2rem", transition: "color 0.15s", flexShrink: 0, opacity: 0.4}} onMouseEnter={e => e.currentTarget.style.opacity = "1"} onMouseLeave={e => e.currentTarget.style.opacity = "0.4"}>✕</button>
+              <button onClick={() => del(quest.id)} style={{background: "transparent", border: "none", cursor: "pointer", fontSize: "0.85rem", padding: "0.1rem 0.2rem", transition: "color 0.15s", flexShrink: 0, opacity: 0.4}} onMouseEnter={e => e.currentTarget.style.opacity = "1"} onMouseLeave={e => e.currentTarget.style.opacity = "0.4"}>✕</button>
             </div>
             {open && <div style={{marginTop: "0.7rem"}}>
               {kroks.map(krok => <div key={krok.id} className="checklist-item">
                 <div className={`check-box${krok.done ? " checked" : ""}`} onClick={() => updStep(quest.id, krok.id, "done", !krok.done)}/>
                 <input className={`iedit flex1 checklist-text${krok.done ? " done" : ""}`} style={{fontSize: "0.92rem"}} value={krok.text} onChange={e => updStep(quest.id, krok.id, "text", e.target.value)} placeholder="Opis kroku szczegółowego…"/>
-                <button style={{background: "transparent", border: "none", cursor: pointer, fontSize: "0.75rem", transition: "opacity 0.15s", opacity: 0.3}} onMouseEnter={e => e.currentTarget.style.opacity = "1"} onMouseLeave={e => e.currentTarget.style.opacity = "0.3"} onClick={() => delStep(quest.id, krok.id)}>✕</button>
+                <button style={{background: "transparent", border: "none", cursor: "pointer", fontSize: "0.75rem", transition: "opacity 0.15s", opacity: 0.3}} onMouseEnter={e => e.currentTarget.style.opacity = "1"} onMouseLeave={e => e.currentTarget.style.opacity = "0.3"} onClick={() => delStep(quest.id, krok.id)}>✕</button>
               </div>)}
               <div className="row mt05" style={{justifyContent: "space-between", alignItems: "flex-end"}}>
                 <button className="btn-sm" onClick={() => addStep(quest.id)}>+ Dodaj krok</button>
@@ -1666,7 +1666,7 @@ function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, theme
       <div style={{position: "absolute", top: "1rem", right: "1rem"}}>
         <button
           onClick={() => { const idx = PALETTES.indexOf(theme); const next = PALETTES[(idx + 1) % PALETTES.length]; localStorage.setItem("hj_theme", JSON.stringify(next)); window.location.reload(); }}
-          style={{background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, fontFamily: "Cinzel,serif", fontSize: "0.55rem", letterSpacing: "0.1em", padding: "0.2rem 0.5rem", cursor: pointer, textTransform: "uppercase"}}
+          style={{background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, fontFamily: "Cinzel,serif", fontSize: "0.55rem", letterSpacing: "0.1em", padding: "0.2rem 0.5rem", cursor: "pointer", textTransform: "uppercase"}}
         >Zmień motyw</button>
       </div>
 
@@ -1791,13 +1791,13 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
           <div style={{display: "flex", gap: "0.4rem", marginBottom: "0.8rem", flexWrap: "wrap"}}>
             {Object.keys(STAT_ARRAYS).map(arr => (
               <button key={arr}
-                style={{fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "transparent", border: `1px solid ${!useWlasne && statArray === arr ? t.accent : t.borderInput}`, color: !useWlasne && statArray === arr ? t.accent : t.textMuted, padding: "0.3rem 0.7rem", cursor: pointer, transition: "all 0.15s"}}
+                style={{fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "transparent", border: `1px solid ${!useWlasne && statArray === arr ? t.accent : t.borderInput}`, color: !useWlasne && statArray === arr ? t.accent : t.textMuted, padding: "0.3rem 0.7rem", cursor: "pointer", transition: "all 0.15s"}}
                 onClick={() => { setStatArray(arr); setUseWlasne(false); }}>
                 {arr}
               </button>
             ))}
             <button
-              style={{fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "transparent", border: `1px solid ${useWlasne ? t.accent : t.borderInput}`, color: useWlasne ? t.accent : t.textMuted, padding: "0.3rem 0.7rem", cursor: pointer, transition: "all 0.15s"}}
+              style={{fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "transparent", border: `1px solid ${useWlasne ? t.accent : t.borderInput}`, color: useWlasne ? t.accent : t.textMuted, padding: "0.3rem 0.7rem", cursor: "pointer", transition: "all 0.15s"}}
               onClick={() => setUseWlasne(true)}>
               Ręczne (Własne)
             </button>
@@ -1825,7 +1825,7 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
           <div style={{display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.3rem", marginBottom: "0.6rem"}}>
             {ALIGNMENTS.map(a => (
               <button key={a}
-                style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.06em", textTransform: "uppercase", background: "transparent", border: `1px solid ${align === a ? t.accent : t.borderInput}`, color: align === a ? t.accent : t.textMuted, padding: "0.35rem 0.2rem", cursor: pointer, transition: "all 0.15s", lineHeight: 1.3, textAlign: "center"}}
+                style={{fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.06em", textTransform: "uppercase", background: "transparent", border: `1px solid ${align === a ? t.accent : t.borderInput}`, color: align === a ? t.accent : t.textMuted, padding: "0.35rem 0.2rem", cursor: "pointer", transition: "all 0.15s", lineHeight: 1.3, textAlign: "center"}}
                 onClick={() => setAlign(a)}>{a}</button>
             ))}
           </div>
@@ -1837,7 +1837,7 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
         <div style={{display: "flex", justifyContent: "space-between", marginTop: "1.5rem", gap: "0.6rem"}}>
           <button
             onClick={krok === 0 ? onAnuluj : () => setStep(s => s - 1)}
-            style={{fontFamily: "Cinzel,serif", fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, padding: "0.5rem 1rem", cursor: pointer, flex: "0 0 auto"}}>
+            style={{fontFamily: "Cinzel,serif", fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, padding: "0.5rem 1rem", cursor: "pointer", flex: "0 0 auto"}}>
             {krok === 0 ? "Anuluj" : "← Wstecz"}
           </button>
           {krok < STEPS.length - 1
@@ -1848,7 +1848,7 @@ function PostaćWizard({ onFinish, onAnuluj, theme }) {
               </button>
             : <button
                 onClick={handleFinish}
-                style={{fontFamily: "Cinzel,serif", fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "rgba(226,185,78,0.12)", border: `1px solid ${t.accent}`, color: t.accent, padding: "0.5rem 1.5rem", cursor: pointer, flex: 1, boxShadow: `0 0 16px rgba(226,185,78,0.2)`}}>
+                style={{fontFamily: "Cinzel,serif", fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", background: "rgba(226,185,78,0.12)", border: `1px solid ${t.accent}`, color: t.accent, padding: "0.5rem 1.5rem", cursor: "pointer", flex: 1, boxShadow: `0 0 16px rgba(226,185,78,0.2)`}}>
                 ⚔ Rozpocznij Przygodę
               </button>}
         </div>
@@ -2040,13 +2040,13 @@ export default function HeroJournal() {
             <div style={{position: "relative"}}>
               <button
                 onClick={() => setShowPalette(s => !s)}
-                style={{background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.08em", padding: "0.22rem 0.5rem", cursor: pointer, textTransform: "uppercase", transition: "all 0.2s", whiteSpace: "nowrap"}}
+                style={{background: "transparent", border: `1px solid ${t.borderInput}`, color: t.textMuted, fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.08em", padding: "0.22rem 0.5rem", cursor: "pointer", textTransform: "uppercase", transition: "all 0.2s", whiteSpace: "nowrap"}}
               >{PALETTE_LABELS[theme] || "🎨"}</button>
               {showPalette && <>
                 <div style={{position: "fixed", inset: 0, zIndex: 199}} onClick={() => setShowPalette(false)}/>
                 <div style={{position: "absolute", top: "calc(100% + 6px)", right: 0, background: t.modalBg, border: `1px solid ${t.border}`, boxShadow: `0 8px 24px ${t.shadowBot}`, zIndex: 200, minWidth: 148}}>
                   {PALETTES.map(p => (
-                    <button key={p} onClick={() => { setTheme(p); save("hj_theme", p); setShowPalette(false); }} style={{display: "block", width: "100%", background: theme === p ? `rgba(226,185,78,0.1)` : "transparent", border: "none", borderBottom: `1px solid ${t.borderSub}`, color: theme === p ? t.accent : t.text, fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.08em", padding: "0.45rem 0.8rem", cursor: pointer, textAlign: "left", transition: "background 0.12s"}}>
+                    <button key={p} onClick={() => { setTheme(p); save("hj_theme", p); setShowPalette(false); }} style={{display: "block", width: "100%", background: theme === p ? `rgba(226,185,78,0.1)` : "transparent", border: "none", borderBottom: `1px solid ${t.borderSub}`, color: theme === p ? t.accent : t.text, fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.08em", padding: "0.45rem 0.8rem", cursor: "pointer", textAlign: "left", transition: "background 0.12s"}}>
                       {PALETTE_LABELS[p]}
                     </button>
                   ))}
