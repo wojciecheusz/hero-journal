@@ -18,7 +18,7 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
   const del = id => { setSesjas(s => s.filter(x => x.id !== id)); if (editingId === id) setEditingId(null); };
   const toggle = id => { setOpenIds(o => ({ ...o, [id]: !o[id] })); if (!openIds[id]) setEditingId(null); };
 
-  const hasAny = npcs.length || locations.length || quests.length || inventory.length || skills.length;
+  const hasAny = npcs.length > 0 || locations.length > 0 || quests.length > 0 || inventory.length > 0 || skills.length > 0;
   const hasNotes = sessions.some(s => s.notes);
 
   return (

@@ -2004,7 +2004,7 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
         <div style={{maxWidth: 780, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem"}}>
 
           {/* Lewa strona: logo + imię + zmień */}
-          <div style={{display:"flex", alignItems:"center", gap:"0.6rem", flex:1, minWidth:0, cursor:"pointer"}}
+          <div style={{display:"flex", alignItems:"center", gap:"0.55rem", flex:1, minWidth:0, cursor:"pointer"}}
             onClick={() => setScreen("profiles")} title="Zmień bohatera">
             <div className="hj-logo">⚔ HJ</div>
             <div style={{minWidth:0, flex:1}}>
@@ -2012,7 +2012,13 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
                 {char.name?.trim() || "Bohater"}
               </span>
             </div>
-            <span style={{fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:t.textDim, letterSpacing:"0.08em", textTransform:"uppercase", flexShrink:0}}>▾ Zmień</span>
+            {/* Ikona profilu */}
+            <div style={{flexShrink:0, width:26, height:26, borderRadius:"50%", border:`1px solid ${t.borderInput}`, background:t.bgInput, display:"flex", alignItems:"center", justifyContent:"center", color:t.textMuted}}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="8" r="4" fill="currentColor"/>
+                <path d="M4 20c0-3.87 3.58-7 8-7s8 3.13 8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </div>
           </div>
 
           {/* Prawa strona: jeden przycisk ⚙ otwierający panel ustawień */}
