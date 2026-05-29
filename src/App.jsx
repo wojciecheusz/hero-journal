@@ -1,3 +1,16 @@
+
+const compactHpControlsStyle = {
+  display: "grid",
+  gridTemplateColumns: "52px minmax(110px,1fr) 52px 60px 60px 60px",
+  gap: "6px",
+  alignItems: "stretch",
+};
+
+const compactHpBoxStyle = {
+  minHeight: 84,
+  padding: "8px",
+};
+
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 /* ═══════════════════════════════════════════════
@@ -907,21 +920,21 @@ function PostaćSheet({ char, setChar, inventory, skills, spells }) {
         <button className="btn-pm plus" style={{height: "100%", minHeight: 52}} onClick={() => setChar(c => ({...c, hp: {...c.hp, current: clamp(c.hp.current + 1, 0, c.hp.max)}}))}>+</button>
         
         <div className="combat-box">
-          <span className="combat-box-label">Tymcz. PŻ</span>
+          <span className="combat-box-label">Tym. PŻ</span>
           <input className="combat-box-input" type="number" value={char.hp.temp || 0}
             onFocus={e => e.target.select()}
             onChange={e => setChar(c => ({...c, hp: {...c.hp, temp: e.target.value === "" ? 0 : parseInt(e.target.value) || 0}}))}
             onBlur={e => setChar(c => ({...c, hp: {...c.hp, temp: parseInt(e.target.value) || 0}}))}/>
         </div>
         <div className="combat-box">
-          <span className="combat-box-label">Klasa Panc. (AC)</span>
+          <span className="combat-box-label">KP</span>
           <input className="combat-box-input" type="number" value={char.ac || 0}
             onFocus={e => e.target.select()}
             onChange={e => setChar(c => ({...c, ac: e.target.value === "" ? 0 : parseInt(e.target.value) || 0}))}
             onBlur={e => setChar(c => ({...c, ac: parseInt(e.target.value) || 0}))}/>
         </div>
         <div className="combat-box" title="Modyfikator Zręczności — edytuj, aby nadpisać">
-          <span className="combat-box-label">Inicjatywa</span>
+          <span className="combat-box-label">INI</span>
           <input className="combat-box-input" type="number"
             value={char.initiativeBonus !== undefined ? char.initiativeBonus : Math.floor((char.stats.DEX - 10) / 2)}
             onFocus={e => e.target.select()}
