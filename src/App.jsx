@@ -1,4 +1,13 @@
 
+
+const characterUnifiedCardStyle = {
+  borderRadius: "12px",
+  border: `1px solid ${theme.border}`,
+  background: `linear-gradient(180deg, ${theme.panel} 0%, rgba(0,0,0,0.15) 100%)`,
+  boxShadow: "0 4px 12px rgba(0,0,0,0.18)",
+};
+
+
 const compactHpControlsStyle = {
   display: "grid",
   gridTemplateColumns: "52px minmax(110px,1fr) 52px 60px 60px 60px",
