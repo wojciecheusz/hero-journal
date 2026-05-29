@@ -96,15 +96,16 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             const stVal = over !== undefined ? over : auto;
             const stColor = exp ? "var(--spell-accent)" : prz ? "#c9a84c" : "inherit";
             return (
-              <div key={st.key} style={{ display: "flex", flexDirection: "column", gap: 0 }} onClick={() => cycleSave(st.key)}>
+              <div key={st.key} style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 <StatBox label={st.attr} value={char.stats[st.attr]} onChange={v => updSt(st.attr, v)}/>
-                <div className="stat-box" style={{ borderTop: "none", textAlign: "center", padding: "0.25rem 0.1rem 0.2rem", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
+                <div className="stat-box" onClick={() => cycleSave(st.key)}
+                  style={{ borderTop: "none", textAlign: "center", padding: "0.25rem 0.1rem 0.2rem", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
                   <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.44rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.45, lineHeight: 1 }}>ST</span>
                   <input type="number" value={stVal}
+                    title={over !== undefined ? "Wartość ręczna — kliknij dwukrotnie, aby zresetować" : "Wartość automatyczna — kliknij dwukrotnie, aby zresetować"}
                     style={{ background: "transparent", border: "none", outline: "none", fontFamily: "Cinzel,serif", fontSize: "0.85rem", fontWeight: 700, color: stColor, textAlign: "center", width: "100%", padding: "0.15rem 0", lineHeight: 1, display: "block" }}
                     onChange={e => { const n = parseInt(e.target.value); setChar(c => ({ ...c, savingThrowOverride: { ...(c.savingThrowOverride || {}), [st.key]: isNaN(n) ? undefined : n } })); }}
-                    onDoubleClick={() => setChar(c => { const o = { ...(c.savingThrowOverride || {}) }; delete o[st.key]; return { ...c, savingThrowOverride: o }; })}
-                    onClick={e => e.stopPropagation()}/>
+                    onDoubleClick={e => { e.stopPropagation(); setChar(c => { const o = { ...(c.savingThrowOverride || {}) }; delete o[st.key]; return { ...c, savingThrowOverride: o }; }); }}/>
                 </div>
               </div>
             );
