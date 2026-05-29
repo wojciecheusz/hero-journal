@@ -1,5 +1,29 @@
 export const today = () => new Date().toISOString().slice(0, 10);
 
+/* XP potrzebne do osiągnięcia kolejnego poziomu (indeks = aktualny poziom 1–20) */
+export const XP_THRESHOLDS = [
+  0,       // poziom 1 → 2
+  300,     // poziom 2 → 3
+  900,     // poziom 3 → 4
+  2700,    // poziom 4 → 5
+  6500,    // poziom 5 → 6
+  14000,   // poziom 6 → 7
+  23000,   // poziom 7 → 8
+  34000,   // poziom 8 → 9
+  48000,   // poziom 9 → 10
+  64000,   // poziom 10 → 11
+  85000,   // poziom 11 → 12
+  100000,  // poziom 12 → 13
+  120000,  // poziom 13 → 14
+  140000,  // poziom 14 → 15
+  165000,  // poziom 15 → 16
+  195000,  // poziom 16 → 17
+  225000,  // poziom 17 → 18
+  265000,  // poziom 18 → 19
+  305000,  // poziom 19 → 20
+  355000,  // poziom 20 (max)
+];
+
 export const STAT_KEYS    = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
 export const STATUS_CYCLE = { "Aktywne": "Ukończone", "Ukończone": "Nieudane", "Nieudane": "Aktywne" };
 export const REL_CYCLE    = { unknown: "ally", ally: "neutral", neutral: "hostile", hostile: "unknown" };

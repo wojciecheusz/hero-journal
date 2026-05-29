@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { clamp, numMod } from '../../utils/math';
-import { SAVING_THROWS, GENERIC_SKILLS, ALIGNMENTS, ITEM_ICONS } from '../../constants/gameConstants';
+import { SAVING_THROWS, GENERIC_SKILLS, ALIGNMENTS, ITEM_ICONS, XP_THRESHOLDS } from '../../constants/gameConstants';
 import { StatBox, SkillPips, Toggle, RestModal, SpellSlotsWidget } from '../../shared/ui';
 
 const hpBarColor = pct => pct > 70
@@ -18,6 +18,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
   const hpPct = Math.round(clamp((char.hp.current / char.hp.max) * 100, 0, 100));
   const pb    = char.profBonus || 2;
   const ds    = char.deathSaves || { successes: 0, failures: 0 };
+
+  const totalLevel = Math.min(Math.max((char.classes || []).reduce((s, c) => s + (c.level || 1), 0), 1), 20);
+  const xpMax      = totalLevel < 20 ? XP_THRESHOLDS[totalLevel] : null;
 
   const [restModal, setRestModal] = useState(null);
   const [activeTab, setActiveTab] = useState(() => {
@@ -80,19 +83,12 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           )}
         </div>
 
-        {/* ── Przeszłość | Dośw. (XP) | Charakter — 3 kolumny ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 68px 1fr", gap: "0.5rem", alignItems: "end" }}>
+        {/* ── Przeszłość | Charakter | XP — 3 kolumny ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 100px", gap: "0.5rem", alignItems: "end" }}>
           <div>
             <div style={LABEL}>Przeszłość</div>
             <input className="iedit" style={{ fontSize: "0.9rem" }} value={char.background || ""}
               onChange={e => upd("background", e.target.value)} placeholder="Przeszłość postaci…"/>
-          </div>
-          <div>
-            <div style={LABEL}>XP</div>
-            <input type="number" min={0} className="iedit"
-              style={{ textAlign: "center", fontFamily: "Cinzel,serif", fontSize: "0.9rem" }}
-              value={char.xp ?? 0}
-              onChange={e => upd("xp", Math.max(0, parseInt(e.target.value) || 0))}/>
           </div>
           <div>
             <div style={LABEL}>Charakter</div>
@@ -100,6 +96,18 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
               onChange={e => upd("alignment", e.target.value)} style={{ fontSize: "0.75rem", padding: "0.3rem 0.4rem" }}>
               {ALIGNMENTS.map(a => <option key={a} value={a}>{a}</option>)}
             </select>
+          </div>
+          <div>
+            <div style={LABEL}>XP</div>
+            <input type="number" min={0} className="iedit"
+              style={{ fontFamily: "Cinzel,serif", fontSize: "0.9rem", textAlign: "center", width: "100%" }}
+              value={char.xp ?? 0}
+              onChange={e => upd("xp", Math.max(0, parseInt(e.target.value) || 0))}/>
+            <div style={{ fontFamily: "Cinzel,serif", fontSize: "0.44rem", letterSpacing: "0.06em", marginTop: "0.2rem", opacity: 0.65, textAlign: "center", whiteSpace: "nowrap" }}>
+              {xpMax !== null
+                ? `→ lvl ${totalLevel + 1}: ${xpMax.toLocaleString("pl-PL")}`
+                : "— poziom MAX —"}
+            </div>
           </div>
         </div>
 
@@ -254,7 +262,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
 
         {/* ── Umiejętności ── */}
         <hr className="inner-divider" data-label="Umiejętności" style={{ marginTop: "1.1rem" }}/>
-        <div style={{ marginTop: "0.6rem", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.3rem" }}>
+        <div style={{ marginTop: "0.6rem", display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: "0.3rem" }}>
           {GENERIC_SKILLS.map(sk => {
             const prz = !!(char.skills || {})[sk.key];
             const exp = !!(char.skillExp || {})[sk.key];
@@ -267,7 +275,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             return (
               <div key={sk.key} title={sk.label} className={`stat-box${exp ? " stat-box-exp" : prz ? " stat-box-prz" : ""}`}
                 onClick={() => cycleSkill(sk.key)}
-                style={{ position: "relative", cursor: "pointer", padding: "0.35rem 0.25rem 0.3rem", textAlign: "center", minHeight: 0, userSelect: "none" }}>
+                style={{ position: "relative", cursor: "pointer", padding: "0.35rem 0.25rem 0.3rem", textAlign: "center", minHeight: 0, userSelect: "none", minWidth: 0 }}>
                 <div style={{ position: "absolute", top: "0.22rem", right: "0.22rem", width: 10, height: 10, borderRadius: "50%", border: pipBorder, background: pipColor, clipPath: pipClip, boxShadow: exp ? "0 0 4px rgba(100,200,224,0.5)" : prz ? "0 0 4px rgba(201,168,76,0.5)" : "none", transition: "all 0.15s", pointerEvents: "none" }}/>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", letterSpacing: "0.08em", textTransform: "uppercase", opacity: 0.55, display: "block", marginBottom: "0.15rem", lineHeight: 1.2, paddingRight: "0.7rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sk.label}</span>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.9rem", fontWeight: 700, color: statColor, display: "block", lineHeight: 1 }}>{numMod(bonus)}</span>
