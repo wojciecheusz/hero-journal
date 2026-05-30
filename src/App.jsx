@@ -56,6 +56,7 @@ import LocationsScreen from "./features/world/LocationsScreen";
 import FactionsPanel from "./features/factions/FactionsPanel";
 import SessionsScreen from "./features/sessions/SessionsScreen";
 import QuestScreen from "./features/quests/QuestScreen";
+import CompendiumScreen from "./features/compendium/CompendiumScreen";
 import { createSampleHero } from "./constants/sampleHero";
 import { ProfileScreen as ProfileScreenFeature, PostaćWizard as WizardFeature } from "./features/profiles/ProfileScreen";
 
@@ -72,6 +73,7 @@ function buildCSS(t) {
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body, #root { min-height: 100vh; background: ${t.bg}; }
+  @keyframes skel { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
   .hj-root { position: relative; min-height: 100vh; background: ${t.bg}; color: ${t.text}; font-family: 'Crimson Text', Georgia, serif; font-size: 1.05rem; line-height: 1.55; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); width: 100%; overflow-x: hidden; }
   input, select, textarea { font-size: max(1rem, 16px); }
   input[type="number"] { font-size: inherit; }
@@ -1808,6 +1810,16 @@ const NAV_GROUPS = [
       {id:"quests",    label:"Zadania",   icon:"⚡"},
     ],
   },
+  {
+    id:"compendium", label:"Kompendium", icon:"📚", defaultTab:"compendium-spells",
+    tabs:[
+      {id:"compendium-races",     label:"Rasy",       icon:"🧝"},
+      {id:"compendium-classes",   label:"Klasy",      icon:"⚔️"},
+      {id:"compendium-spells",    label:"Czary",      icon:"✨"},
+      {id:"compendium-monsters",  label:"Potwory",    icon:"🐉"},
+      {id:"compendium-equipment", label:"Przedmioty", icon:"🎒"},
+    ],
+  },
 ];
 
 /* ═══ KORZEŃ APLIKACJI (MAIN NODE) ═══════════════ */
@@ -2090,6 +2102,11 @@ function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
         {tab === "factions"  && <FactionsPanel factions={factions} setFactions={setFactions} openEntity={openEntity}/>}
         {tab === "sessions"  && <SessionsScreen sessions={sessions} setSesjas={setSesjas} npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab === "quests"    && <QuestScreen quests={quests} setZadania={setZadania} openEntity={openEntity}/>}
+        {tab === "compendium-races"     && <CompendiumScreen activeTab="races"     key="races"/>}
+        {tab === "compendium-classes"   && <CompendiumScreen activeTab="classes"   key="classes"/>}
+        {tab === "compendium-spells"    && <CompendiumScreen activeTab="spells"    key="spells"/>}
+        {tab === "compendium-monsters"  && <CompendiumScreen activeTab="monsters"  key="monsters"/>}
+        {tab === "compendium-equipment" && <CompendiumScreen activeTab="equipment" key="equipment"/>}
       </main>
 
       {openGroup && <div className="nav-drawer-overlay" onClick={() => setOpenGroup(null)}/>}

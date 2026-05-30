@@ -162,4 +162,14 @@ export const NAV_GROUPS = [
       { id: "quests",   label: "Zadania", icon: "⚡" },
     ],
   },
+  {
+    id: "compendium", label: "Kompendium", icon: "📚", defaultTab: "compendium-spells",
+    tabs: [
+      { id: "compendium-races",     label: "Rasy",       icon: "🧝" },
+      { id: "compendium-classes",   label: "Klasy",      icon: "⚔️" },
+      { id: "compendium-spells",    label: "Czary",      icon: "✨" },
+      { id: "compendium-monsters",  label: "Potwory",    icon: "🐉" },
+      { id: "compendium-equipment", label: "Przedmioty", icon: "🎒" },
+    ],
+  },
 ];
