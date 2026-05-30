@@ -96,12 +96,12 @@ function buildCSS(t) {
   .hj-nav-sub { font-family: 'Cinzel', serif; font-size: 0.38rem; letter-spacing: 0.06em; text-transform: uppercase; color: ${t.textDim}; opacity: 0.6; transition: color 0.18s; margin-top: 0.05rem; }
   .hj-nav-btn.active .hj-nav-sub, .hj-nav-btn.group-active .hj-nav-sub { color: ${t.textMuted}; opacity: 0.8; }
   .nav-drawer-overlay { position: fixed; inset: 0; z-index: 98; background: transparent; }
-  .nav-drawer { position: fixed; bottom: calc(68px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; z-index: 99; background: ${t.navBg}; border-top: 1px solid ${t.border}; border-bottom: none; box-shadow: 0 -8px 32px ${t.shadowBot}; padding: 0.6rem 0.5rem calc(0.6rem + env(safe-area-inset-bottom,0px)); display: flex; gap: 0.4rem; flex-wrap: wrap; }
-  .nav-drawer-item { flex: 1; min-width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; background: transparent; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; padding: 0.5rem 0.4rem; border-radius: 2px; }
+  .nav-drawer { position: fixed; bottom: calc(68px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; z-index: 99; background: ${t.navBg}; border-top: 1px solid ${t.border}; border-bottom: none; box-shadow: 0 -8px 32px ${t.shadowBot}; padding: 0.25rem 0.3rem calc(0.25rem + env(safe-area-inset-bottom,0px)); display: flex; gap: 0.15rem; flex-wrap: nowrap; }
+  .nav-drawer-item { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.2rem; background: transparent; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; padding: 0.35rem 0.2rem; border-radius: 2px; }
   .nav-drawer-item:hover { background: rgba(226,185,78,0.06); border-color: ${t.border}; }
   .nav-drawer-item.active { background: rgba(226,185,78,0.12); border-color: ${t.accentBorder}; }
   .nav-drawer-icon { font-size: 1.3rem; line-height: 1; }
-  .nav-drawer-label { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase; color: ${t.textMuted}; }
+  .nav-drawer-label { font-family: 'Cinzel', serif; font-size: 0.44rem; letter-spacing: 0.05em; text-transform: uppercase; color: ${t.textMuted}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .nav-drawer-item.active .nav-drawer-label { color: ${t.accent}; }
   .hj-content { max-width: 780px; margin: 0 auto; padding: 1.4rem 1rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
   .card { background: ${t.bgCard}; border: 1px solid ${t.border}; box-shadow: 0 3px 0 ${t.shadowCard}, inset 0 1px 0 rgba(226,185,78,0.05); padding: 1.25rem; position: relative; border-radius: 2px; }
