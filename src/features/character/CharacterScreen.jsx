@@ -65,7 +65,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
 
   const CoinRow = () => (
     <div style={{ borderBottom:"1px solid rgba(128,128,128,0.15)", paddingBottom:"0.75rem", marginBottom:"0.75rem" }}>
-      <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>💰 Sakiewka</div>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem" }}>
         {[["gold","🪙","Złoto","#c8a820"],["silver","⚪","Srebro","#8898a8"],["copper","🟤","Miedź","#b07040"]].map(([type,icon,label,color]) => {
           const val = (char.coins||{})[type] || 0;
