@@ -35,6 +35,8 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
 
   const visible = locations.filter(l => !activeTag || (l.tags || []).includes(activeTag)).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
+  const displayLocType = type => T.LOC_TYPES[LOC_TYPES.indexOf(type)] ?? type;
+
   return (
     <>
       <div className="row" style={{ justifyContent:"space-between" }}>
@@ -48,9 +50,9 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
             <input className="g-input" placeholder={L.namePh} value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && addLoc()}/>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
-              {LOC_TYPES.map(t => (
+              {LOC_TYPES.map((t, i) => (
                 <button key={t} className="filter-tag" style={{ opacity: form.type === t ? 1 : 0.45, borderColor: form.type === t ? "currentColor" : "" }}
-                  onClick={() => setForm(f => ({ ...f, type: t }))}>{t}</button>
+                  onClick={() => setForm(f => ({ ...f, type: t }))}>{T.LOC_TYPES[i] ?? t}</button>
               ))}
             </div>
             <textarea className="g-textarea" rows={3} placeholder={L.notesPh} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
@@ -70,7 +72,7 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
                 <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem" }}>
                   <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                     value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={L.editNamePh}/>
-                  <span className="loc-type">{loc.type}</span>
+                  <span className="loc-type">{displayLocType(loc.type)}</span>
                 </div>
               </div>
               <PrzypnijBtn pinned={loc.pinned} onToggle={() => upd(loc.id, "pinned", !loc.pinned)}/>
@@ -80,7 +82,7 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
             {open && (
               <div style={{ marginTop:"0.8rem" }}>
                 <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.7rem" }}>
-                  {LOC_TYPES.map(t => <button key={t} className="filter-tag" style={{ opacity: loc.type === t ? 1 : 0.4, borderColor: loc.type === t ? "currentColor" : "" }} onClick={() => upd(loc.id, "type", t)}>{t}</button>)}
+                  {LOC_TYPES.map((t, i) => <button key={t} className="filter-tag" style={{ opacity: loc.type === t ? 1 : 0.4, borderColor: loc.type === t ? "currentColor" : "" }} onClick={() => upd(loc.id, "type", t)}>{T.LOC_TYPES[i] ?? t}</button>)}
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={L.editNotesPh} value={loc.notes || ""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={() => del(loc.id)}>{L.delete}</button></div>

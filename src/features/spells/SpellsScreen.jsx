@@ -20,6 +20,9 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
   const inUseCount = spells.filter(s => s.inUse).length;
   const visible = activeLevel ? spells.filter(s => s.level === activeLevel) : spells;
 
+  const displayLevel  = lv => T.SPELL_LEVELS[SPELL_LEVELS.indexOf(lv)]  ?? lv;
+  const displaySchool = sc => T.SPELL_SCHOOLS[SPELL_SCHOOLS.indexOf(sc)] ?? sc;
+
   const addSpell = () => {
     const n = form.name.trim(); if (!n) return;
     setCzary(l => [...l, { id: Date.now(), ...form, name: n, tags: [], pinned: false, inUse: false }]);
@@ -67,9 +70,9 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
               </select>
             </div>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
-              {SPELL_LEVELS.map(lv => (
+              {SPELL_LEVELS.map((lv, i) => (
                 <button key={lv} className="filter-tag" style={{ opacity: form.level === lv ? 1 : 0.45, borderColor: form.level === lv ? "#1a5a9a" : "", color: form.level === lv ? "#64a0e6" : "" }}
-                  onClick={() => setForm(f => ({ ...f, level: lv }))}>{lv}</button>
+                  onClick={() => setForm(f => ({ ...f, level: lv }))}>{T.SPELL_LEVELS[i] ?? lv}</button>
               ))}
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem" }}>
@@ -86,7 +89,7 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
 
       <div className="filter-bar">
         <button className={`filter-tag${!activeLevel ? " active-filter" : ""}`} onClick={() => setAktywnyLevel(null)}>{SP.all}</button>
-        {SPELL_LEVELS.map(lv => { const count = spells.filter(s => s.level === lv).length; if (!count) return null; return <button key={lv} className={`filter-tag${activeLevel === lv ? " active-filter" : ""}`} style={{ borderColor: activeLevel === lv ? "#1a5a9a" : "", color: activeLevel === lv ? "#64a0e6" : "" }} onClick={() => setAktywnyLevel(activeLevel === lv ? null : lv)}>{lv} ({count})</button>; })}
+        {SPELL_LEVELS.map((lv, i) => { const count = spells.filter(s => s.level === lv).length; if (!count) return null; return <button key={lv} className={`filter-tag${activeLevel === lv ? " active-filter" : ""}`} style={{ borderColor: activeLevel === lv ? "#1a5a9a" : "", color: activeLevel === lv ? "#64a0e6" : "" }} onClick={() => setAktywnyLevel(activeLevel === lv ? null : lv)}>{T.SPELL_LEVELS[i] ?? lv} ({count})</button>; })}
       </div>
 
       {spells.length === 0 && <div className="card empty-state">{SP.empty}</div>}
@@ -99,8 +102,8 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
                 <div className="row" style={{ gap:"0.5rem", marginBottom:"0.3rem", flexWrap:"wrap" }}>
                   <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", color:"var(--spell-text)", fontWeight:700 }}
                     value={sp.name} onChange={e => upd(sp.id, "name", e.target.value)} placeholder={SP.editNamePh}/>
-                  <span className="spell-level-badge">{sp.level}</span>
-                  {sp.school && <span className="spell-school-badge">{sp.school}</span>}
+                  <span className="spell-level-badge">{displayLevel(sp.level)}</span>
+                  {sp.school && <span className="spell-school-badge">{displaySchool(sp.school)}</span>}
                 </div>
                 {!open && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--spell-muted)" }}>
                   {[sp.castingTime, sp.zakres && `${SP.rangeLbl}: ${sp.zakres}`, sp.duration && `${SP.durationLbl}: ${sp.duration}`].filter(Boolean).join(" · ")}
@@ -116,9 +119,9 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
               <div style={{ marginTop:"0.8rem" }}>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem", marginBottom:"0.7rem" }}>
                   <div><span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.12em", color:"var(--spell-muted)", textTransform:"uppercase", display:"block", marginBottom:"0.2rem" }}>{SP.level}</span>
-                    <select className="g-select" style={{ fontSize:"0.82rem", padding:"0.25rem 0.5rem", borderColor:"var(--spell-border)" }} value={sp.level} onChange={e => upd(sp.id, "level", e.target.value)}>{SPELL_LEVELS.map(lv => <option key={lv} value={lv}>{lv}</option>)}</select></div>
+                    <select className="g-select" style={{ fontSize:"0.82rem", padding:"0.25rem 0.5rem", borderColor:"var(--spell-border)" }} value={sp.level} onChange={e => upd(sp.id, "level", e.target.value)}>{SPELL_LEVELS.map((lv,i) => <option key={lv} value={lv}>{T.SPELL_LEVELS[i] ?? lv}</option>)}</select></div>
                   <div><span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.12em", color:"var(--spell-muted)", textTransform:"uppercase", display:"block", marginBottom:"0.2rem" }}>{SP.school}</span>
-                    <select className="g-select" style={{ fontSize:"0.82rem", padding:"0.25rem 0.5rem", borderColor:"var(--spell-border)" }} value={sp.school} onChange={e => upd(sp.id, "school", e.target.value)}>{SPELL_SCHOOLS.map(s => <option key={s} value={s}>{s}</option>)}</select></div>
+                    <select className="g-select" style={{ fontSize:"0.82rem", padding:"0.25rem 0.5rem", borderColor:"var(--spell-border)" }} value={sp.school} onChange={e => upd(sp.id, "school", e.target.value)}>{SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{T.SPELL_SCHOOLS[i] ?? s}</option>)}</select></div>
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem", marginBottom:"0.7rem" }}>
                   <div className="pack-field"><span className="pack-field-label">{SP.castingTimeLbl}</span><input className="pack-field-input" value={sp.castingTime || ""} onChange={e => upd(sp.id, "castingTime", e.target.value)}/></div>

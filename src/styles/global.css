@@ -593,6 +593,19 @@ input[type="number"] { font-size: inherit; }
 .btn-rest.short:hover { border-color: #8a7030; color: #d4a030; background: rgba(212,160,48,0.08); }
 .btn-rest.long:hover  { border-color: #2a5a8a; color: #64a0d4; background: rgba(100,160,212,0.08); }
 
+.btn-shadow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--hj-border-input);
+  color: var(--hj-text-muted);
+  padding: 0.28rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
 /* ── Tagi ─────────────────────────────────────────────────────── */
 .tags-row { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-top: 0.55rem; }
 
