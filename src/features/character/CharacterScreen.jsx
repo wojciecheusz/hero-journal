@@ -175,9 +175,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       ════════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">Cechy i Rzuty Obronne</div>
-        <p style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"var(--text-muted)", marginBottom:"0.7rem", letterSpacing:"0.08em" }}>
-          Kliknij wartość cechy aby edytować · Kliknij ST aby edytować · Dwuklik ST = reset
-        </p>
         <div className="stat-grid-6">
           {SAVING_THROWS.map(st => {
             const base = Math.floor((char.stats[st.attr]-10)/2);
@@ -206,9 +203,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       ════════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">Umiejętności</div>
-        <p style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"var(--text-muted)", marginBottom:"0.6rem", letterSpacing:"0.08em" }}>
-          Kliknij: biegłość → ekspertyza → brak
-        </p>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,minmax(0,1fr))", gap:"0.3rem" }}>
           {GENERIC_SKILLS.map(sk => {
             const prz = !!(char.skills||{})[sk.key];
