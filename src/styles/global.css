@@ -96,13 +96,6 @@ input[type="number"] { font-size: inherit; }
   width: 100%;
   overflow-x: hidden;
   padding-top: calc(env(safe-area-inset-top, 0px) + 52px) !important;
-  --spell-accent: var(--spell-accent);
-  --spell-border: var(--spell-border);
-  --spell-muted:  var(--spell-muted);
-  --spell-dim:    var(--spell-dim);
-  --spell-text:   var(--spell-text);
-  --spell-bg:     var(--spell-bg);
-  --quest-reward: var(--quest-reward);
   --pip-prof:     var(--hj-accent);
   --pip-exp:      var(--spell-accent);
   --pip-empty:    var(--hj-border-input);
