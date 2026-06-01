@@ -11,7 +11,8 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const [formState, setForm] = useState({ name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"" });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
-  const [activeTag, setAktywnyTag] = useState(null);
+  const [editing, setEditing] = useState({});
+  const [activeTag, setActiveTag] = useState(null);
 
   useEffect(() => {
     if (!openEntity?.name) return;
@@ -30,12 +31,14 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
     setForm({ name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"" });
     setShowForm(false);
   };
-  const upd = (id, f, v) => setNPCs(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));
-  const del = id => setNPCs(l => l.filter(x => x.id !== id));
-  const toggle = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const cycleRel = id => setNPCs(l => l.map(x => x.id === id ? { ...x, relation: REL_CYCLE[x.relation || "unknown"] } : x));
+  const upd       = (id, f, v) => setNPCs(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));
+  const del       = id => setNPCs(l => l.filter(x => x.id !== id));
+  const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
+  const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
+  const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
+  const cycleRel  = id => setNPCs(l => l.map(x => x.id === id ? { ...x, relation: REL_CYCLE[x.relation || "unknown"] } : x));
 
-  const visible = npcs.filter(n => !activeTag || (n.tags || []).includes(activeTag)).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+  const visible = npcs.filter(n => !activeTag || (n.tags || []).includes(activeTag)).sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
 
   return (
     <>
@@ -49,7 +52,7 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
           <div className="col">
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem" }}>
               <input className="g-input" placeholder={N.namePh} value={formState.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && addNPC()}/>
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key==="Enter" && addNPC()}/>
               <input className="g-input" placeholder={N.rolePh} value={formState.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}/>
               <input className="g-input" placeholder={N.affiliationPh} value={formState.affiliation} onChange={e => setForm(f => ({ ...f, affiliation: e.target.value }))}/>
               <input className="g-input" placeholder={N.metAtPh} value={formState.metAt} onChange={e => setForm(f => ({ ...f, metAt: e.target.value }))}/>
@@ -57,7 +60,7 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
             <input className="g-input" placeholder={N.connectionsPh} value={formState.connections} onChange={e => setForm(f => ({ ...f, connections: e.target.value }))}/>
             <div className="row" style={{ gap:"0.5rem", flexWrap:"wrap" }}>
               {["unknown","ally","neutral","hostile"].map(r => (
-                <button key={r} className={`rel-badge rel-${r}`} style={{ opacity: formState.relation === r ? 1 : 0.45 }}
+                <button key={r} className={`rel-badge rel-${r}`} style={{ opacity: formState.relation===r?1:0.45 }}
                   onClick={() => setForm(f => ({ ...f, relation: r }))}>{RL[r]}</button>
               ))}
             </div>
@@ -67,13 +70,15 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
         </div>
       )}
 
-      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setAktywnyTag}/>
+      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
       {npcs.length === 0 && <div className="card empty-state">{N.empty}</div>}
+
       {visible.map(npc => {
         const open = !!expanded[npc.id];
+        const isEditing = !!editing[npc.id];
         const rel = npc.relation || "unknown";
         return (
-          <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned ? " pinned" : ""}`} style={{ padding:"1rem 1.1rem" }}>
+          <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="entity-header">
               <div className="flex1">
                 <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
@@ -82,20 +87,31 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
                   <span className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)}>{RL[rel]}</span>
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem" }}>
-                  <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role || ""} onChange={e => upd(npc.id, "role", e.target.value)} placeholder={N.editRolePh}/>
-                  <input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation || ""} onChange={e => upd(npc.id, "affiliation", e.target.value)} placeholder={N.editAffilPh}/>
-                  <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt || ""} onChange={e => upd(npc.id, "metAt", e.target.value)} placeholder={N.editMetAtPh}/>
-                  <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections || ""} onChange={e => upd(npc.id, "connections", e.target.value)} placeholder={N.editConnPh}/>
+                  <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/>
+                  <input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/>
+                  <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/>
+                  <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/>
                 </div>
               </div>
-              <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id, "pinned", !npc.pinned)}/>
+              <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id,"pinned",!npc.pinned)}/>
+              <button className="entity-toggle" onClick={() => startEdit(npc.id)} title="Edytuj">✎</button>
               <button className="entity-toggle" onClick={() => toggle(npc.id)}>{open ? "▲" : "▼"}</button>
             </div>
-            <TagsEditor tags={npc.tags || []} onChange={v => upd(npc.id, "tags", v)}/>
-            {open && (
+
+            {/* Podgląd notatek — zawsze widoczny gdy jest treść */}
+            {npc.notes && !isEditing && (
+              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:"var(--hj-text)", lineHeight:1.65, marginTop:"0.5rem", whiteSpace:"pre-wrap", wordBreak:"break-word", opacity:0.88 }}>{npc.notes}</p>
+            )}
+
+            <TagsEditor tags={npc.tags||[]} onChange={v => upd(npc.id,"tags",v)}/>
+
+            {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>
-                <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes || ""} onChange={e => upd(npc.id, "notes", e.target.value)}/>
-                <div className="row mt05" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button></div>
+                <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
+                <div className="row mt05" style={{ justifyContent:"space-between" }}>
+                  <button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button>
+                  <button className="btn-ghost" onClick={() => stopEdit(npc.id)}>✓</button>
+                </div>
               </div>
             )}
           </div>
