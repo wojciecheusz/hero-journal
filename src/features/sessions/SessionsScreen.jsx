@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { LEGEND_ITEMS } from '../../constants/gameConstants';
 import { parseEntityLinksWithTooltips } from '../../shared/ui';
+import { useT } from '../../i18n/translations';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
 export default function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventory, skills, onNavigate }) {
+  const T  = useT();
+  const S  = T.SESSIONS;
+
   const [openIds, setOpenIds] = useState({});
   const [editingId, setEditingId] = useState(null);
 
   const addSesja = () => {
-    const e = { id: Date.now(), number: sessions.length + 1, date: today(), title: `Sesja ${sessions.length + 1}`, notes: "" };
+    const e = { id: Date.now(), number: sessions.length + 1, date: today(), title: `#${sessions.length + 1}`, notes: "" };
     setSesjas(s => [e, ...s]);
     setOpenIds(o => ({ ...o, [e.id]: true }));
     setEditingId(e.id);
@@ -23,14 +27,14 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
 
   return (
     <>
-      <div className="row" style={{ justifyContent: "space-between" }}>
-        <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em" }}>{sessions.length} sesji udokumentowanych</span>
-        <button className="btn-ghost" onClick={addSesja}>⊕ Nowy wpis</button>
+      <div className="row" style={{ justifyContent:"space-between" }}>
+        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{S.count(sessions.length)}</span>
+        <button className="btn-ghost" onClick={addSesja}>{S.add}</button>
       </div>
 
       {hasAny && hasNotes && (
         <div className="sess-legend">
-          <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>Kliknij kolorowy link aby otworzyć wpis →</span>
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase" }}>{S.legendHint}</span>
           {LEGEND_ITEMS.map(li => {
             const counts = { npc: npcs.length, location: locations.length, quest: quests.length, inventory: inventory.length, skill: skills.length };
             if (!counts[li.type]) return null;
@@ -39,7 +43,7 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
         </div>
       )}
 
-      {sessions.length === 0 && <div className="card empty-state">Brak spisanych przygód w kronikach kampanii.</div>}
+      {sessions.length === 0 && <div className="card empty-state">{S.empty}</div>}
       {sessions.map(sess => {
         const open = !!openIds[sess.id];
         const editing = editingId === sess.id;
@@ -48,31 +52,31 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
           <div key={sess.id} className="sess-entry">
             <div className={`sess-header${open ? " open" : ""}`} onClick={() => toggle(sess.id)}>
               <span className="sess-num">#{String(sess.number).padStart(2, "0")}</span>
-              <input className="iedit flex1" style={{ fontFamily: "Cinzel,serif", fontSize: "0.92rem" }}
+              <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.92rem" }}
                 value={sess.title} onChange={e => { e.stopPropagation(); upd(sess.id, "title", e.target.value); }} onClick={e => e.stopPropagation()}/>
-              <input type="date" style={{ background: "transparent", border: "none", color: "inherit", fontFamily: "inherit", fontSize: "0.75rem", outline: "none", flexShrink: 0, opacity: 0.6 }}
+              <input type="date" style={{ background:"transparent", border:"none", color:"inherit", fontFamily:"inherit", fontSize:"0.75rem", outline:"none", flexShrink:0, opacity:0.6 }}
                 value={sess.date} onChange={e => { e.stopPropagation(); upd(sess.id, "date", e.target.value); }} onClick={e => e.stopPropagation()}/>
-              <span style={{ fontSize: "0.65rem", flexShrink: 0, opacity: 0.5 }}>{open ? "▲" : "▼"}</span>
+              <span style={{ fontSize:"0.65rem", flexShrink:0, opacity:0.5 }}>{open ? "▲" : "▼"}</span>
             </div>
             {open && (
               <div className="sess-body">
                 {editing ? (
                   <>
                     <textarea className="g-textarea" rows={6} autoFocus
-                      placeholder="Zapisuj szczegóły z gry. Imiona postaci, nazwy miast lub zadań automatycznie zamienią się w interaktywne hiperłącza encyklopedyczne…"
+                      placeholder={S.notesPh}
                       value={sess.notes} onChange={e => upd(sess.id, "notes", e.target.value)}/>
-                    <div className="row mt05" style={{ justifyContent: "space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(sess.id)}>Usuń wpis</button>
-                      <button className="btn-ghost" onClick={() => setEditingId(null)}>✓ Gotowe</button>
+                    <div className="row mt05" style={{ justifyContent:"space-between" }}>
+                      <button className="btn-ghost" onClick={() => del(sess.id)}>{S.delete}</button>
+                      <button className="btn-ghost" onClick={() => setEditingId(null)}>{S.done}</button>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="sess-rendered" data-placeholder="Brak sporządzonych notatek. Dotknij, aby zacząć pisać kronikę sesji…"
+                    <div className="sess-rendered" data-placeholder={S.emptyNote}
                       onClick={() => setEditingId(sess.id)}>{sess.notes ? parsed : null}</div>
-                    <div className="row mt05" style={{ justifyContent: "space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(sess.id)}>Usuń wpis</button>
-                      <button className="btn-ghost" style={{ opacity: 0.7 }} onClick={() => setEditingId(sess.id)}>✎ Edytuj kronikę</button>
+                    <div className="row mt05" style={{ justifyContent:"space-between" }}>
+                      <button className="btn-ghost" onClick={() => del(sess.id)}>{S.delete}</button>
+                      <button className="btn-ghost" style={{ opacity:0.7 }} onClick={() => setEditingId(sess.id)}>{S.edit}</button>
                     </div>
                   </>
                 )}

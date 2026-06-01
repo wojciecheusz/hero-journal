@@ -267,19 +267,23 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   /* ── Ekrany pomocnicze ───────────────────────────────────────── */
   if (screen === "profiles") return (
-    <ProfileScreen
-      profiles={profiles} activeId={activeId} theme={theme}
-      onSelect={switchProfile} onCreate={() => setScreen("wizard")}
-      onDelete={handleDelete} onCreateSample={handleSampleCreate}
-      onRename={handleRename}
-    />
+    <LangContext.Provider value={lang}>
+      <ProfileScreen
+        profiles={profiles} activeId={activeId} theme={theme}
+        onSelect={switchProfile} onCreate={() => setScreen("wizard")}
+        onDelete={handleDelete} onCreateSample={handleSampleCreate}
+        onRename={handleRename}
+      />
+    </LangContext.Provider>
   );
 
   if (screen === "wizard") return (
-    <PostaćWizard
-      theme={theme} onFinish={handleWizardFinish}
-      onAnuluj={profiles.length > 0 ? () => setScreen("profiles") : undefined}
-    />
+    <LangContext.Provider value={lang}>
+      <PostaćWizard
+        theme={theme} onFinish={handleWizardFinish}
+        onAnuluj={profiles.length > 0 ? () => setScreen("profiles") : undefined}
+      />
+    </LangContext.Provider>
   );
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */

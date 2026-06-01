@@ -1,24 +1,29 @@
 import { useState, useEffect } from 'react';
 import { SKILL_CATS } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../shared/ui';
+import { useT } from '../../i18n/translations';
 
-const catColor = cat => ({ "Umiejętność": "#c9943e", "Cecha rasowa": "#4a8aaa", "Atut": "#9a6030" })[cat] || "#8a7848";
+const catColor = cat => ({ "Umiejętność":"#c9943e","Skill":"#c9943e","Cecha rasowa":"#4a8aaa","Racial Feature":"#4a8aaa","Atut":"#9a6030","Feat":"#9a6030" })[cat] || "#8a7848";
 
 export default function SkillsScreen({ skills, setUmiejętności, openEntity }) {
-  const [form, setForm] = useState({ name: "", category: "Umiejętność", description: "", level: 0 });
+  const T  = useT();
+  const SK = T.SKILLS;
+  const CATS = T.SKILL_CATS;
+
+  const [form, setForm] = useState({ name:"", category: CATS[0], description:"", level:0 });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
+  const [activeTag, setAktywnyTag] = useState(null);
+  const [activeCat, setAktywnyCat] = useState(null);
 
   useEffect(() => {
     if (!openEntity?.name) return;
     const found = skills.find(s => s.name?.toLowerCase() === openEntity.name.toLowerCase());
     if (found) {
       setExpanded(e => ({ ...e, [found.id]: true }));
-      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior:'smooth', block:'center' }), 150);
     }
   }, [openEntity]);
-  const [activeTag, setAktywnyTag] = useState(null);
-  const [activeCat, setAktywnyCat] = useState(null);
 
   const allTags = [...new Set(skills.flatMap(s => s.tags || []))].sort();
   const inUseCount = skills.filter(s => s.inUse).length;
@@ -26,7 +31,7 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
   const addSkill = () => {
     const n = form.name.trim(); if (!n) return;
     setUmiejętności(l => [...l, { id: Date.now(), name: n, category: form.category, description: form.description.trim(), level: form.level, tags: [], pinned: false, inUse: false }]);
-    setForm({ name: "", category: "Umiejętność", description: "", level: 0 });
+    setForm({ name:"", category: CATS[0], description:"", level:0 });
     setShowForm(false);
   };
   const upd = (id, f, v) => setUmiejętności(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));
@@ -34,74 +39,84 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
   const toggle = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
   const toggleInUse = id => setUmiejętności(l => l.map(x => x.id === id ? { ...x, inUse: !x.inUse } : x));
 
-  const visible = skills.filter(s => (!activeTag || (s.tags || []).includes(activeTag)) && (!activeCat || s.category === activeCat)).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+  const visible = skills.filter(s =>
+    (!activeTag || (s.tags || []).includes(activeTag)) &&
+    (!activeCat || s.category === activeCat || SKILL_CATS[CATS.indexOf(activeCat)] === s.category)
+  ).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
   return (
     <>
-      <div className="row" style={{ justifyContent: "space-between" }}>
-        <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.12em" }}>{skills.length} wpisów{inUseCount > 0 ? ` · ${inUseCount} aktywnych` : ""}</span>
-        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? "✕ Anuluj" : "⊕ Dodaj wpis"}</button>
+      <div className="row" style={{ justifyContent:"space-between" }}>
+        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{SK.count(skills.length, inUseCount)}</span>
+        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? SK.cancel : SK.add}</button>
       </div>
 
       {showForm && (
         <div className="add-form">
           <div className="col">
-            <input className="g-input" placeholder="Nazwa zdolności…" value={form.name}
+            <input className="g-input" placeholder={SK.namePh} value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && addSkill()}/>
-            <div className="row" style={{ gap: "0.4rem", flexWrap: "wrap" }}>
-              {SKILL_CATS.map(c => (
+            <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
+              {CATS.map((c, i) => (
                 <button key={c} className="filter-tag" style={{ opacity: form.category === c ? 1 : 0.45, borderColor: form.category === c ? catColor(c) + "88" : "", color: form.category === c ? catColor(c) : "" }}
                   onClick={() => setForm(f => ({ ...f, category: c }))}>{c}</button>
               ))}
             </div>
-            <div className="row" style={{ gap: "0.6rem" }}>
-              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", textTransform: "uppercase", letterSpacing: "0.12em" }}>Poziom Mistrzostwa</span>
+            <div className="row" style={{ gap:"0.6rem" }}>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.58rem", textTransform:"uppercase", letterSpacing:"0.12em" }}>{SK.masteryLevel}</span>
               <SkillPips value={form.level} onChange={v => setForm(f => ({ ...f, level: v }))}/>
             </div>
-            <textarea className="g-textarea" rows={3} placeholder="Opis działania, wymagania, modyfikatory mechaniczne…" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}/>
-            <div className="row" style={{ justifyContent: "flex-end" }}><button className="btn-ghost" onClick={addSkill}>⊕ Dodaj</button></div>
+            <textarea className="g-textarea" rows={3} placeholder={SK.descPh} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}/>
+            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addSkill}>{SK.addBtn}</button></div>
           </div>
         </div>
       )}
 
       <div className="filter-bar">
-        <button className={`filter-tag${!activeCat ? " active-filter" : ""}`} onClick={() => setAktywnyCat(null)}>Wszystkie</button>
-        {SKILL_CATS.map(c => { const count = skills.filter(s => s.category === c).length; if (!count) return null; return <button key={c} className={`filter-tag${activeCat === c ? " active-filter" : ""}`} style={{ borderColor: activeCat === c ? catColor(c) + "88" : "", color: activeCat === c ? catColor(c) : "" }} onClick={() => setAktywnyCat(activeCat === c ? null : c)}>{c} ({count})</button>; })}
+        <button className={`filter-tag${!activeCat ? " active-filter" : ""}`} onClick={() => setAktywnyCat(null)}>{SK.all}</button>
+        {CATS.map((c, i) => {
+          const plCat = SKILL_CATS[i];
+          const count = skills.filter(s => s.category === plCat || s.category === c).length;
+          if (!count) return null;
+          return <button key={c} className={`filter-tag${activeCat === c ? " active-filter" : ""}`} style={{ borderColor: activeCat === c ? catColor(c) + "88" : "", color: activeCat === c ? catColor(c) : "" }} onClick={() => setAktywnyCat(activeCat === c ? null : c)}>{c} ({count})</button>;
+        })}
       </div>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setAktywnyTag}/>
 
-      {skills.length === 0 && <div className="card empty-state">Brak zapisanych umiejętności, cech rasowych ani atutów.</div>}
+      {skills.length === 0 && <div className="card empty-state">{SK.empty}</div>}
       {visible.map(sk => {
         const open = !!expanded[sk.id];
         const cc = catColor(sk.category);
+        const catIdx = SKILL_CATS.indexOf(sk.category);
+        const displayCat = catIdx >= 0 ? CATS[catIdx] : sk.category;
         return (
-          <div key={sk.id} id={`entity-${sk.id}`} className={`card${sk.pinned ? " pinned" : ""}${sk.inUse ? " inuse-active" : ""}`} style={{ padding: "1rem 1.1rem", borderLeftColor: cc + "55", borderLeftWidth: 2 }}>
+          <div key={sk.id} id={`entity-${sk.id}`} className={`card${sk.pinned ? " pinned" : ""}${sk.inUse ? " inuse-active" : ""}`} style={{ padding:"1rem 1.1rem", borderLeftColor: cc + "55", borderLeftWidth:2 }}>
             <div className="entity-header">
               <div className="flex1">
-                <div className="row" style={{ gap: "0.5rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>
-                  <input className="iedit flex1" style={{ fontFamily: "Cinzel,serif", fontSize: "0.98rem", fontWeight: 700 }}
-                    value={sk.name} onChange={e => upd(sk.id, "name", e.target.value)} placeholder="Nazwa…"/>
-                  <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase", color: cc, border: `1px solid ${cc}55`, padding: "0.15rem 0.5rem", background: `${cc}0d`, flexShrink: 0 }}>{sk.category}</span>
+                <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
+                  <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", fontWeight:700 }}
+                    value={sk.name} onChange={e => upd(sk.id, "name", e.target.value)} placeholder={SK.editNamePh}/>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.15rem 0.5rem", background:`${cc}0d`, flexShrink:0 }}>{displayCat}</span>
                 </div>
                 {sk.level > 0 && <SkillPips value={sk.level} onChange={v => upd(sk.id, "level", v)}/>}
               </div>
-              <Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse ? "Aktywna" : "Nieaktywna"} color="purple"/>
+              <Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse ? SK.active : SK.inactive} color="purple"/>
               <PrzypnijBtn pinned={sk.pinned} onToggle={() => upd(sk.id, "pinned", !sk.pinned)}/>
               <button className="entity-toggle" onClick={() => toggle(sk.id)}>{open ? "▲" : "▼"}</button>
             </div>
-            {!open && sk.description && <p style={{ fontSize: "0.92rem", fontStyle: "italic", marginTop: "0.3rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", opacity: 0.7 }}>{sk.description}</p>}
+            {!open && sk.description && <p style={{ fontSize:"0.92rem", fontStyle:"italic", marginTop:"0.3rem", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", opacity:0.7 }}>{sk.description}</p>}
             <TagsEditor tags={sk.tags || []} onChange={v => upd(sk.id, "tags", v)}/>
             {open && (
-              <div style={{ marginTop: "0.8rem" }}>
-                <div className="row" style={{ gap: "0.4rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
-                  {SKILL_CATS.map(c => <button key={c} className="filter-tag" style={{ opacity: sk.category === c ? 1 : 0.4, borderColor: sk.category === c ? catColor(c) + "88" : "", color: sk.category === c ? catColor(c) : "" }} onClick={() => upd(sk.id, "category", c)}>{c}</button>)}
+              <div style={{ marginTop:"0.8rem" }}>
+                <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
+                  {CATS.map((c, i) => <button key={c} className="filter-tag" style={{ opacity: sk.category === SKILL_CATS[i] || sk.category === c ? 1 : 0.4, borderColor: sk.category === SKILL_CATS[i] || sk.category === c ? catColor(c) + "88" : "", color: sk.category === SKILL_CATS[i] || sk.category === c ? catColor(c) : "" }} onClick={() => upd(sk.id, "category", SKILL_CATS[i])}>{c}</button>)}
                 </div>
-                <div className="row" style={{ gap: "0.6rem", marginBottom: "0.7rem" }}>
-                  <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", textTransform: "uppercase", letterSpacing: "0.12em" }}>Mistrzostwo</span>
+                <div className="row" style={{ gap:"0.6rem", marginBottom:"0.7rem" }}>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.58rem", textTransform:"uppercase", letterSpacing:"0.12em" }}>{SK.mastery}</span>
                   <SkillPips value={sk.level} onChange={v => upd(sk.id, "level", v)}/>
                 </div>
-                <textarea className="g-textarea" rows={4} placeholder="Opis efektu działania cechy…" value={sk.description || ""} onChange={e => upd(sk.id, "description", e.target.value)}/>
-                <div className="row mt05" style={{ justifyContent: "flex-end" }}><button className="btn-ghost" onClick={() => del(sk.id)}>Usuń</button></div>
+                <textarea className="g-textarea" rows={4} placeholder={SK.editDescPh} value={sk.description || ""} onChange={e => upd(sk.id, "description", e.target.value)}/>
+                <div className="row mt05" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={() => del(sk.id)}>{SK.delete}</button></div>
               </div>
             )}
           </div>
