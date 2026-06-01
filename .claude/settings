@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "Set-Location 'c:\\Users\\mwoj\\hero-journal'; $s = git status --porcelain; if ($s) { npm run build; if ($LASTEXITCODE -eq 0) { git add .; $f = @(git diff --cached --name-only | ForEach-Object { Split-Path $_ -Leaf }); if ($f.Count -gt 0) { git commit -m ('auto: ' + ($f[0..2] -join ', ')); git push } } }",
+            "timeout": 120,
+            "statusMessage": "Budowanie i push na GitHub..."
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git push)",
+      "Bash(git push *)",
+      "Bash(npm run build)"
+    ]
+  }
+}
