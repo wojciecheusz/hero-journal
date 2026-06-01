@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 import { clamp, numMod } from '../../utils/math';
-import { SAVING_THROWS, GENERIC_SKILLS, ITEM_ICONS, XP_THRESHOLDS, CONDITIONS } from '../../constants/gameConstants';
+import { SAVING_THROWS, ITEM_ICONS, XP_THRESHOLDS, CONDITIONS } from '../../constants/gameConstants';
 import { StatBox, SkillPips, Toggle, RestModal, SpellSlotsWidget } from '../../shared/ui';
+import { useT } from '../../i18n/translations';
 
 const hpBarColor = pct => pct > 70
   ? "linear-gradient(90deg,#1a5a1a,#2a8a2a,#33aa33)"
@@ -14,6 +15,9 @@ const LBL = { fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.16
 const LBL_SM = { fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--text-muted)" };
 
 export default function CharacterScreen({ char, setChar, inventory, skills, spells }) {
+  const T = useT();
+  const GENERIC_SKILLS = T.GENERIC_SKILLS;
+
   const upd   = (f, v) => setChar(c => ({ ...c, [f]: v }));
   const updSt = (s, v) => setChar(c => ({ ...c, stats: { ...c.stats, [s]: v } }));
   const hpPct = Math.round(clamp((char.hp.current / char.hp.max) * 100, 0, 100));

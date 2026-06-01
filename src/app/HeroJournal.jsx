@@ -6,7 +6,8 @@ import {
   loadActiveId, saveActiveId, migrateLegacy, deleteCharData, load, save,
   setCloudSaveHook,
 } from '../utils/storage';
-import { NAV_GROUPS } from './navigation';
+import { getNavGroups } from './navigation';
+import { detectLang, LangContext, TRANSLATIONS } from '../i18n/translations';
 import { createSampleHero } from '../constants/sampleHero';
 import { cloudSave } from '../firebase/firestore';
 import { ProfileScreen, PostaćWizard } from '../features/profiles/ProfileScreen';
@@ -100,6 +101,16 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     applyThemeVars(THEMES[name] || THEMES.mrok);
     return name;
   });
+
+  const [lang, setLang] = useState(detectLang);
+
+  const toggleLanguage = useCallback(() => {
+    setLang(l => {
+      const next = l === 'pl' ? 'en' : 'pl';
+      localStorage.setItem('hj_lang', next);
+      return next;
+    });
+  }, []);
 
   const [profiles, setProfiles] = useState(() => { migrateLegacy(); return loadProfiles(); });
   const [activeId, setActiveId] = useState(() => { migrateLegacy(); return loadActiveId(); });
@@ -250,6 +261,10 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   /* ── Skróty do danych ────────────────────────────────────────── */
   const { char, inventory, npcs, locations, skills, spells, sessions, quests, factions } = data;
 
+  /* ── Zlokalizowane dane ───────────────────────────────────────── */
+  const T         = TRANSLATIONS[lang];
+  const navGroups = getNavGroups(lang);
+
   /* ── Ekrany pomocnicze ───────────────────────────────────────── */
   if (screen === "profiles") return (
     <ProfileScreen
@@ -269,6 +284,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */
   return (
+    <LangContext.Provider value={lang}>
     <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onAnuluj={() => setShowReset(false)}/>}
 
@@ -288,8 +304,19 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             </div>
           </div>
 
+          {/* Prawa strona: lang + settings */}
+          <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexShrink:0 }}>
+
+          {/* Przycisk zmiany języka */}
+          <button onClick={toggleLanguage} title={lang === 'pl' ? 'Switch to English' : 'Przełącz na polski'}
+            style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.1em", width:32, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--hj-accent-border)"; e.currentTarget.style.color = "var(--hj-accent)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--hj-border-input)"; e.currentTarget.style.color = "var(--hj-text-muted)"; }}>
+            {T.UI.langToggle}
+          </button>
+
           {/* Panel ustawień */}
-          <div style={{ position:"relative", flexShrink:0 }}>
+          <div style={{ position:"relative" }}>
             <button onClick={() => setShowSettings(s => !s)} title="Ustawienia"
               style={{ background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", lineHeight:1, width:32, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
               ⚙
@@ -298,12 +325,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
               <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
               <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 8px 32px var(--hj-shadow-bot)", zIndex:200, width:230, borderRadius:"2px" }}>
                 <div style={{ padding:"0.6rem 0.7rem 0.4rem" }}>
-                  <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.5rem" }}>Motyw kolorystyczny</div>
+                  <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.5rem" }}>{T.UI.themeColor}</div>
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem" }}>
                     {PALETTES.map(p => (
                       <button key={p} onClick={() => setTheme(p)}
                         style={{ background:theme===p?"rgba(226,185,78,0.12)":"transparent", border:`1px solid ${theme===p?"var(--hj-accent-border)":"var(--hj-border-sub)"}`, color:theme===p?"var(--hj-accent)":"var(--hj-text)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.04em", padding:"0.3rem 0.4rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px" }}>
-                        {PALETTE_LABELS[p]}
+                        {T.PALETTE_LABELS[p]}
                       </button>
                     ))}
                   </div>
@@ -311,24 +338,25 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
                 <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.4rem 0.5rem", display:"flex", flexDirection:"column", gap:"0.2rem" }}>
                   <button onClick={() => { setShowReset(true); setShowSettings(false); }}
                     style={{ background:"transparent", border:"1px solid #6a2a2a", color:"#c04040", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                    ↺ Reset postaci
+                    {T.UI.resetChar}
                   </button>
                   {user && onCloudRefresh && (
                     <button onClick={() => { onCloudRefresh(); setShowSettings(false); }}
                       style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                      ☁ Synchronizuj dane
+                      {T.UI.syncData}
                     </button>
                   )}
                   {user && onLogout && (
                     <button onClick={() => { onLogout(); setShowSettings(false); }}
                       style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                      ⎋ Wyloguj ({(user.displayName || user.email || "").split(/[\s@]/)[0]})
+                      {T.UI.logout} ({(user.displayName || user.email || "").split(/[\s@]/)[0]})
                     </button>
                   )}
                 </div>
               </div>
             </>}
-          </div>
+          </div>{/* /settings */}
+          </div>{/* /right-side flex */}
         </div>
       </header>
 
@@ -348,7 +376,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       {/* Szuflada nawigacyjna */}
       {openGroup && <div className="nav-drawer-overlay" onClick={() => setOpenGroup(null)}/>}
       {openGroup && (() => {
-        const group = NAV_GROUPS.find(g => g.id === openGroup);
+        const group = navGroups.find(g => g.id === openGroup);
         if (!group) return null;
         return (
           <div className="nav-drawer" onClick={e => e.stopPropagation()}>
@@ -364,7 +392,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       })()}
 
       <nav className="hj-bottom-nav">
-        {NAV_GROUPS.map(g => {
+        {navGroups.map(g => {
           const isGroupActive     = g.tabs.some(t => t.id === tab);
           const activeTabInGroup  = g.tabs.find(t => t.id === tab);
           const isOpen            = openGroup === g.id;
@@ -386,5 +414,6 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         })}
       </nav>
     </div>
+    </LangContext.Provider>
   );
 }
