@@ -119,7 +119,12 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             onClick={() => setChar(c => ({...c, classes:[...(c.classes||[]),{name:"",level:1}]}))}>+ Wieloklasowość</button>
         )}
 
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 100px", gap:"0.5rem", alignItems:"end" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 100px", gap:"0.5rem", alignItems:"end" }}>
+          <div>
+            <div style={LBL}>Rasa</div>
+            <input className="iedit" style={{ fontSize:"0.9rem" }} value={char.race||""}
+              onChange={e => upd("race", e.target.value)} placeholder="np. Elf, Krasnolud…"/>
+          </div>
           <div>
             <div style={LBL}>Przeszłość</div>
             <input className="iedit" style={{ fontSize:"0.9rem" }} value={char.background||""}
