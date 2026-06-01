@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { clamp, numMod } from '../../utils/math';
-import { SAVING_THROWS, GENERIC_SKILLS, ALIGNMENTS, ITEM_ICONS, XP_THRESHOLDS, CONDITIONS } from '../../constants/gameConstants';
+import { SAVING_THROWS, GENERIC_SKILLS, ITEM_ICONS, XP_THRESHOLDS, CONDITIONS } from '../../constants/gameConstants';
 import { StatBox, SkillPips, Toggle, RestModal, SpellSlotsWidget } from '../../shared/ui';
 
 const hpBarColor = pct => pct > 70
@@ -106,20 +106,32 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
               style={{ fontFamily:"Cinzel,serif", fontSize: i===0?"1.1rem":"0.95rem", fontWeight:700, letterSpacing:"0.03em" }}
               value={cls.name} placeholder={`Klasa ${i+1}…`}
               onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],name:e.target.value}; return {...c,classes:cl}; })}/>
+            {i === 0 && (char.classes||[]).length < 4 && (
+              <button className="btn-ghost" style={{ padding:"0.1rem 0.4rem", fontSize:"0.8rem", flexShrink:0 }}
+                onClick={() => setChar(c => ({...c, classes:[...(c.classes||[]),{name:"",level:1}]}))}>+</button>
+            )}
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", opacity:0.45, flexShrink:0, textTransform:"uppercase" }}>Poz.</span>
             <input type="number" className="iedit" style={{ width:32, textAlign:"center", fontFamily:"Cinzel,serif", fontSize:i===0?"1rem":"0.88rem", fontWeight:600, opacity:0.85 }}
               value={cls.level} min={1} max={20}
               onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)}; return {...c,classes:cl}; })}/>
+            {i === 0 && (
+              <>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.12em", opacity:0.45, flexShrink:0, textTransform:"uppercase" }}>XP</span>
+                <input type="number" min={0} className="iedit"
+                  style={{ width:50, fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center", color:"inherit" }}
+                  value={char.xp ?? 0} onChange={e => upd("xp", Math.max(0, parseInt(e.target.value)||0))}
+                  onFocus={e => e.target.select()}/>
+              </>
+            )}
             {i > 0 && <button className="btn-ghost" style={{ padding:"0.1rem 0.35rem", fontSize:"0.65rem" }}
               onClick={() => setChar(c => ({...c, classes:c.classes.filter((_,j) => j!==i)}))}>✕</button>}
           </div>
         ))}
-        {(char.classes||[]).length < 4 && (
-          <button className="btn-sm" style={{ alignSelf:"flex-start", marginTop:"0.3rem", marginBottom:"0.8rem" }}
-            onClick={() => setChar(c => ({...c, classes:[...(c.classes||[]),{name:"",level:1}]}))}>+ Wieloklasowość</button>
-        )}
+        <div style={{ ...LBL_SM, fontSize:"0.4rem", marginBottom:"0.5rem", textAlign:"right" }}>
+          {xpMax !== null ? `→ lvl ${totalLevel+1}: ${xpMax.toLocaleString("pl-PL")} XP` : "— MAX —"}
+        </div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 100px", gap:"0.5rem", alignItems:"end" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem", alignItems:"end" }}>
           <div>
             <div style={LBL}>Rasa</div>
             <input className="iedit" style={{ fontSize:"0.9rem" }} value={char.race||""}
@@ -132,19 +144,8 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
           <div>
             <div style={LBL}>Charakter</div>
-            <select className="g-select" value={char.alignment||"Bezwzględnie neutralny"}
-              onChange={e => upd("alignment", e.target.value)} style={{ fontSize:"0.75rem", padding:"0.3rem 0.4rem" }}>
-              {ALIGNMENTS.map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
-          </div>
-          <div>
-            <div style={LBL}>XP</div>
-            <input type="number" min={0} className="iedit"
-              style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center", width:"100%", color:"inherit" }}
-              value={char.xp ?? 0} onChange={e => upd("xp", Math.max(0, parseInt(e.target.value)||0))}/>
-            <div style={{ ...LBL_SM, fontSize:"0.42rem", marginTop:"0.18rem", textAlign:"center" }}>
-              {xpMax !== null ? `→ lvl ${totalLevel+1}: ${xpMax.toLocaleString("pl-PL")}` : "— MAX —"}
-            </div>
+            <input className="iedit" maxLength={8} style={{ fontSize:"0.9rem" }} value={char.alignment||""}
+              onChange={e => upd("alignment", e.target.value)} placeholder="np. CN, LG…"/>
           </div>
         </div>
 

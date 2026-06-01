@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ALIGNMENTS, STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstants';
+import { STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstants';
 import { clamp } from '../../utils/math';
 import { THEMES, PALETTES } from '../../theme/themes';
 
@@ -124,7 +124,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
   const [cls, setCls] = useState(null);
   const [level, setPoziom] = useState(1);
   const [bg, setBg] = useState("");
-  const [align, setAlign] = useState("Bezwzględnie neutralny");
+  const [align, setAlign] = useState("");
   const [statArray, setStatArray] = useState("Zestaw standardowy");
   const [customCechy, setWlasneCechy] = useState({ STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 });
   const [useWlasne, setUseWlasne] = useState(false);
@@ -237,13 +237,9 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
             <input style={{ ...inputStyle, marginBottom: "0.6rem" }} placeholder="np. Żołnierz, Szlachcic, Mędrzec…"
               value={bg} onChange={e => setBg(e.target.value)}/>
             <div className="wizard-step-label">Charakter moralny</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.3rem", marginBottom: "0.6rem" }}>
-              {ALIGNMENTS.map(a => (
-                <button key={a}
-                  style={{ fontFamily: "Cinzel,serif", fontSize: "0.48rem", letterSpacing: "0.06em", textTransform: "uppercase", background: "transparent", border: `1px solid ${align === a ? t.accent : t.borderInput}`, color: align === a ? t.accent : t.textMuted, padding: "0.35rem 0.2rem", cursor: "pointer", lineHeight: 1.3, textAlign: "center" }}
-                  onClick={() => setAlign(a)}>{a}</button>
-              ))}
-            </div>
+            <input style={{ ...inputStyle, marginBottom: "0.6rem" }} maxLength={8}
+              placeholder="np. CN, LG, NE… (max 8 znaków)"
+              value={align} onChange={e => setAlign(e.target.value)}/>
             <div style={{ fontFamily: "Crimson Text,serif", fontSize: "0.9rem", color: t.textDim, fontStyle: "italic", marginTop: "0.5rem", lineHeight: 1.6 }}>
               Twój bohater jest gotowy do drogi. Każdą wartość będziesz mógł swobodnie edytować podczas kampanii.
             </div>
