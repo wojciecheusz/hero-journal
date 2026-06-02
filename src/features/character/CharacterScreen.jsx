@@ -397,8 +397,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem", marginTop:"0.8rem" }}>
-          <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px" }}>
+        <div style={{ display:"flex", gap:"1rem", marginTop:"0.8rem", flexWrap:"wrap", alignItems:"flex-start" }}>
+          {/* Death saves — auto-szerokość na podstawie treści */}
+          <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px", flex:"0 0 auto" }}>
             <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>{C.deathSaves}</div>
             {[["successes",C.deathSuccess,"#4a9a5a"],["failures",C.deathFailure,"#9a3a3a"]].map(([type,label,color]) => (
               <div key={type} style={{ display:"flex", alignItems:"center", gap:"0.4rem", marginBottom:"0.35rem" }}>
@@ -406,22 +407,24 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 <div style={{ display:"flex", gap:"0.3rem" }}>
                   {[0,1,2].map(i => (
                     <div key={i} onClick={() => toggleDeath(type, i)}
-                      style={{ width:18, height:18, borderRadius:"50%", border:`2px solid ${color}`, background:i<(ds[type]||0)?color:"transparent", cursor:"pointer", transition:"background 0.15s", flexShrink:0 }}/>
+                      style={{ width:20, height:20, borderRadius:"50%", border:`2px solid ${color}`, background:i<(ds[type]||0)?color:"transparent", cursor:"pointer", transition:"background 0.15s", flexShrink:0 }}/>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px" }}>
+
+          {/* Exhaustion — stałe rozmiary przycisków, nie rosną ze screens */}
+          <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px", flex:"0 0 auto" }}>
             <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>{C.exhaustion}</div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.25rem" }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 2rem)", gap:"0.25rem" }}>
               {[0,1,2,3,4,5,6].map(level => {
                 const cur = (char.conditions||{}).exhaustion || 0;
                 const filled = level > 0 && level <= cur;
                 return (
                   <button key={level}
                     onClick={() => setChar(c => ({...c, conditions:{...(c.conditions||{}), exhaustion:level===cur?0:level}}))}
-                    style={{ width:"100%", aspectRatio:"1", borderRadius:"4px", border:`1.5px solid ${filled?"#cc5020":level===0&&cur===0?"#4a9a5a":"var(--pip-empty)"}`, background:filled?"rgba(200,80,32,0.25)":level===0&&cur===0?"rgba(74,154,90,0.15)":"transparent", cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.5rem", fontWeight:700, color:filled?"#ee7040":level===0&&cur===0?"#4a9a5a":"var(--text-dim)", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    style={{ width:"2rem", height:"2rem", borderRadius:"4px", border:`1.5px solid ${filled?"#cc5020":level===0&&cur===0?"#4a9a5a":"var(--pip-empty)"}`, background:filled?"rgba(200,80,32,0.25)":level===0&&cur===0?"rgba(74,154,90,0.15)":"transparent", cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.55rem", fontWeight:700, color:filled?"#ee7040":level===0&&cur===0?"#4a9a5a":"var(--text-dim)", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
                     {level===0?"✓":level}
                   </button>
                 );
