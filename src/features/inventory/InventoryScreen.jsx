@@ -11,6 +11,7 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name:"", type:"Ogólny", qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
   const [expanded, setExpanded] = useState({});
+  const [editing,  setEditing]  = useState({});
   const [filterType, setFilterType] = useState(null);
 
   useEffect(() => {
@@ -28,14 +29,16 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
     setForm({ name:"", type:"Ogólny", qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
     setShowForm(false);
   };
-  const upd = (id, f, v) => setInventory(inv => inv.map(x => x.id === id ? { ...x, [f]: v } : x));
-  const del = id => setInventory(inv => inv.filter(x => x.id !== id));
-  const toggle = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
+  const upd         = (id, f, v) => setInventory(inv => inv.map(x => x.id === id ? { ...x, [f]: v } : x));
+  const del         = id => setInventory(inv => inv.filter(x => x.id !== id));
+  const toggle      = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
+  const startEdit   = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
+  const stopEdit    = id => setEditing(e => ({ ...e, [id]: false }));
   const toggleEquip = id => setInventory(inv => inv.map(x => x.id === id ? { ...x, equipped: !x.equipped } : x));
 
-  const visible = filterType ? inventory.filter(i => i.type === filterType) : inventory;
+  const visible      = filterType ? inventory.filter(i => i.type === filterType) : inventory;
   const equippedCount = inventory.filter(i => i.equipped).length;
-  const needsExtras = t => ["Broń","Zwój z czarem","Cudowny przedmiot","Jednorazowy"].includes(t);
+  const needsExtras  = t => ["Broń","Zwój z czarem","Cudowny przedmiot","Jednorazowy"].includes(t);
 
   return (
     <>
@@ -94,24 +97,41 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
 
       {inventory.length === 0 && <div className="card empty-state">{I.empty}</div>}
       {visible.map(item => {
-        const open = !!expanded[item.id];
+        const open      = !!expanded[item.id];
+        const isEditing = !!editing[item.id];
+        const preview   = [item.effect, item.note].filter(Boolean).join(" · ");
         return (
           <div key={item.id} id={`entity-${item.id}`} className={`pack-item${item.equipped ? " equipped-active" : ""}`}>
+
+            {/* Nagłówek */}
             <div className="pack-item-header">
               <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{ITEM_ICONS[item.type] || "◈"}</span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700 }}
                 value={item.name} onChange={e => upd(item.id, "name", e.target.value)}/>
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.08em", border:"1px solid currentColor", padding:"0.1rem 0.35rem", flexShrink:0, opacity:0.6 }}>{displayItemType(item.type)}</span>
               <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>
+              <button className="entity-toggle" onClick={() => startEdit(item.id)} title="Edytuj">✎</button>
               <button className="entity-toggle" onClick={() => toggle(item.id)}>{open ? "▲" : "▼"}</button>
             </div>
-            {/* Podgląd opisu — 2 linie gdy zwinięty */}
-            {!open && (item.note || item.effect) && (
-              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.9rem", color:"var(--hj-text-muted)", lineHeight:1.6, marginTop:"0.3rem", fontStyle:"italic", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden", wordBreak:"break-word", opacity:0.85 }}>
-                {item.effect && item.note ? `${item.effect} · ${item.note}` : item.effect || item.note}
+
+            {/* Podgląd — 2 linie gdy zwinięty, pełny gdy rozwinięty (ale nie w trybie edycji) */}
+            {preview && !isEditing && (
+              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.9rem", color:"var(--hj-text-muted)", lineHeight:1.6, marginTop:"0.3rem", fontStyle:"italic", wordBreak:"break-word", opacity:0.85, ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>
+                {preview}
               </p>
             )}
-            {open && (
+
+            {/* Statystyki broni/czaru — zawsze widoczne gdy rozwinięty i nie w edycji */}
+            {open && !isEditing && (item.damage || item.charges) && (
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"0.5rem", marginTop:"0.35rem" }}>
+                {item.damage && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-label)" }}>⚔ {item.damage}{item.damageType ? ` (${item.damageType})` : ""}{item.modifier ? ` +${parseInt(item.modifier)||0}` : ""}</span>}
+                {item.charges && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-label)" }}>{I.charges} {item.charges}</span>}
+                {item.qty && item.qty !== "1" && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-dim)" }}>×{item.qty}</span>}
+              </div>
+            )}
+
+            {/* Formularz edycji */}
+            {isEditing && (
               <div className="pack-item-body">
                 <div className="pack-item-row">
                   <div className="pack-field"><span className="pack-field-label">{I.qty}</span><input className="pack-field-input" value={item.qty || "1"} onChange={e => upd(item.id, "qty", e.target.value)}/></div>
@@ -130,7 +150,10 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
                   )}
                 </div>
                 <div className="pack-field"><span className="pack-field-label">{I.notes}</span><input className="pack-field-input" value={item.note || ""} onChange={e => upd(item.id, "note", e.target.value)}/></div>
-                <div className="row" style={{ justifyContent:"flex-end", marginTop:"0.3rem" }}><button className="btn-ghost" onClick={() => del(item.id)}>{I.delete}</button></div>
+                <div className="row" style={{ justifyContent:"space-between", marginTop:"0.3rem" }}>
+                  <button className="btn-ghost" onClick={() => del(item.id)}>{I.delete}</button>
+                  <button className="btn-ghost" onClick={() => stopEdit(item.id)}>✓</button>
+                </div>
               </div>
             )}
           </div>
