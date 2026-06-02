@@ -314,18 +314,6 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             ))}
           </div>
         ))}
-        <div style={{ marginTop:"auto", padding:"0.75rem", borderTop:"1px solid var(--hj-border-sub)", display:"flex", gap:"0.4rem" }}>
-          <button onClick={toggleLanguage} title={lang==='pl'?'Switch to English':'Przełącz na polski'}
-            style={{ flex:1, background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.1em", padding:"0.3rem", cursor:"pointer", transition:"all 0.15s" }}
-            onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--hj-accent-border)";e.currentTarget.style.color="var(--hj-accent)";}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--hj-border-input)";e.currentTarget.style.color="var(--hj-text-muted)";}}>
-            {T.UI.langToggle}
-          </button>
-          <button onClick={() => setShowSettings(s => !s)} title="Ustawienia"
-            style={{ background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1rem", width:34, cursor:"pointer", transition:"all 0.15s", display:"flex", alignItems:"center", justifyContent:"center" }}>
-            ⚙
-          </button>
-        </div>
       </aside>
 
       <header className="hj-header">
