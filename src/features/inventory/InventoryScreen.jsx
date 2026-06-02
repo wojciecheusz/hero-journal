@@ -6,6 +6,7 @@ import { useT } from '../../i18n/translations';
 export default function InventoryScreen({ inventory, setInventory, openEntity }) {
   const T = useT();
   const I = T.INVENTORY;
+  const displayItemType = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name:"", type:"Ogólny", qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
@@ -55,9 +56,9 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
                 onChange={e => setForm(f => ({ ...f, qty: e.target.value }))}/>
             </div>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
-              {ITEM_TYPES.map(t => (
+              {ITEM_TYPES.map((t, i) => (
                 <button key={t} className="filter-tag" style={{ opacity: form.type === t ? 1 : 0.5, borderColor: form.type === t ? "currentColor" : "" }}
-                  onClick={() => setForm(f => ({ ...f, type: t }))}>{ITEM_ICONS[t]} {t}</button>
+                  onClick={() => setForm(f => ({ ...f, type: t }))}>{ITEM_ICONS[t]} {T.ITEM_TYPES[i] ?? t}</button>
               ))}
             </div>
             {needsExtras(form.type) && (
@@ -85,9 +86,9 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
 
       <div className="filter-bar">
         <button className={`filter-tag${!filterType ? " active-filter" : ""}`} onClick={() => setFilterType(null)}>{I.all}</button>
-        {ITEM_TYPES.map(t => {
-          const c = inventory.filter(i => i.type === t).length; if (!c) return null;
-          return <button key={t} className={`filter-tag${filterType === t ? " active-filter" : ""}`} onClick={() => setFilterType(filterType === t ? null : t)}>{ITEM_ICONS[t]} {t} ({c})</button>;
+        {ITEM_TYPES.map((t, i) => {
+          const c = inventory.filter(x => x.type === t).length; if (!c) return null;
+          return <button key={t} className={`filter-tag${filterType === t ? " active-filter" : ""}`} onClick={() => setFilterType(filterType === t ? null : t)}>{ITEM_ICONS[t]} {T.ITEM_TYPES[i] ?? t} ({c})</button>;
         })}
       </div>
 
@@ -100,7 +101,7 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
               <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{ITEM_ICONS[item.type] || "◈"}</span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700 }}
                 value={item.name} onChange={e => upd(item.id, "name", e.target.value)}/>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.08em", border:"1px solid currentColor", padding:"0.1rem 0.35rem", flexShrink:0, opacity:0.6 }}>{item.type}</span>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.08em", border:"1px solid currentColor", padding:"0.1rem 0.35rem", flexShrink:0, opacity:0.6 }}>{displayItemType(item.type)}</span>
               <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>
               <button className="entity-toggle" onClick={() => toggle(item.id)}>{open ? "▲" : "▼"}</button>
             </div>
