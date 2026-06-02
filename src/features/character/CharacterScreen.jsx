@@ -11,8 +11,23 @@ const hpBarColor = pct => pct > 70
     : "linear-gradient(90deg,#3a0a0a,#6b0f0f,#961a1a)";
 const hpNumColor = pct => pct > 70 ? "#3a9a3a" : pct > 35 ? "#c06010" : "#c03030";
 
-const LBL    = { fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.16em", textTransform:"uppercase", marginBottom:"0.25rem", color:"var(--text-label)" };
+const LBL    = { fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.16em", textTransform:"uppercase", marginBottom:"0.2rem", color:"var(--text-label)" };
 const LBL_SM = { fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"var(--text-muted)" };
+
+/* Nagłówek zwijany */
+function CardHeader({ label, open, onToggle, hint }) {
+  return (
+    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: open ? "0.85rem" : 0, cursor:"pointer", userSelect:"none" }}
+      onClick={onToggle}>
+      <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--text-label)", display:"flex", alignItems:"center", gap:"0.5rem", flex:1 }}>
+        {label}
+        {hint && <span style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.8rem", color:"var(--text-muted)", textTransform:"none", letterSpacing:"0.03em", fontWeight:400, marginLeft:"0.3rem" }}>{hint}</span>}
+        {open && <span style={{ flex:1, height:1, background:"linear-gradient(90deg,var(--hj-border),transparent)", display:"block" }}/>}
+      </div>
+      <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:"var(--text-dim)", marginLeft:"0.5rem" }}>{open ? "▲" : "▼"}</span>
+    </div>
+  );
+}
 
 export default function CharacterScreen({ char, setChar, inventory, skills, spells }) {
   const T  = useT();
@@ -24,6 +39,12 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
   const hpPct = Math.round(clamp((char.hp.current / char.hp.max) * 100, 0, 100));
   const pb    = char.profBonus || 2;
   const ds    = char.deathSaves || { successes: 0, failures: 0 };
+
+  /* Stany zwijanych kart */
+  const [charOpen, setCharOpen]           = useState(true);
+  const [personalityOpen, setPersonality] = useState(true);
+  const [historyOpen, setHistoryOpen]     = useState(true);
+  const [notesOpen, setNotesOpen]         = useState(true);
 
   const [restModal, setRestModal] = useState(null);
   const [activeTab, setActiveTab] = useState("items");
@@ -94,80 +115,102 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
     <>
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
 
-      {/* KARTA 1: POSTAĆ */}
+      {/* ══════════════════════════════════════
+          KARTA 1: POSTAĆ
+      ══════════════════════════════════════ */}
       <div className="card">
-        <div className="sect-label">{C.title}</div>
+        <CardHeader label={C.title} open={charOpen} onToggle={() => setCharOpen(o => !o)}
+          hint={!charOpen ? char.name?.trim() || "" : ""}/>
 
-        <input className="iedit"
-          style={{ fontFamily:"Cinzel,serif", fontSize:"1.35rem", fontWeight:700, letterSpacing:"0.04em", width:"100%", marginBottom:"0.7rem" }}
-          value={char.name || ""} onChange={e => upd("name", e.target.value)} placeholder={C.heroName}/>
+        {charOpen && (
+          <>
+            {/* Imię */}
+            <input className="iedit"
+              style={{ fontFamily:"Cinzel,serif", fontSize:"1.35rem", fontWeight:700, letterSpacing:"0.04em", width:"100%", marginBottom:"0.65rem" }}
+              value={char.name||""} onChange={e => upd("name", e.target.value)} placeholder={C.heroName}/>
 
-        {(char.classes || []).map((cls, i) => (
-          <div key={i} className="class-row" style={{ alignItems:"baseline", gap:"0.4rem", marginBottom:"0.2rem" }}>
-            <input className="iedit flex1"
-              style={{ fontFamily:"Cinzel,serif", fontSize: i===0?"1.1rem":"0.95rem", fontWeight:700, letterSpacing:"0.03em" }}
-              value={cls.name} placeholder={`${i+1}…`}
-              onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],name:e.target.value}; return {...c,classes:cl}; })}/>
-            {i === 0 && (char.classes||[]).length < 4 && (
-              <button className="btn-ghost" style={{ padding:"0.1rem 0.4rem", fontSize:"0.8rem", flexShrink:0 }}
-                onClick={() => setChar(c => ({...c, classes:[...(c.classes||[]),{name:"",level:1}]}))}>+</button>
-            )}
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", opacity:0.45, flexShrink:0, textTransform:"uppercase" }}>{C.level}</span>
-            <input type="number" className="iedit" style={{ width:32, textAlign:"center", fontFamily:"Cinzel,serif", fontSize:i===0?"1rem":"0.88rem", fontWeight:600, opacity:0.85 }}
-              value={cls.level} min={1} max={20}
-              onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)}; return {...c,classes:cl}; })}/>
-            {i === 0 && (
-              <>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.12em", opacity:0.45, flexShrink:0, textTransform:"uppercase" }}>XP</span>
-                <input type="number" min={0} className="iedit"
-                  style={{ width:50, fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center", color:"inherit" }}
-                  value={char.xp ?? 0} onChange={e => upd("xp", Math.max(0, parseInt(e.target.value)||0))}
-                  onFocus={e => e.target.select()}/>
-              </>
-            )}
-            {i > 0 && <button className="btn-ghost" style={{ padding:"0.1rem 0.35rem", fontSize:"0.65rem" }}
-              onClick={() => setChar(c => ({...c, classes:c.classes.filter((_,j) => j!==i)}))}>✕</button>}
-          </div>
-        ))}
-        <div style={{ ...LBL_SM, fontSize:"0.4rem", marginBottom:"0.5rem", textAlign:"right" }}>
-          {xpMax !== null ? C.xpNext(totalLevel+1, xpMax.toLocaleString()) : C.xpMax}
-        </div>
-
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem", alignItems:"end" }}>
-          <div>
-            <div style={LBL}>{C.race}</div>
-            <input className="iedit" style={{ fontSize:"0.9rem" }} value={char.race||""}
-              onChange={e => upd("race", e.target.value)} placeholder={C.racePh}/>
-          </div>
-          <div>
-            <div style={LBL}>{C.background}</div>
-            <input className="iedit" style={{ fontSize:"0.9rem" }} value={char.background||""}
-              onChange={e => upd("background", e.target.value)} placeholder={C.backgroundPh}/>
-          </div>
-          <div>
-            <div style={LBL}>{C.alignment}</div>
-            <input className="iedit" maxLength={8} style={{ fontSize:"0.9rem" }} value={char.alignment||""}
-              onChange={e => upd("alignment", e.target.value)} placeholder={C.alignmentPh}/>
-          </div>
-        </div>
-
-        <hr className="inner-divider" data-label={C.appearance} style={{ marginTop:"1rem" }}/>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.5rem", marginTop:"0.7rem" }}>
-          {[
-            ["age",C.age,C.agePh],["height",C.height,C.heightPh],["weight",C.weight,C.weightPh],
-            ["eyes",C.eyes,C.eyesPh],["skin",C.skin,C.skinPh],["hair",C.hair,C.hairPh],
-          ].map(([key,label,ph]) => (
-            <div key={key}>
-              <div style={LBL}>{label}</div>
-              <input className="iedit" style={{ fontSize:"0.88rem" }}
-                value={(char.appearance||{})[key]||""} placeholder={ph}
-                onChange={e => setChar(c => ({...c, appearance:{...(c.appearance||{}),[key]:e.target.value}}))}/>
+            {/* Klasy — każda w osobnym rzędzie */}
+            <div style={{ marginBottom:"0.35rem" }}>
+              {(char.classes||[]).map((cls, i) => (
+                <div key={i} style={{ display:"flex", alignItems:"baseline", gap:"0.45rem", marginBottom:"0.25rem" }}>
+                  <input className="iedit flex1"
+                    style={{ fontFamily:"Cinzel,serif", fontSize: i===0?"1.05rem":"0.92rem", fontWeight:700, letterSpacing:"0.03em", minWidth:0 }}
+                    value={cls.name} placeholder={`${i===0 ? "" : "↳ "} ${i+1}`}
+                    onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],name:e.target.value}; return {...c,classes:cl}; })}/>
+                  {i===0 && (char.classes||[]).length < 4 && (
+                    <button className="btn-ghost" style={{ padding:"0.1rem 0.4rem", fontSize:"0.8rem", flexShrink:0 }}
+                      onClick={() => setChar(c => ({...c, classes:[...(c.classes||[]),{name:"",level:1}]}))}>+</button>
+                  )}
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", opacity:0.4, flexShrink:0, textTransform:"uppercase" }}>{C.level}</span>
+                  <input type="number" className="iedit"
+                    style={{ width:28, textAlign:"center", fontFamily:"Cinzel,serif", fontSize:"0.95rem", fontWeight:600, opacity:0.85, flexShrink:0 }}
+                    value={cls.level} min={1} max={20}
+                    onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)}; return {...c,classes:cl}; })}/>
+                  {i > 0 && (
+                    <button className="btn-ghost" style={{ padding:"0.1rem 0.35rem", fontSize:"0.65rem", flexShrink:0 }}
+                      onClick={() => setChar(c => ({...c, classes:c.classes.filter((_,j) => j!==i)}))}>✕</button>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+
+            {/* Poziom łączny + XP */}
+            <div style={{ display:"flex", alignItems:"baseline", gap:"0.5rem", marginBottom:"0.6rem", flexWrap:"wrap" }}>
+              <span style={{ ...LBL_SM, marginBottom:0 }}>Σ {C.level}</span>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700, color:"var(--hj-accent)" }}>{totalLevel}</span>
+              <span style={{ ...LBL_SM, marginBottom:0, marginLeft:"0.4rem" }}>XP</span>
+              <input type="number" min={0} className="iedit"
+                style={{ width:60, fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center", color:"inherit" }}
+                value={char.xp??0} onChange={e => upd("xp", Math.max(0, parseInt(e.target.value)||0))}
+                onFocus={e => e.target.select()}/>
+              <span style={{ ...LBL_SM, fontSize:"0.42rem", marginBottom:0, opacity:0.6, marginLeft:"0.1rem" }}>
+                {xpMax !== null ? C.xpNext(totalLevel+1, xpMax.toLocaleString()) : C.xpMax}
+              </span>
+            </div>
+
+            {/* Rasa + Przeszłość */}
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.45rem", marginBottom:"0.45rem" }}>
+              <div>
+                <div style={LBL}>{C.race}</div>
+                <input className="iedit" style={{ fontSize:"0.9rem" }} value={char.race||""}
+                  onChange={e => upd("race", e.target.value)} placeholder={C.racePh}/>
+              </div>
+              <div>
+                <div style={LBL}>{C.background}</div>
+                <input className="iedit" style={{ fontSize:"0.9rem" }} value={char.background||""}
+                  onChange={e => upd("background", e.target.value)} placeholder={C.backgroundPh}/>
+              </div>
+            </div>
+
+            {/* Charakter */}
+            <div style={{ marginBottom:"0.7rem" }}>
+              <div style={LBL}>{C.alignment}</div>
+              <input className="iedit" maxLength={8} style={{ fontSize:"0.9rem", maxWidth:120 }} value={char.alignment||""}
+                onChange={e => upd("alignment", e.target.value)} placeholder={C.alignmentPh}/>
+            </div>
+
+            {/* Wygląd */}
+            <hr className="inner-divider" data-label={C.appearance} style={{ marginTop:"0.3rem" }}/>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.45rem", marginTop:"0.65rem" }}>
+              {[
+                ["age",C.age,C.agePh],["height",C.height,C.heightPh],["weight",C.weight,C.weightPh],
+                ["eyes",C.eyes,C.eyesPh],["skin",C.skin,C.skinPh],["hair",C.hair,C.hairPh],
+              ].map(([key,label,ph]) => (
+                <div key={key}>
+                  <div style={LBL}>{label}</div>
+                  <input className="iedit" style={{ fontSize:"0.88rem" }}
+                    value={(char.appearance||{})[key]||""} placeholder={ph}
+                    onChange={e => setChar(c => ({...c, appearance:{...(c.appearance||{}),[key]:e.target.value}}))}/>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* KARTA 2: CECHY I RZUTY OBRONNE */}
+      {/* ══════════════════════════════════════
+          KARTA 2: CECHY I RZUTY OBRONNE
+      ══════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">{C.savingThrowsTitle}</div>
         <div className="stat-grid-6">
@@ -193,7 +236,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
       </div>
 
-      {/* KARTA 3: UMIEJĘTNOŚCI */}
+      {/* ══════════════════════════════════════
+          KARTA 3: UMIEJĘTNOŚCI
+      ══════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">{C.skillsTitle}</div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,minmax(0,1fr))", gap:"0.3rem" }}>
@@ -220,7 +265,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
       </div>
 
-      {/* KARTA 4: WALKA */}
+      {/* ══════════════════════════════════════
+          KARTA 4: WALKA
+      ══════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">{C.combatTitle}</div>
 
@@ -364,7 +411,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
               </div>
             ))}
           </div>
-
           <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px" }}>
             <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>{C.exhaustion}</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.25rem" }}>
@@ -384,7 +430,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
       </div>
 
-      {/* KARTA 5: AKTYWNE I WYPOSAŻONE */}
+      {/* ══════════════════════════════════════
+          KARTA 5: AKTYWNE I WYPOSAŻONE
+      ══════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">{C.equippedTitle}</div>
         <CoinRow/>
@@ -462,7 +510,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         )}
       </div>
 
-      {/* KARTA 6: BIEGŁOŚCI */}
+      {/* ══════════════════════════════════════
+          KARTA 6: BIEGŁOŚCI
+      ══════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">{C.profTitle}</div>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.6rem" }}>
@@ -483,32 +533,49 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
       </div>
 
-      {/* KARTA 7: CECHY OSOBOWOŚCI */}
+      {/* ══════════════════════════════════════
+          KARTA 7: CECHY OSOBOWOŚCI — zwijana
+      ══════════════════════════════════════ */}
       <div className="card">
-        <div className="sect-label">{C.personalityTitle}</div>
-        <div className="trait-grid">
-          {[
-            ["personality",C.persTraits,C.persPh],
-            ["ideals",C.ideals,C.idealsPh],
-            ["bonds",C.bonds,C.bondsPh],
-            ["flaws",C.flaws,C.flawsPh],
-          ].map(([key,label,ph]) => (
-            <div key={key} className="trait-block">
-              <span className="trait-label">{label}</span>
-              <textarea className="trait-ta" rows={3} placeholder={ph} value={char.traits?.[key]||""}
-                onChange={e => setChar(c => ({...c, traits:{...(c.traits||{}),[key]:e.target.value}}))}/>
-            </div>
-          ))}
-        </div>
+        <CardHeader label={C.personalityTitle} open={personalityOpen} onToggle={() => setPersonality(o => !o)}/>
+        {personalityOpen && (
+          <div className="trait-grid">
+            {[
+              ["personality",C.persTraits,C.persPh],
+              ["ideals",C.ideals,C.idealsPh],
+              ["bonds",C.bonds,C.bondsPh],
+              ["flaws",C.flaws,C.flawsPh],
+            ].map(([key,label,ph]) => (
+              <div key={key} className="trait-block">
+                <span className="trait-label">{label}</span>
+                <textarea className="trait-ta" rows={3} placeholder={ph} value={char.traits?.[key]||""}
+                  onChange={e => setChar(c => ({...c, traits:{...(c.traits||{}),[key]:e.target.value}}))}/>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* KARTA 8: HISTORIA I NOTATKI */}
+      {/* ══════════════════════════════════════
+          KARTA 8: HISTORIA — zwijana
+      ══════════════════════════════════════ */}
       <div className="card">
-        <div className="sect-label">{C.notesTitle}</div>
-        <div style={{ ...LBL, marginBottom:"0.3rem" }}>{C.personalNotes}</div>
-        <textarea className="g-textarea" rows={3} placeholder={C.personalNotesPh} value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}/>
-        <div style={{ ...LBL, marginTop:"0.8rem", marginBottom:"0.3rem" }}>{C.backstory}</div>
-        <textarea className="g-textarea" rows={5} placeholder={C.backstoryPh} value={char.backstory||""} onChange={e => upd("backstory", e.target.value)}/>
+        <CardHeader label={C.backstory} open={historyOpen} onToggle={() => setHistoryOpen(o => !o)}/>
+        {historyOpen && (
+          <textarea className="g-textarea" rows={5} placeholder={C.backstoryPh}
+            value={char.backstory||""} onChange={e => upd("backstory", e.target.value)}/>
+        )}
+      </div>
+
+      {/* ══════════════════════════════════════
+          KARTA 9: NOTATKI — zwijana
+      ══════════════════════════════════════ */}
+      <div className="card">
+        <CardHeader label={C.personalNotes} open={notesOpen} onToggle={() => setNotesOpen(o => !o)}/>
+        {notesOpen && (
+          <textarea className="g-textarea" rows={3} placeholder={C.personalNotesPh}
+            value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}/>
+        )}
       </div>
     </>
   );
