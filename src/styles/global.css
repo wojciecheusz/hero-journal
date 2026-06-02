@@ -406,6 +406,49 @@ input[type="number"] { font-size: inherit; }
 
   /* Cechy osobowości — 2 kolumny */
   .trait-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Siatka umiejętności — 3 kolumny na bazowym desktop */
+  .hj-skills-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   WIDE DESKTOP  ≥ 1440px
+══════════════════════════════════════════════════════════════ */
+@media (min-width: 1440px) {
+  .hj-sidebar      { width: 240px; }
+  .hj-root         { padding-left: 240px; }
+  .hj-header       { left: 240px; }
+  .hj-header-inner { max-width: 1440px; }
+  .hj-content      { max-width: 1440px; padding: 2rem 3rem 3rem; }
+  .hj-skills-grid  { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FULL HD / 2K  ≥ 1920px
+══════════════════════════════════════════════════════════════ */
+@media (min-width: 1920px) {
+  .hj-sidebar      { width: 260px; }
+  .hj-root         { padding-left: 260px; }
+  .hj-header       { left: 260px; }
+  .hj-header-inner { max-width: 1800px; }
+  .hj-content      { max-width: 1800px; padding: 2.5rem 3.5rem 4rem; gap: 1.4rem; }
+  .hj-skills-grid  { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .card            { padding: 1.75rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4K / ULTRAWIDE  ≥ 2560px
+══════════════════════════════════════════════════════════════ */
+@media (min-width: 2560px) {
+  .hj-sidebar      { width: 280px; }
+  .hj-root         { padding-left: 280px; }
+  .hj-header       { left: 280px; }
+  .hj-header-inner { max-width: min(2600px, calc(100vw - 280px - 4rem)); }
+  .hj-content      { max-width: min(2600px, calc(100vw - 280px - 4rem)); padding: 3rem 4rem 5rem; gap: 1.6rem; }
+  .hj-skills-grid  { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .card            { padding: 2rem; }
+  .hj-sidebar-item { font-size: 0.65rem; padding: 0.5rem 1.25rem 0.5rem calc(1.25rem - 2px); }
+  .hj-sidebar-group-label { font-size: 0.5rem; padding: 0.65rem 1.25rem 0.2rem; }
 }
 
 /* ── Karty ────────────────────────────────────────────────────── */

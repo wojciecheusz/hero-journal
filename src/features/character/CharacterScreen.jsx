@@ -242,7 +242,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       ══════════════════════════════════════ */}
       <div className="card">
         <div className="sect-label">{C.skillsTitle}</div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,minmax(0,1fr))", gap:"0.3rem" }}>
+        <div className="hj-skills-grid" style={{ display:"grid", gap:"0.3rem" }}>
           {GENERIC_SKILLS.map(sk => {
             const prz = !!(char.skills||{})[sk.key];
             const exp = !!(char.skillExp||{})[sk.key];
