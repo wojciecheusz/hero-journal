@@ -276,7 +276,8 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       <div className="card">
         <div className="sect-label">{C.combatTitle}</div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.4rem", marginBottom:"0.7rem" }}>
+        {/* ── A: Podstawowe statystyki walki — ograniczona szerokość ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4, minmax(66px, 108px))", gap:"0.4rem", marginBottom:"0.75rem" }}>
           <div className="combat-box">
             <span className="combat-box-label">{C.ac}</span>
             <input className="combat-box-input" type="number" value={char.ac||0}
@@ -306,10 +307,12 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"36px auto 36px 1fr", gap:"0.3rem", alignItems:"stretch" }}>
-          <button className="btn-pm minus" style={{ height:"100%", minHeight:52 }}
+        {/* ── B: Punkty życia — flex z ograniczonymi szerokościami ── */}
+        <div style={{ display:"flex", gap:"0.3rem", alignItems:"stretch" }}>
+          <button className="btn-pm minus" style={{ flexShrink:0 }}
             onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
-          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.4rem", gap:0 }}>
+
+          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.5rem", gap:0, flex:"1 1 auto", maxWidth:220 }}>
             <span className="combat-box-label">{C.hp}</span>
             <div style={{ display:"flex", alignItems:"baseline", gap:"0.15rem" }}>
               <input type="number" value={char.hp.current}
@@ -325,9 +328,11 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 onBlur={e => setChar(c => ({...c, hp:{...c.hp, max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
             </div>
           </div>
-          <button className="btn-pm plus" style={{ height:"100%", minHeight:52 }}
+
+          <button className="btn-pm plus" style={{ flexShrink:0 }}
             onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
-          <div className="combat-box">
+
+          <div className="combat-box" style={{ flex:"0 0 auto", minWidth:72, maxWidth:96 }}>
             <span className="combat-box-label">{C.hpTemp}</span>
             <input className="combat-box-input" type="number" value={char.hp.temp||0}
               onFocus={e => e.target.select()}
@@ -336,12 +341,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        <div className="hp-bar-bg" style={{ marginTop:"0.5rem" }}>
-          <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpBarColor(hpPct) }}/>
-        </div>
-        <div className="hp-pct" style={{ color:hpNumColor(hpPct) }}>{hpPct}{C.hpVitality}</div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"0.4rem", marginTop:"0.6rem" }}>
+        {/* ── C: Percepcja i rzucanie czarów — ograniczona szerokość ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3, minmax(72px, 120px))", gap:"0.4rem", marginTop:"0.75rem" }}>
           <div className="combat-box">
             <span className="combat-box-label">{C.passivePerc}</span>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"inherit" }}>{10+percBonus}</span>
@@ -356,10 +358,11 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:"0.4rem", marginTop:"0.6rem" }}>
-          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.25rem 0.4rem", gap:"0.1rem" }}>
+        {/* ── D: Kości wytrzymałości i odpoczynek — flex ── */}
+        <div style={{ display:"flex", gap:"0.4rem", marginTop:"0.75rem", alignItems:"stretch", flexWrap:"wrap" }}>
+          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.3rem 0.6rem", gap:"0.1rem", flex:"0 0 auto" }}>
             <span className="combat-box-label">{C.hitDice}</span>
-            <div style={{ display:"flex", alignItems:"center", gap:"0.2rem" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"0.25rem" }}>
               <select className="combat-box-input" style={{ width:"auto", cursor:"pointer", fontSize:"0.75rem" }}
                 value={(char.hitDice||{type:"d8"}).type}
                 onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),type:e.target.value}}))}>
@@ -375,12 +378,12 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             </div>
           </div>
           <button className="btn-rest short" onClick={() => setRestModal("short")}
-            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.35rem 0.2rem" }}>
+            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem", flex:"0 0 auto", minWidth:72 }}>
             <span style={{ fontSize:"1rem", lineHeight:1 }}>☽</span>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.shortRest}</span>
           </button>
           <button className="btn-rest long" onClick={() => setRestModal("long")}
-            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.35rem 0.2rem" }}>
+            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem", flex:"0 0 auto", minWidth:72 }}>
             <span style={{ fontSize:"1rem", lineHeight:1 }}>☀</span>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.longRest}</span>
           </button>
