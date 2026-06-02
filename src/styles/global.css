@@ -438,6 +438,19 @@ input[type="number"] { font-size: inherit; }
   .char-col         { gap: 1.6rem; }
 }
 
+/* ── Wewnętrzny layout karty Combat ──────────────────────────── */
+.combat-layout  { display: flex; flex-direction: column; gap: 0.7rem; }
+.combat-group   { display: flex; flex-direction: column; gap: 0.7rem; }
+
+@media (min-width: 1024px) {
+  .combat-layout {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 1.2rem;
+    align-items: start;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════
    WIDE DESKTOP  ≥ 1440px
 ══════════════════════════════════════════════════════════════ */

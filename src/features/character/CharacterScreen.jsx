@@ -276,8 +276,12 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       <div className="card">
         <div className="sect-label">{C.combatTitle}</div>
 
-        {/* ── A: Podstawowe statystyki walki — ograniczona szerokość ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4, minmax(66px, 108px))", gap:"0.4rem", marginBottom:"0.75rem" }}>
+        <div className="combat-layout">
+        {/* ══ LEWA: AC/HP/Hit Dice ══ */}
+        <div className="combat-group">
+
+        {/* ── A: Podstawowe statystyki ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.4rem" }}>
           <div className="combat-box">
             <span className="combat-box-label">{C.ac}</span>
             <input className="combat-box-input" type="number" value={char.ac||0}
@@ -307,12 +311,12 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        {/* ── B: Punkty życia — flex z ograniczonymi szerokościami ── */}
-        <div style={{ display:"flex", gap:"0.3rem", alignItems:"stretch" }}>
-          <button className="btn-pm minus" style={{ flexShrink:0 }}
+        {/* ── B: Punkty życia ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"36px 1fr 36px auto", gap:"0.3rem", alignItems:"stretch" }}>
+          <button className="btn-pm minus"
             onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
 
-          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.5rem", gap:0, flex:"1 1 auto", maxWidth:220 }}>
+          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.5rem", gap:0 }}>
             <span className="combat-box-label">{C.hp}</span>
             <div style={{ display:"flex", alignItems:"baseline", gap:"0.15rem" }}>
               <input type="number" value={char.hp.current}
@@ -329,10 +333,10 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             </div>
           </div>
 
-          <button className="btn-pm plus" style={{ flexShrink:0 }}
+          <button className="btn-pm plus"
             onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
 
-          <div className="combat-box" style={{ flex:"0 0 auto", minWidth:72, maxWidth:96 }}>
+          <div className="combat-box" style={{ minWidth:72 }}>
             <span className="combat-box-label">{C.hpTemp}</span>
             <input className="combat-box-input" type="number" value={char.hp.temp||0}
               onFocus={e => e.target.select()}
@@ -342,25 +346,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
 
 
-        {/* ── C: Percepcja i rzucanie czarów — ograniczona szerokość ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3, minmax(72px, 120px))", gap:"0.4rem", marginTop:"0.75rem" }}>
-          <div className="combat-box">
-            <span className="combat-box-label">{C.passivePerc}</span>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"inherit" }}>{10+percBonus}</span>
-          </div>
-          <div className="combat-box" title={`8 + ${pb} + ${spellAbi>=0?"+":""}${spellAbi}`}>
-            <span className="combat-box-label">{C.spellDC}</span>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--spell-accent)" }}>{spellDC}</span>
-          </div>
-          <div className="combat-box">
-            <span className="combat-box-label">{C.spellAtk}</span>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--spell-accent)" }}>{numMod(pb+spellAbi)}</span>
-          </div>
-        </div>
-
-        {/* ── D: Kości wytrzymałości i odpoczynek — flex ── */}
-        <div style={{ display:"flex", gap:"0.4rem", marginTop:"0.75rem", alignItems:"stretch", flexWrap:"wrap" }}>
-          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.3rem 0.6rem", gap:"0.1rem", flex:"0 0 auto" }}>
+        {/* ── D: Hit Dice + Rest ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr auto auto", gap:"0.4rem", alignItems:"stretch" }}>
+          <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.3rem 0.6rem", gap:"0.1rem" }}>
             <span className="combat-box-label">{C.hitDice}</span>
             <div style={{ display:"flex", alignItems:"center", gap:"0.25rem" }}>
               <select className="combat-box-input" style={{ width:"auto", cursor:"pointer", fontSize:"0.75rem" }}
@@ -378,18 +366,40 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             </div>
           </div>
           <button className="btn-rest short" onClick={() => setRestModal("short")}
-            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem", flex:"0 0 auto", minWidth:72 }}>
+            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem" }}>
             <span style={{ fontSize:"1rem", lineHeight:1 }}>☽</span>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.shortRest}</span>
           </button>
           <button className="btn-rest long" onClick={() => setRestModal("long")}
-            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem", flex:"0 0 auto", minWidth:72 }}>
+            style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem" }}>
             <span style={{ fontSize:"1rem", lineHeight:1 }}>☀</span>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.longRest}</span>
           </button>
         </div>
 
-        <div style={{ marginTop:"0.8rem" }}>
+        </div>{/* /lewa sekcja */}
+
+        {/* ══ PRAWA: Percepcja, stany, śmierć ══ */}
+        <div className="combat-group">
+
+        {/* ── C: Percepcja i rzucanie czarów ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"0.4rem" }}>
+          <div className="combat-box">
+            <span className="combat-box-label">{C.passivePerc}</span>
+            <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"inherit" }}>{10+percBonus}</span>
+          </div>
+          <div className="combat-box" title={`8 + ${pb} + ${spellAbi>=0?"+":""}${spellAbi}`}>
+            <span className="combat-box-label">{C.spellDC}</span>
+            <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--spell-accent)" }}>{spellDC}</span>
+          </div>
+          <div className="combat-box">
+            <span className="combat-box-label">{C.spellAtk}</span>
+            <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--spell-accent)" }}>{numMod(pb+spellAbi)}</span>
+          </div>
+        </div>
+
+        {/* ── E: Conditions ── */}
+        <div>
           <div style={{ ...LBL_SM, marginBottom:"0.4rem" }}>{C.conditionsTitle}</div>
           <div style={{ display:"flex", flexWrap:"wrap", gap:"0.3rem" }}>
             {CONDITIONS.map(cond => {
@@ -404,7 +414,8 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        <div style={{ display:"flex", gap:"1rem", marginTop:"0.8rem", flexWrap:"wrap", alignItems:"flex-start" }}>
+        {/* ── F: Death Saves + Exhaustion ── */}
+        <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", alignItems:"flex-start" }}>
           {/* Death saves — auto-szerokość na podstawie treści */}
           <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px", flex:"0 0 auto" }}>
             <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>{C.deathSaves}</div>
@@ -439,6 +450,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
             </div>
           </div>
         </div>
+
+        </div>{/* /prawa sekcja */}
+        </div>{/* /combat-layout */}
       </div>
 
       </div>{/* /lewa kolumna */}
