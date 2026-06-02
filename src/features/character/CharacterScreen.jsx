@@ -45,6 +45,7 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
   const [personalityOpen, setPersonality] = useState(true);
   const [historyOpen, setHistoryOpen]     = useState(true);
   const [notesOpen, setNotesOpen]         = useState(true);
+  const [profOpen, setProfOpen]           = useState(true);
 
   const [restModal, setRestModal] = useState(null);
   const [activeTab, setActiveTab] = useState("items");
@@ -511,30 +512,43 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       </div>
 
       {/* ══════════════════════════════════════
-          KARTA 6: BIEGŁOŚCI
+          KARTA 6: NOTATKI OSOBISTE — zwijana (tuż po Aktywne i Wyposażone)
       ══════════════════════════════════════ */}
       <div className="card">
-        <div className="sect-label">{C.profTitle}</div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.6rem" }}>
-          {[
-            ["weapons", C.weapons, C.weaponsPh],
-            ["armor",   C.armor,   C.armorPh],
-            ["languages",C.languages,C.languagesPh],
-            ["tools",   C.tools,   C.toolsPh],
-          ].map(([key,label,ph]) => (
-            <div key={key}>
-              <div style={LBL}>{label}</div>
-              <textarea className="g-textarea" rows={2} placeholder={ph}
-                value={(char.proficiencies||{})[key]||""}
-                onChange={e => setChar(c => ({...c, proficiencies:{...(c.proficiencies||{}),[key]:e.target.value}}))}
-                style={{ fontSize:"0.9rem", minHeight:"2.5rem" }}/>
-            </div>
-          ))}
-        </div>
+        <CardHeader label={C.personalNotes} open={notesOpen} onToggle={() => setNotesOpen(o => !o)}/>
+        {notesOpen && (
+          <textarea className="g-textarea" rows={3} placeholder={C.personalNotesPh}
+            value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}/>
+        )}
       </div>
 
       {/* ══════════════════════════════════════
-          KARTA 7: CECHY OSOBOWOŚCI — zwijana
+          KARTA 7: BIEGŁOŚCI — zwijana
+      ══════════════════════════════════════ */}
+      <div className="card">
+        <CardHeader label={C.profTitle} open={profOpen} onToggle={() => setProfOpen(o => !o)}/>
+        {profOpen && (
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.6rem" }}>
+            {[
+              ["weapons", C.weapons, C.weaponsPh],
+              ["armor",   C.armor,   C.armorPh],
+              ["languages",C.languages,C.languagesPh],
+              ["tools",   C.tools,   C.toolsPh],
+            ].map(([key,label,ph]) => (
+              <div key={key}>
+                <div style={LBL}>{label}</div>
+                <textarea className="g-textarea" rows={2} placeholder={ph}
+                  value={(char.proficiencies||{})[key]||""}
+                  onChange={e => setChar(c => ({...c, proficiencies:{...(c.proficiencies||{}),[key]:e.target.value}}))}
+                  style={{ fontSize:"0.9rem", minHeight:"2.5rem" }}/>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ══════════════════════════════════════
+          KARTA 8: CECHY OSOBOWOŚCI — zwijana
       ══════════════════════════════════════ */}
       <div className="card">
         <CardHeader label={C.personalityTitle} open={personalityOpen} onToggle={() => setPersonality(o => !o)}/>
@@ -567,16 +581,6 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         )}
       </div>
 
-      {/* ══════════════════════════════════════
-          KARTA 9: NOTATKI — zwijana
-      ══════════════════════════════════════ */}
-      <div className="card">
-        <CardHeader label={C.personalNotes} open={notesOpen} onToggle={() => setNotesOpen(o => !o)}/>
-        {notesOpen && (
-          <textarea className="g-textarea" rows={3} placeholder={C.personalNotesPh}
-            value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}/>
-        )}
-      </div>
     </>
   );
 }
