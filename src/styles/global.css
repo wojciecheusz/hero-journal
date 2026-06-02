@@ -286,6 +286,57 @@ input[type="number"] { font-size: inherit; }
 
 .nav-drawer-item.active .nav-drawer-label { color: var(--hj-accent); }
 
+/* ── Sidebar (domyślnie ukryty — mobile) ─────────────────────── */
+.hj-sidebar { display: none; }
+
+.hj-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  overflow: hidden;
+}
+.hj-sidebar-brand:hover { background: rgba(226,185,78,0.06); }
+
+.hj-sidebar-group { padding-bottom: 0.2rem; }
+
+.hj-sidebar-group-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.43rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--hj-text-dim);
+  display: block;
+  padding: 0.55rem 1rem 0.15rem;
+  opacity: 0.7;
+}
+
+.hj-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  padding: 0.42rem 1rem 0.42rem calc(1rem - 2px);
+  transition: all 0.15s;
+  text-align: left;
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hj-text-muted);
+}
+.hj-sidebar-item:hover  { background: rgba(226,185,78,0.06); color: var(--hj-text); }
+.hj-sidebar-item.active { background: rgba(226,185,78,0.1); border-left-color: var(--hj-accent); color: var(--hj-accent); }
+
+/* Header inner wrapper — responsywne ograniczenie szerokości */
+.hj-header-inner { max-width: 780px; margin: 0 auto; }
+
 /* ── Obszar treści ────────────────────────────────────────────── */
 .hj-content {
   max-width: 780px;
@@ -294,6 +345,67 @@ input[type="number"] { font-size: inherit; }
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TABLET  640px – 1023px
+══════════════════════════════════════════════════════════════ */
+@media (min-width: 640px) {
+  .hj-content     { max-width: 860px; padding: 1.6rem 1.5rem 2rem; gap: 1.1rem; }
+  .hj-header-inner { max-width: 860px; }
+  .stat-grid-6    { grid-template-columns: repeat(6, 1fr) !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DESKTOP  ≥ 1024px — sidebar layout
+══════════════════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+
+  /* Sidebar visible */
+  .hj-sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 220px;
+    background: var(--hj-nav-bg);
+    border-right: 1px solid var(--hj-border);
+    box-shadow: 2px 0 20px rgba(0,0,0,0.25);
+    z-index: 60;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Root: przesuń zawartość w prawo */
+  .hj-root {
+    padding-left: 220px;
+    padding-bottom: 3rem;
+  }
+
+  /* Header: zaczyna za sidebarem */
+  .hj-header       { left: 220px; }
+  .hj-header-inner { max-width: 1100px; margin: 0 auto; }
+
+  /* Ukryj mobilny pasek nawigacji i szufladę */
+  .hj-bottom-nav,
+  .nav-drawer,
+  .nav-drawer-overlay { display: none !important; }
+
+  /* Treść szersza */
+  .hj-content {
+    max-width: 1100px;
+    padding: 2rem 2.5rem 3rem;
+    gap: 1.2rem;
+  }
+
+  /* Karty — więcej powietrza */
+  .card { padding: 1.5rem; }
+
+  /* Stat grid zawsze 6 kolumn */
+  .stat-grid-6 { grid-template-columns: repeat(6, 1fr) !important; }
+
+  /* Cechy osobowości — 2 kolumny */
+  .trait-grid { grid-template-columns: 1fr 1fr; }
 }
 
 /* ── Karty ────────────────────────────────────────────────────── */
