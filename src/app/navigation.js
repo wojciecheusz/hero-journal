@@ -1,7 +1,6 @@
 import { TRANSLATIONS } from '../i18n/translations';
 
-/* Buduje tablicę NAV_GROUPS z etykietami w wybranym języku.
-   ID i ikony są niezmienne — tylko .label pochodzi z TRANSLATIONS. */
+/* Nawigacja mobilna — wszystkie sub-taby widoczne */
 export function getNavGroups(lang) {
   const n = TRANSLATIONS[lang]?.NAV ?? TRANSLATIONS.en.NAV;
   return [
@@ -31,6 +30,46 @@ export function getNavGroups(lang) {
     },
     {
       id: "compendium", label: n.compendium, icon: "📚", defaultTab: "compendium-spells",
+      tabs: [
+        { id:"compendium-races",     label: n["compendium-races"],     icon:"🧝" },
+        { id:"compendium-classes",   label: n["compendium-classes"],   icon:"⚔️" },
+        { id:"compendium-spells",    label: n["compendium-spells"],    icon:"✨" },
+        { id:"compendium-monsters",  label: n["compendium-monsters"],  icon:"🐉" },
+        { id:"compendium-equipment", label: n["compendium-equipment"], icon:"🎒" },
+      ],
+    },
+  ];
+}
+
+/* Nawigacja desktopowa — uproszczona struktura dla sidebara:
+   - Hero ma podzakładki Character i Equipment (virtual tab)
+   - World to jeden przycisk pokazujący 3 kolumny
+   - Inventory/Spells/Skills/NPCs/Locations/Factions znikają z nawigatora */
+export function getNavGroupsDesktop(lang) {
+  const n = TRANSLATIONS[lang]?.NAV ?? TRANSLATIONS.en.NAV;
+  return [
+    {
+      id: "hero", label: n.hero, icon: "⚔️",
+      tabs: [
+        { id:"character",  label: n.character,  icon:"⚔️" },
+        { id:"equipment",  label: n.equipment,  icon:"🎒" },
+      ],
+    },
+    {
+      id: "world", label: n.world, icon: "🌍",
+      tabs: [
+        { id:"world-all", label: n.world, icon:"🌍" },
+      ],
+    },
+    {
+      id: "log", label: n.log, icon: "📜",
+      tabs: [
+        { id:"sessions", label: n.sessions, icon:"📖" },
+        { id:"quests",   label: n.quests,   icon:"⚡" },
+      ],
+    },
+    {
+      id: "compendium", label: n.compendium, icon: "📚",
       tabs: [
         { id:"compendium-races",     label: n["compendium-races"],     icon:"🧝" },
         { id:"compendium-classes",   label: n["compendium-classes"],   icon:"⚔️" },

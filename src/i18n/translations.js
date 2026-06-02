@@ -49,6 +49,7 @@ export const TRANSLATIONS = {
     ],
     NAV: {
       hero:"Bohater", character:"Postać", inventory:"Plecak", spells:"Czary", skills:"Zdolności",
+      equipment:"Wyposażenie",
       world:"Świat", npcs:"Postacie", locations:"Miejsca", factions:"Frakcje",
       log:"Dziennik", sessions:"Kronika", quests:"Zadania", compendium:"Kompendium",
       "compendium-races":"Rasy","compendium-classes":"Klasy","compendium-spells":"Czary",
@@ -270,6 +271,7 @@ export const TRANSLATIONS = {
     ],
     NAV: {
       hero:"Hero", character:"Character", inventory:"Inventory", spells:"Spells", skills:"Abilities",
+      equipment:"Equipment",
       world:"World", npcs:"Characters", locations:"Locations", factions:"Factions",
       log:"Journal", sessions:"Chronicle", quests:"Quests", compendium:"Compendium",
       "compendium-races":"Races","compendium-classes":"Classes","compendium-spells":"Spells",

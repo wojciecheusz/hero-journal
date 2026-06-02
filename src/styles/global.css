@@ -428,6 +428,9 @@ input[type="number"] { font-size: inherit; }
   .hj-skills-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
+/* ── Siatka umiejętności D&D — zawsze 3 kolumny (mobile i desktop) ── */
+.hj-skills-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
 /* ── Multi-kolumnowy widok World i Equipment (desktop only) ──── */
 .multi-col-desktop { display: none; }
 .single-col-mobile { display: block; }

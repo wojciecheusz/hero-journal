@@ -414,8 +414,8 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           </div>
         </div>
 
-        {/* ── F: Death Saves + Exhaustion ── */}
-        <div style={{ display:"flex", gap:"1rem", flexWrap:"wrap", alignItems:"flex-start" }}>
+        {/* ── F: Death Saves + Exhaustion — zawsze w rzędzie (grid 1fr 1fr) ── */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.7rem", alignItems:"start" }}>
           {/* Death saves — auto-szerokość na podstawie treści */}
           <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px", flex:"0 0 auto" }}>
             <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>{C.deathSaves}</div>

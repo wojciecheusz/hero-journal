@@ -6,7 +6,7 @@ import {
   loadActiveId, saveActiveId, migrateLegacy, deleteCharData, load, save,
   setCloudSaveHook,
 } from '../utils/storage';
-import { getNavGroups } from './navigation';
+import { getNavGroups, getNavGroupsDesktop } from './navigation';
 import { detectLang, LangContext, TRANSLATIONS } from '../i18n/translations';
 import { createSampleHero } from '../constants/sampleHero';
 import { cloudSave } from '../firebase/firestore';
@@ -262,8 +262,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const { char, inventory, npcs, locations, skills, spells, sessions, quests, factions } = data;
 
   /* ── Zlokalizowane dane ───────────────────────────────────────── */
-  const T         = TRANSLATIONS[lang];
-  const navGroups = getNavGroups(lang);
+  const T                = TRANSLATIONS[lang];
+  const navGroups        = getNavGroups(lang);         // mobile bottom nav
+  const navGroupsDesktop = getNavGroupsDesktop(lang);  // desktop sidebar
 
   /* ── Ekrany pomocnicze ───────────────────────────────────────── */
   if (screen === "profiles") return (
@@ -301,19 +302,45 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
           </span>
         </div>
         <div style={{ height:"1px", background:"var(--hj-border)", margin:"0 0.75rem 0.25rem" }}/>
-        {navGroups.map(g => (
-          <div key={g.id} className="hj-sidebar-group">
-            <span className="hj-sidebar-group-label">{g.label}</span>
-            {g.tabs.map(t => (
-              <button key={t.id}
-                className={`hj-sidebar-item${tab === t.id ? " active" : ""}`}
-                onClick={() => setTab(t.id)}>
-                <span style={{ fontSize:"0.95rem", lineHeight:1, flexShrink:0 }}>{t.icon}</span>
-                <span>{t.label}</span>
-              </button>
-            ))}
-          </div>
-        ))}
+        {navGroupsDesktop.map(g => {
+          /* Grupy z jedną zakładką (np. World) — renderuj jako jeden przycisk */
+          if (g.tabs.length === 1) {
+            const t = g.tabs[0];
+            const isWorldActive = t.id === "world-all" &&
+              (tab === "world-all" || ["npcs","locations","factions"].includes(tab));
+            const isActive = tab === t.id || isWorldActive;
+            return (
+              <div key={g.id} className="hj-sidebar-group">
+                <button
+                  className={`hj-sidebar-item${isActive ? " active" : ""}`}
+                  style={{ paddingTop:"0.55rem", paddingBottom:"0.55rem" }}
+                  onClick={() => setTab(t.id)}>
+                  <span style={{ fontSize:"0.95rem", lineHeight:1, flexShrink:0 }}>{g.icon}</span>
+                  <span>{g.label}</span>
+                </button>
+              </div>
+            );
+          }
+          /* Grupy z wieloma zakładkami — pokaż sub-items */
+          return (
+            <div key={g.id} className="hj-sidebar-group">
+              <span className="hj-sidebar-group-label">{g.label}</span>
+              {g.tabs.map(t => {
+                const isEquipActive = t.id === "equipment" &&
+                  (tab === "equipment" || ["inventory","skills","spells"].includes(tab));
+                const isActive = tab === t.id || isEquipActive;
+                return (
+                  <button key={t.id}
+                    className={`hj-sidebar-item${isActive ? " active" : ""}`}
+                    onClick={() => setTab(t.id)}>
+                    <span style={{ fontSize:"0.95rem", lineHeight:1, flexShrink:0 }}>{t.icon}</span>
+                    <span>{t.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })}
       </aside>
 
       <header className="hj-header">
@@ -391,8 +418,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <main className="hj-content">
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} skills={skills} spells={spells}/>}
 
-        {/* ── Inventory / Spells / Skills — kolumny na desktop ── */}
-        {["inventory","skills","spells"].includes(tab) && <>
+        {/* ── Equipment (virtual desktop tab) + mobile individual tabs ── */}
+        {(tab === "equipment" || ["inventory","skills","spells"].includes(tab)) && <>
           <div className="multi-col-desktop">
             <div className="screen-col">
               <div className="screen-col-header">{T.NAV.inventory}</div>
@@ -411,11 +438,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
             {tab === "skills"    && <SkillsScreen    skills={skills}       setUmiejętności={setSkills}  openEntity={openEntity}/>}
             {tab === "spells"    && <SpellsScreen     spells={spells}       setCzary={setSpells}         char={char} setChar={setChar}/>}
+            {tab === "equipment" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
           </div>
         </>}
 
-        {/* ── NPCs / Locations / Factions — kolumny na desktop ── */}
-        {["npcs","locations","factions"].includes(tab) && <>
+        {/* ── World-all (virtual desktop tab) + mobile individual tabs ── */}
+        {(tab === "world-all" || ["npcs","locations","factions"].includes(tab)) && <>
           <div className="multi-col-desktop">
             <div className="screen-col">
               <div className="screen-col-header">{T.NAV.npcs}</div>
@@ -434,6 +462,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             {tab === "npcs"      && <NPCsScreen       npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
             {tab === "locations" && <LocationsScreen  locations={locations} setLocations={setLocations}  openEntity={openEntity}/>}
             {tab === "factions"  && <FactionsPanel    factions={factions}   setFactions={setFactions}    openEntity={openEntity}/>}
+            {tab === "world-all" && <NPCsScreen       npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
           </div>
         </>}
 
