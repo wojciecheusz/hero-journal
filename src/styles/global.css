@@ -347,6 +347,19 @@ input[type="number"] { font-size: inherit; }
   gap: 1rem;
 }
 
+/* ── Siatka karty postaci ─────────────────────────────────────── */
+.char-sheet-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+.char-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 /* ══════════════════════════════════════════════════════════════
    TABLET  640px – 1023px
 ══════════════════════════════════════════════════════════════ */
@@ -398,6 +411,10 @@ input[type="number"] { font-size: inherit; }
     gap: 1.2rem;
   }
 
+  /* Karta postaci — 2 kolumny */
+  .char-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+  .char-col         { gap: 1.2rem; }
+
   /* Karty — więcej powietrza */
   .card { padding: 1.5rem; }
 
@@ -409,6 +426,16 @@ input[type="number"] { font-size: inherit; }
 
   /* Siatka umiejętności — 3 kolumny na bazowym desktop */
   .hj-skills-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Karta postaci — aktualizacje dla szerszych breakpointów */
+@media (min-width: 1440px) {
+  .char-sheet-grid { gap: 1.4rem; }
+  .char-col         { gap: 1.4rem; }
+}
+@media (min-width: 1920px) {
+  .char-sheet-grid { gap: 1.6rem; }
+  .char-col         { gap: 1.6rem; }
 }
 
 /* ══════════════════════════════════════════════════════════════

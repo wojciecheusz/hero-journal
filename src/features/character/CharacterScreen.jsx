@@ -115,6 +115,10 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
   return (
     <>
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
+      <div className="char-sheet-grid">
+
+      {/* ══════════ LEWA KOLUMNA: mechanika (postać, cechy, walka) ══════════ */}
+      <div className="char-col">
 
       {/* ══════════════════════════════════════
           KARTA 1: POSTAĆ
@@ -434,6 +438,11 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         </div>
       </div>
 
+      </div>{/* /lewa kolumna */}
+
+      {/* ══════════ PRAWA KOLUMNA: wyposażenie i osobowość ══════════ */}
+      <div className="char-col">
+
       {/* ══════════════════════════════════════
           KARTA 5: AKTYWNE I WYPOSAŻONE
       ══════════════════════════════════════ */}
@@ -584,6 +593,8 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
         )}
       </div>
 
+      </div>{/* /prawa kolumna */}
+      </div>{/* /char-sheet-grid */}
     </>
   );
 }
