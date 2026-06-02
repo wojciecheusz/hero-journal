@@ -104,6 +104,12 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
               <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>
               <button className="entity-toggle" onClick={() => toggle(item.id)}>{open ? "▲" : "▼"}</button>
             </div>
+            {/* Podgląd opisu — 2 linie gdy zwinięty */}
+            {!open && (item.note || item.effect) && (
+              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.9rem", color:"var(--hj-text-muted)", lineHeight:1.6, marginTop:"0.3rem", fontStyle:"italic", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden", wordBreak:"break-word", opacity:0.85 }}>
+                {item.effect && item.note ? `${item.effect} · ${item.note}` : item.effect || item.note}
+              </p>
+            )}
             {open && (
               <div className="pack-item-body">
                 <div className="pack-item-row">

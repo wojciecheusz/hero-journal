@@ -120,11 +120,11 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
               <button className="entity-toggle" onClick={() => toggle(sp.id)}>{open?"▲":"▼"}</button>
             </div>
 
-            {/* Podgląd opisu — zawsze widoczny gdy jest treść */}
+            {/* Podgląd opisu — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
             {sp.description && !isEditing && (
-              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:"var(--spell-muted)", lineHeight:1.65, marginTop:"0.4rem", whiteSpace:"pre-wrap", wordBreak:"break-word" }}>{sp.description}</p>
+              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:"var(--spell-muted)", lineHeight:1.65, marginTop:"0.4rem", wordBreak:"break-word", ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{sp.description}</p>
             )}
-            {sp.notes && !isEditing && (
+            {sp.notes && !isEditing && open && (
               <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.88rem", color:"var(--spell-dim)", lineHeight:1.55, marginTop:"0.3rem", whiteSpace:"pre-wrap", wordBreak:"break-word", fontStyle:"italic" }}>{sp.notes}</p>
             )}
 
