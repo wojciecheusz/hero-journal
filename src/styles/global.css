@@ -428,6 +428,39 @@ input[type="number"] { font-size: inherit; }
   .hj-skills-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
+/* ── Multi-kolumnowy widok World i Equipment (desktop only) ──── */
+.multi-col-desktop { display: none; }
+.single-col-mobile { display: block; }
+
+@media (min-width: 1024px) {
+  .multi-col-desktop {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    align-items: start;
+  }
+  .single-col-mobile { display: none; }
+
+  /* Każda kolumna screenu — flex column jak hj-content */
+  .screen-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+  }
+  /* Nagłówek kolumny */
+  .screen-col-header {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--hj-text-label);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--hj-border);
+    margin-bottom: 0.2rem;
+  }
+}
+
 /* Karta postaci — aktualizacje dla szerszych breakpointów */
 @media (min-width: 1440px) {
   .char-sheet-grid { gap: 1.4rem; }

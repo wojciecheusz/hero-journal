@@ -390,12 +390,53 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
       <main className="hj-content">
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} skills={skills} spells={spells}/>}
-        {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
-        {tab === "skills"    && <SkillsScreen    skills={skills}       setUmiejętności={setSkills}  openEntity={openEntity}/>}
-        {tab === "spells"    && <SpellsScreen     spells={spells}       setCzary={setSpells}         char={char} setChar={setChar}/>}
-        {tab === "npcs"      && <NPCsScreen       npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
-        {tab === "locations" && <LocationsScreen  locations={locations} setLocations={setLocations}  openEntity={openEntity}/>}
-        {tab === "factions"  && <FactionsPanel    factions={factions}   setFactions={setFactions}    openEntity={openEntity}/>}
+
+        {/* ── Inventory / Spells / Skills — kolumny na desktop ── */}
+        {["inventory","skills","spells"].includes(tab) && <>
+          <div className="multi-col-desktop">
+            <div className="screen-col">
+              <div className="screen-col-header">{T.NAV.inventory}</div>
+              <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>
+            </div>
+            <div className="screen-col">
+              <div className="screen-col-header">{T.NAV.spells}</div>
+              <SpellsScreen spells={spells} setCzary={setSpells} char={char} setChar={setChar}/>
+            </div>
+            <div className="screen-col">
+              <div className="screen-col-header">{T.NAV.skills}</div>
+              <SkillsScreen skills={skills} setUmiejętności={setSkills} openEntity={openEntity}/>
+            </div>
+          </div>
+          <div className="single-col-mobile">
+            {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
+            {tab === "skills"    && <SkillsScreen    skills={skills}       setUmiejętności={setSkills}  openEntity={openEntity}/>}
+            {tab === "spells"    && <SpellsScreen     spells={spells}       setCzary={setSpells}         char={char} setChar={setChar}/>}
+          </div>
+        </>}
+
+        {/* ── NPCs / Locations / Factions — kolumny na desktop ── */}
+        {["npcs","locations","factions"].includes(tab) && <>
+          <div className="multi-col-desktop">
+            <div className="screen-col">
+              <div className="screen-col-header">{T.NAV.npcs}</div>
+              <NPCsScreen npcs={npcs} setNPCs={setNPCs} openEntity={openEntity}/>
+            </div>
+            <div className="screen-col">
+              <div className="screen-col-header">{T.NAV.locations}</div>
+              <LocationsScreen locations={locations} setLocations={setLocations} openEntity={openEntity}/>
+            </div>
+            <div className="screen-col">
+              <div className="screen-col-header">{T.NAV.factions}</div>
+              <FactionsPanel factions={factions} setFactions={setFactions} openEntity={openEntity}/>
+            </div>
+          </div>
+          <div className="single-col-mobile">
+            {tab === "npcs"      && <NPCsScreen       npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
+            {tab === "locations" && <LocationsScreen  locations={locations} setLocations={setLocations}  openEntity={openEntity}/>}
+            {tab === "factions"  && <FactionsPanel    factions={factions}   setFactions={setFactions}    openEntity={openEntity}/>}
+          </div>
+        </>}
+
         {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSesjas={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab === "quests"    && <QuestScreen       quests={quests}       setZadania={setQuests}       openEntity={openEntity}/>}
         {tab.startsWith("compendium") && <CompendiumScreen activeTab={tab.replace("compendium-", "")} key={tab}/>}
