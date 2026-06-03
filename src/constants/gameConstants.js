@@ -45,6 +45,7 @@ export const FACTION_RANK_COLORS = {
 };
 
 export const ITEM_ICONS = {
+  // Enum keys (po migracji)
   general:      "📦",
   weapon:       "⚔️",
   armor:        "🛡️",
@@ -53,6 +54,15 @@ export const ITEM_ICONS = {
   consumable:   "🧪",
   tool:         "🔧",
   other:        "◈",
+  // Legacy Polish keys (przed migracją — backward compatibility)
+  "Ogólny":          "📦",
+  "Broń":            "⚔️",
+  "Pancerz":         "🛡️",
+  "Zwój z czarem":   "📜",
+  "Cudowny przedmiot":"✨",
+  "Jednorazowy":     "🧪",
+  "Narzędzie":       "🔧",
+  "Inny":            "◈",
 };
 
 export const ALIGNMENTS = [

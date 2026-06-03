@@ -21,8 +21,8 @@ export default function HelpPanel({ tab, theme, onClose }) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div style={{ position:"fixed", inset:0, zIndex:498, background:"transparent" }} onClick={onClose}/>
+      {/* Backdrop — ukryty na desktop (pomoc jest w sidebarze) */}
+      <div className="hj-help-overlay" style={{ position:"fixed", inset:0, zIndex:498, background:"transparent" }} onClick={onClose}/>
 
       {/* Panel */}
       <div className="hj-help-overlay" style={{ position:"fixed", top:"env(safe-area-inset-top, 0px)", right:0, bottom:0, zIndex:499, width:"min(380px, 100vw)", background:t.bgCard, borderLeft:`1px solid ${t.border}`, boxShadow:`-12px 0 48px ${t.shadowBot}`, display:"flex", flexDirection:"column", overflow:"hidden" }}>
