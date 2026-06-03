@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LOC_TYPES } from '../../constants/gameConstants';
+import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
@@ -7,7 +8,7 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
   const T = useT();
   const L = T.LOCATIONS;
 
-  const [form, setForm] = useState({ name:"", type:"Osada", notes:"" });
+  const [form, setForm] = useState({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"" });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
   const [editing, setEditing] = useState({});
@@ -27,7 +28,7 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
   const addLoc = () => {
     const n = form.name.trim(); if (!n) return;
     setLocations(l => [...l, { id: Date.now(), name: n, type: form.type, notes: form.notes.trim(), tags: [], pinned: false }]);
-    setForm({ name:"", type:"Osada", notes:"" });
+    setForm({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"" });
     setShowForm(false);
   };
   const upd    = (id, f, v) => setLocations(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));

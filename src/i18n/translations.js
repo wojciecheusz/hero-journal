@@ -21,7 +21,18 @@ export const TRANSLATIONS = {
       wschod:"🌅 Wschód", las:"🌿 Las", lupek:"🌊 Łupek",
       pergamin:"📜 Pergamin", kosc:"🤍 Kość Słoniowa",
     },
-    STATUS_CYCLE:  { "Aktywne":"Ukończone", "Ukończone":"Nieudane", "Nieudane":"Aktywne" },
+    STATUS_CYCLE:  { active:"completed", completed:"failed", failed:"active" }, // deprecated — use enums.STATUS_CYCLE
+
+    LABELS: {
+      questStatus: { active:"Aktywne", completed:"Ukończone", failed:"Nieudane" },
+      skillCat:    { skill:"Umiejętność", racial_feature:"Cecha rasowa", feat:"Atut" },
+      itemType:    { general:"Ogólny", weapon:"Broń", armor:"Pancerz", spell_scroll:"Zwój z czarem", wondrous:"Cudowny przedmiot", consumable:"Jednorazowy", tool:"Narzędzie", other:"Inny" },
+      locType:     { settlement:"Osada", dungeon:"Podziemia", wilderness:"Dzicz", building:"Budynek", ruins:"Ruiny", landmark:"Punkt Orientacyjny", other:"Inne" },
+      factionType: { guild:"Gildia", order:"Zakon", cult:"Kult", government:"Rząd", military:"Armia", criminals:"Przestępcy", merchants:"Kupcy", religious:"Religijna", political:"Polityczna", other:"Inna" },
+      factionRank: { unknown:"Nieznany", ally:"Sojusznik", neutral:"Neutralny", enemy:"Wróg", member:"Członek", officer:"Oficer", leader:"Przywódca" },
+      spellLevel:  { cantrip:"Sztuczka", level1:"1. poziom", level2:"2. poziom", level3:"3. poziom", level4:"4. poziom", level5:"5. poziom", level6:"6. poziom", level7:"7. poziom", level8:"8. poziom", level9:"9. poziom" },
+      spellSchool: { abjuration:"Odrzucanie", conjuration:"Przywoływanie", divination:"Wieszczenie", enchantment:"Surogacja", evocation:"Wywoływanie", illusion:"Iluzja", necromancy:"Nekromancja", transmutation:"Przemiana", other:"Inna" },
+    },
     REL_LABELS:    { ally:"Sprzymierzeniec", neutral:"Neutralny", hostile:"Wrogi", unknown:"Nieznany" },
     LOC_TYPES:     ["Osada","Podziemia","Dzicz","Budynek","Ruiny","Punkt Orientacyjny","Inne"],
     FACTION_TYPES: ["Gildia","Zakon","Kult","Rząd","Armia","Przestępcy","Kupcy","Religijna","Polityczna","Inna"],
@@ -369,7 +380,18 @@ export const TRANSLATIONS = {
       wschod:"🌅 Dawn", las:"🌿 Forest", lupek:"🌊 Slate",
       pergamin:"📜 Parchment", kosc:"🤍 Ivory",
     },
-    STATUS_CYCLE:  { "Active":"Completed","Completed":"Failed","Failed":"Active" },
+    STATUS_CYCLE:  { active:"completed", completed:"failed", failed:"active" }, // deprecated — use enums.STATUS_CYCLE
+
+    LABELS: {
+      questStatus: { active:"Active", completed:"Completed", failed:"Failed" },
+      skillCat:    { skill:"Skill", racial_feature:"Racial Feature", feat:"Feat" },
+      itemType:    { general:"General", weapon:"Weapon", armor:"Armor", spell_scroll:"Spell Scroll", wondrous:"Wondrous Item", consumable:"Consumable", tool:"Tool", other:"Other" },
+      locType:     { settlement:"Settlement", dungeon:"Dungeon", wilderness:"Wilderness", building:"Building", ruins:"Ruins", landmark:"Landmark", other:"Other" },
+      factionType: { guild:"Guild", order:"Order", cult:"Cult", government:"Government", military:"Military", criminals:"Criminals", merchants:"Merchants", religious:"Religious", political:"Political", other:"Other" },
+      factionRank: { unknown:"Unknown", ally:"Ally", neutral:"Neutral", enemy:"Enemy", member:"Member", officer:"Officer", leader:"Leader" },
+      spellLevel:  { cantrip:"Cantrip", level1:"1st level", level2:"2nd level", level3:"3rd level", level4:"4th level", level5:"5th level", level6:"6th level", level7:"7th level", level8:"8th level", level9:"9th level" },
+      spellSchool: { abjuration:"Abjuration", conjuration:"Conjuration", divination:"Divination", enchantment:"Enchantment", evocation:"Evocation", illusion:"Illusion", necromancy:"Necromancy", transmutation:"Transmutation", other:"Other" },
+    },
     REL_LABELS:    { ally:"Ally", neutral:"Neutral", hostile:"Hostile", unknown:"Unknown" },
     LOC_TYPES:     ["Settlement","Dungeon","Wilderness","Building","Ruins","Landmark","Other"],
     FACTION_TYPES: ["Guild","Order","Cult","Government","Military","Criminals","Merchants","Religious","Political","Other"],

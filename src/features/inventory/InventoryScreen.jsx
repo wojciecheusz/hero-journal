@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ITEM_TYPES, ITEM_ICONS } from '../../constants/gameConstants';
+import { ITEM_TYPE } from '../../constants/enums.js';
 import { Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
@@ -9,7 +10,7 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
   const displayItemType = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
 
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name:"", type:"Ogólny", qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
+  const [form, setForm] = useState({ name:"", type:ITEM_TYPE.GENERAL, qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
   const [expanded, setExpanded] = useState({});
   const [editing,  setEditing]  = useState({});
   const [filterType, setFilterType] = useState(null);
@@ -38,7 +39,7 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
 
   const visible      = filterType ? inventory.filter(i => i.type === filterType) : inventory;
   const equippedCount = inventory.filter(i => i.equipped).length;
-  const needsExtras  = t => ["Broń","Zwój z czarem","Cudowny przedmiot","Jednorazowy"].includes(t);
+  const needsExtras  = t => [ITEM_TYPE.WEAPON, ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
 
   return (
     <>
@@ -66,14 +67,14 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
             </div>
             {needsExtras(form.type) && (
               <>
-                {form.type === "Broń" && (
+                {form.type === ITEM_TYPE.WEAPON && (
                   <div className="pack-item-row">
                     <div className="pack-field"><span className="pack-field-label">{I.damageDice}</span><input className="pack-field-input" placeholder="e.g. 1d8" value={form.damage} onChange={e => setForm(f => ({ ...f, damage: e.target.value }))}/></div>
                     <div className="pack-field"><span className="pack-field-label">{I.damageType}</span><input className="pack-field-input" placeholder="e.g. Slashing" value={form.damageType} onChange={e => setForm(f => ({ ...f, damageType: e.target.value }))}/></div>
                     <div className="pack-field"><span className="pack-field-label">{I.hitBonus}</span><input className="pack-field-input" type="number" value={form.modifier} onChange={e => setForm(f => ({ ...f, modifier: e.target.value }))}/></div>
                   </div>
                 )}
-                {["Zwój z czarem","Cudowny przedmiot","Jednorazowy"].includes(form.type) && (
+                {[ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(form.type) && (
                   <div className="pack-item-row">
                     <div className="pack-field"><span className="pack-field-label">{I.charges}</span><input className="pack-field-input" value={form.charges} onChange={e => setForm(f => ({ ...f, charges: e.target.value }))}/></div>
                     <div className="pack-field" style={{ flex:2 }}><span className="pack-field-label">{I.effect}</span><input className="pack-field-input" value={form.effect} onChange={e => setForm(f => ({ ...f, effect: e.target.value }))}/></div>
@@ -139,14 +140,14 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
               <div className="pack-item-body">
                 <div className="pack-item-row">
                   <div className="pack-field"><span className="pack-field-label">{I.qty}</span><input className="pack-field-input" value={item.qty || "1"} onChange={e => upd(item.id, "qty", e.target.value)}/></div>
-                  {item.type === "Broń" && (
+                  {item.type === ITEM_TYPE.WEAPON && (
                     <>
                       <div className="pack-field"><span className="pack-field-label">{I.damage}</span><input className="pack-field-input" value={item.damage || ""} onChange={e => upd(item.id, "damage", e.target.value)}/></div>
                       <div className="pack-field"><span className="pack-field-label">{I.type}</span><input className="pack-field-input" value={item.damageType || ""} onChange={e => upd(item.id, "damageType", e.target.value)}/></div>
                       <div className="pack-field"><span className="pack-field-label">{I.attackBonus}</span><input className="pack-field-input" type="number" value={item.modifier || ""} onChange={e => upd(item.id, "modifier", e.target.value)}/></div>
                     </>
                   )}
-                  {["Zwój z czarem","Cudowny przedmiot","Jednorazowy"].includes(item.type) && (
+                  {[ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(item.type) && (
                     <>
                       <div className="pack-field"><span className="pack-field-label">{I.charges}</span><input className="pack-field-input" value={item.charges || ""} onChange={e => upd(item.id, "charges", e.target.value)}/></div>
                       <div className="pack-field" style={{ flex:2 }}><span className="pack-field-label">{I.action}</span><input className="pack-field-input" value={item.effect || ""} onChange={e => upd(item.id, "effect", e.target.value)}/></div>

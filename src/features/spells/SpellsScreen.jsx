@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS } from '../../constants/gameConstants';
+import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
 import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
@@ -9,7 +10,7 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
   const T  = useT();
   const SP = T.SPELLS;
 
-  const [form, setForm] = useState({ name:"", level:"Sztuczka", school:"Wywoływanie", castingTime:"1 akcja", zakres:"", duration:"", components:"", description:"", notes:"" });
+  const [form, setForm] = useState({ name:"", level:SPELL_LEVEL.CANTRIP, school:SPELL_SCHOOL.EVOCATION, castingTime:"1 action", zakres:"", duration:"", components:"", description:"", notes:"" });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
   const [editing, setEditing] = useState({});
@@ -21,13 +22,13 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
   const inUseCount = spells.filter(s => s.inUse).length;
   const visible = activeLevel ? spells.filter(s => s.level===activeLevel) : spells;
 
-  const displayLevel  = lv => T.SPELL_LEVELS[SPELL_LEVELS.indexOf(lv)]  ?? lv;
-  const displaySchool = sc => T.SPELL_SCHOOLS[SPELL_SCHOOLS.indexOf(sc)] ?? sc;
+  const displayLevel  = lv => T.LABELS.spellLevel[lv]  ?? lv;
+  const displaySchool = sc => T.LABELS.spellSchool[sc] ?? sc;
 
   const addSpell = () => {
     const n = form.name.trim(); if (!n) return;
     setCzary(l => [...l, { id: Date.now(), ...form, name: n, tags: [], pinned: false, inUse: false }]);
-    setForm({ name:"", level:"Sztuczka", school:"Wywoływanie", castingTime:"1 akcja", zakres:"", duration:"", components:"", description:"", notes:"" });
+    setForm({ name:"", level:SPELL_LEVEL.CANTRIP, school:SPELL_SCHOOL.EVOCATION, castingTime:"1 action", zakres:"", duration:"", components:"", description:"", notes:"" });
     setShowForm(false);
   };
   const upd       = (id, f, v) => setCzary(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));

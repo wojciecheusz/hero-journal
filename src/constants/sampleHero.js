@@ -4,6 +4,8 @@
  * Session notes contain NPC names and location names
  * that automatically become hyperlinks in the chronicle view.
  */
+import { ITEM_TYPE, LOC_TYPE, FACTION_TYPE, FACTION_RANK, SKILL_CAT, SPELL_LEVEL, SPELL_SCHOOL, QUEST_STATUS } from './enums.js';
+
 export function createSampleHero() {
   const id = "sample_" + Date.now();
 
@@ -34,8 +36,8 @@ export function createSampleHero() {
     personalNotes: "// Ritual of the White Oak: an unknown ritual that may seal the Lord Gnicia.\n// Leaden Sky: something like an 'entity', a pupil of Lord Gnicia\n// Echo of the First Oak: key to the Ritual of the White Oak",
     backstory: "John Silverblade grew up in a small village on the kingdom's outskirts. As a young boy, he survived a demon-cult raid that reduced his home to ashes. Saved by a wandering paladin, he swore to dedicate his life to fighting evil. After years of service in the Order of the Silver Flame, he set out alone to face the growing threat of the Dragon Blood Cult — an organization that stole the Order's holy relic.",
     spellSlots: {
-      "1. poziom": { max: 4, used: 2 },
-      "2. poziom": { max: 2, used: 0 },
+      [SPELL_LEVEL.L1]: { max: 4, used: 2 },
+      [SPELL_LEVEL.L2]: { max: 2, used: 0 },
     },
     spellcastingAbility: "CHA",
     hitDice: { type: "d10", max: 5, used: 2 },
@@ -54,40 +56,40 @@ export function createSampleHero() {
   /* ── INVENTORY ─────────────────────────────────── */
   const inventory = [
     {
-      id: 101, name: "Longsword +1", type: "Broń", qty: "1",
+      id: 101, name: "Longsword +1", type: ITEM_TYPE.WEAPON, qty: "1",
       damage: "1d8", damageType: "Slashing", modifier: "1",
       charges: "", effect: "",
       note: "Found in the Shadow Cave. Glows faintly in darkness — a sign of an ancient consecration spell.",
       equipped: true, tags: ["magic"],
     },
     {
-      id: 102, name: "Plate Armor", type: "Pancerz", qty: "1",
+      id: 102, name: "Plate Armor", type: ITEM_TYPE.ARMOR, qty: "1",
       damage: "", damageType: "", modifier: "", charges: "", effect: "",
       note: "Well-fitted. AC 18. Polished to a mirror shine — John's mark on the battlefield.",
       equipped: true, tags: [],
     },
     {
-      id: 103, name: "Heraldic Shield", type: "Pancerz", qty: "1",
+      id: 103, name: "Heraldic Shield", type: ITEM_TYPE.ARMOR, qty: "1",
       damage: "", damageType: "", modifier: "", charges: "", effect: "",
       note: "Bears the symbol of the Order of the Silver Flame — a silver flame on black.",
       equipped: true, tags: ["order"],
     },
     {
-      id: 104, name: "Healing Potion", type: "Jednorazowy", qty: "3",
+      id: 104, name: "Healing Potion", type: ITEM_TYPE.CONSUMABLE, qty: "3",
       damage: "", damageType: "", modifier: "",
       charges: "3", effect: "Restores 2d4+2 HP",
       note: "Purchased at the Temple of Mystra from Elara Moonwhisper.",
       equipped: false, tags: ["medicine"],
     },
     {
-      id: 105, name: "Scroll — Detect Evil and Good", type: "Zwój z czarem", qty: "1",
+      id: 105, name: "Scroll — Detect Evil and Good", type: ITEM_TYPE.SCROLL, qty: "1",
       damage: "", damageType: "", modifier: "",
       charges: "1", effect: "Detect Evil and Good, range 30 ft, duration 10 min.",
       note: "Given by Elara before the Shadow Cave expedition.",
       equipped: false, tags: ["magic", "scouting"],
     },
     {
-      id: 106, name: "Silk Rope 50 ft", type: "Narzędzie", qty: "1",
+      id: 106, name: "Silk Rope 50 ft", type: ITEM_TYPE.TOOL, qty: "1",
       damage: "", damageType: "", modifier: "", charges: "", effect: "",
       note: "Essential for dungeon exploration. Has saved lives more than once.",
       equipped: false, tags: [],
@@ -97,7 +99,7 @@ export function createSampleHero() {
   /* ── SPELLS ────────────────────────────────────── */
   const spells = [
     {
-      id: 201, name: "Cure Wounds", level: "1. poziom", school: "Przywoływanie",
+      id: 201, name: "Cure Wounds", level: SPELL_LEVEL.L1, school: SPELL_SCHOOL.CONJURATION,
       castingTime: "1 action", zakres: "Touch", duration: "Instantaneous",
       components: "V, S",
       description: "A creature you touch regains HP equal to 1d8 + your spellcasting modifier (CHA). Has no effect on undead or constructs.",
@@ -105,7 +107,7 @@ export function createSampleHero() {
       tags: ["healing"], pinned: false, inUse: true,
     },
     {
-      id: 202, name: "Divine Smite", level: "1. poziom", school: "Wywoływanie",
+      id: 202, name: "Divine Smite", level: SPELL_LEVEL.L1, school: SPELL_SCHOOL.EVOCATION,
       castingTime: "1 bonus action", zakres: "Self", duration: "Concentration, up to 1 minute",
       components: "V",
       description: "Your next weapon hit deals an extra 2d8 radiant damage. Against undead or fiends — 3d8.",
@@ -113,7 +115,7 @@ export function createSampleHero() {
       tags: ["damage", "combat"], pinned: false, inUse: true,
     },
     {
-      id: 203, name: "Protection from Evil and Good", level: "1. poziom", school: "Odrzucanie",
+      id: 203, name: "Protection from Evil and Good", level: SPELL_LEVEL.L1, school: SPELL_SCHOOL.ABJURATION,
       castingTime: "1 action", zakres: "Touch", duration: "Concentration, up to 10 minutes",
       components: "V, S, M (holy water)",
       description: "One willing creature is protected from aberrations, celestials, fiends, undead, and fey. Attacks by those creature types are made with disadvantage.",
@@ -121,7 +123,7 @@ export function createSampleHero() {
       tags: ["protection"], pinned: false, inUse: true,
     },
     {
-      id: 204, name: "Command", level: "1. poziom", school: "Surogacja",
+      id: 204, name: "Command", level: SPELL_LEVEL.L1, school: SPELL_SCHOOL.ENCHANTMENT,
       castingTime: "1 action", zakres: "60 ft", duration: "1 round",
       components: "V",
       description: "You speak a one-word command to a creature you can see. The target makes a WIS saving throw. On a failure, it follows the command (e.g., Flee!, Grovel!, Approach!, Halt!).",
@@ -133,22 +135,22 @@ export function createSampleHero() {
   /* ── ABILITIES / FEATURES ──────────────────────── */
   const skills = [
     {
-      id: 301, name: "Extra Attack", category: "Umiejętność",
+      id: 301, name: "Extra Attack", category: SKILL_CAT.SKILL,
       description: "When you take the Attack action, you can make one additional weapon attack as a bonus action on the same turn.",
       level: 3, tags: ["combat", "bonus-action"], pinned: false, inUse: true,
     },
     {
-      id: 302, name: "Lay on Hands", category: "Cecha rasowa",
+      id: 302, name: "Lay on Hands", category: SKILL_CAT.RACIAL,
       description: "You have a pool of 25 HP per day. As an action, touch a creature to restore any number of HP from the pool. Alternatively, spend 5 HP to cure one disease or poison.",
       level: 2, tags: ["healing", "paladin"], pinned: false, inUse: true,
     },
     {
-      id: 303, name: "Divine Sense", category: "Cecha rasowa",
+      id: 303, name: "Divine Sense", category: SKILL_CAT.RACIAL,
       description: "As an action, you open your awareness to higher powers. Until the end of your next turn, you know the location of any undead, fiend, or celestial within 60 ft — even through walls.",
       level: 1, tags: ["detection", "paladin"], pinned: false, inUse: false,
     },
     {
-      id: 304, name: "Aura of Courage", category: "Atut",
+      id: 304, name: "Aura of Courage", category: SKILL_CAT.FEAT,
       description: "Friendly creatures within 10 ft of you can't be frightened while you are conscious. (Available from 10th level — John's goal)",
       level: 0, tags: ["aura", "goal"], pinned: false, inUse: false,
     },
@@ -193,22 +195,22 @@ export function createSampleHero() {
   /* ── LOCATIONS ─────────────────────────────────── */
   const locations = [
     {
-      id: 501, name: "Baldur's Gate", type: "Osada",
+      id: 501, name: "Baldur's Gate", type: LOC_TYPE.SETTLEMENT,
       notes: "A great port city — a bustling marketplace and political center of the region. Home to the Temple of Mystra, the Merchant Guild, and the City Watch. The Dragon Blood Cult reportedly operates in the Old District underground. A safe place to rest.",
       tags: ["city", "port", "base"], pinned: false,
     },
     {
-      id: 502, name: "Shadow Cave", type: "Podziemia",
+      id: 502, name: "Shadow Cave", type: LOC_TYPE.DUNGEON,
       notes: "A dark cave 3 days east of Baldur's Gate, hidden behind a waterfall in Cloak Wood. Was the cult's base. During session 3 found a Longsword +1 and a Detect Evil scroll. Mrak Thornwood escaped through a secret eastern exit.",
       tags: ["cave", "cult", "exploration"], pinned: true,
     },
     {
-      id: 503, name: "The Golden Horseshoe Tavern", type: "Budynek",
+      id: 503, name: "The Golden Horseshoe Tavern", type: LOC_TYPE.BUILDING,
       notes: "A cozy tavern in central Baldur's Gate, run by Barlin Copperbeard. Good food, cheap rooms — 5 sp/night. A regular meeting spot. Barlin always knows what's happening in town.",
       tags: ["tavern", "base", "rest"], pinned: false,
     },
     {
-      id: 504, name: "Temple of Mystra", type: "Budynek",
+      id: 504, name: "Temple of Mystra", type: LOC_TYPE.BUILDING,
       notes: "A grand temple in Baldur's Gate's western district — white and gold architecture, always open to the faithful. Elara Moonwhisper's base. Safe haven, large library with cult information. Can buy potions and scrolls here.",
       tags: ["temple", "safe", "shopping"], pinned: false,
     },
@@ -243,7 +245,7 @@ export function createSampleHero() {
       name: "Recover the Holy Relic",
       description: "The Dragon Blood Cult stole the Order's relic. A copy found in the Shadow Cave suggests the original is deeper in the cult's organization.",
       reward: "Order's Blessing + 5000 gp",
-      status: "Aktywne",
+      status: QUEST_STATUS.ACTIVE,
       kroks: [
         { id: 7011, text: "Reach the Shadow Cave", done: true },
         { id: 7012, text: "Defeat the cult guards", done: true },
@@ -256,7 +258,7 @@ export function createSampleHero() {
       name: "Eliminate Mrak Thornwood",
       description: "The Dark Knight escaped and is seeking revenge. He knows our faces and our route.",
       reward: "800 gp bounty from the City Watch + personal vendetta resolved",
-      status: "Aktywne",
+      status: QUEST_STATUS.ACTIVE,
       kroks: [
         { id: 7021, text: "Track Mrak's whereabouts", done: false },
         { id: 7022, text: "Confront and neutralize Mrak", done: false },
@@ -267,7 +269,7 @@ export function createSampleHero() {
       name: "Find the Cult's City Agents",
       description: "The parchment taken from Mrak contains a list of cult agents operating in Baldur's Gate. Sir Aldric needs this decoded.",
       reward: "City Watch commendation + free lodging at the barracks",
-      status: "Ukończone",
+      status: QUEST_STATUS.COMPLETED,
       kroks: [
         { id: 7031, text: "Deliver the parchment to Sir Aldric Vance", done: true },
         { id: 7032, text: "Work with Elara Moonwhisper to decode the list", done: true },
@@ -278,24 +280,24 @@ export function createSampleHero() {
   /* ── FACTIONS ──────────────────────────────────── */
   const factions = [
     {
-      id: 801, name: "Order of the Silver Flame", type: "Zakon",
-      rank: "Oficer", leader: "High Commander Yriel Dawnblade",
+      id: 801, name: "Order of the Silver Flame", type: FACTION_TYPE.ORDER,
+      rank: FACTION_RANK.OFFICER, leader: "High Commander Yriel Dawnblade",
       headquarters: "Silver Citadel, northern mountains",
       goal: "Protect the innocent and destroy supernatural evil across the realm",
       notes: "John's home order. They sent him on this mission to recover the stolen relic. They have resources but are spread thin across the continent. Contact: send a silver raven to the Citadel.",
       tags: ["order", "home", "paladin"], pinned: true, reputation: 80,
     },
     {
-      id: 802, name: "Dragon Blood Cult", type: "Kult",
-      rank: "Wróg", leader: "Unknown supreme leader",
+      id: 802, name: "Dragon Blood Cult", type: FACTION_TYPE.CULT,
+      rank: FACTION_RANK.ENEMY, leader: "Unknown supreme leader",
       headquarters: "Unknown — likely underground",
       goal: "Summon a dragon god through stolen sacred artifacts",
       notes: "Enemy faction. Operates in cells — each cell knows little of the others. Mrak Thornwood is their regional leader. Members identified by a demoness tattoo on the left wrist.",
       tags: ["cult", "enemy", "dangerous"], pinned: false, reputation: -90,
     },
     {
-      id: 803, name: "Baldur's Gate City Watch", type: "Armia",
-      rank: "Sojusznik", leader: "Sir Aldric Vance",
+      id: 803, name: "Baldur's Gate City Watch", type: FACTION_TYPE.MILITARY,
+      rank: FACTION_RANK.ALLY, leader: "Sir Aldric Vance",
       headquarters: "East Gate Barracks, Baldur's Gate",
       goal: "Maintain law and order in the city",
       notes: "Useful allies within the city. Overstretched — can't act outside the walls. Help with passes and official backing. Sir Aldric trusts John after the caravan report.",

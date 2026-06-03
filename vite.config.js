@@ -6,6 +6,15 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 750,
   },
+  test: {
+    globals: true,
+    environment: 'node',
+    include: ['src/**/*.test.js', 'src/**/*.test.jsx'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/constants/enums.js', 'src/utils/storage.js', 'src/utils/math.js'],
+    },
+  },
   plugins: [
     react(),
     VitePWA({

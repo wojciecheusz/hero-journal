@@ -1,16 +1,21 @@
 import { useState, useEffect } from 'react';
 import { SKILL_CATS } from '../../constants/gameConstants';
+import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
-const catColor = cat => ({ "Umiejętność":"#c9943e","Skill":"#c9943e","Cecha rasowa":"#4a8aaa","Racial Feature":"#4a8aaa","Atut":"#9a6030","Feat":"#9a6030" })[cat] || "#8a7848";
+const catColor = cat => ({
+  [SKILL_CAT.SKILL]:  "#c9943e",
+  [SKILL_CAT.RACIAL]: "#4a8aaa",
+  [SKILL_CAT.FEAT]:   "#9a6030",
+})[cat] || "#8a7848";
 
 export default function SkillsScreen({ skills, setUmiejętności, openEntity }) {
   const T    = useT();
   const SK   = T.SKILLS;
   const CATS = T.SKILL_CATS;
 
-  const [form, setForm] = useState({ name:"", category: CATS[0], description:"", level:0 });
+  const [form, setForm] = useState({ name:"", category: SKILL_CAT.SKILL, description:"", level:0 });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
   const [editing, setEditing] = useState({});
@@ -32,7 +37,7 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
   const addSkill = () => {
     const n = form.name.trim(); if (!n) return;
     setUmiejętności(l => [...l, { id: Date.now(), name: n, category: form.category, description: form.description.trim(), level: form.level, tags: [], pinned: false, inUse: false }]);
-    setForm({ name:"", category: CATS[0], description:"", level:0 });
+    setForm({ name:"", category: SKILL_CAT.SKILL, description:"", level:0 });
     setShowForm(false);
   };
   const upd       = (id, f, v) => setUmiejętności(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));

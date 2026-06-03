@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS } from '../../constants/gameConstants';
+import { FACTION_TYPE, FACTION_RANK } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
@@ -7,7 +8,7 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
   const T = useT();
   const F = T.FACTIONS;
 
-  const [form, setForm] = useState({ name:"", type:"Gildia", rank:"Nieznany", leader:"", headquarters:"", goal:"", notes:"" });
+  const [form, setForm] = useState({ name:"", type:FACTION_TYPE.GUILD, rank:FACTION_RANK.UNKNOWN, leader:"", headquarters:"", goal:"", notes:"" });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
   const [editing, setEditing] = useState({});
@@ -29,7 +30,7 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
   const addFaction = () => {
     const n = form.name.trim(); if (!n) return;
     setFactions(l => [...l, { id: Date.now(), ...form, name: n, tags: [], pinned: false, reputation: 0 }]);
-    setForm({ name:"", type:"Gildia", rank:"Nieznany", leader:"", headquarters:"", goal:"", notes:"" });
+    setForm({ name:"", type:FACTION_TYPE.GUILD, rank:FACTION_RANK.UNKNOWN, leader:"", headquarters:"", goal:"", notes:"" });
     setShowForm(false);
   };
   const upd       = (id, f, v) => setFactions(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
@@ -39,7 +40,7 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
   const cycleRank = id => setFactions(l => l.map(x => {
     if (x.id!==id) return x;
-    const idx = FACTION_RANKS.indexOf(x.rank||"Nieznany");
+    const idx = FACTION_RANKS.indexOf(x.rank||FACTION_RANK.UNKNOWN);
     return { ...x, rank: FACTION_RANKS[(idx+1)%FACTION_RANKS.length] };
   }));
 
@@ -91,7 +92,7 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
       {visible.map(fac => {
         const open = !!expanded[fac.id];
         const isEditing = !!editing[fac.id];
-        const rc  = rankColor(fac.rank||"Nieznany");
+        const rc  = rankColor(fac.rank||FACTION_RANK.UNKNOWN);
         const rep = fac.reputation||0;
         return (
           <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
@@ -100,7 +101,7 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
                 <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
                   <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                     value={fac.name} onChange={e => upd(fac.id,"name",e.target.value)} placeholder={F.editNamePh}/>
-                  <span onClick={() => cycleRank(fac.id)} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", flexShrink:0, userSelect:"none" }}>{fac.rank||"Nieznany"}</span>
+                  <span onClick={() => cycleRank(fac.id)} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", flexShrink:0, userSelect:"none" }}>{fac.rank||FACTION_RANK.UNKNOWN}</span>
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem" }}>
                   <input className="iedit" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)} placeholder="…"/>

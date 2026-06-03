@@ -3,7 +3,7 @@ import { THEMES, PALETTES, PALETTE_LABELS } from '../theme/themes';
 import { DEFAULT_CHAR } from '../constants/gameConstants';
 import {
   CHAR_SLOTS, loadChar, saveChar, loadProfiles, saveProfiles,
-  loadActiveId, saveActiveId, migrateLegacy, deleteCharData, load, save,
+  loadActiveId, saveActiveId, migrateLegacy, migrateToEnums, deleteCharData, load, save,
   setCloudSaveHook,
 } from '../utils/storage';
 import { getNavGroups, getNavGroupsDesktop } from './navigation';
@@ -113,7 +113,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     });
   }, []);
 
-  const [profiles, setProfiles] = useState(() => { migrateLegacy(); return loadProfiles(); });
+  const [profiles, setProfiles] = useState(() => { migrateLegacy(); migrateToEnums(); return loadProfiles(); });
   const [activeId, setActiveId] = useState(() => { migrateLegacy(); return loadActiveId(); });
   const [screen, setScreen]     = useState(() => {
     migrateLegacy();

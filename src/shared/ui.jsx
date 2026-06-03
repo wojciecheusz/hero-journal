@@ -122,8 +122,9 @@ export function parseEntityLinksWithTooltips(text, npcs, locations, quests, inve
 }
 
 export function SpellSlotsWidget({ char, setChar, spells }) {
-  const SPELL_SLOT_LABELS = ["1. poziom", "2. poziom", "3. poziom", "4. poziom", "5. poziom", "6. poziom", "7. poziom", "8. poziom", "9. poziom"];
-  const usedLevels = [...new Set((spells || []).map(s => s.level).filter(l => l !== "Sztuczka"))];
+  const T = useT();
+  const SPELL_SLOT_LABELS = ["level1","level2","level3","level4","level5","level6","level7","level8","level9"];
+  const usedLevels = [...new Set((spells || []).map(s => s.level).filter(l => l !== "cantrip"))];
   if (!usedLevels.length) return (
     <p style={{ fontFamily: "Cinzel,serif", fontSize: "0.62rem", opacity: 0.5, textAlign: "center", padding: "1rem 0" }}>
       Brak zapisanych czarów poziomowych (innych niż sztuczki).
@@ -137,7 +138,7 @@ export function SpellSlotsWidget({ char, setChar, spells }) {
         const count = (spells || []).filter(s => s.level === lv).length;
         return (
           <div key={lv} className="spell-slot-box">
-            <span className="spell-slot-label">{lv}</span>
+            <span className="spell-slot-label">{T.LABELS.spellLevel[lv] ?? lv}</span>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "2px" }}>
               <input className="spell-slot-input" type="number" min={0} value={sl.used || 0}
                 onChange={e => setChar(c => ({ ...c, spellSlots: { ...(c.spellSlots || {}), [lv]: { ...((c.spellSlots || {})[lv] || { max: 0, used: 0 }), used: Math.max(0, parseInt(e.target.value) || 0) } } }))}
