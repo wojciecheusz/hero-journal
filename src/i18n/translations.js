@@ -69,6 +69,17 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Motyw kolorystyczny", resetChar:"↺ Reset postaci", syncData:"☁ Synchronizuj dane",
       logout:"⎋ Wyloguj", changeHero:"Zmień bohatera", hero:"Bohater", langToggle:"EN",
+      tagPlaceholder:"tag…", tagAdd:"+ tag",
+      filterLabel:"Filtr:", filterAll:"Wszystkie",
+      noLevelSpells:"Brak zapisanych czarów poziomowych (innych niż sztuczki).",
+      spellCount:(n) => `${n} czar${n !== 1 ? "y" : ""}`,
+      resetTitle:"⚠ Pełny reset karty",
+      resetText:"Spowoduje to trwałe usunięcie wszystkich danych postaci. Tej operacji nie można cofnąć.",
+      resetCancel:"Anuluj", resetConfirm:"Usuń wszystko",
+      loading:"Synchronizacja…",
+      loginTagline:"Zaloguj się, aby synchronizować kampanię między komputerem a telefonem.",
+      loginBtn:"Zaloguj przez Google", loginBtnLoading:"Logowanie…",
+      loginPrivacy:"Twoje dane kampanii są prywatne — dostępne wyłącznie na Twoim koncie Google.",
     },
 
     CHAR: {
@@ -247,6 +258,17 @@ export const TRANSLATIONS = {
       recoverDiceDetail:(cur,next,rec) => `${cur} → ${next} (odzyskano ${rec})`,
       resetDeath:"Wyczyść rzuty obronne przeciw śmierci",
       resetDeathDetail:"Sukcesy i porażki zostały zresetowane",
+    },
+
+    CRASH: {
+      title:"Coś poszło nie tak",
+      body:"Hero Journal napotkał nieoczekiwany błąd. Dane postaci są bezpieczne w lokalnym magazynie przeglądarki.",
+      details:"Szczegóły błędu",
+      reload:"Odśwież stronę",
+      recover:"Spróbuj odzyskać",
+      resetHint:"Jeśli problem się powtarza, spróbuj",
+      resetLink:"wyczyścić stan tutoriala",
+      contactSuffix:"lub skontaktuj się z pomocą.",
     },
 
     PROFILES: {
@@ -428,6 +450,17 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Color theme", resetChar:"↺ Reset character", syncData:"☁ Sync data",
       logout:"⎋ Log out", changeHero:"Change hero", hero:"Hero", langToggle:"PL",
+      tagPlaceholder:"tag…", tagAdd:"+ tag",
+      filterLabel:"Filter:", filterAll:"All",
+      noLevelSpells:"No leveled spells saved (cantrips not counted).",
+      spellCount:(n) => `${n} spell${n !== 1 ? "s" : ""}`,
+      resetTitle:"⚠ Full character reset",
+      resetText:"This will permanently delete all character data. This action cannot be undone.",
+      resetCancel:"Cancel", resetConfirm:"Delete everything",
+      loading:"Synchronizing…",
+      loginTagline:"Sign in to sync your campaign between your computer and phone.",
+      loginBtn:"Sign in with Google", loginBtnLoading:"Signing in…",
+      loginPrivacy:"Your campaign data is private — accessible only on your Google account.",
     },
 
     CHAR: {
@@ -606,6 +639,17 @@ export const TRANSLATIONS = {
       recoverDiceDetail:(cur,next,rec) => `${cur} → ${next} (recovered ${rec})`,
       resetDeath:"Clear death saving throws",
       resetDeathDetail:"Successes and failures have been reset",
+    },
+
+    CRASH: {
+      title:"Something went wrong",
+      body:"Hero Journal encountered an unexpected error. Your character data is safe in the browser's local storage.",
+      details:"Error details",
+      reload:"Reload page",
+      recover:"Try to recover",
+      resetHint:"If this keeps happening, try",
+      resetLink:"clearing tutorial state",
+      contactSuffix:"or contact support.",
     },
 
     PROFILES: {

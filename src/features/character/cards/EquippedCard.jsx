@@ -34,12 +34,12 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
               <div key={type} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"0.25rem" }}>
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", textTransform:"uppercase", color, lineHeight:1 }}>{label}</span>
                 <div style={{ display:"flex", alignItems:"center", gap:"0.2rem" }}>
-                  <button onClick={() => updCoins(type, val-1)} aria-label={`Decrease ${type}`} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>−</button>
+                  <button onClick={() => updCoins(type, val-1)} aria-label={`Decrease ${type}`} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--hj-pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>−</button>
                   <input type="number" min={0} value={val}
                     onChange={e => updCoins(type, parseInt(e.target.value)||0)}
                     onFocus={e => e.target.select()}
                     style={{ width:46, fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, textAlign:"center", background:"transparent", border:"none", borderBottom:`1px dashed ${color}`, outline:"none", color:"inherit" }}/>
-                  <button onClick={() => updCoins(type, val+1)} aria-label={`Increase ${type}`} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>+</button>
+                  <button onClick={() => updCoins(type, val+1)} aria-label={`Increase ${type}`} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--hj-pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>+</button>
                 </div>
               </div>
             );
@@ -72,7 +72,7 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
               </div>
               {item.damage && <div className="equipped-stat">⚔ {item.damage}{item.damageType?` (${item.damageType})`:""}{item.modifier?` · +${parseInt(item.modifier)||0}`:""}</div>}
               {item.charges && <div className="equipped-stat">{C.charges} {item.charges}</div>}
-              {item.effect && <div className="equipped-stat" style={{ color:"var(--spell-muted)" }}>{item.effect}</div>}
+              {item.effect && <div className="equipped-stat" style={{ color:"var(--hj-spell-muted)" }}>{item.effect}</div>}
               {item.note && <div className="equipped-stat" style={{ fontStyle:"italic", opacity:0.7 }}>{item.note}</div>}
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
                   <span className="equipped-icon">🔮</span>
                   <div className="flex1">
                     <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
-                      <span className="equipped-name" style={{ color:"var(--spell-text)" }}>{sp.name}</span>
+                      <span className="equipped-name" style={{ color:"var(--hj-spell-text)" }}>{sp.name}</span>
                       <span className="equipped-spell-badge">{displaySpellLevel(sp.level)}</span>
                       {sp.school && <span className="equipped-spell-badge">{displaySpellSchool(sp.school)}</span>}
                     </div>

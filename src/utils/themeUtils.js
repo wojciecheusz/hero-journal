@@ -42,10 +42,22 @@ export function applyThemeVars(t) {
   set('--spell-bg',            t.spellBg);
   set('--quest-reward',        t.questReward);
   set('--hj-selected-bg',      t.selectedBg);
+  /* pip/text aliases — prefixed versions for new code, non-prefixed kept for global.css */
   set('--pip-prof',            t.accent);
   set('--pip-exp',             t.spellAccent);
   set('--pip-empty',           t.borderInput);
+  set('--hj-pip-prof',         t.accent);
+  set('--hj-pip-exp',          t.spellAccent);
+  set('--hj-pip-empty',        t.borderInput);
   set('--text-label',          t.textLabel);
   set('--text-muted',          t.textMuted);
   set('--text-dim',            t.textDim);
+  /* spell aliases with --hj- prefix for new code */
+  set('--hj-spell-accent',     t.spellAccent);
+  set('--hj-spell-border',     t.spellBorder);
+  set('--hj-spell-muted',      t.spellMuted);
+  set('--hj-spell-dim',        t.spellDim);
+  set('--hj-spell-text',       t.spellText);
+  set('--hj-spell-bg',         t.spellBg);
+  set('--hj-quest-reward',     t.questReward);
 }

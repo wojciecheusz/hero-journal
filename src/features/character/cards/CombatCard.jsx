@@ -123,11 +123,11 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
             </div>
             <div className="combat-box">
               <span className="combat-box-label">{C.spellDC}</span>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--spell-accent)" }}>{spellDC}</span>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--hj-spell-accent)" }}>{spellDC}</span>
             </div>
             <div className="combat-box">
               <span className="combat-box-label">{C.spellAtk}</span>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--spell-accent)" }}>{numMod(pb+spellAbi)}</span>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--hj-spell-accent)" }}>{numMod(pb+spellAbi)}</span>
             </div>
           </div>
 
@@ -139,7 +139,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                 const label  = T.CONDITIONS?.[cond.key] || cond.label;
                 return (
                   <button key={cond.key} onClick={() => toggleCondition(cond.key)}
-                    style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.06em", textTransform:"uppercase", padding:"0.22rem 0.45rem", border:`1px solid ${active?"#cc3030":"var(--pip-empty)"}`, background:active?"rgba(200,48,48,0.2)":"transparent", color:active?"#ee5050":"var(--text-muted)", cursor:"pointer", transition:"all 0.15s", borderRadius:"2px" }}>
+                    style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.06em", textTransform:"uppercase", padding:"0.22rem 0.45rem", border:`1px solid ${active?"#cc3030":"var(--hj-pip-empty)"}`, background:active?"rgba(200,48,48,0.2)":"transparent", color:active?"#ee5050":"var(--hj-text-muted)", cursor:"pointer", transition:"all 0.15s", borderRadius:"2px" }}>
                     {label}
                   </button>
                 );
@@ -171,7 +171,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                   return (
                     <button key={level}
                       onClick={() => setChar(c => ({...c, conditions:{...(c.conditions||{}), exhaustion:level===cur?0:level}}))}
-                      style={{ width:"2rem", height:"2rem", borderRadius:"4px", border:`1.5px solid ${filled?"#cc5020":level===0&&cur===0?"#4a9a5a":"var(--pip-empty)"}`, background:filled?"rgba(200,80,32,0.25)":level===0&&cur===0?"rgba(74,154,90,0.15)":"transparent", cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.55rem", fontWeight:700, color:filled?"#ee7040":level===0&&cur===0?"#4a9a5a":"var(--text-dim)", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                      style={{ width:"2rem", height:"2rem", borderRadius:"4px", border:`1.5px solid ${filled?"#cc5020":level===0&&cur===0?"#4a9a5a":"var(--hj-pip-empty)"}`, background:filled?"rgba(200,80,32,0.25)":level===0&&cur===0?"rgba(74,154,90,0.15)":"transparent", cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.55rem", fontWeight:700, color:filled?"#ee7040":level===0&&cur===0?"#4a9a5a":"var(--hj-text-dim)", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
                       {level===0?"✓":level}
                     </button>
                   );

@@ -3,6 +3,7 @@ import { clamp } from '../utils/math';
 import { useT } from '../i18n/translations';
 
 export function TagsEditor({ tags, onChange }) {
+  const T = useT();
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
   const commit = () => {
@@ -19,21 +20,22 @@ export function TagsEditor({ tags, onChange }) {
         </span>
       ))}
       {adding
-        ? <input className="tag-input" autoFocus value={draft} placeholder="tag…"
+        ? <input className="tag-input" autoFocus value={draft} placeholder={T.UI.tagPlaceholder}
             onChange={e => setDraft(e.target.value)} onBlur={commit}
             onKeyDown={e => { if (e.key === "Enter") commit(); if (e.key === "Escape") { setAdding(false); setDraft(""); } }}/>
-        : <button className="tag-add-btn" onClick={() => setAdding(true)}>+ tag</button>
+        : <button className="tag-add-btn" onClick={() => setAdding(true)}>{T.UI.tagAdd}</button>
       }
     </div>
   );
 }
 
 export function FilterBar({ allTags, activeTag, onSelect }) {
+  const T = useT();
   if (!allTags.length) return null;
   return (
     <div className="filter-bar">
-      <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>Filtr:</span>
-      <button className={`filter-tag${!activeTag ? " active-filter" : ""}`} onClick={() => onSelect(null)}>Wszystkie</button>
+      <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>{T.UI.filterLabel}</span>
+      <button className={`filter-tag${!activeTag ? " active-filter" : ""}`} onClick={() => onSelect(null)}>{T.UI.filterAll}</button>
       {allTags.map(tag => (
         <button key={tag} className={`filter-tag${activeTag === tag ? " active-filter" : ""}`}
           onClick={() => onSelect(activeTag === tag ? null : tag)}>{tag}</button>
@@ -127,7 +129,7 @@ export function SpellSlotsWidget({ char, setChar, spells }) {
   const usedLevels = [...new Set((spells || []).map(s => s.level).filter(l => l !== "cantrip"))];
   if (!usedLevels.length) return (
     <p style={{ fontFamily: "Cinzel,serif", fontSize: "0.62rem", opacity: 0.5, textAlign: "center", padding: "1rem 0" }}>
-      Brak zapisanych czarów poziomowych (innych niż sztuczki).
+      {T.UI.noLevelSpells}
     </p>
   );
   usedLevels.sort((a, b) => SPELL_SLOT_LABELS.indexOf(a) - SPELL_SLOT_LABELS.indexOf(b));
@@ -143,13 +145,13 @@ export function SpellSlotsWidget({ char, setChar, spells }) {
               <input className="spell-slot-input" type="number" min={0} value={sl.used || 0}
                 onChange={e => setChar(c => ({ ...c, spellSlots: { ...(c.spellSlots || {}), [lv]: { ...((c.spellSlots || {})[lv] || { max: 0, used: 0 }), used: Math.max(0, parseInt(e.target.value) || 0) } } }))}
                 style={{ width: 28, fontSize: "0.9rem" }}/>
-              <span style={{ color: "var(--spell-border)", fontSize: "0.7rem" }}>/</span>
+              <span style={{ color: "var(--hj-spell-border)", fontSize: "0.7rem" }}>/</span>
               <input className="spell-slot-input" type="number" min={0} value={sl.max || 0}
                 onChange={e => setChar(c => ({ ...c, spellSlots: { ...(c.spellSlots || {}), [lv]: { ...((c.spellSlots || {})[lv] || { max: 0, used: 0 }), max: Math.max(0, parseInt(e.target.value) || 0) } } }))}
-                style={{ width: 28, fontSize: "0.9rem", color: "var(--spell-muted)" }}/>
+                style={{ width: 28, fontSize: "0.9rem", color: "var(--hj-spell-muted)" }}/>
             </div>
-            <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", color: "var(--spell-dim)", textTransform: "uppercase", marginTop: "0.1rem", display: "block" }}>
-              {count} czar{count !== 1 ? "y" : ""}
+            <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.42rem", color: "var(--hj-spell-dim)", textTransform: "uppercase", marginTop: "0.1rem", display: "block" }}>
+              {T.UI.spellCount(count)}
             </span>
           </div>
         );
@@ -271,14 +273,15 @@ export function RestModal({ type, char, setChar, onClose }) {
 }
 
 export function ResetModal({ onConfirm, onCancel }) {
+  const T = useT();
   return (
     <div className="modal-overlay" onClick={onCancel}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
-        <div className="modal-title">⚠ Pełny reset karty</div>
-        <p className="modal-text">Spowoduje to trwałe usunięcie wszystkich danych postaci. Tej operacji nie można cofnąć.</p>
+        <div className="modal-title">{T.UI.resetTitle}</div>
+        <p className="modal-text">{T.UI.resetText}</p>
         <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem" }}>
-          <button className="btn-ghost" onClick={onCancel}>Anuluj</button>
-          <button className="btn-danger" onClick={onConfirm}>Usuń wszystko</button>
+          <button className="btn-ghost" onClick={onCancel}>{T.UI.resetCancel}</button>
+          <button className="btn-danger" onClick={onConfirm}>{T.UI.resetConfirm}</button>
         </div>
       </div>
     </div>
