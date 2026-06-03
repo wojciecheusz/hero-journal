@@ -86,6 +86,21 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
       </div>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
 
+      {/* Legenda kategorii */}
+      {skills.length > 0 && (
+        <div style={{ display:"flex", gap:"0.75rem", flexWrap:"wrap", padding:"0.4rem 0.6rem", background:"rgba(128,128,128,0.04)", border:"1px solid var(--hj-border)", borderRadius:"2px" }}>
+          {[["Umiejętność","#c9943e"],["Cecha rasowa","#4a8aaa"],["Atut","#9a6030"]].map(([plCat,color],i) => {
+            const displayLabel = CATS[i] ?? plCat;
+            return (
+              <div key={plCat} style={{ display:"flex", alignItems:"center", gap:"0.3rem" }}>
+                <div style={{ width:8, height:8, borderRadius:"50%", background:color, flexShrink:0 }}/>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", textTransform:"uppercase", color }}>{displayLabel}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {skills.length===0 && <div className="card empty-state">{SK.empty}</div>}
 
       {visible.map(sk => {
@@ -97,15 +112,15 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
         return (
           <div key={sk.id} id={`entity-${sk.id}`} className={`card${sk.pinned?" pinned":""}${sk.inUse?" inuse-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor: cc+"55", borderLeftWidth:2 }}>
             <div className="entity-header">
-              <div className="flex1">
-                <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
-                  <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", fontWeight:700 }}
-                    value={sk.name} onChange={e => upd(sk.id,"name",e.target.value)} placeholder={SK.editNamePh}/>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.15rem 0.5rem", background:`${cc}0d`, flexShrink:0 }}>{displayCat}</span>
+              <div className="flex1" style={{ display:"flex", flexDirection:"column", gap:"0.2rem" }}>
+                <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", fontWeight:700, width:"100%" }}
+                  value={sk.name} onChange={e => upd(sk.id,"name",e.target.value)} placeholder={SK.editNamePh}/>
+                <div style={{ display:"flex", gap:"0.4rem", alignItems:"center", flexWrap:"wrap" }}>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.1rem 0.4rem", background:`${cc}0d`, flexShrink:0 }}>{displayCat}</span>
+                  {sk.level>0 && <SkillPips value={sk.level} onChange={v => upd(sk.id,"level",v)}/>}
+                  <Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse?SK.active:SK.inactive} color="purple"/>
                 </div>
-                {sk.level>0 && <SkillPips value={sk.level} onChange={v => upd(sk.id,"level",v)}/>}
               </div>
-              <Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse?SK.active:SK.inactive} color="purple"/>
               <PrzypnijBtn pinned={sk.pinned} onToggle={() => upd(sk.id,"pinned",!sk.pinned)}/>
               <button className="entity-toggle" onClick={() => startEdit(sk.id)} title="Edytuj">✎</button>
               <button className="entity-toggle" onClick={() => toggle(sk.id)}>{open?"▲":"▼"}</button>

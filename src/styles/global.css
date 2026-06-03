@@ -404,6 +404,10 @@ input[type="number"] { font-size: inherit; }
   .nav-drawer,
   .nav-drawer-overlay { display: none !important; }
 
+  /* Bazowy font +4px na desktopie (16px → 20px) */
+  html { font-size: 20px; }
+  input, select, textarea { font-size: max(1rem, 16px); }
+
   /* Treść szersza */
   .hj-content {
     max-width: 1100px;

@@ -104,17 +104,19 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
           <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"#1a4a8a", borderLeftWidth:2 }}>
             <div className="entity-header">
               <div className="flex1">
-                <div className="row" style={{ gap:"0.5rem", marginBottom:"0.3rem", flexWrap:"wrap" }}>
-                  <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", color:"var(--spell-text)", fontWeight:700 }}
+                <div style={{ display:"flex", flexDirection:"column", gap:"0.2rem", flex:1, minWidth:0 }}>
+                  <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", color:"var(--spell-text)", fontWeight:700, width:"100%" }}
                     value={sp.name} onChange={e => upd(sp.id,"name",e.target.value)} placeholder={SP.editNamePh}/>
-                  <span className="spell-level-badge">{displayLevel(sp.level)}</span>
-                  {sp.school && <span className="spell-school-badge">{displaySchool(sp.school)}</span>}
+                  <div style={{ display:"flex", gap:"0.3rem", flexWrap:"wrap", alignItems:"center" }}>
+                    <span className="spell-level-badge">{displayLevel(sp.level)}</span>
+                    {sp.school && <span className="spell-school-badge">{displaySchool(sp.school)}</span>}
+                    <Toggle on={!!sp.inUse} onToggle={() => toggleInUse(sp.id)} label={sp.inUse?SP.prepared:SP.known} color="blue"/>
+                  </div>
                 </div>
                 <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--spell-muted)" }}>
                   {[sp.castingTime, sp.zakres&&`${SP.rangeLbl}: ${sp.zakres}`, sp.duration&&`${SP.durationLbl}: ${sp.duration}`].filter(Boolean).join(" · ")}
                 </div>
               </div>
-              <Toggle on={!!sp.inUse} onToggle={() => toggleInUse(sp.id)} label={sp.inUse?SP.prepared:SP.known} color="blue"/>
               <PrzypnijBtn pinned={sp.pinned} onToggle={() => upd(sp.id,"pinned",!sp.pinned)}/>
               <button className="entity-toggle" onClick={() => startEdit(sp.id)} title="Edytuj">✎</button>
               <button className="entity-toggle" onClick={() => toggle(sp.id)}>{open?"▲":"▼"}</button>

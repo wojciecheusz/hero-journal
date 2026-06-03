@@ -1,36 +1,38 @@
 /**
- * Przykładowy bohater — John Silverblade, Paladyn poziom 5.
- * Wszystkie zakładki wypełnione min. 3 wpisami.
- * Notatki sesji zawierają imiona NPC i nazwy lokacji
- * — automatycznie stają się hiperłączami w widoku kroniki.
+ * Sample hero — John Silverblade, Paladin level 5.
+ * All tabs filled with at least 3 entries.
+ * Session notes contain NPC names and location names
+ * that automatically become hyperlinks in the chronicle view.
  */
 export function createSampleHero() {
   const id = "sample_" + Date.now();
 
-  /* ── KARTA POSTACI ─────────────────────────────── */
+  /* ── CHARACTER SHEET ─────────────────────────────── */
   const char = {
     name: "John Silverblade",
-    classes: [{ name: "Paladyn", level: 5 }],
+    race: "Human",
+    classes: [{ name: "Paladin", level: 5 }],
     stats: { STR: 18, DEX: 10, CON: 16, INT: 10, WIS: 12, CHA: 14 },
     profBonus: 3,
     hp: { current: 44, max: 52, temp: 0 },
     ac: 18,
+    speed: 30,
     initiativeBonus: undefined,
     xp: 8500,
     savingThrows: { wis: true, cha: true },
     savingThrowExp: {}, savingThrowOverride: {},
     skills: { athletics: true, intimidation: true, perception: true, persuasion: true },
-    skillExp: {},
-    alignment: "Praworządny dobry",
-    background: "Żołnierz",
+    skillExp: { perception: true },
+    alignment: "LG",
+    background: "Soldier",
     traits: {
-      personality: "Zawsze dotrzymuję słowa. Moje słowo to moja broń, a moja broń nigdy nie kłamie.",
-      ideals: "Sprawiedliwość musi przeważać. Nawet wróg zasługuje na uczciwy wyrok — ale nie na litość bez zasług.",
-      bonds: "Przysięgałem bronić niewinnych przed mocami ciemności. Tej przysięgi nie złamię, cokolwiek się stanie.",
-      flaws: "Działam pochopnie gdy widzę cierpiących. Nie pytam o cenę — po prostu uderzam.",
+      personality: "I always keep my word. My oath is my weapon, and my weapon never lies.",
+      ideals: "Justice must prevail. Even an enemy deserves a fair trial — but not mercy without merit.",
+      bonds: "I swore to protect the innocent from the powers of darkness. I will not break that oath, whatever the cost.",
+      flaws: "I act recklessly when I see suffering. I don't ask the price — I just strike.",
     },
-    personalNotes: "Muszę znaleźć Świętą Relikwię zanim trafi głębiej w struktury kultu. Elara Moonwhisper mówiła o tunelach pod Starą Dzielnicą — sprawdzić to następnym razem w Baldur's Gate.",
-    backstory: "John Silverblade wyrósł w małej wiosce na obrzeżach królestwa. Jako młody chłopak przeżył napad kultu demonów, który obrócił jego dom w zgliszcza. Ocalony przez wędrownego paladyna, przysiągł poświęcić życie walce ze złem. Po latach służby w Zakonie Srebrnego Płomienia wyruszył samotnie, by stawić czoła rosnącemu zagrożeniu ze strony Kultu Smoczej Krwi — organizacji, która skradła świętą relikwię Zakonu.",
+    personalNotes: "// Ritual of the White Oak: an unknown ritual that may seal the Lord Gnicia.\n// Leaden Sky: something like an 'entity', a pupil of Lord Gnicia\n// Echo of the First Oak: key to the Ritual of the White Oak",
+    backstory: "John Silverblade grew up in a small village on the kingdom's outskirts. As a young boy, he survived a demon-cult raid that reduced his home to ashes. Saved by a wandering paladin, he swore to dedicate his life to fighting evil. After years of service in the Order of the Silver Flame, he set out alone to face the growing threat of the Dragon Blood Cult — an organization that stole the Order's holy relic.",
     spellSlots: {
       "1. poziom": { max: 4, used: 2 },
       "2. poziom": { max: 2, used: 0 },
@@ -38,297 +40,275 @@ export function createSampleHero() {
     spellcastingAbility: "CHA",
     hitDice: { type: "d10", max: 5, used: 2 },
     deathSaves: { successes: 0, failures: 0 },
+    proficiencies: {
+      weapons: "Simple weapons, martial weapons",
+      armor: "All armor, shields",
+      languages: "Common, Celestial",
+      tools: "Gaming set (dice)",
+    },
+    appearance: { age: "32", height: "185 cm", weight: "90 kg", eyes: "Gray", skin: "Tanned", hair: "Dark brown" },
+    conditions: {},
+    coins: { gold: 45, silver: 12, copper: 8 },
   };
 
-  /* ── PLECAK ────────────────────────────────────── */
+  /* ── INVENTORY ─────────────────────────────────── */
   const inventory = [
     {
-      id: 101, name: "Długi miecz +1", type: "Broń", qty: "1",
-      damage: "1d8", damageType: "Sieczne", modifier: "1",
+      id: 101, name: "Longsword +1", type: "Broń", qty: "1",
+      damage: "1d8", damageType: "Slashing", modifier: "1",
       charges: "", effect: "",
-      note: "Znaleziony w Jaskini Cieni. Lśni lekkim blaskiem w ciemności — znak dawnego zaklęcia uświęcenia.",
-      equipped: true, tags: ["magiczna"],
+      note: "Found in the Shadow Cave. Glows faintly in darkness — a sign of an ancient consecration spell.",
+      equipped: true, tags: ["magic"],
     },
     {
-      id: 102, name: "Zbroja płytowa", type: "Pancerz", qty: "1",
+      id: 102, name: "Plate Armor", type: "Pancerz", qty: "1",
       damage: "", damageType: "", modifier: "", charges: "", effect: "",
-      note: "Dobrze dopasowana. KP 18. Wypolerowana do połysku — znak Johna na polu walki.",
+      note: "Well-fitted. AC 18. Polished to a mirror shine — John's mark on the battlefield.",
       equipped: true, tags: [],
     },
     {
-      id: 103, name: "Tarcza heraldyczna", type: "Pancerz", qty: "1",
+      id: 103, name: "Heraldic Shield", type: "Pancerz", qty: "1",
       damage: "", damageType: "", modifier: "", charges: "", effect: "",
-      note: "Na tarczy symbol Zakonu Srebrnego Płomienia — srebrny płomień na czarnym tle.",
-      equipped: true, tags: ["zakon"],
+      note: "Bears the symbol of the Order of the Silver Flame — a silver flame on black.",
+      equipped: true, tags: ["order"],
     },
     {
-      id: 104, name: "Mikstura Leczenia", type: "Jednorazowy", qty: "3",
+      id: 104, name: "Healing Potion", type: "Jednorazowy", qty: "3",
       damage: "", damageType: "", modifier: "",
-      charges: "3", effect: "Przywraca 2k4+2 PŻ",
-      note: "Zakupione w Świątyni Mystryl od Elary Moonwhisper.",
-      equipped: false, tags: ["lekarstwo"],
+      charges: "3", effect: "Restores 2d4+2 HP",
+      note: "Purchased at the Temple of Mystra from Elara Moonwhisper.",
+      equipped: false, tags: ["medicine"],
     },
     {
-      id: 105, name: "Zwój — Wykryj Zło i Dobro", type: "Zwój z czarem", qty: "1",
+      id: 105, name: "Scroll — Detect Evil and Good", type: "Zwój z czarem", qty: "1",
       damage: "", damageType: "", modifier: "",
-      charges: "1", effect: "Detect Evil and Good, zasięg 30 stóp, czas 10 min.",
-      note: "Podarowany przez Elarę przed wyprawą do Jaskini Cieni.",
-      equipped: false, tags: ["magia", "zwiady"],
+      charges: "1", effect: "Detect Evil and Good, range 30 ft, duration 10 min.",
+      note: "Given by Elara before the Shadow Cave expedition.",
+      equipped: false, tags: ["magic", "scouting"],
     },
     {
-      id: 106, name: "Lina jedwabna 15 m", type: "Narzędzie", qty: "1",
+      id: 106, name: "Silk Rope 50 ft", type: "Narzędzie", qty: "1",
       damage: "", damageType: "", modifier: "", charges: "", effect: "",
-      note: "Niezbędna przy eksploracji podziemi. Kilka razy uratowała życie.",
+      note: "Essential for dungeon exploration. Has saved lives more than once.",
       equipped: false, tags: [],
     },
   ];
 
-  /* ── CZARY ─────────────────────────────────────── */
+  /* ── SPELLS ────────────────────────────────────── */
   const spells = [
     {
-      id: 201, name: "Leczenie Ran", level: "1. poziom", school: "Przywoływanie",
-      castingTime: "1 akcja", zakres: "Dotyk", duration: "Natychmiastowy",
+      id: 201, name: "Cure Wounds", level: "1. poziom", school: "Przywoływanie",
+      castingTime: "1 action", zakres: "Touch", duration: "Instantaneous",
       components: "V, S",
-      description: "Stworzenie, którego dotkniesz, odzyskuje liczbę PŻ równą 1k8 + twój modyfikator rzucania czarów (CHA). Nie działa na nieumarłych ani konstrukty.",
-      notes: "Na wyższym slocie: +1k8 za każdy poziom powyżej 1.",
-      tags: ["uzdrawianie"], pinned: false, inUse: true,
+      description: "A creature you touch regains HP equal to 1d8 + your spellcasting modifier (CHA). Has no effect on undead or constructs.",
+      notes: "At Higher Levels: +1d8 per slot level above 1st.",
+      tags: ["healing"], pinned: false, inUse: true,
     },
     {
-      id: 202, name: "Boska Smite", level: "1. poziom", school: "Wywoływanie",
-      castingTime: "1 akcja bonusowa", zakres: "Ja", duration: "Koncentracja, do 1 minuty",
+      id: 202, name: "Divine Smite", level: "1. poziom", school: "Wywoływanie",
+      castingTime: "1 bonus action", zakres: "Self", duration: "Concentration, up to 1 minute",
       components: "V",
-      description: "Następne uderzenie bronią zadaje dodatkowe 2k8 obrażeń od promieniowania. Wobec nieumarłych i ożywionych stworzeń — 3k8.",
-      notes: "Na wyższym slocie: +1k8 za każdy poziom powyżej 1.",
-      tags: ["obrażenia", "walka"], pinned: false, inUse: true,
+      description: "Your next weapon hit deals an extra 2d8 radiant damage. Against undead or fiends — 3d8.",
+      notes: "At Higher Levels: +1d8 per slot level above 1st.",
+      tags: ["damage", "combat"], pinned: false, inUse: true,
     },
     {
-      id: 203, name: "Ochrona przed Złem i Dobrem", level: "1. poziom", school: "Odrzucanie",
-      castingTime: "1 akcja", zakres: "Dotyk", duration: "Koncentracja, do 10 minut",
-      components: "V, S, M (woda święcona)",
-      description: "Jedno chętne stworzenie jest chronione przed aberracjami, niebiańskimi, demonami, nieumarłymi i wróżkami. Ataki tych stworzeń są wykonywane ze stratą na kości.",
+      id: 203, name: "Protection from Evil and Good", level: "1. poziom", school: "Odrzucanie",
+      castingTime: "1 action", zakres: "Touch", duration: "Concentration, up to 10 minutes",
+      components: "V, S, M (holy water)",
+      description: "One willing creature is protected from aberrations, celestials, fiends, undead, and fey. Attacks by those creature types are made with disadvantage.",
       notes: "",
-      tags: ["ochrona"], pinned: false, inUse: true,
+      tags: ["protection"], pinned: false, inUse: true,
     },
     {
-      id: 204, name: "Rozkaz", level: "1. poziom", school: "Surogacja",
-      castingTime: "1 akcja", zakres: "60 stóp", duration: "1 runda",
+      id: 204, name: "Command", level: "1. poziom", school: "Surogacja",
+      castingTime: "1 action", zakres: "60 ft", duration: "1 round",
       components: "V",
-      description: "Wypowiadasz jedno słowo rozkazu do stworzenia, które możesz zobaczyć. Cel musi wykonać rzut obronny na MĄD. Przy porażce wykonuje rozkaz (np. Uciekaj!, Padnij!, Podejdź!, Zatrzymaj się!).",
-      notes: "Skuteczny do rozdzielenia wrogów lub zatrzymania ucieczki.",
-      tags: ["kontrola", "surogacja"], pinned: false, inUse: false,
+      description: "You speak a one-word command to a creature you can see. The target makes a WIS saving throw. On a failure, it follows the command (e.g., Flee!, Grovel!, Approach!, Halt!).",
+      notes: "Useful for splitting enemies or stopping escapes.",
+      tags: ["control", "enchantment"], pinned: false, inUse: false,
     },
   ];
 
-  /* ── ZDOLNOŚCI ─────────────────────────────────── */
+  /* ── ABILITIES / FEATURES ──────────────────────── */
   const skills = [
     {
-      id: 301, name: "Drugie Uderzenie", category: "Umiejętność",
-      description: "Gdy atakujesz akcją Ataku, możesz wykonać jeden dodatkowy atak bronią jako akcję bonusową w tej samej turze.",
-      level: 3, tags: ["walka", "akcja-bonusowa"], pinned: false, inUse: true,
+      id: 301, name: "Extra Attack", category: "Umiejętność",
+      description: "When you take the Attack action, you can make one additional weapon attack as a bonus action on the same turn.",
+      level: 3, tags: ["combat", "bonus-action"], pinned: false, inUse: true,
     },
     {
-      id: 302, name: "Nałożenie Rąk", category: "Cecha rasowa",
-      description: "Masz pulę 25 PŻ na dzień. Jako akcję dotykasz stworzenia i przywracasz mu dowolną ilość PŻ z tej puli. Alternatywnie za 5 PŻ leczysz jedno zatrucie lub chorobę.",
-      level: 2, tags: ["uzdrawianie", "paladyn"], pinned: false, inUse: true,
+      id: 302, name: "Lay on Hands", category: "Cecha rasowa",
+      description: "You have a pool of 25 HP per day. As an action, touch a creature to restore any number of HP from the pool. Alternatively, spend 5 HP to cure one disease or poison.",
+      level: 2, tags: ["healing", "paladin"], pinned: false, inUse: true,
     },
     {
-      id: 303, name: "Boski Zmysł", category: "Cecha rasowa",
-      description: "Jako akcję otwierasz świadomość na wyższe moce. Do końca następnej tury znasz lokalizację każdego nieumarłego, demona lub niebiańskiego w promieniu 60 stóp — nawet za ścianami.",
-      level: 1, tags: ["wykrywanie", "paladyn"], pinned: false, inUse: false,
+      id: 303, name: "Divine Sense", category: "Cecha rasowa",
+      description: "As an action, you open your awareness to higher powers. Until the end of your next turn, you know the location of any undead, fiend, or celestial within 60 ft — even through walls.",
+      level: 1, tags: ["detection", "paladin"], pinned: false, inUse: false,
     },
     {
-      id: 304, name: "Aura Odwagi", category: "Atut",
-      description: "Przyjacielskie stworzenia w promieniu 10 stóp od ciebie nie mogą być przestraszone, gdy jesteś przytomny. (Dostępna od 10. poziomu — cel Johna)",
-      level: 0, tags: ["aura", "cel"], pinned: false, inUse: false,
+      id: 304, name: "Aura of Courage", category: "Atut",
+      description: "Friendly creatures within 10 ft of you can't be frightened while you are conscious. (Available from 10th level — John's goal)",
+      level: 0, tags: ["aura", "goal"], pinned: false, inUse: false,
     },
   ];
 
-  /* ── NPC ───────────────────────────────────────── */
+  /* ── NPCS ──────────────────────────────────────── */
   const npcs = [
     {
-      id: 401, name: "Elara Moonwhisper", role: "Kapłanka Mystryl",
-      relation: "ally", affiliation: "Świątynia Mystryl",
-      metAt: "Baldur's Gate — Tawerna Pod Złotą Podkową",
-      connections: "Informatorka, sojuszniczka, dostawczyni mikstur",
-      notes: "Elfka o srebrnych włosach i przenikliwych, fioletowych oczach. Posiada rozległą wiedzę o kulcie — studiuje ich rytuały od lat. Można jej ufać bezwarunkowo. Aktualnie przebywa w Świątyni Mystryl w Baldur's Gate. Wspomniała o tunelach pod Starą Dzielnicą.",
-      tags: ["kapłanka", "elf", "sojusznik"], pinned: true,
+      id: 401, name: "Elara Moonwhisper", role: "Priest of Mystra",
+      relation: "ally", affiliation: "Temple of Mystra",
+      metAt: "Baldur's Gate — The Golden Horseshoe Tavern",
+      connections: "Informant, ally, potion supplier",
+      notes: "An elf with silver hair and piercing violet eyes. Has extensive knowledge of the cult — studying their rituals for years. Completely trustworthy. Currently at the Temple of Mystra in Baldur's Gate. Mentioned tunnels under the Old District.",
+      tags: ["priest", "elf", "ally"], pinned: true,
     },
     {
-      id: 402, name: "Mrak Thornwood", role: "Mroczny Rycerz Kultu",
-      relation: "hostile", affiliation: "Kult Smoczej Krwi",
-      metAt: "Jaskinia Cieni",
-      connections: "Lokalny lider kultu, poszukiwany przez Straż",
-      notes: "Wysoki mężczyzna w czarnej zbroi z symbolem demonicy. Pokonany w Jaskini Cieni, ale zdołał uciec przez ukryte wyjście. Prawdopodobnie szuka zemsty. NIEBEZPIECZNY — walczy bez honoru.",
-      tags: ["kult", "wróg", "poszukiwany"], pinned: false,
+      id: 402, name: "Mrak Thornwood", role: "Dark Knight of the Cult",
+      relation: "hostile", affiliation: "Dragon Blood Cult",
+      metAt: "Shadow Cave",
+      connections: "Local cult leader, wanted by the Guard",
+      notes: "Tall man in black armor bearing a demoness symbol. Defeated in the Shadow Cave but escaped through a hidden exit. Likely seeking revenge. DANGEROUS — fights without honor.",
+      tags: ["cult", "enemy", "wanted"], pinned: false,
     },
     {
-      id: 403, name: "Barlin Gędźbor", role: "Karczmarz",
-      relation: "neutral", affiliation: "Tawerna Pod Złotą Podkową",
-      metAt: "Baldur's Gate — Tawerna Pod Złotą Podkową",
-      connections: "Źródło plotek, skrzynka meldunek",
-      notes: "Gruby krasnolud z siwą, zaplecioną brodą. Sympatyczny, dyskretny — za odpowiednią monetę dzieli się informacjami o podróżnikach. Nienawidzi kłopotów. Zna każdego w mieście.",
-      tags: ["karczmarz", "krasnolud", "informator"], pinned: false,
+      id: 403, name: "Barlin Copperbeard", role: "Innkeeper",
+      relation: "neutral", affiliation: "The Golden Horseshoe Tavern",
+      metAt: "Baldur's Gate — The Golden Horseshoe Tavern",
+      connections: "Source of rumors, message relay",
+      notes: "A stout dwarf with a silver braided beard. Friendly and discreet — shares information about travelers for the right coin. Hates trouble. Knows everyone in town.",
+      tags: ["innkeeper", "dwarf", "informant"], pinned: false,
     },
     {
-      id: 404, name: "Ser Aldric Vance", role: "Dowódca Gwardii Wschodniej",
-      relation: "ally", affiliation: "Straż Miejska Baldur's Gate",
-      metAt: "Brama Wschodnia, Baldur's Gate",
-      connections: "Oficjalne wsparcie w mieście, wydaje przepustki",
-      notes: "Starszy rycerz o zmęczonym, ale szlachetnym spojrzeniu. Pomógł podczas wejścia do miasta. Wierzy, że kult wciąż działa w podziemiu. Straż jest przeciążona i nie może działać poza murami.",
-      tags: ["rycerz", "straż", "oficjalny"], pinned: false,
+      id: 404, name: "Sir Aldric Vance", role: "Commander of the Eastern Guard",
+      relation: "ally", affiliation: "Baldur's Gate City Watch",
+      metAt: "East Gate, Baldur's Gate",
+      connections: "Official city support, issues passes",
+      notes: "An older knight with a tired but noble gaze. Helped during entry to the city. Believes the cult still operates underground. The Watch is overstretched and can't act outside the walls.",
+      tags: ["knight", "guard", "official"], pinned: false,
     },
   ];
 
-  /* ── LOKACJE ───────────────────────────────────── */
+  /* ── LOCATIONS ─────────────────────────────────── */
   const locations = [
     {
       id: 501, name: "Baldur's Gate", type: "Osada",
-      notes: "Wielkie miasto portowe — tętniące życiem targowisko i polityczne centrum regionu. Tutaj działa Świątynia Mystryl, Gildia Kupiecka i Straż Miejska. W podziemiu Starej Dzielnicy podobno operuje Kult Smoczej Krwi. Bezpieczne miejsce do odpoczynku.",
-      tags: ["miasto", "port", "baza"], pinned: false,
+      notes: "A great port city — a bustling marketplace and political center of the region. Home to the Temple of Mystra, the Merchant Guild, and the City Watch. The Dragon Blood Cult reportedly operates in the Old District underground. A safe place to rest.",
+      tags: ["city", "port", "base"], pinned: false,
     },
     {
-      id: 502, name: "Jaskinia Cieni", type: "Podziemia",
-      notes: "Mroczna jaskinia 3 dni drogi na wschód od Baldur's Gate, ukryta za wodospadem w lesie Cloak Wood. Była bazą kultu. Po wyprawie sesji 3 znaleziono tu Długi miecz +1 i Zwój — Wykryj Zło i Dobro. Mrak Thornwood uciekł przez tajne wyjście na wschodzie.",
-      tags: ["jaskinia", "kult", "eksploracja"], pinned: true,
+      id: 502, name: "Shadow Cave", type: "Podziemia",
+      notes: "A dark cave 3 days east of Baldur's Gate, hidden behind a waterfall in Cloak Wood. Was the cult's base. During session 3 found a Longsword +1 and a Detect Evil scroll. Mrak Thornwood escaped through a secret eastern exit.",
+      tags: ["cave", "cult", "exploration"], pinned: true,
     },
     {
-      id: 503, name: "Tawerna Pod Złotą Podkową", type: "Budynek",
-      notes: "Przytulna tawerna w centrum Baldur's Gate, prowadzona przez Barlina Gędźbora. Dobre jedzenie, tanie noclegi — 5 sz/noc. Stałe miejsce spotkań. Barlin zawsze wie co słychać w mieście.",
-      tags: ["tawerna", "baza", "odpoczynek"], pinned: false,
+      id: 503, name: "The Golden Horseshoe Tavern", type: "Budynek",
+      notes: "A cozy tavern in central Baldur's Gate, run by Barlin Copperbeard. Good food, cheap rooms — 5 sp/night. A regular meeting spot. Barlin always knows what's happening in town.",
+      tags: ["tavern", "base", "rest"], pinned: false,
     },
     {
-      id: 504, name: "Świątynia Mystryl", type: "Budynek",
-      notes: "Wielka świątynia w zachodniej dzielnicy Baldur's Gate — biało-złota architektura, zawsze otwarta dla wiernych. Siedziba Elary Moonwhisper. Bezpieczne miejsce, duża biblioteka z informacjami o kulcie. Można tu kupić miksturki i zwoje.",
-      tags: ["świątynia", "bezpieczna", "zakupy"], pinned: false,
+      id: 504, name: "Temple of Mystra", type: "Budynek",
+      notes: "A grand temple in Baldur's Gate's western district — white and gold architecture, always open to the faithful. Elara Moonwhisper's base. Safe haven, large library with cult information. Can buy potions and scrolls here.",
+      tags: ["temple", "safe", "shopping"], pinned: false,
     },
   ];
 
-  /* ── SESJE ─────────────────────────────────────── */
+  /* ── SESSIONS ──────────────────────────────────── */
   const sessions = [
     {
       id: 601, number: 1,
       date: "2025-03-15",
-      title: "Przybycie do Baldur's Gate",
-      notes: "John Silverblade przybył do Baldur's Gate po tygodniowej podróży z północy. W Tawernie Pod Złotą Podkową spotkał Elara Moonwhisper — elfkę kapłankę, która ostrzegła go przed wzmożoną aktywnością Kultu Smoczej Krwi w okolicach miasta. Barlin Gędźbor przy piwie opowiedział o znikającym towarze z magazynów portowych oraz o grupie nieznajomych w czarnych płaszczach, którzy zatrzymali się tu trzy noce temu.",
+      title: "Arrival in Baldur's Gate",
+      notes: "John Silverblade arrived in Baldur's Gate after a week-long journey from the north. At The Golden Horseshoe Tavern he met Elara Moonwhisper — an elven priestess who warned him of increased Dragon Blood Cult activity near the city. Barlin Copperbeard over a pint told him about missing cargo from port warehouses and a group of strangers in black cloaks who stayed three nights ago.",
     },
     {
       id: 602, number: 2,
       date: "2025-03-22",
-      title: "Napad na karawanę",
-      notes: "Drużyna przyjęła zlecenie ochrony karawany Gildii Kupieckiej. W połowie drogi między Baldur's Gate a Wrotami Lasu kultyści zaatakowali z lasu. John Silverblade powstrzymał Mraka Thornwooda od ucieczki z cennym pergaminem — listą agentów kultu w mieście. Elara Moonwhisper zidentyfikowała symbol na ich zbrojach jako znak Kultu Smoczej Krwi. Ser Aldric Vance po naszym raporcie nakazał wzmocnić patrole przy Bramie Wschodniej.",
+      title: "Caravan Ambush",
+      notes: "The party accepted a Merchant Guild caravan escort. Halfway between Baldur's Gate and Forest Gate, cultists attacked from the woods. John Silverblade stopped Mrak Thornwood from escaping with a valuable parchment — a list of cult agents in the city. Elara Moonwhisper identified the symbol on their armor as the Dragon Blood Cult mark. Sir Aldric Vance, after our report, ordered increased patrols at East Gate.",
     },
     {
       id: 603, number: 3,
       date: "2025-04-05",
-      title: "Szturm na Jaskinię Cieni",
-      notes: "Na podstawie mapy zdobytej od Mraka dotarliśmy do Jaskini Cieni. John przeprowadził drużynę przez pułapki przy wejściu. Pokonaliśmy strażników kultu i dotarliśmy do głównej komnaty — zastaliśmy tu ołtarz i skrzytkę ze zwojami. Mrak Thornwood zdołał uciec przez ukryte wyjście na wschodzie. Zdobyliśmy Długi miecz +1 i Zwój — Wykryj Zło i Dobro. Elara Moonwhisper stwierdziła, że relikwia Zakonu nie była tu przechowywana — szukamy dalej.",
+      title: "Assault on the Shadow Cave",
+      notes: "Using the map from Mrak, we reached the Shadow Cave. John led the party past the entrance traps. We defeated the cult guards and reached the main chamber — found an altar and a chest of scrolls. Mrak Thornwood escaped through a hidden eastern exit. Acquired a Longsword +1 and the Detect Evil scroll. Elara Moonwhisper confirmed the Order's relic wasn't stored here — search continues.",
     },
   ];
 
-  /* ── ZADANIA ───────────────────────────────────── */
+  /* ── QUESTS ────────────────────────────────────── */
   const quests = [
     {
       id: 701,
-      name: "Odzysk Świętej Relikwii",
-      description: "Kult Smoczej Krwi skradł relikwię Zakonu. Kopia znaleziona w Jaskini Cieni wskazuje, że oryginał jest głębiej w strukturach kultu.",
-      reward: "Błogosławieństwo Zakonu + 5000 sz złota",
+      name: "Recover the Holy Relic",
+      description: "The Dragon Blood Cult stole the Order's relic. A copy found in the Shadow Cave suggests the original is deeper in the cult's organization.",
+      reward: "Order's Blessing + 5000 gp",
       status: "Aktywne",
       kroks: [
-        { id: 7011, text: "Dotrzeć do Jaskini Cieni", done: true },
-        { id: 7012, text: "Pokonać straże kultu", done: true },
-        { id: 7013, text: "Odnaleźć mapę głównej kwatery kultu", done: false },
-        { id: 7014, text: "Odzyskać relikwię z rąk kultu", done: false },
+        { id: 7011, text: "Reach the Shadow Cave", done: true },
+        { id: 7012, text: "Defeat the cult guards", done: true },
+        { id: 7013, text: "Find the map of the cult's main base", done: false },
+        { id: 7014, text: "Recover the relic from the cult", done: false },
       ],
     },
     {
       id: 702,
-      name: "Schwytać Mraka Thornwooda",
-      description: "Mroczny Rycerz kultu uciekł podczas szturmu na Jaskinię Cieni. Musi zostać schwytany, zanim ostrzeże główną kwaterę.",
-      reward: "Informacje o strukturze kultu + 1000 sz złota od Straży",
+      name: "Eliminate Mrak Thornwood",
+      description: "The Dark Knight escaped and is seeking revenge. He knows our faces and our route.",
+      reward: "800 gp bounty from the City Watch + personal vendetta resolved",
       status: "Aktywne",
       kroks: [
-        { id: 7021, text: "Dowiedzieć się przez Barlina gdzie kryją się kultysci", done: false },
-        { id: 7022, text: "Wyśledzić Mraka Thornwooda", done: false },
-        { id: 7023, text: "Schwytać lub zneutralizować Mraka", done: false },
+        { id: 7021, text: "Track Mrak's whereabouts", done: false },
+        { id: 7022, text: "Confront and neutralize Mrak", done: false },
       ],
     },
     {
       id: 703,
-      name: "Oczyść Jaskinię Cieni",
-      description: "Pokonaliśmy kultystów w jaskini, ale mogli być ocalali. Okoliczni chłopi proszą o pomoc.",
-      reward: "500 sz złota od okolicznych wsi",
+      name: "Find the Cult's City Agents",
+      description: "The parchment taken from Mrak contains a list of cult agents operating in Baldur's Gate. Sir Aldric needs this decoded.",
+      reward: "City Watch commendation + free lodging at the barracks",
       status: "Ukończone",
       kroks: [
-        { id: 7031, text: "Wejść do jaskini", done: true },
-        { id: 7032, text: "Pokonać wszystkich kultystów", done: true },
-        { id: 7033, text: "Sprawdzić wszystkie komnaty i oczyszcić ołtarz", done: true },
+        { id: 7031, text: "Deliver the parchment to Sir Aldric Vance", done: true },
+        { id: 7032, text: "Work with Elara Moonwhisper to decode the list", done: true },
       ],
-    },
-    {
-      id: 704,
-      name: "Ochrona karawany Gildii",
-      description: "Zadanie zlecone przez Gildię Kupiecką — bezpieczny transport ładunku na wschód.",
-      reward: "300 sz złota + dobre relacje z Gildią Kupiecką",
-      status: "Ukończone",
-      kroks: [],
     },
   ];
 
-  /* ── FRAKCJE ───────────────────────────────────── */
+  /* ── FACTIONS ──────────────────────────────────── */
   const factions = [
     {
-      id: 801,
-      name: "Zakon Srebrnego Płomienia",
-      type: "Zakon",
-      rank: "Członek",
-      leader: "Arcykapłan Dorian Ashford",
-      headquarters: "Cytadela Płomienia, Waterdeep",
-      goal: "Zwalczanie sił zła, ochrona niewinnych przed demonami i kultami",
-      notes: "John jest pełnoprawnym członkiem Zakonu od 3 lat. Działa jako wysłannik w terenie — pełna autonomia decyzji. Zakon ma szeroką sieć kontaktów i agentów w wielu miastach. Wszelka pomoc przy relikwii jest najwyższym priorytetem.",
-      reputation: 75, tags: ["zakon", "sojusznik", "zleceniodawca"], pinned: true,
+      id: 801, name: "Order of the Silver Flame", type: "Zakon",
+      rank: "Oficer", leader: "High Commander Yriel Dawnblade",
+      headquarters: "Silver Citadel, northern mountains",
+      goal: "Protect the innocent and destroy supernatural evil across the realm",
+      notes: "John's home order. They sent him on this mission to recover the stolen relic. They have resources but are spread thin across the continent. Contact: send a silver raven to the Citadel.",
+      tags: ["order", "home", "paladin"], pinned: true, reputation: 80,
     },
     {
-      id: 802,
-      name: "Kult Smoczej Krwi",
-      type: "Kult",
-      rank: "Wróg",
-      leader: "Nieznany Arcykultyta (pseudonim: Czerwony Cień)",
-      headquarters: "Nieznana — prawdopodobnie pod Starą Dzielnicą Baldur's Gate",
-      goal: "Przywołanie starożytnego demona przy użyciu świętych artefaktów zakonnych",
-      notes: "Kult działa głęboko w podziemiu. Mają agentów w strukturach miasta. Mrak Thornwood jest jednym z rycerzy-dowódców. Symbol: czerwony smok na czarnym tle. Nie zawahają się przed morderstwem. Finansowani przez nieznanego możnowładcę.",
-      reputation: -90, tags: ["kult", "wróg", "demony", "zagrożenie"], pinned: false,
+      id: 802, name: "Dragon Blood Cult", type: "Kult",
+      rank: "Wróg", leader: "Unknown supreme leader",
+      headquarters: "Unknown — likely underground",
+      goal: "Summon a dragon god through stolen sacred artifacts",
+      notes: "Enemy faction. Operates in cells — each cell knows little of the others. Mrak Thornwood is their regional leader. Members identified by a demoness tattoo on the left wrist.",
+      tags: ["cult", "enemy", "dangerous"], pinned: false, reputation: -90,
     },
     {
-      id: 803,
-      name: "Gildia Kupiecka Baldur's Gate",
-      type: "Kupcy",
-      rank: "Sojusznik",
-      leader: "Mistrz Handlu Renwick Thorn",
-      headquarters: "Dom Gildii, Zachodnia Dzielnica, Baldur's Gate",
-      goal: "Bezpieczeństwo szlaków handlowych i ochrona interesów kupieckich",
-      notes: "Współpraca nawiązana po udanej ochronie karawany. Dobrze płacą za zlecenia. Mają rozległą sieć informatorów — wiedzą o podejrzanym ruchu towarów w regionie. Potencjalne źródło informacji o przemycie kultu.",
-      reputation: 40, tags: ["kupcy", "zleceniodawca", "informacje"], pinned: false,
-    },
-    {
-      id: 804,
-      name: "Straż Miejska Baldur's Gate",
-      type: "Rząd",
-      rank: "Sojusznik",
-      leader: "Komendant Helena Vance",
-      headquarters: "Twierdza Straży, Brama Wschodnia, Baldur's Gate",
-      goal: "Utrzymanie porządku publicznego i ochrona granic miasta",
-      notes: "Ser Aldric Vance jest naszym kontaktem. Straż jest przytłoczona pracą. Oficjalnie nas wspiera, ale nie może działać poza murami bez rozkazu Rady. Wzmocnili patrole po naszym raporcie o kulcie.",
-      reputation: 30, tags: ["straż", "miasto", "oficjalny"], pinned: false,
+      id: 803, name: "Baldur's Gate City Watch", type: "Armia",
+      rank: "Sojusznik", leader: "Sir Aldric Vance",
+      headquarters: "East Gate Barracks, Baldur's Gate",
+      goal: "Maintain law and order in the city",
+      notes: "Useful allies within the city. Overstretched — can't act outside the walls. Help with passes and official backing. Sir Aldric trusts John after the caravan report.",
+      tags: ["guard", "official", "ally"], pinned: false, reputation: 40,
     },
   ];
 
   const profile = {
-    id,
-    name: "John Silverblade",
-    class: "Paladyn",
-    level: 5,
+    id, name: char.name,
+    class: char.classes[0]?.name || "",
+    level: char.classes[0]?.level || 1,
     created: Date.now(),
   };
 
-  return { id, profile, char, inventory, npcs, locations, skills, spells, sessions, quests, factions };
+  return { id, profile, char, inventory, spells, skills, npcs, locations, sessions, quests, factions };
 }

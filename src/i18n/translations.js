@@ -214,6 +214,30 @@ export const TRANSLATIONS = {
       modifyReward:"Modyfikuj nagrodę", rewardEditPh:"Nagroda…",
     },
 
+    CONDITIONS: {
+      blinded:"Oślepiony", charmed:"Oczarowany", deafened:"Ogłuchy",
+      frightened:"Przestraszony", grappled:"Chwycony", incapacitated:"Ubezwłasnowolniony",
+      invisible:"Niewidzialny", paralyzed:"Sparaliżowany", petrified:"Skamieniały",
+      poisoned:"Zatruty", prone:"Leżący", restrained:"Obezwładniony",
+      stunned:"Ogłuszony", unconscious:"Nieprzytomny",
+    },
+
+    REST: {
+      shortTitle:"☽ Krótki odpoczynek", longTitle:"☀ Długi odpoczynek",
+      availableDice:(avail,max,type) => `Wydaj Kości Wytrzymałości. ${avail} z ${max} kości ${type} dostępnych.`,
+      diceType:"Typ kości", maxLabel:"Maks.", spend:"Wydaj",
+      restores:(avg,min,max,mod) => `Przywraca ok. ${avg} PŻ (zakres ${min}–${max}, MOD Budowy ${mod>=0?"+":""}${mod})`,
+      cancel:"Anuluj", doShortRest:"☽ Odpoczywaj", doLongRest:"☀ Odpocznij Długo",
+      restoreHp:"Przywróć pełne punkty życia",
+      restoreHpDetail:(cur,max) => `Z ${cur} → ${max}`,
+      resetSlots:"Zresetuj komórki czarów",
+      resetSlotsDetail:"Wszystkie zużyte gniazda zostaną odnowione",
+      recoverDice:"Odzyskaj Kości Wytrzymałości",
+      recoverDiceDetail:(cur,next,rec) => `${cur} → ${next} (odzyskano ${rec})`,
+      resetDeath:"Wyczyść rzuty obronne przeciw śmierci",
+      resetDeathDetail:"Sukcesy i porażki zostały zresetowane",
+    },
+
     PROFILES: {
       tagline:"Wybierz postać bohatera, aby kontynuować kampanię RPG",
       unnamed:"Bezimienny Bohater", renameTitle:"Zmień imię bohatera",
@@ -221,7 +245,9 @@ export const TRANSLATIONS = {
       createNew:"⊕ Stwórz Nowego Bohatera", createSample:"✦ Stwórz przykładowego bohatera",
       heroCount:(n) => `${n} ${n===1?"heros":"herosów"} w dzienniku`,
       wizardTitle:"Tworzenie Bohatera", step:"Krok", of:"z",
-      stepNames:["Imię","Klasa","Atrybuty","Przeszłość i charakter"],
+      stepNames:["Imię","Klasa","Atrybuty","Przeszłość","Wygląd","Osobowość"],
+      appearanceQuestion:"Wygląd postaci",
+      personalityQuestion:"Cechy osobowości",
       nameQuestion:"Jak ma na imię Twój bohater?",
       namePh:"Wpisz imię bohatera…", nameHint:"Imię pojawi się w nagłówku dziennika karty.",
       classQuestion:"Wybierz klasę postaci", levelLabel2:"Poziom (Lvl)",
@@ -436,6 +462,30 @@ export const TRANSLATIONS = {
       modifyReward:"Modify reward", rewardEditPh:"Reward…",
     },
 
+    CONDITIONS: {
+      blinded:"Blinded", charmed:"Charmed", deafened:"Deafened",
+      frightened:"Frightened", grappled:"Grappled", incapacitated:"Incapacitated",
+      invisible:"Invisible", paralyzed:"Paralyzed", petrified:"Petrified",
+      poisoned:"Poisoned", prone:"Prone", restrained:"Restrained",
+      stunned:"Stunned", unconscious:"Unconscious",
+    },
+
+    REST: {
+      shortTitle:"☽ Short Rest", longTitle:"☀ Long Rest",
+      availableDice:(avail,max,type) => `Spend Hit Dice to recover HP. ${avail} of ${max} ${type} dice available.`,
+      diceType:"Die type", maxLabel:"Max.", spend:"Spend",
+      restores:(avg,min,max,mod) => `Restores ~${avg} HP (range ${min}–${max}, CON mod ${mod>=0?"+":""}${mod})`,
+      cancel:"Cancel", doShortRest:"☽ Rest", doLongRest:"☀ Long Rest",
+      restoreHp:"Restore full hit points",
+      restoreHpDetail:(cur,max) => `From ${cur} → ${max}`,
+      resetSlots:"Reset spell slots",
+      resetSlotsDetail:"All expended spell slots will be restored",
+      recoverDice:"Recover Hit Dice",
+      recoverDiceDetail:(cur,next,rec) => `${cur} → ${next} (recovered ${rec})`,
+      resetDeath:"Clear death saving throws",
+      resetDeathDetail:"Successes and failures have been reset",
+    },
+
     PROFILES: {
       tagline:"Select your hero to continue your RPG campaign",
       unnamed:"Unnamed Hero", renameTitle:"Rename hero",
@@ -443,7 +493,9 @@ export const TRANSLATIONS = {
       createNew:"⊕ Create New Hero", createSample:"✦ Create sample hero",
       heroCount:(n) => `${n} hero${n!==1?"es":""} in journal`,
       wizardTitle:"Create Hero", step:"Step", of:"of",
-      stepNames:["Name","Class","Attributes","Background & Alignment"],
+      stepNames:["Name","Class","Attributes","Background","Appearance","Personality"],
+      appearanceQuestion:"Character appearance",
+      personalityQuestion:"Personality traits",
       nameQuestion:"What is your hero's name?",
       namePh:"Enter hero name…", nameHint:"The name will appear in the character journal header.",
       classQuestion:"Choose character class", levelLabel2:"Level (Lvl)",

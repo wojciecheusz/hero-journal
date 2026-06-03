@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { clamp } from '../utils/math';
+import { useT } from '../i18n/translations';
 
 export function TagsEditor({ tags, onChange }) {
   const [adding, setAdding] = useState(false);
@@ -157,6 +158,8 @@ export function SpellSlotsWidget({ char, setChar, spells }) {
 }
 
 export function RestModal({ type, char, setChar, onClose }) {
+  const T  = useT();
+  const R  = T.REST;
   const hd = char.hitDice || { type: "d8", max: 1, used: 0 };
   const available = Math.max(0, hd.max - hd.used);
   const [hdWydaj, setHdWydaj] = useState(1);
@@ -193,27 +196,24 @@ export function RestModal({ type, char, setChar, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
-        <div className="modal-title">{isShort ? "☽ Krótki odpoczynek" : "☀ Długi odpoczynek"}</div>
+        <div className="modal-title">{isShort ? R.shortTitle : R.longTitle}</div>
         {isShort ? (
           <>
-            <p className="modal-text">
-              Wydaj Kości Wytrzymałości, aby odzyskać punkty życia.{" "}
-              <strong style={{ color: "inherit" }}>{available}</strong> z <strong style={{ color: "inherit" }}>{hd.max}</strong> kości {hd.type} dostępnych.
-            </p>
+            <p className="modal-text">{R.availableDice(available, hd.max, hd.type)}</p>
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.8rem", flexWrap: "wrap" }}>
-              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.9 }}>Typ kości</span>
+              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.9 }}>{R.diceType}</span>
               <select className="g-select" style={{ width: "auto", fontSize: "0.9rem", padding: "0.3rem 0.5rem" }}
                 value={hd.type} onChange={e => setChar(c => ({ ...c, hitDice: { ...hd, type: e.target.value } }))}>
                 {["d4", "d6", "d8", "d10", "d12"].map(d => <option key={d} value={d}>{d}</option>)}
               </select>
-              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.9 }}>Maks.</span>
+              <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", opacity: 0.9 }}>{R.maxLabel}</span>
               <input type="number" min={1} value={hd.max}
                 onChange={e => setChar(c => ({ ...c, hitDice: { ...hd, max: parseInt(e.target.value) || 1 } }))}
                 style={{ width: 44, fontFamily: "Cinzel,serif", fontSize: "0.9rem", background: "transparent", border: "none", borderBottom: "1px dashed currentColor", outline: "none", textAlign: "center", color: "inherit" }}/>
             </div>
             <div className="modal-detail">
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
-                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.9 }}>Wydaj</span>
+                <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.9 }}>{R.spend}</span>
                 <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>−</button>
                 <input type="number" min={0} max={available} value={hdWydaj}
                   onChange={e => setHdWydaj(clamp(parseInt(e.target.value) || 0, 0, available))}
@@ -230,24 +230,24 @@ export function RestModal({ type, char, setChar, onClose }) {
                 const max = spend * dieMax + spend * conMod;
                 return (
                   <span style={{ fontFamily: "Crimson Text,Georgia,serif", fontSize: "0.95rem", fontStyle: "italic", opacity: 0.85 }}>
-                    Przywraca ok. <strong>{Math.max(0, avg)}</strong> PŻ (zakres {Math.max(0, min)}–{Math.max(0, max)}, śr. + MOD Budowy {conMod >= 0 ? "+" : ""}{conMod})
+                    {R.restores(Math.max(0, avg), Math.max(0, min), Math.max(0, max), conMod)}
                   </span>
                 );
               })()}
             </div>
             <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem", marginTop: "0.8rem" }}>
-              <button className="btn-ghost" onClick={onClose}>Anuluj</button>
-              <button className="btn-ghost" onClick={doShortRest}>☽ Odpoczywaj</button>
+              <button className="btn-ghost" onClick={onClose}>{R.cancel}</button>
+              <button className="btn-ghost" onClick={doShortRest}>{R.doShortRest}</button>
             </div>
           </>
         ) : (
           <>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
               {[
-                ["❤️", "Przywróć pełne punkty życia", `Z ${char.hp.current} → ${char.hp.max}`],
-                ["💫", "Zresetuj komórki czarów", "Wszystkie zużyte gniazda czarów zostaną odnowione"],
-                ["🎲", "Odzyskaj Kości Wytrzymałości", (() => { const rec = Math.max(1, Math.floor((char.hitDice?.max || 1) / 2)); const cur = (char.hitDice?.max || 1) - (char.hitDice?.used || 0); return `${cur} → ${Math.min(char.hitDice?.max || 1, cur + rec)} (odzyskano ${rec})`; })()],
-                ["☠️", "Wyczyść rzuty obronne przeciw śmierci", "Sukcesy i porażki zostały zresetowane"],
+                ["❤️", R.restoreHp,    R.restoreHpDetail(char.hp.current, char.hp.max)],
+                ["💫", R.resetSlots,   R.resetSlotsDetail],
+                ["🎲", R.recoverDice,  (() => { const rec = Math.max(1, Math.floor((char.hitDice?.max || 1) / 2)); const cur = (char.hitDice?.max || 1) - (char.hitDice?.used || 0); return R.recoverDiceDetail(cur, Math.min(char.hitDice?.max || 1, cur + rec), rec); })()],
+                ["☠️", R.resetDeath,   R.resetDeathDetail],
               ].map(([icon, label, detail]) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.35rem 0", borderBottom: "1px solid rgba(128,128,128,0.15)" }}>
                   <span style={{ fontSize: "1rem", flexShrink: 0 }}>{icon}</span>
@@ -259,8 +259,8 @@ export function RestModal({ type, char, setChar, onClose }) {
               ))}
             </div>
             <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem" }}>
-              <button className="btn-ghost" onClick={onClose}>Anuluj</button>
-              <button className="btn-ghost" onClick={doLongRest}>☀ Odpocznij Długo</button>
+              <button className="btn-ghost" onClick={onClose}>{R.cancel}</button>
+              <button className="btn-ghost" onClick={doLongRest}>{R.doLongRest}</button>
             </div>
           </>
         )}

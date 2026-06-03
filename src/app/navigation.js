@@ -28,16 +28,6 @@ export function getNavGroups(lang) {
         { id:"quests",   label: n.quests,   icon:"⚡" },
       ],
     },
-    {
-      id: "compendium", label: n.compendium, icon: "📚", defaultTab: "compendium-spells",
-      tabs: [
-        { id:"compendium-races",     label: n["compendium-races"],     icon:"🧝" },
-        { id:"compendium-classes",   label: n["compendium-classes"],   icon:"⚔️" },
-        { id:"compendium-spells",    label: n["compendium-spells"],    icon:"✨" },
-        { id:"compendium-monsters",  label: n["compendium-monsters"],  icon:"🐉" },
-        { id:"compendium-equipment", label: n["compendium-equipment"], icon:"🎒" },
-      ],
-    },
   ];
 }
 
@@ -66,16 +56,6 @@ export function getNavGroupsDesktop(lang) {
       tabs: [
         { id:"sessions", label: n.sessions, icon:"📖" },
         { id:"quests",   label: n.quests,   icon:"⚡" },
-      ],
-    },
-    {
-      id: "compendium", label: n.compendium, icon: "📚",
-      tabs: [
-        { id:"compendium-races",     label: n["compendium-races"],     icon:"🧝" },
-        { id:"compendium-classes",   label: n["compendium-classes"],   icon:"⚔️" },
-        { id:"compendium-spells",    label: n["compendium-spells"],    icon:"✨" },
-        { id:"compendium-monsters",  label: n["compendium-monsters"],  icon:"🐉" },
-        { id:"compendium-equipment", label: n["compendium-equipment"], icon:"🎒" },
       ],
     },
   ];

@@ -21,7 +21,6 @@ import LocationsScreen  from '../features/world/LocationsScreen';
 import FactionsPanel    from '../features/factions/FactionsPanel';
 import SessionsScreen   from '../features/sessions/SessionsScreen';
 import QuestScreen      from '../features/quests/QuestScreen';
-import CompendiumScreen from '../features/compendium/CompendiumScreen';
 
 /* Aplikuje zmienne CSS motywu na :root — synchronicznie, bez FOUC */
 export function applyThemeVars(t) {
@@ -468,7 +467,6 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
         {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSesjas={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab === "quests"    && <QuestScreen       quests={quests}       setZadania={setQuests}       openEntity={openEntity}/>}
-        {tab.startsWith("compendium") && <CompendiumScreen activeTab={tab.replace("compendium-", "")} key={tab}/>}
       </main>
 
       {/* Szuflada nawigacyjna */}

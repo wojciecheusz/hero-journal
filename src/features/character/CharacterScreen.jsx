@@ -356,8 +356,9 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
                 onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),type:e.target.value}}))}>
                 {["d4","d6","d8","d10","d12"].map(d => <option key={d} value={d}>{d}</option>)}
               </select>
-              <input type="number" min={0} value={(char.hitDice||{used:0}).used||0}
-                onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),used:parseInt(e.target.value)||0}}))}
+              <input type="number" min={0} max={(char.hitDice||{max:1}).max||1}
+                value={Math.max(0, ((char.hitDice||{max:1}).max||1) - ((char.hitDice||{used:0}).used||0))}
+                onChange={e => { const rem = parseInt(e.target.value)||0; const max = (char.hitDice||{max:1}).max||1; setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),used:Math.max(0, max - rem)}})); }}
                 style={{ width:24, background:"transparent", border:"none", borderBottom:"1px dashed currentColor", outline:"none", fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, textAlign:"center", color:"inherit" }}/>
               <span style={{ fontSize:"0.6rem", opacity:0.35 }}>/</span>
               <input type="number" min={1} value={(char.hitDice||{max:1}).max||1}
@@ -404,10 +405,11 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
           <div style={{ display:"flex", flexWrap:"wrap", gap:"0.3rem" }}>
             {CONDITIONS.map(cond => {
               const active = !!(char.conditions||{})[cond.key];
+              const label  = T.CONDITIONS?.[cond.key] || cond.label;
               return (
                 <button key={cond.key} onClick={() => toggleCondition(cond.key)}
                   style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.06em", textTransform:"uppercase", padding:"0.22rem 0.45rem", border:`1px solid ${active?"#cc3030":"var(--pip-empty)"}`, background:active?"rgba(200,48,48,0.2)":"transparent", color:active?"#ee5050":"var(--text-muted)", cursor:"pointer", transition:"all 0.15s", borderRadius:"2px" }}>
-                  {cond.label}
+                  {label}
                 </button>
               );
             })}

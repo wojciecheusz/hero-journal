@@ -3,6 +3,7 @@ import { STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstan
 import { clamp } from '../../utils/math';
 import { THEMES, PALETTES } from '../../theme/themes';
 import { useT } from '../../i18n/translations';
+// clamp used only in ProfileScreen level input
 
 export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, onCreateSample, onRename, theme }) {
   const t = THEMES[theme] || THEMES.mrok;
@@ -92,6 +93,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
   const t = THEMES[theme] || THEMES.mrok;
   const T = useT();
   const P = T.PROFILES;
+  const C = T.CHAR;
 
   const [krok, setStep] = useState(0);
   const [name, setImie] = useState("");
@@ -102,24 +104,26 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
   const [statArray, setStatArray] = useState("Zestaw standardowy");
   const [customCechy, setWlasneCechy] = useState({ STR:10, DEX:10, CON:10, INT:10, WIS:10, CHA:10 });
   const [useWlasne, setUseWlasne] = useState(false);
+  const [appearance, setAppearance] = useState({ age:"", height:"", weight:"", eyes:"", skin:"", hair:"" });
+  const [traits, setTraits] = useState({ personality:"", ideals:"", bonds:"", flaws:"" });
 
   const STEPS = P.stepNames;
   const stats = useWlasne ? customCechy : (STAT_ARRAYS[statArray] || STAT_ARRAYS["Zestaw standardowy"]);
   const statMod = v => { const m = Math.floor((v - 10) / 2); return m >= 0 ? `+${m}` : String(m); };
-  const canNext = [name.trim().length > 0, cls !== null, true, true][krok];
+  const canNext = [name.trim().length > 0, cls !== null, true, true, true, true][krok];
 
   const handleFinish = () => {
     const id = "profile_" + Date.now();
     const newChar = {
-      name: name.trim(), classes: [{ name: cls?.name || "Poszukiwacz przygód", level }],
+      name: name.trim(), race: "", classes: [{ name: cls?.name || "Poszukiwacz przygód", level }],
       stats: { ...stats }, profBonus: 2, hp: { current: 10, max: 10, temp: 0 }, ac: 10,
       initiativeBonus: undefined, savingThrows: {}, savingThrowExp: {}, savingThrowOverride: {},
       skills: {}, skillExp: {}, alignment: align, background: bg.trim(),
-      traits: { personality:"", ideals:"", bonds:"", flaws:"" },
+      traits,
       personalNotes:"", backstory:"", spellSlots:{}, spellcastingAbility:"INT",
       hitDice:{ type:"d8", max:1, used:0 }, xp:0, speed:30,
       coins:{ gold:0, silver:0, copper:0 },
-      appearance:{ age:"", height:"", weight:"", eyes:"", skin:"", hair:"" },
+      appearance,
       conditions:{}, proficiencies:{ weapons:"", armor:"", languages:"", tools:"" },
       deathSaves:{ successes:0, failures:0 },
     };
@@ -191,8 +195,9 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
                 <div key={k} className="wizard-stat-box">
                   <span className="wizard-stat-label">{k}</span>
                   {useWlasne
-                    ? <input type="number" min={1} max={30} value={customCechy[k]}
-                        onChange={e => setWlasneCechy(s => ({ ...s, [k]: clamp(parseInt(e.target.value) || 10, 1, 30) }))}
+                    ? <input type="number" min={0} max={30} value={customCechy[k]}
+                        onChange={e => setWlasneCechy(s => ({ ...s, [k]: parseInt(e.target.value) ?? 0 }))}
+                        onFocus={e => e.target.select()}
                         style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, color:t.accent, textAlign:"center", width:"100%" }}/>
                     : <span className="wizard-stat-val">{stats[k]}</span>
                   }
@@ -214,6 +219,50 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
               value={align} onChange={e => setAlign(e.target.value)}/>
             <div style={{ fontFamily:"Crimson Text,serif", fontSize:"0.9rem", color:t.textDim, fontStyle:"italic", marginTop:"0.5rem", lineHeight:1.6 }}>
               {P.readyHint}
+            </div>
+          </>
+        )}
+
+        {krok === 4 && (
+          <>
+            <div className="wizard-step-label">{P.appearanceQuestion}</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem" }}>
+              {[
+                ["age", C.age, C.agePh],
+                ["height", C.height, C.heightPh],
+                ["weight", C.weight, C.weightPh],
+                ["eyes", C.eyes, C.eyesPh],
+                ["skin", C.skin, C.skinPh],
+                ["hair", C.hair, C.hairPh],
+              ].map(([key, label, ph]) => (
+                <div key={key}>
+                  <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.16em", textTransform:"uppercase", color:t.textLabel, marginBottom:"0.2rem" }}>{label}</div>
+                  <input style={inputStyle} placeholder={ph} value={appearance[key]||""}
+                    onChange={e => setAppearance(a => ({ ...a, [key]: e.target.value }))}/>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {krok === 5 && (
+          <>
+            <div className="wizard-step-label">{P.personalityQuestion}</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:"0.5rem" }}>
+              {[
+                ["personality", C.persTraits, C.persPh],
+                ["ideals", C.ideals, C.idealsPh],
+                ["bonds", C.bonds, C.bondsPh],
+                ["flaws", C.flaws, C.flawsPh],
+              ].map(([key, label, ph]) => (
+                <div key={key}>
+                  <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.16em", textTransform:"uppercase", color:t.textLabel, marginBottom:"0.2rem" }}>{label}</div>
+                  <textarea
+                    style={{ ...inputStyle, resize:"vertical", minHeight:"3rem", lineHeight:1.55 }}
+                    placeholder={ph} value={traits[key]||""}
+                    onChange={e => setTraits(tr => ({ ...tr, [key]: e.target.value }))}/>
+                </div>
+              ))}
             </div>
           </>
         )}
