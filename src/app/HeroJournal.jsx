@@ -302,7 +302,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             {showSettings && <>
               <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
               {/* position:fixed — nie obcinany przez overflow sidebara */}
-              <div style={{ position:"fixed", bottom:"48px", left:"5px", background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 -8px 32px var(--hj-shadow-bot)", zIndex:200, width:210, borderRadius:"2px" }}>
+              <div style={{ position:"fixed", bottom:"48px", left:"5px", background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 -8px 32px var(--hj-shadow-bot)", zIndex:200, width:250, borderRadius:"2px" }}>
                 <div style={{ padding:"0.5rem 0.6rem 0.35rem" }}>
                   <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.4rem" }}>{T.UI.themeColor}</div>
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem" }}>

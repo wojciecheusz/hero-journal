@@ -63,9 +63,9 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                   onFocus={e => e.target.select()}
                   onChange={e => setChar(c => ({...c, hp:{...c.hp, current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}
                   onBlur={e => setChar(c => ({...c, hp:{...c.hp, current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
-                <span style={{ color:"inherit", opacity:0.35, fontSize:"0.85rem" }}>/</span>
+                <span style={{ color:"var(--hj-text-muted)", opacity:0.5, fontSize:"0.85rem" }}>/</span>
                 <input type="number" value={char.hp.max}
-                  style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"0.9rem", width:40, opacity:0.75 }}
+                  style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"0.9rem", width:40, color:"var(--hj-text-muted)", opacity:0.85 }}
                   onFocus={e => e.target.select()}
                   onChange={e => setChar(c => ({...c, hp:{...c.hp, max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}))}
                   onBlur={e => setChar(c => ({...c, hp:{...c.hp, max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
@@ -93,11 +93,11 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                 <input type="number" min={0} max={(char.hitDice||{max:1}).max||1}
                   value={Math.max(0, ((char.hitDice||{max:1}).max||1) - ((char.hitDice||{used:0}).used||0))}
                   onChange={e => { const rem=parseInt(e.target.value)||0; const max=(char.hitDice||{max:1}).max||1; setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),used:Math.max(0,max-rem)}})); }}
-                  style={{ width:24, background:"transparent", border:"none", borderBottom:"1px dashed currentColor", outline:"none", fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, textAlign:"center" }}/>
-                <span style={{ fontSize:"0.6rem", opacity:0.35 }}>/</span>
+                  style={{ width:24, background:"transparent", border:"none", borderBottom:"1px dashed var(--hj-accent)", outline:"none", fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, textAlign:"center", color:"var(--hj-accent)" }}/>
+                <span style={{ color:"var(--hj-text-muted)", opacity:0.5, fontSize:"0.6rem" }}>/</span>
                 <input type="number" min={1} value={(char.hitDice||{max:1}).max||1}
                   onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),max:parseInt(e.target.value)||1}}))}
-                  style={{ width:24, background:"transparent", border:"none", borderBottom:"1px dashed currentColor", outline:"none", fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center", opacity:0.65 }}/>
+                  style={{ width:24, background:"transparent", border:"none", borderBottom:"1px dashed var(--hj-text-muted)", outline:"none", fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center", color:"var(--hj-text-muted)", opacity:0.8 }}/>
               </div>
             </div>
             <button className="btn-rest short" onClick={() => onRestModal("short")}
