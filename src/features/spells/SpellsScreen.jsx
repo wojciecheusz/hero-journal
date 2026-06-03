@@ -75,7 +75,7 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
             </div>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
               {SPELL_LEVELS.map((lv,i) => (
-                <button key={lv} className="filter-tag" style={{ opacity: form.level===lv?1:0.45, borderColor: form.level===lv?"#1a5a9a":"", color: form.level===lv?"#64a0e6":"" }}
+                <button key={lv} className="filter-tag" style={{ opacity: form.level===lv?1:0.45, borderColor: form.level===lv?"var(--spell-border)":"", color: form.level===lv?"var(--spell-accent)":"" }}
                   onClick={() => setForm(f => ({ ...f, level: lv }))}>{T.SPELL_LEVELS[i]??lv}</button>
               ))}
             </div>
@@ -93,7 +93,7 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
 
       <div className="filter-bar">
         <button className={`filter-tag${!activeLevel?" active-filter":""}`} onClick={() => setActiveLevel(null)}>{SP.all}</button>
-        {SPELL_LEVELS.map((lv,i) => { const count=spells.filter(s=>s.level===lv).length; if(!count) return null; return <button key={lv} className={`filter-tag${activeLevel===lv?" active-filter":""}`} style={{ borderColor: activeLevel===lv?"#1a5a9a":"", color: activeLevel===lv?"#64a0e6":"" }} onClick={() => setActiveLevel(activeLevel===lv?null:lv)}>{T.SPELL_LEVELS[i]??lv} ({count})</button>; })}
+        {SPELL_LEVELS.map((lv,i) => { const count=spells.filter(s=>s.level===lv).length; if(!count) return null; return <button key={lv} className={`filter-tag${activeLevel===lv?" active-filter":""}`} style={{ borderColor: activeLevel===lv?"var(--spell-border)":"", color: activeLevel===lv?"var(--spell-accent)":"" }} onClick={() => setActiveLevel(activeLevel===lv?null:lv)}>{T.SPELL_LEVELS[i]??lv} ({count})</button>; })}
       </div>
 
       {spells.length===0 && <div className="card empty-state">{SP.empty}</div>}
@@ -102,7 +102,7 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
         const open = !!expanded[sp.id];
         const isEditing = !!editing[sp.id];
         return (
-          <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"#1a4a8a", borderLeftWidth:2 }}>
+          <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"var(--spell-border)", borderLeftWidth:2 }}>
             <div className="entity-header">
               <div className="flex1">
                 <div style={{ display:"flex", flexDirection:"column", gap:"0.2rem", flex:1, minWidth:0 }}>

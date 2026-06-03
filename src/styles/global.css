@@ -1055,7 +1055,7 @@ textarea { overflow-y: hidden; }
 .spell-slot-input  { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: var(--spell-accent); text-align: center; width: 100%; }
 
 /* ── Plecak ───────────────────────────────────────────────────── */
-.pack-item            { background: var(--hj-pack-item); border: 1px solid var(--hj-pack-item-border); padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; border-radius: 2px; }
+.pack-item            { background: var(--hj-bg-card); border: 1px solid var(--hj-border); padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; border-radius: 2px; }
 .pack-item.equipped-active { border-color: var(--hj-accent-border); border-left: 3px solid var(--hj-accent); }
 .pack-item-header     { display: flex; align-items: center; gap: 0.5rem; }
 .pack-item-body       { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }

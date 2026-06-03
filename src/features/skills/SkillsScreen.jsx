@@ -5,9 +5,18 @@ import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../sha
 import { useT } from '../../i18n/translations';
 
 const catColor = cat => ({
+  // Enum keys (po migracji)
   [SKILL_CAT.SKILL]:  "#c9943e",
   [SKILL_CAT.RACIAL]: "#4a8aaa",
   [SKILL_CAT.FEAT]:   "#9a6030",
+  // Legacy Polish keys (sprzed migracji)
+  "Umiejętność":  "#c9943e",
+  "Cecha rasowa": "#4a8aaa",
+  "Atut":         "#9a6030",
+  // Legacy English display labels
+  "Skill":           "#c9943e",
+  "Racial Feature":  "#4a8aaa",
+  "Feat":            "#9a6030",
 })[cat] || "#8a7848";
 
 export default function SkillsScreen({ skills, setUmiejętności, openEntity }) {
