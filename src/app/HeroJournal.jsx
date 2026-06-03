@@ -96,13 +96,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   /* ── Auto-resize textarea: po zmianie taba lub profilu ─────────── */
   useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      document.querySelectorAll('textarea').forEach(ta => {
-        ta.style.height = 'auto';
-        ta.style.height = `${ta.scrollHeight}px`;
-      });
-    });
-    return () => cancelAnimationFrame(id);
+    const resize = ta => { ta.style.height = 'auto'; ta.style.height = `${ta.scrollHeight}px`; };
+    const runAll = () => document.querySelectorAll('textarea').forEach(resize);
+    const rafId = requestAnimationFrame(runAll);
+    /* Fallback dla lazy-loaded chunków — czekamy aż komponent się zamontuje */
+    const tid = setTimeout(runAll, 250);
+    return () => { cancelAnimationFrame(rafId); clearTimeout(tid); };
   }, [tab, activeId]);
 
   /* ── Synchronizacja metadanych profilu (useCharacterData + useProfileManager) ── */
