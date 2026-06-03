@@ -25,7 +25,7 @@ export default function HelpPanel({ tab, theme, onClose }) {
       <div style={{ position:"fixed", inset:0, zIndex:498, background:"transparent" }} onClick={onClose}/>
 
       {/* Panel */}
-      <div style={{ position:"fixed", top:"env(safe-area-inset-top, 0px)", right:0, bottom:0, zIndex:499, width:"min(380px, 100vw)", background:t.bgCard, borderLeft:`1px solid ${t.border}`, boxShadow:`-12px 0 48px ${t.shadowBot}`, display:"flex", flexDirection:"column", overflow:"hidden" }}>
+      <div className="hj-help-overlay" style={{ position:"fixed", top:"env(safe-area-inset-top, 0px)", right:0, bottom:0, zIndex:499, width:"min(380px, 100vw)", background:t.bgCard, borderLeft:`1px solid ${t.border}`, boxShadow:`-12px 0 48px ${t.shadowBot}`, display:"flex", flexDirection:"column", overflow:"hidden" }}>
 
         {/* Header */}
         <div style={{ padding:"1rem 1.25rem 0.85rem", borderBottom:`1px solid ${t.border}`, display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>

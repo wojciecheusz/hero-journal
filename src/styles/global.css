@@ -419,6 +419,8 @@ textarea { overflow-y: hidden; }
   /* Header — całkowicie ukryty na desktop (sidebar przejmuje rolę) */
   .hj-header        { display: none !important; }
   .hj-root          { padding-top: 0 !important; }
+  /* HelpPanel overlay ukryty na desktop (panel jest w sidebarze) */
+  .hj-help-overlay  { display: none !important; }
 
   /* Karta postaci — 2 kolumny */
   .char-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
