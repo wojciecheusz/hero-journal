@@ -426,7 +426,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
           {/* Ustawienia — dropdown fixed, nie obcięty przez overflow sidebara */}
           <div style={{ flex:1, position:"relative" }}>
-            <button onClick={() => { setShowSettings(s => !s); setShowHelp(false); }} title="Ustawienia"
+            <button onClick={() => setShowSettings(s => !s)} title="Ustawienia"
               style={{ width:"100%", height:32, background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
               ⚙
             </button>
