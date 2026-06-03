@@ -368,6 +368,64 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             </div>
           );
         })}
+        {/* ── Stopka sidebara: ? i ⚙ ── */}
+        <div style={{ marginTop:"auto", padding:"0.5rem 0.6rem", borderTop:"1px solid var(--hj-border-sub)", display:"flex", gap:"0.4rem" }}>
+          {/* Pomoc */}
+          <button onClick={() => { setShowHelp(s => !s); setShowSettings(false); }} title="Help"
+            style={{ flex:1, background:showHelp?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            ?
+          </button>
+
+          {/* Ustawienia z dropdownem nad przyciskiem */}
+          <div style={{ flex:1, position:"relative" }}>
+            <button onClick={() => { setShowSettings(s => !s); setShowHelp(false); }} title="Ustawienia"
+              style={{ width:"100%", height:32, background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
+              ⚙
+            </button>
+            {showSettings && <>
+              <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
+              <div style={{ position:"absolute", bottom:"calc(100% + 8px)", left:0, background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 -8px 32px var(--hj-shadow-bot)", zIndex:200, width:270, borderRadius:"2px" }}>
+                <div style={{ padding:"0.6rem 0.7rem 0.4rem" }}>
+                  <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.5rem" }}>{T.UI.themeColor}</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem" }}>
+                    {PALETTES.map(p => (
+                      <button key={p} onClick={() => setTheme(p)}
+                        style={{ background:theme===p?"rgba(226,185,78,0.12)":"transparent", border:`1px solid ${theme===p?"var(--hj-accent-border)":"var(--hj-border-sub)"}`, color:theme===p?"var(--hj-accent)":"var(--hj-text)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.04em", padding:"0.3rem 0.4rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px" }}>
+                        {T.PALETTE_LABELS[p]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.4rem 0.5rem", display:"flex", flexDirection:"column", gap:"0.2rem" }}>
+                  <button onClick={() => { toggleLanguage(); }}
+                    style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
+                    🌐 {T.UI.langToggle === "EN" ? "Switch to English" : "Przełącz na polski"}
+                  </button>
+                  <button onClick={() => { setScreen("profiles"); setShowSettings(false); }}
+                    style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
+                    👤 {T.UI.changeHero}
+                  </button>
+                  <button onClick={() => { setShowReset(true); setShowSettings(false); }}
+                    style={{ background:"transparent", border:"1px solid #6a2a2a", color:"#c04040", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
+                    {T.UI.resetChar}
+                  </button>
+                  {user && onCloudRefresh && (
+                    <button onClick={() => { onCloudRefresh(); setShowSettings(false); }}
+                      style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
+                      {T.UI.syncData}
+                    </button>
+                  )}
+                  {user && onLogout && (
+                    <button onClick={() => { onLogout(); setShowSettings(false); }}
+                      style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
+                      {T.UI.logout} ({(user.displayName || user.email || "").split(/[\s@]/)[0]})
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>}
+          </div>
+        </div>
       </aside>
 
       <header className="hj-header">
