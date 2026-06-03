@@ -416,8 +416,9 @@ textarea { overflow-y: hidden; }
     gap: 1.2rem;
   }
 
-  /* Header — ukryj logo/name (sidebar je pokazuje) */
-  .hj-header-brand { display: none !important; }
+  /* Header — ukryj logo/name (sidebar je pokazuje), przyciski do prawej */
+  .hj-header-brand  { display: none !important; }
+  .hj-header-inner  { justify-content: flex-end; }
 
   /* Karta postaci — 2 kolumny */
   .char-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
