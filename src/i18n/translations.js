@@ -449,7 +449,7 @@ export const TRANSLATIONS = {
       ac:"AC", initiative:"Initiative", initiativeTip:"Default: DEX mod.",
       speed:"Speed", profBonus:"Prof.", profBonusTip:"Proficiency Bonus",
       hp:"Hit Points", hpTemp:"Tmp. HP", hpVitality:"% vitality",
-      passivePerc:"Pass. Perception", spellDC:"Spell DC", spellAtk:"Spell Attack",
+      passivePerc:"Pass. Percep.", spellDC:"Spell DC", spellAtk:"Spell Attack",
       hitDice:"Hit Dice", shortRest:"Short rest", longRest:"Long rest",
       conditionsTitle:"Conditions",
       deathSaves:"☠ Death Saves", deathSuccess:"Success", deathFailure:"Failure",
