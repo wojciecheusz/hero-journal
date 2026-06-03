@@ -76,6 +76,7 @@ body {
 
 input, select, textarea { font-size: max(1rem, 16px); }
 input[type="number"] { font-size: inherit; }
+textarea { overflow-y: hidden; }
 
 @keyframes skel { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
 

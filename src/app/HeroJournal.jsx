@@ -147,6 +147,28 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const setQuests    = useCallback(fn => setDataRaw(d => ({ ...d, quests:    typeof fn === 'function' ? fn(d.quests)    : fn })), []);
   const setFactions  = useCallback(fn => setDataRaw(d => ({ ...d, factions:  typeof fn === 'function' ? fn(d.factions)  : fn })), []);
 
+  /* ── Auto-resize textarea: listener na input ─────────────────── */
+  useEffect(() => {
+    const resize = ta => {
+      ta.style.height = 'auto';
+      ta.style.height = `${ta.scrollHeight}px`;
+    };
+    const onInput = e => { if (e.target.tagName === 'TEXTAREA') resize(e.target); };
+    document.addEventListener('input', onInput, true);
+    return () => document.removeEventListener('input', onInput, true);
+  }, []);
+
+  /* ── Auto-resize textarea: po zmianie taba lub profilu ─────────── */
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      document.querySelectorAll('textarea').forEach(ta => {
+        ta.style.height = 'auto';
+        ta.style.height = `${ta.scrollHeight}px`;
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [tab, activeId]);
+
   /* ── Motyw ──────────────────────────────────────────────────── */
   useEffect(() => {
     applyThemeVars(THEMES[theme] || THEMES.mrok);
@@ -376,7 +398,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             </button>
             {showSettings && <>
               <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
-              <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 8px 32px var(--hj-shadow-bot)", zIndex:200, width:230, borderRadius:"2px" }}>
+              <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 8px 32px var(--hj-shadow-bot)", zIndex:200, width:270, borderRadius:"2px" }}>
                 <div style={{ padding:"0.6rem 0.7rem 0.4rem" }}>
                   <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.5rem" }}>{T.UI.themeColor}</div>
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem" }}>
