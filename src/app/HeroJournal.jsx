@@ -2,11 +2,15 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { THEMES, PALETTES, PALETTE_LABELS } from '../theme/themes';
 import { DEFAULT_CHAR } from '../constants/gameConstants';
 import {
-  CHAR_SLOTS, loadChar, saveChar, loadProfiles, saveProfiles,
-  loadActiveId, saveActiveId, migrateLegacy, migrateToEnums, deleteCharData, load, save,
-  setCloudSaveHook,
+  CHAR_SLOTS, saveChar, loadProfiles, saveProfiles, saveActiveId,
+  load, save, setCloudSaveHook, clearCloudSaveHook,
 } from '../utils/storage';
+import { useTheme }         from '../hooks/useTheme';
+import { useLanguage }      from '../hooks/useLanguage';
+import { useCharacterData, EMPTY_DATA, loadProfileData } from '../hooks/useCharacterData';
+import { useProfileManager } from '../hooks/useProfileManager';
 import { getNavGroups, getNavGroupsDesktop } from './navigation';
+import { applyThemeVars } from '../utils/themeUtils';
 import TutorialModal from './TutorialModal';
 import HelpPanel     from './HelpPanel';
 import { detectLang, LangContext, TRANSLATIONS } from '../i18n/translations';
@@ -24,106 +28,26 @@ import FactionsPanel    from '../features/factions/FactionsPanel';
 import SessionsScreen   from '../features/sessions/SessionsScreen';
 import QuestScreen      from '../features/quests/QuestScreen';
 
-/* Aplikuje zmienne CSS motywu na :root — synchronicznie, bez FOUC */
-export function applyThemeVars(t) {
-  const r = document.documentElement;
-  const set = (k, v) => r.style.setProperty(k, v);
-  set('--hj-bg',               t.bg);
-  set('--hj-bg-card',          t.bgCard);
-  set('--hj-bg-input',         t.bgInput);
-  set('--hj-bg-nav',           t.navBg ?? t.bgNav ?? t.bg);
-  set('--hj-border',           t.border);
-  set('--hj-border-sub',       t.borderSub);
-  set('--hj-border-input',     t.borderInput);
-  set('--hj-text',             t.text);
-  set('--hj-text-muted',       t.textMuted);
-  set('--hj-text-dim',         t.textDim);
-  set('--hj-text-label',       t.textLabel);
-  set('--hj-accent',           t.accent);
-  set('--hj-accent-border',    t.accentBorder);
-  set('--hj-header-bg',        t.headerBg);
-  set('--hj-nav-bg',           t.navBg);
-  set('--hj-scroll-track',     t.scrollTrack);
-  set('--hj-scroll-thumb',     t.scrollThumb);
-  set('--hj-noise',            t.noise);
-  set('--hj-shadow-bot',       t.shadowBot);
-  set('--hj-shadow-card',      t.shadowCard);
-  set('--hj-inner-div-bg',     t.innerDivBg);
-  set('--hj-hp-bg',            t.hpBg);
-  set('--hj-add-form',         t.addForm);
-  set('--hj-modal-bg',         t.modalBg);
-  set('--hj-empty-color',      t.emptyColor);
-  set('--hj-sess-entry',       t.sessEntry);
-  set('--hj-combat-box',       t.combatBox);
-  set('--hj-spell-slot-box',   t.spellSlotBox);
-  set('--hj-spell-slot-border',t.spellSlotBorder);
-  set('--hj-pack-item',        t.packItem);
-  set('--hj-pack-item-border', t.packItemBorder);
-  set('--hj-pack-field-input', t.packFieldInput);
-  set('--spell-accent',        t.spellAccent);
-  set('--spell-border',        t.spellBorder);
-  set('--spell-muted',         t.spellMuted);
-  set('--spell-dim',           t.spellDim);
-  set('--spell-text',          t.spellText);
-  set('--spell-bg',            t.spellBg);
-  set('--quest-reward',        t.questReward);
-  set('--hj-selected-bg',      t.selectedBg);
-  set('--pip-prof',            t.accent);
-  set('--pip-exp',             t.spellAccent);
-  set('--pip-empty',           t.borderInput);
-  set('--text-label',          t.textLabel);
-  set('--text-muted',          t.textMuted);
-  set('--text-dim',            t.textDim);
-}
-
-const EMPTY_DATA = {
-  char: DEFAULT_CHAR, inventory: [], npcs: [], locations: [],
-  skills: [], spells: [], sessions: [], quests: [], factions: [],
-};
-
-function loadProfileData(id) {
-  return {
-    char:      loadChar("char",      id, DEFAULT_CHAR),
-    inventory: loadChar("inventory", id, []),
-    npcs:      loadChar("npcs",      id, []),
-    locations: loadChar("locations", id, []),
-    skills:    loadChar("skills",    id, []),
-    spells:    loadChar("spells",    id, []),
-    sessions:  loadChar("sessions",  id, []),
-    quests:    loadChar("quests",    id, []),
-    factions:  loadChar("factions",  id, []),
-  };
-}
+/* applyThemeVars → src/utils/themeUtils.js
+   EMPTY_DATA / loadProfileData → src/hooks/useCharacterData.js */
 
 export default function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
-  const [theme, setTheme] = useState(() => {
-    const s = load("hj_theme", "mrok");
-    const name = PALETTES.includes(s) ? s : "mrok";
-    applyThemeVars(THEMES[name] || THEMES.mrok);
-    return name;
-  });
+  /* ── Custom hooks ────────────────────────────────────────────── */
+  const { theme, setTheme }            = useTheme();
+  const { lang, setLang, toggleLanguage } = useLanguage();
 
-  const [lang, setLang] = useState(detectLang);
+  const {
+    profiles, setProfiles, activeId, setActiveId, screen, setScreen,
+    selectProfile, finishWizard, createSample, renameProfile, deleteProfile,
+  } = useProfileManager();
 
-  const toggleLanguage = useCallback(() => {
-    setLang(l => {
-      const next = l === 'pl' ? 'en' : 'pl';
-      localStorage.setItem('hj_lang', next);
-      return next;
-    });
-  }, []);
+  const {
+    data, setDataRaw,
+    setChar, setInventory, setNPCs, setLocations,
+    setSkills, setSpells, setSessions, setQuests, setFactions,
+  } = useCharacterData(activeId);
 
-  const [profiles, setProfiles] = useState(() => { migrateLegacy(); migrateToEnums(); return loadProfiles(); });
-  const [activeId, setActiveId] = useState(() => { migrateLegacy(); return loadActiveId(); });
-  const [screen, setScreen]     = useState(() => {
-    migrateLegacy();
-    const przs = loadProfiles();
-    const aid  = loadActiveId();
-    if (przs.length === 0) return "wizard";
-    if (!aid || !przs.find(p => p.id === aid)) return "profiles";
-    return "app";
-  });
-
+  /* ── UI state (pozostaje w HeroJournal — czysto prezentacyjny) ── */
   const [tab, setTab]               = useState("character");
   const [openGroup, setOpenGroup]   = useState(null);
   const [showReset, setShowReset]       = useState(false);
@@ -132,20 +56,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [showTutorial, setShowTutorial] = useState(() => !localStorage.getItem("hj_tutorial_seen"));
   const [openEntity, setOpenEntity] = useState(null);
 
-  /* ── Skonsolidowany stan danych postaci ─────────────────────── */
-  const [data, setDataRaw] = useState(() =>
-    activeId ? loadProfileData(activeId) : EMPTY_DATA
-  );
-
-  const setChar      = useCallback(fn => setDataRaw(d => ({ ...d, char:      typeof fn === 'function' ? fn(d.char)      : fn })), []);
-  const setInventory = useCallback(fn => setDataRaw(d => ({ ...d, inventory: typeof fn === 'function' ? fn(d.inventory) : fn })), []);
-  const setNPCs      = useCallback(fn => setDataRaw(d => ({ ...d, npcs:      typeof fn === 'function' ? fn(d.npcs)      : fn })), []);
-  const setLocations = useCallback(fn => setDataRaw(d => ({ ...d, locations: typeof fn === 'function' ? fn(d.locations) : fn })), []);
-  const setSkills    = useCallback(fn => setDataRaw(d => ({ ...d, skills:    typeof fn === 'function' ? fn(d.skills)    : fn })), []);
-  const setSpells    = useCallback(fn => setDataRaw(d => ({ ...d, spells:    typeof fn === 'function' ? fn(d.spells)    : fn })), []);
-  const setSessions  = useCallback(fn => setDataRaw(d => ({ ...d, sessions:  typeof fn === 'function' ? fn(d.sessions)  : fn })), []);
-  const setQuests    = useCallback(fn => setDataRaw(d => ({ ...d, quests:    typeof fn === 'function' ? fn(d.quests)    : fn })), []);
-  const setFactions  = useCallback(fn => setDataRaw(d => ({ ...d, factions:  typeof fn === 'function' ? fn(d.factions)  : fn })), []);
+  /* ── setLang synchronizacja (detectLang może się różnić od TRANSLATIONS context) ── */
+  // lang jest zarządzany przez useLanguage i przekazany do LangContext
 
   /* ── Auto-resize textarea: listener na input ─────────────────── */
   useEffect(() => {
@@ -169,24 +81,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     return () => cancelAnimationFrame(id);
   }, [tab, activeId]);
 
-  /* ── Motyw ──────────────────────────────────────────────────── */
-  useEffect(() => {
-    applyThemeVars(THEMES[theme] || THEMES.mrok);
-    save("hj_theme", theme);
-  }, [theme]);
-
-  /* ── Zapis danych (tylko zmienione sloty) ────────────────────── */
-  const prevDataRef = useRef(data);
-  useEffect(() => {
-    if (!activeId) return;
-    const prev = prevDataRef.current;
-    CHAR_SLOTS.forEach(slot => {
-      if (data[slot] !== prev[slot]) saveChar(slot, activeId, data[slot]);
-    });
-    prevDataRef.current = data;
-  }, [data, activeId]);
-
-  /* ── Synchronizacja metadanych profilu ───────────────────────── */
+  /* ── Synchronizacja metadanych profilu (useCharacterData + useProfileManager) ── */
   useEffect(() => {
     if (!activeId) return;
     setProfiles(prev => {
@@ -214,7 +109,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         queue.delete(key);
       }, 1500));
     });
-    return () => { setCloudSaveHook(null); queue.forEach(clearTimeout); queue.clear(); };
+    return () => { clearCloudSaveHook(); queue.forEach(clearTimeout); queue.clear(); };
   }, [user?.uid]);
 
   /* ── Nawigacja ───────────────────────────────────────────────── */
@@ -225,63 +120,37 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   /* ── Zarządzanie profilami ───────────────────────────────────── */
   const switchProfile = useCallback(id => {
-    saveActiveId(id);
-    setActiveId(id);
+    selectProfile(id);
     setDataRaw(loadProfileData(id));
     setTab("character");
-    setScreen("app");
-  }, []);
+  }, [selectProfile, setDataRaw]);
 
   const handleWizardFinish = useCallback((id, newChar, profileMeta) => {
-    CHAR_SLOTS.forEach(slot => saveChar(slot, id, slot === "char" ? newChar : []));
-    const updated = [...loadProfiles(), { ...profileMeta, id }];
-    saveProfiles(updated);
-    saveActiveId(id);
-    setProfiles(updated);
-    setDataRaw({ ...EMPTY_DATA, char: newChar });
-    setActiveId(id);
+    const { newChar: nc } = finishWizard(id, newChar, profileMeta);
+    setDataRaw({ ...EMPTY_DATA, char: nc });
     setTab("character");
-    setScreen("app");
-  }, []);
+  }, [finishWizard, setDataRaw]);
 
   const handleSampleCreate = useCallback(() => {
-    const { id, profile, char, inventory, npcs, locations, skills, spells, sessions, quests, factions } = createSampleHero();
-    const slots = { char, inventory, npcs, locations, skills, spells, sessions, quests, factions };
-    CHAR_SLOTS.forEach(slot => saveChar(slot, id, slots[slot]));
-    const updated = [...loadProfiles(), profile];
-    saveProfiles(updated);
-    saveActiveId(id);
-    setProfiles(updated);
+    const slots = createSample();
     setDataRaw(slots);
-    setActiveId(id);
     setTab("character");
-    setScreen("app");
-  }, []);
+  }, [createSample, setDataRaw]);
 
   const handleRename = useCallback((profileId, newName) => {
-    const updated = loadProfiles().map(p => p.id === profileId ? { ...p, name: newName } : p);
-    saveProfiles(updated);
-    setProfiles(updated);
-    if (profileId === activeId) setChar(c => ({ ...c, name: newName }));
-  }, [activeId, setChar]);
+    renameProfile(profileId, newName, activeId, setChar);
+  }, [renameProfile, activeId, setChar]);
 
   const handleDelete = useCallback(id => {
-    deleteCharData(id);
-    const updated = loadProfiles().filter(p => p.id !== id);
-    saveProfiles(updated);
-    setProfiles(updated);
-    if (id === activeId) {
-      if (updated.length > 0) switchProfile(updated[0].id);
-      else { saveActiveId(null); setActiveId(null); setScreen("wizard"); }
-    }
-  }, [activeId, switchProfile]);
+    deleteProfile(id, activeId, switchProfile);
+  }, [deleteProfile, activeId, switchProfile]);
 
   const handleReset = useCallback(() => {
     if (!activeId) return;
     CHAR_SLOTS.forEach(slot => saveChar(slot, activeId, EMPTY_DATA[slot]));
     setDataRaw(EMPTY_DATA);
     setShowReset(false);
-  }, [activeId]);
+  }, [activeId, setDataRaw]);
 
   /* ── Skróty do danych ────────────────────────────────────────── */
   const { char, inventory, npcs, locations, skills, spells, sessions, quests, factions } = data;

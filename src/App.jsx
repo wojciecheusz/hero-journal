@@ -5,6 +5,7 @@ import { syncFromCloud } from './firebase/firestore';
 import HeroJournal from './app/HeroJournal';
 import LoginScreen from './app/LoginScreen';
 import LoadingScreen from './app/LoadingScreen';
+import ErrorBoundary from './app/ErrorBoundary';
 import './styles/global.css';
 
 export default function App() {
@@ -54,11 +55,13 @@ export default function App() {
   if (firebaseReady && !user)  return <LoginScreen onLogin={handleLogin} loading={loginLoading}/>;
 
   return (
-    <HeroJournal
-      key={appKey}
-      user={user}
-      onLogout={user ? handleLogout : null}
-      onCloudRefresh={user ? handleCloudRefresh : null}
-    />
+    <ErrorBoundary onReset={() => setAppKey(k => k + 1)}>
+      <HeroJournal
+        key={appKey}
+        user={user}
+        onLogout={user ? handleLogout : null}
+        onCloudRefresh={user ? handleCloudRefresh : null}
+      />
+    </ErrorBoundary>
   );
 }

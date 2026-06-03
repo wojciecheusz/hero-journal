@@ -1,10 +1,23 @@
-export let _cloudSaveHook = null;
-export const setCloudSaveHook = fn => { _cloudSaveHook = fn; };
+/* ── Cloud save callback — encapsulated w closure (nie module global) ── */
+const _hooks = {
+  /** @type {((key: string, val: unknown) => void) | null} */
+  cloudSave: null,
+};
+
+export const setCloudSaveHook   = fn  => { _hooks.cloudSave = fn; };
+export const clearCloudSaveHook = ()  => { _hooks.cloudSave = null; };
 
 export const CHAR_SLOTS = ["char","inventory","npcs","locations","skills","spells","sessions","quests","factions"];
 
-export const load    = (key, fb) => { try { return JSON.parse(localStorage.getItem(key)) ?? fb; } catch { return fb; } };
-export const save    = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} _cloudSaveHook?.(key, val); };
+export const load = (key, fb) => {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fb; }
+  catch { return fb; }
+};
+
+export const save = (key, val) => {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  _hooks.cloudSave?.(key, val);
+};
 
 const charKey              = (slot, id) => `hj_${slot}_${id}`;
 export const loadChar       = (slot, id, fb) => load(charKey(slot, id), fb);
@@ -16,6 +29,59 @@ export const saveProfiles  = p  => save("hj_profiles", p);
 export const loadActiveId  = () => load("hj_active_profile", null);
 export const saveActiveId  = id => save("hj_active_profile", id);
 
+/* ── Walidacja danych postaci ───────────────────────────────── */
+/**
+ * Zapewnia, że załadowane dane mają poprawny kształt.
+ * Chroni przed runtime crashem gdy localStorage zawiera niekompletne/uszkodzone dane.
+ */
+export function validateCharData(data, defaults) {
+  if (!data || typeof data !== 'object') return { ...defaults };
+
+  const safe = { ...defaults, ...data };
+
+  // Zagwarantuj istnienie kluczowych obiektów zagnieżdżonych
+  const ensureObj  = (key, def) => {
+    safe[key] = (data[key] && typeof data[key] === 'object' && !Array.isArray(data[key]))
+      ? { ...def, ...data[key] } : { ...def };
+  };
+  const ensureArr  = (key, def) => {
+    safe[key] = Array.isArray(data[key]) ? data[key] : def;
+  };
+  const ensureNum  = (key, def) => {
+    safe[key] = (typeof data[key] === 'number' && !isNaN(data[key])) ? data[key] : def;
+  };
+
+  ensureObj('stats',        defaults.stats);
+  ensureObj('hp',           defaults.hp);
+  ensureObj('coins',        defaults.coins);
+  ensureObj('traits',       defaults.traits);
+  ensureObj('appearance',   defaults.appearance);
+  ensureObj('proficiencies',defaults.proficiencies);
+  ensureObj('deathSaves',   defaults.deathSaves);
+  ensureObj('conditions',   defaults.conditions);
+  ensureArr('classes',      defaults.classes);
+  ensureArr('spellSlots',   defaults.spellSlots);  // SpellSlots is an object
+  ensureNum('xp',           defaults.xp ?? 0);
+  ensureNum('ac',           defaults.ac ?? 10);
+  ensureNum('speed',        defaults.speed ?? 30);
+  ensureNum('profBonus',    defaults.profBonus ?? 2);
+
+  // Zapewnij przynajmniej jedną klasę
+  if (!safe.classes || safe.classes.length === 0) {
+    safe.classes = defaults.classes;
+  }
+
+  // spellSlots może być obiektem lub pustą tablicą (legacy) — normalizuj
+  if (Array.isArray(safe.spellSlots)) safe.spellSlots = {};
+
+  return safe;
+}
+
+export function validateArray(data, defaultVal = []) {
+  return Array.isArray(data) ? data : defaultVal;
+}
+
+/* ── Migracja legacy → single profile ────────────────────────── */
 export const migrateLegacy = () => {
   if (loadProfiles().length > 0) return;
   const legacyChar = load("hj_char", null);
@@ -35,11 +101,9 @@ export const migrateLegacy = () => {
   saveActiveId(id);
 };
 
-/* ── Migracja danych do language-neutral enumów (uruchamiana raz per profil) ── */
-
+/* ── Migracja danych do language-neutral enumów ─────────────── */
 const MIGRATION_KEY = "hj_enum_migration_v1";
 
-/** Mapy z polskich wartości na enums */
 const QUEST_STATUS_MAP = {
   "Aktywne":"active", "Ukończone":"completed", "Nieudane":"failed",
 };
@@ -76,98 +140,45 @@ const SPELL_SCHOOL_MAP = {
   "Nekromancja":"necromancy", "Przemiana":"transmutation", "Inna":"other",
 };
 
-function migrateMap(val, map) { return map[val] ?? val; }
+function mm(val, map) { return map[val] ?? val; }
 
-function migrateQuests(quests = []) {
-  return quests.map(q => ({
-    ...q,
-    status: migrateMap(q.status, QUEST_STATUS_MAP),
-  }));
+function migrateQuests(q = [])    { return q.map(x => ({ ...x, status: mm(x.status, QUEST_STATUS_MAP) })); }
+function migrateSkills(s = [])    { return s.map(x => ({ ...x, category: mm(x.category, SKILL_CAT_MAP) })); }
+function migrateInventory(inv=[]) { return inv.map(x => ({ ...x, type: mm(x.type, ITEM_TYPE_MAP) })); }
+function migrateLocations(l=[])   { return l.map(x => ({ ...x, type: mm(x.type, LOC_TYPE_MAP) })); }
+function migrateFactions(f=[])    { return f.map(x => ({ ...x, type: mm(x.type, FACTION_TYPE_MAP), rank: mm(x.rank, FACTION_RANK_MAP) })); }
+function migrateSpells(s=[])      { return s.map(x => ({ ...x, level: mm(x.level, SPELL_LEVEL_MAP), school: mm(x.school, SPELL_SCHOOL_MAP) })); }
+function migrateSpellSlots(slots={}) {
+  const r = {};
+  for (const [k,v] of Object.entries(slots || {})) r[mm(k, SPELL_LEVEL_MAP)] = v;
+  return r;
 }
-
-function migrateSkills(skills = []) {
-  return skills.map(s => ({
-    ...s,
-    category: migrateMap(s.category, SKILL_CAT_MAP),
-  }));
-}
-
-function migrateInventory(inv = []) {
-  return inv.map(item => ({
-    ...item,
-    type: migrateMap(item.type, ITEM_TYPE_MAP),
-  }));
-}
-
-function migrateLocations(locs = []) {
-  return locs.map(l => ({
-    ...l,
-    type: migrateMap(l.type, LOC_TYPE_MAP),
-  }));
-}
-
-function migrateFactions(factions = []) {
-  return factions.map(f => ({
-    ...f,
-    type: migrateMap(f.type, FACTION_TYPE_MAP),
-    rank: migrateMap(f.rank, FACTION_RANK_MAP),
-  }));
-}
-
-function migrateSpells(spells = []) {
-  return spells.map(sp => ({
-    ...sp,
-    level:  migrateMap(sp.level,  SPELL_LEVEL_MAP),
-    school: migrateMap(sp.school, SPELL_SCHOOL_MAP),
-  }));
-}
-
-function migrateSpellSlots(slots = {}) {
-  const result = {};
-  for (const [key, val] of Object.entries(slots)) {
-    result[migrateMap(key, SPELL_LEVEL_MAP)] = val;
-  }
-  return result;
-}
-
-function migrateChar(char = {}) {
+function migrateChar(char={}) {
   if (!char) return char;
-  return {
-    ...char,
-    spellSlots: migrateSpellSlots(char.spellSlots),
-  };
+  return { ...char, spellSlots: migrateSpellSlots(char.spellSlots) };
 }
 
-/**
- * Idempotent migration: runs once per installation (tracked via localStorage flag).
- * Converts all stored Polish enum strings to language-neutral enum values.
- */
 export function migrateToEnums() {
   if (localStorage.getItem(MIGRATION_KEY)) return;
-
-  const profiles = loadProfiles();
-  profiles.forEach(({ id }) => {
-    const char      = loadChar("char",      id, null);
-    const inventory = loadChar("inventory", id, null);
-    const skills    = loadChar("skills",    id, null);
-    const spells    = loadChar("spells",    id, null);
-    const locations = loadChar("locations", id, null);
-    const factions  = loadChar("factions",  id, null);
-    const quests    = loadChar("quests",    id, null);
-
-    if (char)      saveChar("char",      id, migrateChar(char));
-    if (inventory) saveChar("inventory", id, migrateInventory(inventory));
-    if (skills)    saveChar("skills",    id, migrateSkills(skills));
-    if (spells)    saveChar("spells",    id, migrateSpells(spells));
-    if (locations) saveChar("locations", id, migrateLocations(locations));
-    if (factions)  saveChar("factions",  id, migrateFactions(factions));
-    if (quests)    saveChar("quests",    id, migrateQuests(quests));
+  loadProfiles().forEach(({ id }) => {
+    const c = loadChar("char",      id, null);
+    const i = loadChar("inventory", id, null);
+    const s = loadChar("skills",    id, null);
+    const sp= loadChar("spells",    id, null);
+    const l = loadChar("locations", id, null);
+    const f = loadChar("factions",  id, null);
+    const q = loadChar("quests",    id, null);
+    if (c)  saveChar("char",      id, migrateChar(c));
+    if (i)  saveChar("inventory", id, migrateInventory(i));
+    if (s)  saveChar("skills",    id, migrateSkills(s));
+    if (sp) saveChar("spells",    id, migrateSpells(sp));
+    if (l)  saveChar("locations", id, migrateLocations(l));
+    if (f)  saveChar("factions",  id, migrateFactions(f));
+    if (q)  saveChar("quests",    id, migrateQuests(q));
   });
-
   localStorage.setItem(MIGRATION_KEY, "1");
 }
 
-/* Eksport map do użycia w testach */
 export const _migrationMaps = {
   QUEST_STATUS_MAP, SKILL_CAT_MAP, ITEM_TYPE_MAP,
   LOC_TYPE_MAP, FACTION_TYPE_MAP, FACTION_RANK_MAP,
