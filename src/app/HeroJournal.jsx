@@ -7,6 +7,8 @@ import {
   setCloudSaveHook,
 } from '../utils/storage';
 import { getNavGroups, getNavGroupsDesktop } from './navigation';
+import TutorialModal from './TutorialModal';
+import HelpPanel     from './HelpPanel';
 import { detectLang, LangContext, TRANSLATIONS } from '../i18n/translations';
 import { createSampleHero } from '../constants/sampleHero';
 import { cloudSave } from '../firebase/firestore';
@@ -124,8 +126,10 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   const [tab, setTab]               = useState("character");
   const [openGroup, setOpenGroup]   = useState(null);
-  const [showReset, setShowReset]   = useState(false);
+  const [showReset, setShowReset]       = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHelp, setShowHelp]         = useState(false);
+  const [showTutorial, setShowTutorial] = useState(() => !localStorage.getItem("hj_tutorial_seen"));
   const [openEntity, setOpenEntity] = useState(null);
 
   /* ── Skonsolidowany stan danych postaci ─────────────────────── */
@@ -291,6 +295,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     <LangContext.Provider value={lang}>
     <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onAnuluj={() => setShowReset(false)}/>}
+      {showTutorial && <TutorialModal theme={theme} onClose={() => { setShowTutorial(false); localStorage.setItem("hj_tutorial_seen","1"); }}/>}
+      {showHelp && <HelpPanel tab={tab} theme={theme} onClose={() => setShowHelp(false)}/>}
 
       {/* ── Sidebar (desktop only, ukryty na mobile/tablet przez CSS) ── */}
       <aside className="hj-sidebar">
@@ -360,6 +366,13 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
           {/* Prawa strona: lang + settings */}
           <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexShrink:0 }}>
+
+          {/* Przycisk pomocy kontekstowej */}
+          <button onClick={() => { setShowHelp(s => !s); setShowSettings(false); }}
+            title="Help"
+            style={{ background:showHelp?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, width:32, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            ?
+          </button>
 
           {/* Przycisk zmiany języka */}
           <button onClick={toggleLanguage} title={lang === 'pl' ? 'Switch to English' : 'Przełącz na polski'}

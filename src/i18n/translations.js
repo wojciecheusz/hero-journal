@@ -258,6 +258,106 @@ export const TRANSLATIONS = {
       cancel:"Anuluj", back:"← Wstecz", next:"Dalej →", start:"⚔ Rozpocznij Przygodę",
       changeTheme:"Zmień motyw",
     },
+
+    TUTORIAL: {
+      stepOf:(cur,total) => `${cur} / ${total}`,
+      skip:"Pomiń", prev:"← Wstecz", next:"Dalej →", start:"Zaczynamy",
+      slides:[
+        {
+          icon:"⚔",
+          title:"Witaj w Hero Journal",
+          body:"Cyfrowy arkusz postaci i dziennik kampanii dla gier fabularnych. Prowadź bohatera, odkrywaj świat i zapisuj przygody — wszystko w jednym miejscu.",
+          tip:null, actions:null,
+        },
+        {
+          icon:"🧙",
+          title:"Zakładka Bohater",
+          body:"Karta Postać zawiera tożsamość, statystyki, umiejętności i walkę. Na desktopie podzakładka Wyposażenie pokazuje Plecak, Czary i Zdolności obok siebie.",
+          tip:"▲/▼ zwija i rozwija karty · Karty domyślnie otwarte",
+          actions:null,
+        },
+        {
+          icon:"🌍",
+          title:"Świat i Dziennik",
+          body:"Świat śledzi postacie, miejsca i frakcje. W Dzienniku piszesz kroniki sesji — imiona postaci i nazwy lokacji automatycznie stają się klikalnymi linkami encyklopedycznymi.",
+          tip:"▼ = podgląd tylko do odczytu · ✎ = tryb edycji · ⊕ = nowy wpis",
+          actions:null,
+        },
+        {
+          icon:"💡",
+          title:"Szybka ściągawka",
+          body:"Kluczowe sterowanie używane w całej aplikacji:",
+          tip:null,
+          actions:[
+            ["⊕","Dodaj nowy wpis (przycisk w prawym górnym rogu sekcji)"],
+            ["▼ / ▲","Rozwiń lub zwiń podgląd karty/wpisu"],
+            ["✎","Otwórz tryb edycji wpisu"],
+            ["📌","Przypnij ważny wpis na górze listy"],
+            ["?","Otwórz kontekstową pomoc dla aktywnej zakładki"],
+          ],
+        },
+      ],
+    },
+
+    HELP: {
+      character:{
+        title:"Postać",
+        intro:"Tożsamość, statystyki i zdolności bojowe Twojego bohatera.",
+        items:[
+          ["▲/▼","Zwiń / rozwiń kartę","Kliknij nagłówek aby przełączyć. Karty pamiętają swój stan."],
+          ["▼ Cechy","Kliknij box z cechą aby edytować","Dwuklik na ST (Rzut obronny) resetuje ręczne nadpisanie."],
+          ["Pipeliny umiejętności","Cykl biegłości","Klik: brak → biegłość → ekspertyza. Ekspertyza widoczna jako romb."],
+          ["Walka — lewo","KP · Inicjatywa · Prędkość · Biegłość","Edytuj wartości bezpośrednio. Inicjatywa domyślnie = mod. DEX."],
+          ["Walka — prawo","Stany · Rzuty vs śmierć · Wyczerpanie","Tapnij stan aby go aktywować/dezaktywować. Rzuty vs śmierć w kółkach."],
+          ["Kości Wyt.","Pokazuje pozostałe / max","Maleje przy wydawaniu kości podczas Krótkiego odpoczynku."],
+          ["☽ / ☀","Krótki / Długi odpoczynek","Otwiera modal — wydaj Kości Wyt. (krótki) lub pełna regeneracja (długi)."],
+        ],
+      },
+      equipment:{
+        title:"Wyposażenie",
+        intro:"Plecak, Czary i Zdolności widoczne obok siebie na desktopie. Na mobile używaj podzakładek.",
+        items:[
+          ["⊕ Dodaj","Dodaj do ekwipunku","Wybierz typ — formularz dostosuje się do odpowiednich pól (obrażenia, ładunki itp.)."],
+          ["▼ Podgląd","Widok tylko do odczytu","Pokazuje opis / notatki. Zwinięty = 2 linie, rozwinięty = pełny tekst."],
+          ["✎ Edytuj","Otwórz formularz edycji","Zmodyfikuj dowolne pole. Kliknij ✓ aby zapisać i zamknąć."],
+          ["Toggle","Wyposażony / W plecaku","Wyposażone przedmioty pojawiają się w sekcji Aktywne na karcie Postać."],
+          ["Czar ▼","Pokazuje poziom · szkołę · opis","Przełącz Przygotowany/Znany niebieskim przełącznikiem."],
+          ["Kolory zdolności","Umiejętność · Cecha rasowa · Atut","Oznaczone kolorem. Legenda pod paskiem filtrów."],
+        ],
+      },
+      world:{
+        title:"Świat",
+        intro:"Postacie, Miejsca i Frakcje widoczne w trzech kolumnach na desktopie.",
+        items:[
+          ["⊕ Dodaj","Utwórz nowy wpis","Wpisz nazwę i kluczowe informacje. Wpis pojawia się od razu."],
+          ["▼ Podgląd","Czytaj notatki bez edytowania","Zwinięty = 2 linie. Rozwinięty = pełne notatki."],
+          ["✎ Edytuj","Tryb edycji","Modyfikuj pola tekstowe. Kliknij ✓ aby zamknąć."],
+          ["Badge relacji","Nastawienie NPC","Tapnij badge aby cyklować: Nieznany → Sojusznik → Neutralny → Wrogi."],
+          ["📌 Przypnij","Trzymaj wpis na górze","Przypięte wpisy zawsze pojawiają się jako pierwsze."],
+          ["Pasek filtrów","Filtruj po tagu","Kliknij tag aby wyświetlić tylko wpisy z tym tagiem."],
+        ],
+      },
+      sessions:{
+        title:"Kronika",
+        intro:"Tu piszesz notatki z sesji. Imiona NPC, nazwy miejsc i zadań stają się klikalnymi linkami automatycznie.",
+        items:[
+          ["⊕ Nowy wpis","Utwórz kronikę sesji","Nowy wpis pojawia się na górze, gotowy do edycji."],
+          ["✎ Edytuj kronikę","Wejdź w tryb pisania","Wpisz notatki z sesji. Kliknij ✓ Gotowe po zakończeniu."],
+          ["Linki encyklopedyczne","Automatyczne hiperłącza","Każde imię NPC, nazwa lokacji lub zadania staje się kolorowym linkiem. Kliknij aby tam przejść."],
+          ["Legenda","Przewodnik po kolorach linków","Widoczna nad listą sesji gdy masz wpisy w innych zakładkach."],
+        ],
+      },
+      quests:{
+        title:"Zadania",
+        intro:"Śledź aktywne misje, ukończone cele i nieudane zlecenia.",
+        items:[
+          ["⊕ Aktywuj","Dodaj nowe zadanie","Wpisz nazwę, opis i nagrodę. Zadanie startuje jako Aktywne."],
+          ["Badge statusu","Zmień status zadania","Kliknij badge aby cyklować: Aktywne → Ukończone → Nieudane."],
+          ["+ Dodaj krok","Dodaj krok na liście","Rozbij zadanie na cele. Odhaczaj w trakcie postępu."],
+          ["Nagroda","Edytuj nagrodę","Widoczna wewnątrz rozwiniętego zadania. Aktualizuj gdy MG zmienia ofertę."],
+        ],
+      },
+    },
   },
 
   /* ══════════════════════════════════════════════════════════════
@@ -505,6 +605,106 @@ export const TRANSLATIONS = {
       readyHint:"Your hero is ready for the road. You can freely edit every value during the campaign.",
       cancel:"Cancel", back:"← Back", next:"Next →", start:"⚔ Begin Adventure",
       changeTheme:"Change theme",
+    },
+
+    TUTORIAL: {
+      stepOf:(cur,total) => `${cur} / ${total}`,
+      skip:"Skip", prev:"← Back", next:"Next →", start:"Get Started",
+      slides:[
+        {
+          icon:"⚔",
+          title:"Welcome to Hero Journal",
+          body:"A digital character sheet and campaign diary for tabletop RPGs. Track your hero, explore the world, and chronicle your adventures — all in one place.",
+          tip:null, actions:null,
+        },
+        {
+          icon:"🧙",
+          title:"Hero Tab",
+          body:"The Character card holds your identity, ability scores, skills, and combat stats. On desktop, the Equipment sub-tab shows Inventory, Spells, and Abilities side by side.",
+          tip:"▲/▼ collapses and expands each card · Cards open by default",
+          actions:null,
+        },
+        {
+          icon:"🌍",
+          title:"World & Journal",
+          body:"World tracks NPCs, locations, and factions you encounter. In Journal you write session chronicles — character and location names automatically become clickable encyclopedia links.",
+          tip:"▼ = read-only preview · ✎ = open edit mode · ⊕ = add new entry",
+          actions:null,
+        },
+        {
+          icon:"💡",
+          title:"Quick Reference",
+          body:"Key controls used throughout the app:",
+          tip:null,
+          actions:[
+            ["⊕","Add a new entry (button in the top-right of each section)"],
+            ["▼ / ▲","Expand or collapse a card/entry preview"],
+            ["✎","Open edit mode for an entry"],
+            ["📌","Pin an important entry so it stays at the top"],
+            ["?","Open contextual help for the current tab"],
+          ],
+        },
+      ],
+    },
+
+    HELP: {
+      character:{
+        title:"Character",
+        intro:"Your hero's identity, stats, and combat abilities.",
+        items:[
+          ["▲/▼","Collapse / expand card","Tap the header to toggle. Cards remember their state."],
+          ["▼ Ability Scores","Click a stat box to edit it","Double-click an ST (saving throw) to reset any manual override."],
+          ["Skill pips","Cycle proficiency","Click: none → proficient → expert. Expert shown as a diamond pip."],
+          ["Combat — left","AC · Initiative · Speed · Prof. Bonus","Edit values directly. Initiative defaults to DEX mod if not overridden."],
+          ["Combat — right","Conditions · Death Saves · Exhaustion","Tap conditions to toggle them. Death Saves use the circles (3 per row)."],
+          ["Hit Dice","Shows remaining / max","Decreases when you spend dice during a Short Rest."],
+          ["☽ / ☀","Short / Long Rest","Opens a modal to spend Hit Dice (short) or fully recover (long)."],
+        ],
+      },
+      equipment:{
+        title:"Equipment",
+        intro:"Inventory, Spells, and Abilities are shown side by side on desktop. On mobile, use the sub-tabs to switch between them.",
+        items:[
+          ["⊕ Add item","Add to inventory","Choose a type first — the form adapts to show relevant fields (damage, charges, etc.)."],
+          ["▼ Preview","Read-only item view","Shows description / notes. Collapsed = 2 lines, expanded = full text."],
+          ["✎ Edit","Open edit form","Modify any field. Click ✓ to save and close."],
+          ["Toggle","Equipped / In bag","Items marked Equipped appear in the Active & Equipped section of your Character card."],
+          ["Spell ▼","Shows level · school · description","Toggle Prepared/Known with the blue switch. Filter by level using the tag bar."],
+          ["Ability colors","Skill · Racial Feature · Feat","Color-coded by category. Use the legend below the filter bar for reference."],
+        ],
+      },
+      world:{
+        title:"World",
+        intro:"NPCs, Locations, and Factions are shown in three columns on desktop.",
+        items:[
+          ["⊕ Add","Create a new entry","Fill in the name and key fields. The entry appears immediately."],
+          ["▼ Preview","Read notes without editing","Collapsed = 2 lines. Expanded = full notes visible."],
+          ["✎ Edit","Edit mode","Modify text fields. Click ✓ to close."],
+          ["Relation badge","NPC stance","Tap the badge to cycle: Unknown → Ally → Neutral → Hostile."],
+          ["📌 Pin","Keep entry at top","Pinned entries always appear first, regardless of scroll position."],
+          ["Filter bar","Filter by tag","Click any tag to show only entries with that tag. Click again to clear."],
+        ],
+      },
+      sessions:{
+        title:"Chronicle",
+        intro:"Write session notes here. Named NPCs, locations, and quests become clickable links automatically.",
+        items:[
+          ["⊕ New entry","Create a session log","A new entry is added at the top, ready to edit."],
+          ["✎ Edit chronicle","Enter edit mode","Type your session notes. Hit ✓ Done when finished."],
+          ["Entity links","Automatic hyperlinks","Any NPC, location, quest, or inventory name you type becomes a colored link. Click it to navigate there."],
+          ["Legend","Link color guide","Shown above the sessions list when you have named entries in other tabs."],
+        ],
+      },
+      quests:{
+        title:"Quests",
+        intro:"Track active missions, completed objectives, and failed ventures.",
+        items:[
+          ["⊕ Activate quest","Add a new quest","Fill in name, description, and expected reward. Quest starts as Active."],
+          ["Status badge","Cycle quest status","Click the badge to cycle: Active → Completed → Failed → Active."],
+          ["+ Add step","Add a checklist step","Break the quest into objectives. Check them off as you progress."],
+          ["Reward field","Edit reward","Visible inside the expanded quest. Update as the DM changes the offer."],
+        ],
+      },
     },
   },
 };
