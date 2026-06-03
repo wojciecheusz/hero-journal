@@ -373,8 +373,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <header className="hj-header">
         <div className="hj-header-inner" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.5rem" }}>
 
-          {/* Logo + imię bohatera — klik zmienia profil */}
-          <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0, cursor:"pointer" }}
+          {/* Logo + imię bohatera — ukryte na desktop (sidebar przejmuje tę rolę) */}
+          <div className="hj-header-brand" style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0, cursor:"pointer" }}
             onClick={() => setScreen("profiles")} title={T.UI.changeHero}>
             <div className="hj-logo">⚔ HJ</div>
             <span className="hj-char-name" style={{ flex:1 }}>{char.name?.trim() || T.UI.hero}</span>
