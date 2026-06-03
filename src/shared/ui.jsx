@@ -55,10 +55,10 @@ export function PrzypnijBtn({ pinned, onToggle }) {
 export function Toggle({ on, onToggle, label, color }) {
   const cls = on ? (color === "purple" ? "on-purple" : color === "blue" ? "on-blue" : "on") : "";
   return (
-    <div className="toggle-wrap" onClick={onToggle}>
+    <button className="toggle-wrap" role="switch" aria-checked={on} onClick={onToggle} aria-label={label}>
       <div className={`toggle-track${cls ? " " + cls : ""}`}><div className="toggle-thumb"/></div>
       <span className="toggle-label">{label}</span>
-    </div>
+    </button>
   );
 }
 

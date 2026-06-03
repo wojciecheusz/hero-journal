@@ -1,17 +1,6 @@
 
 export const PALETTES = ["mrok", "obsydian", "wschod", "pergamin", "karczma", "puszcza", "bone", "ocean"];
 
-export const PALETTE_LABELS = {
-  mrok:     "🩸 Mrok",
-  obsydian: "🔮 Obsydian",
-  wschod:   "🌅 Wschód",
-  pergamin: "📜 Pergamin",
-  karczma:  "🍺 Karczma",
-  puszcza:  "🍂 Puszcza",
-  bone:     "🦴 Kość",
-  ocean:    "🌊 Ocean",
-};
-
 export const THEMES = {
 
   /* ── MROK – czernie i czerwienie ─────────────────────────── */

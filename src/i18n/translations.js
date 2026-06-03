@@ -21,8 +21,6 @@ export const TRANSLATIONS = {
       pergamin:"📜 Pergamin", karczma:"🍺 Karczma", puszcza:"🍂 Puszcza",
       bone:"🦴 Kość", ocean:"🌊 Ocean",
     },
-    STATUS_CYCLE:  { active:"completed", completed:"failed", failed:"active" }, // deprecated — use enums.STATUS_CYCLE
-
     LABELS: {
       questStatus: { active:"Aktywne", completed:"Ukończone", failed:"Nieudane" },
       skillCat:    { skill:"Umiejętność", racial_feature:"Cecha rasowa", feat:"Atut" },
@@ -402,8 +400,6 @@ export const TRANSLATIONS = {
       pergamin:"📜 Parchment", karczma:"🍺 Tavern", puszcza:"🍂 Wilderness",
       bone:"🦴 Bone", ocean:"🌊 Ocean",
     },
-    STATUS_CYCLE:  { active:"completed", completed:"failed", failed:"active" }, // deprecated — use enums.STATUS_CYCLE
-
     LABELS: {
       questStatus: { active:"Active", completed:"Completed", failed:"Failed" },
       skillCat:    { skill:"Skill", racial_feature:"Racial Feature", feat:"Feat" },

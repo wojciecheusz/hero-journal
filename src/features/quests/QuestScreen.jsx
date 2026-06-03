@@ -63,7 +63,7 @@ function QuestScreen({ quests, setQuests, openEntity }) {
                       <div className="row" style={{ marginBottom:"0.3rem", flexWrap:"wrap", gap:"0.4rem" }}>
                         <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.95rem", fontWeight:700 }}
                           value={quest.name} onChange={e => upd(quest.id,"name",e.target.value)} placeholder={t('QUESTS.editNamePh')}/>
-                        <span className={`badge ${cls}`} onClick={() => cycle(quest.id)}>{displayStatus}</span>
+                        <button className={`badge ${cls}`} onClick={() => cycle(quest.id)} aria-label={`Change status: ${displayStatus}`}>{displayStatus}</button>
                       </div>
                       <input className="iedit" style={{ fontSize:"0.92rem", fontStyle:"italic" }}
                         value={quest.description||""} onChange={e => upd(quest.id,"description",e.target.value)} placeholder={t('QUESTS.editDescPh')}/>

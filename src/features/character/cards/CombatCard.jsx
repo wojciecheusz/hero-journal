@@ -155,8 +155,9 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                   <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", textTransform:"uppercase", color, flexShrink:0, minWidth:44 }}>{label}</span>
                   <div style={{ display:"flex", gap:"0.3rem" }}>
                     {[0,1,2].map(i => (
-                      <div key={i} onClick={() => toggleDeath(type, i)}
-                        style={{ width:20, height:20, borderRadius:"50%", border:`2px solid ${color}`, background:i<(ds[type]||0)?color:"transparent", cursor:"pointer", transition:"background 0.15s", flexShrink:0 }}/>
+                      <button key={i} onClick={() => toggleDeath(type, i)}
+                        aria-label={`${label} ${i+1}`}
+                        style={{ width:20, height:20, borderRadius:"50%", border:`2px solid ${color}`, background:i<(ds[type]||0)?color:"transparent", cursor:"pointer", transition:"background 0.15s", flexShrink:0, padding:0 }}/>
                     ))}
                   </div>
                 </div>

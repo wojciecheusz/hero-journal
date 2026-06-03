@@ -78,7 +78,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
                 <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
                   <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                     value={npc.name} onChange={e => upd(npc.id, "name", e.target.value)} placeholder={N.editNamePh}/>
-                  <span className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)}>{RL[rel]}</span>
+                  <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}>{RL[rel]}</button>
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem" }}>
                   <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/>

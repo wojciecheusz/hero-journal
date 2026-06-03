@@ -5,7 +5,8 @@ export const LBL_SM = { fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpa
 
 export function CardHeader({ label, open, onToggle, hint }) {
   return (
-    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: open ? "0.85rem" : 0, cursor:"pointer", userSelect:"none" }}
+    <button aria-expanded={open} aria-label={label}
+      style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: open ? "0.85rem" : 0, cursor:"pointer", userSelect:"none", width:"100%", background:"transparent", border:"none", padding:0, color:"inherit" }}
       onClick={onToggle}>
       <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--hj-text-label)", display:"flex", alignItems:"center", gap:"0.5rem", flex:1 }}>
         {label}
@@ -13,6 +14,6 @@ export function CardHeader({ label, open, onToggle, hint }) {
         {open && <span style={{ flex:1, height:1, background:"linear-gradient(90deg,var(--hj-border),transparent)", display:"block" }}/>}
       </div>
       <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:"var(--hj-text-dim)", marginLeft:"0.5rem" }}>{open ? "▲" : "▼"}</span>
-    </div>
+    </button>
   );
 }

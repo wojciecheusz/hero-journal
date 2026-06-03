@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { useLocation } from 'wouter';
 import { syncI18nLang } from '../i18n/i18n';
-import { THEMES, PALETTES, PALETTE_LABELS } from '../theme/themes';
+import { THEMES, PALETTES } from '../theme/themes';
 import { DEFAULT_CHAR } from '../constants/gameConstants';
 import {
   CHAR_SLOTS, saveChar, loadProfiles, saveProfiles, saveActiveId,
@@ -20,6 +20,7 @@ import { createSampleHero } from '../constants/sampleHero';
 import { cloudSave } from '../firebase/firestore';
 import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
+import SettingsMenu from './SettingsMenu';
 
 /* ── Lazy imports — każdy tab ładowany na żądanie ─────────────── */
 const CharacterScreen  = lazy(() => import('../features/character/CharacterScreen'));
@@ -217,12 +218,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <aside className="hj-sidebar">
 
         {/* Brand */}
-        <div className="hj-sidebar-brand" onClick={() => setScreen("profiles")} title={T.UI.changeHero}>
+        <button className="hj-sidebar-brand" onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
           <div className="hj-logo" style={{ fontSize:"0.9rem", flexShrink:0 }}>⚔ HJ</div>
           <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:"var(--hj-text-muted)", letterSpacing:"0.08em", textTransform:"uppercase", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", flex:1, minWidth:0 }}>
             {char.name?.trim() || T.UI.hero}
           </span>
-        </div>
+        </button>
         <div style={{ height:"1px", background:"var(--hj-border)", margin:"0 0.75rem 0.25rem", flexShrink:0 }}/>
 
         {/* Nawigacja */}
@@ -324,34 +325,10 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             </button>
             {showSettings && <>
               <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
-              {/* position:fixed — nie obcinany przez overflow sidebara */}
-              <div style={{ position:"fixed", bottom:"48px", left:"5px", background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 -8px 32px var(--hj-shadow-bot)", zIndex:200, width:250, borderRadius:"2px" }}>
-                <div style={{ padding:"0.5rem 0.6rem 0.35rem" }}>
-                  <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.4rem" }}>{T.UI.themeColor}</div>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem" }}>
-                    {PALETTES.map(p => (
-                      <button key={p} onClick={() => setTheme(p)}
-                        style={{ background:theme===p?"rgba(226,185,78,0.12)":"transparent", border:`1px solid ${theme===p?"var(--hj-accent-border)":"var(--hj-border-sub)"}`, color:theme===p?"var(--hj-accent)":"var(--hj-text)", fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.04em", padding:"0.25rem 0.3rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px" }}>
-                        {T.PALETTE_LABELS[p]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.35rem 0.45rem", display:"flex", flexDirection:"column", gap:"0.18rem" }}>
-                  {[
-                    [() => toggleLanguage(), `🌐 ${T.UI.langToggle==="EN"?"Switch to English":"Przełącz na polski"}`, false],
-                    [() => { setScreen("profiles"); setShowSettings(false); }, `👤 ${T.UI.changeHero}`, false],
-                    [() => { setShowReset(true); setShowSettings(false); }, T.UI.resetChar, true],
-                    ...(user&&onCloudRefresh?[[() => { onCloudRefresh(); setShowSettings(false); }, T.UI.syncData, false]]:[]),
-                    ...(user&&onLogout?[[() => { onLogout(); setShowSettings(false); }, `${T.UI.logout} (${(user.displayName||user.email||"").split(/[\s@]/)[0]})`, false]]:[]),
-                  ].map(([onClick, label, isDanger], i) => (
-                    <button key={i} onClick={onClick}
-                      style={{ background:"transparent", border:`1px solid ${isDanger?"#6a2a2a":"var(--hj-border-input)"}`, color:isDanger?"#c04040":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.06em", textTransform:"uppercase", padding:"0.3rem 0.5rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <SettingsMenu T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage}
+                setScreen={setScreen} setShowReset={setShowReset} setShowSettings={setShowSettings}
+                user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+                dropdownStyle={{ position:"fixed", bottom:"48px", left:"5px" }}/>
             </>}
           </div>
         </div>
@@ -361,11 +338,11 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         <div className="hj-header-inner" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.5rem" }}>
 
           {/* Logo + imię bohatera — ukryte na desktop (sidebar przejmuje tę rolę) */}
-          <div className="hj-header-brand" style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0, cursor:"pointer" }}
-            onClick={() => setScreen("profiles")} title={T.UI.changeHero}>
+          <button className="hj-header-brand" style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0, cursor:"pointer", background:"transparent", border:"none", padding:0, color:"inherit", textAlign:"left" }}
+            onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
             <div className="hj-logo">⚔ HJ</div>
             <span className="hj-char-name" style={{ flex:1 }}>{char.name?.trim() || T.UI.hero}</span>
-          </div>
+          </button>
 
           {/* Prawa strona: ? i ⚙ */}
           <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexShrink:0 }}>
@@ -385,45 +362,10 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             </button>
             {showSettings && <>
               <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
-              <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 8px 32px var(--hj-shadow-bot)", zIndex:200, width:270, borderRadius:"2px" }}>
-                <div style={{ padding:"0.6rem 0.7rem 0.4rem" }}>
-                  <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.5rem" }}>{T.UI.themeColor}</div>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem" }}>
-                    {PALETTES.map(p => (
-                      <button key={p} onClick={() => setTheme(p)}
-                        style={{ background:theme===p?"rgba(226,185,78,0.12)":"transparent", border:`1px solid ${theme===p?"var(--hj-accent-border)":"var(--hj-border-sub)"}`, color:theme===p?"var(--hj-accent)":"var(--hj-text)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.04em", padding:"0.3rem 0.4rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px" }}>
-                        {T.PALETTE_LABELS[p]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.4rem 0.5rem", display:"flex", flexDirection:"column", gap:"0.2rem" }}>
-                  <button onClick={() => { toggleLanguage(); }}
-                    style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                    🌐 {T.UI.langToggle === "EN" ? "Switch to English" : "Przełącz na polski"}
-                  </button>
-                  <button onClick={() => { setScreen("profiles"); setShowSettings(false); }}
-                    style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                    👤 {T.UI.changeHero}
-                  </button>
-                  <button onClick={() => { setShowReset(true); setShowSettings(false); }}
-                    style={{ background:"transparent", border:"1px solid #6a2a2a", color:"#c04040", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                    {T.UI.resetChar}
-                  </button>
-                  {user && onCloudRefresh && (
-                    <button onClick={() => { onCloudRefresh(); setShowSettings(false); }}
-                      style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                      {T.UI.syncData}
-                    </button>
-                  )}
-                  {user && onLogout && (
-                    <button onClick={() => { onLogout(); setShowSettings(false); }}
-                      style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
-                      {T.UI.logout} ({(user.displayName || user.email || "").split(/[\s@]/)[0]})
-                    </button>
-                  )}
-                </div>
-              </div>
+              <SettingsMenu T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage}
+                setScreen={setScreen} setShowReset={setShowReset} setShowSettings={setShowSettings}
+                user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+                dropdownStyle={{ position:"absolute", top:"calc(100% + 8px)", right:0 }}/>
             </>}
           </div>{/* /settings */}
           </div>{/* /right-side flex */}

@@ -19,11 +19,6 @@ export const XP_THRESHOLDS = [
 
 export const STAT_KEYS = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
 
-export const REL_LABELS = {
-  ally: "Sprzymierzeniec", neutral: "Neutralny",
-  hostile: "Wrogi", unknown: "Nieznany",
-};
-
 /* Ordered arrays — index matches TRANSLATIONS.LABELS arrays */
 export const LOC_TYPES     = LOC_TYPES_ENUM;
 export const FACTION_TYPES = FACTION_TYPES_ENUM;
@@ -64,12 +59,6 @@ export const ITEM_ICONS = {
   "Narzędzie":       "🔧",
   "Inny":            "◈",
 };
-
-export const ALIGNMENTS = [
-  "Praworządny dobry", "Neutralny dobry", "Chaotyczny dobry",
-  "Praworządny neutralny", "Bezwzględnie neutralny", "Chaotyczny neutralny",
-  "Praworządny zły", "Neutralny zły", "Chaotyczny zły",
-];
 
 export const CONDITIONS = [
   { key: "blinded",       label: "Oślepiony" },

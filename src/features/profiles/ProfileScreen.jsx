@@ -31,8 +31,9 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 
       <div className="profile-list">
         {profiles.map(p => (
-          <div key={p.id}
+          <button key={p.id}
             className={`profile-card${p.id === activeId ? " active-profile" : ""}`}
+            aria-label={`${p.name || P.unnamed}${p.id === activeId ? " ("+P.active+")" : ""}`}
             onClick={() => editingId !== p.id && onSelect(p.id)}>
 
             <span className="profile-card-icon">{DND_CLASSES.find(c => c.name === p.class)?.icon || "⚔️"}</span>
@@ -67,7 +68,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
             {profiles.length > 1 && editingId !== p.id && (
               <button className="profile-card-del" onClick={e => { e.stopPropagation(); onDelete(p.id); }}>✕</button>
             )}
-          </div>
+          </button>
         ))}
       </div>
 

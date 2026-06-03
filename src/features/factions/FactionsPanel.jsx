@@ -95,7 +95,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
                 <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
                   <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                     value={fac.name} onChange={e => upd(fac.id,"name",e.target.value)} placeholder={F.editNamePh}/>
-                  <span onClick={() => cycleRank(fac.id)} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", flexShrink:0, userSelect:"none" }}>{fac.rank||FACTION_RANK.UNKNOWN}</span>
+                  <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${fac.rank||FACTION_RANK.UNKNOWN}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", flexShrink:0, userSelect:"none" }}>{fac.rank||FACTION_RANK.UNKNOWN}</button>
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem" }}>
                   <input className="iedit" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)} placeholder="…"/>
