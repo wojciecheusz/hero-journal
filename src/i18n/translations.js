@@ -17,9 +17,9 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   pl: {
     PALETTE_LABELS: {
-      mrok:"🩸 Mrok", obsydian:"🔮 Obsydian", drewno:"🪵 Drewno",
-      wschod:"🌅 Wschód", las:"🌿 Las", lupek:"🌊 Łupek",
-      pergamin:"📜 Pergamin", kosc:"🤍 Kość Słoniowa",
+      mrok:"🩸 Mrok", obsydian:"🔮 Obsydian", wschod:"🌅 Wschód",
+      pergamin:"📜 Pergamin", karczma:"🍺 Karczma", puszcza:"🍂 Puszcza",
+      bone:"🦴 Kość", ocean:"🌊 Ocean",
     },
     STATUS_CYCLE:  { active:"completed", completed:"failed", failed:"active" }, // deprecated — use enums.STATUS_CYCLE
 
@@ -376,9 +376,9 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   en: {
     PALETTE_LABELS: {
-      mrok:"🩸 Darkness", obsydian:"🔮 Obsidian", drewno:"🪵 Wood",
-      wschod:"🌅 Dawn", las:"🌿 Forest", lupek:"🌊 Slate",
-      pergamin:"📜 Parchment", kosc:"🤍 Ivory",
+      mrok:"🩸 Darkness", obsydian:"🔮 Obsidian", wschod:"🌅 Dawn",
+      pergamin:"📜 Parchment", karczma:"🍺 Tavern", puszcza:"🍂 Wilderness",
+      bone:"🦴 Bone", ocean:"🌊 Ocean",
     },
     STATUS_CYCLE:  { active:"completed", completed:"failed", failed:"active" }, // deprecated — use enums.STATUS_CYCLE
 
