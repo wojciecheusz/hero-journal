@@ -23,7 +23,6 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
   const toggle = id => { setOpenIds(o => ({ ...o, [id]: !o[id] })); if (!openIds[id]) setEditingId(null); };
 
   const hasAny = npcs.length > 0 || locations.length > 0 || quests.length > 0 || inventory.length > 0 || skills.length > 0;
-  const hasNotes = sessions.some(s => s.notes);
 
   return (
     <>
@@ -32,7 +31,7 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
         <button className="btn-ghost" onClick={addSesja}>{S.add}</button>
       </div>
 
-      {hasAny && hasNotes && (
+      {hasAny && (
         <div className="sess-legend">
           <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase" }}>{S.legendHint}</span>
           {LEGEND_ITEMS.map(li => {

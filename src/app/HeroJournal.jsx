@@ -351,20 +351,14 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <header className="hj-header">
         <div className="hj-header-inner" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.5rem" }}>
 
-          {/* Logo + imię bohatera */}
-          <div style={{ display:"flex", alignItems:"center", gap:"0.55rem", flex:1, minWidth:0, cursor:"pointer" }}
-            onClick={() => setScreen("profiles")} title="Zmień bohatera">
+          {/* Logo + imię bohatera — klik zmienia profil */}
+          <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0, cursor:"pointer" }}
+            onClick={() => setScreen("profiles")} title={T.UI.changeHero}>
             <div className="hj-logo">⚔ HJ</div>
-            <span className="hj-char-name">{char.name?.trim() || "Bohater"}</span>
-            <div style={{ flexShrink:0, width:26, height:26, borderRadius:"50%", border:"1px solid var(--hj-border-input)", background:"var(--hj-bg-input)", display:"flex", alignItems:"center", justifyContent:"center", color:"var(--hj-text-muted)" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="8" r="4" fill="currentColor"/>
-                <path d="M4 20c0-3.87 3.58-7 8-7s8 3.13 8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </div>
+            <span className="hj-char-name" style={{ flex:1 }}>{char.name?.trim() || T.UI.hero}</span>
           </div>
 
-          {/* Prawa strona: lang + settings */}
+          {/* Prawa strona: ? i ⚙ */}
           <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexShrink:0 }}>
 
           {/* Przycisk pomocy kontekstowej */}
@@ -372,14 +366,6 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             title="Help"
             style={{ background:showHelp?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, width:32, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
             ?
-          </button>
-
-          {/* Przycisk zmiany języka */}
-          <button onClick={toggleLanguage} title={lang === 'pl' ? 'Switch to English' : 'Przełącz na polski'}
-            style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.1em", width:32, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--hj-accent-border)"; e.currentTarget.style.color = "var(--hj-accent)"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--hj-border-input)"; e.currentTarget.style.color = "var(--hj-text-muted)"; }}>
-            {T.UI.langToggle}
           </button>
 
           {/* Panel ustawień */}
@@ -403,6 +389,14 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
                   </div>
                 </div>
                 <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.4rem 0.5rem", display:"flex", flexDirection:"column", gap:"0.2rem" }}>
+                  <button onClick={() => { toggleLanguage(); }}
+                    style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
+                    🌐 {T.UI.langToggle === "EN" ? "Switch to English" : "Przełącz na polski"}
+                  </button>
+                  <button onClick={() => { setScreen("profiles"); setShowSettings(false); }}
+                    style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
+                    👤 {T.UI.changeHero}
+                  </button>
                   <button onClick={() => { setShowReset(true); setShowSettings(false); }}
                     style={{ background:"transparent", border:"1px solid #6a2a2a", color:"#c04040", fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.35rem 0.6rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s" }}>
                     {T.UI.resetChar}

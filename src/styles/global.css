@@ -95,7 +95,7 @@ input[type="number"] { font-size: inherit; }
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   width: 100%;
   overflow-x: hidden;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 52px) !important;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 56px) !important;
   --pip-prof:     var(--hj-accent);
   --pip-exp:      var(--spell-accent);
   --pip-empty:    var(--hj-border-input);
@@ -437,7 +437,11 @@ input[type="number"] { font-size: inherit; }
 
 /* ── Multi-kolumnowy widok World i Equipment (desktop only) ──── */
 .multi-col-desktop { display: none; }
-.single-col-mobile { display: block; }
+.single-col-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
 @media (min-width: 1024px) {
   .multi-col-desktop {
@@ -705,6 +709,7 @@ input[type="number"] { font-size: inherit; }
   outline: none;
   width: 100%;
   resize: vertical;
+  min-height: 4rem;
   transition: border-color 0.15s;
   line-height: 1.65;
 }
@@ -975,6 +980,7 @@ input[type="number"] { font-size: inherit; }
   line-height: 1.55;
 }
 
+.trait-ta { min-height: 4rem; }
 .trait-ta:focus        { border-color: var(--hj-accent-border); }
 .trait-ta::placeholder { color: var(--hj-text-dim); font-style: italic; }
 

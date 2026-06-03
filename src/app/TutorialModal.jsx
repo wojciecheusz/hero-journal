@@ -13,7 +13,7 @@ export default function TutorialModal({ theme, onClose }) {
   const cur    = slides[slide];
 
   return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.82)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center", padding:"1rem" }}>
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.82)", zIndex:2000, display:"flex", alignItems:"center", justifyContent:"center", padding:`calc(env(safe-area-inset-top, 16px) + 1rem) 1rem calc(env(safe-area-inset-bottom, 16px) + 1rem)` }}>
       <div style={{ background:t.bgCard, border:`1px solid ${t.border}`, padding:"2rem 2rem 1.5rem", maxWidth:480, width:"100%", borderRadius:"4px", boxShadow:`0 24px 80px ${t.shadowBot}`, position:"relative" }}>
 
         {/* Counter */}
