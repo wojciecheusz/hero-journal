@@ -125,7 +125,10 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
       ══════════════════════════════════════ */}
       <div className="card">
         <CardHeader label={C.title} open={charOpen} onToggle={() => setCharOpen(o => !o)}
-          hint={!charOpen ? char.name?.trim() || "" : ""}/>
+          hint={!charOpen ? [
+            char.name?.trim(),
+            (char.classes||[]).map(c => `${c.name}  ${C.level} ${c.level}`).join(" / ")
+          ].filter(Boolean).join("   ·   ") : ""}/>
 
         {charOpen && (
           <>
