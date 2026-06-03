@@ -90,29 +90,27 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
         const rep = fac.reputation||0;
         return (
           <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
-            <div className="entity-header">
-              <div className="flex1">
-                <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
-                  <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
-                    value={fac.name} onChange={e => upd(fac.id,"name",e.target.value)} placeholder={F.editNamePh}/>
-                  <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${fac.rank||FACTION_RANK.UNKNOWN}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", flexShrink:0, userSelect:"none" }}>{fac.rank||FACTION_RANK.UNKNOWN}</button>
-                </div>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem" }}>
-                  <input className="iedit" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)} placeholder="…"/>
-                  <input className="iedit" style={{ fontSize:"0.82rem", opacity:0.7 }} value={fac.leader||""} onChange={e => upd(fac.id,"leader",e.target.value)} placeholder={F.leaderEditPh}/>
-                  <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/>
-                  <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/>
-                </div>
-                <div style={{ marginTop:"0.4rem", display:"flex", alignItems:"center", gap:"0.5rem" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.1em", opacity:0.5, textTransform:"uppercase", flexShrink:0 }}>{F.reputation}</span>
-                  <input type="range" min={-100} max={100} value={rep} onChange={e => upd(fac.id,"reputation",parseInt(e.target.value))}
-                    style={{ flex:1, accentColor: rep>0?"#5a9a5a":rep<0?"#8a3a3a":"#6a5a38", cursor:"pointer" }}/>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.65rem", fontWeight:700, minWidth:36, textAlign:"right", color: rep>50?"#5a9a5a":rep>0?"#8a9a5a":rep<-50?"#8a3a3a":rep<0?"#9a6a3a":"#6a5a38" }}>{rep>0?"+":""}{rep}</span>
-                </div>
-              </div>
+            <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
+              <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
+                value={fac.name} onChange={e => upd(fac.id,"name",e.target.value)} placeholder={F.editNamePh}/>
               <PrzypnijBtn pinned={fac.pinned} onToggle={() => upd(fac.id,"pinned",!fac.pinned)}/>
               <button className="entity-toggle" onClick={() => startEdit(fac.id)} aria-label="Edit entry">✎</button>
-              <button className="entity-toggle" onClick={() => toggle(fac.id)}>{open?"▲":"▼"}</button>
+              <button className="entity-toggle" onClick={() => toggle(fac.id)} aria-label={open?"Collapse":"Expand"}>{open?"▲":"▼"}</button>
+            </div>
+            <div style={{ marginBottom:"0.4rem" }}>
+              <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${fac.rank||FACTION_RANK.UNKNOWN}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", userSelect:"none" }}>{fac.rank||FACTION_RANK.UNKNOWN}</button>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem", marginBottom:"0.3rem" }}>
+              <input className="iedit" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)} placeholder="…"/>
+              <input className="iedit" style={{ fontSize:"0.82rem", opacity:0.7 }} value={fac.leader||""} onChange={e => upd(fac.id,"leader",e.target.value)} placeholder={F.leaderEditPh}/>
+              <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/>
+              <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/>
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", marginBottom:"0.3rem" }}>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.1em", opacity:0.5, textTransform:"uppercase", flexShrink:0 }}>{F.reputation}</span>
+              <input type="range" min={-100} max={100} value={rep} onChange={e => upd(fac.id,"reputation",parseInt(e.target.value))}
+                style={{ flex:1, accentColor: rep>0?"#5a9a5a":rep<0?"#8a3a3a":"#6a5a38", cursor:"pointer" }}/>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.65rem", fontWeight:700, minWidth:36, textAlign:"right", color: rep>50?"#5a9a5a":rep>0?"#8a9a5a":rep<-50?"#8a3a3a":rep<0?"#9a6a3a":"#6a5a38" }}>{rep>0?"+":""}{rep}</span>
             </div>
 
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}

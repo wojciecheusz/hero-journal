@@ -73,23 +73,21 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
         const rel = npc.relation || "unknown";
         return (
           <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
-            <div className="entity-header">
-              <div className="flex1">
-                <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem", flexWrap:"wrap" }}>
-                  <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
-                    value={npc.name} onChange={e => upd(npc.id, "name", e.target.value)} placeholder={N.editNamePh}/>
-                  <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}>{RL[rel]}</button>
-                </div>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem" }}>
-                  <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/>
-                  <input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/>
-                  <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/>
-                  <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/>
-                </div>
-              </div>
+            <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
+              <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
+                value={npc.name} onChange={e => upd(npc.id, "name", e.target.value)} placeholder={N.editNamePh}/>
               <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id,"pinned",!npc.pinned)}/>
               <button className="entity-toggle" onClick={() => startEdit(npc.id)} aria-label="Edit entry">✎</button>
-              <button className="entity-toggle" onClick={() => toggle(npc.id)}>{open ? "▲" : "▼"}</button>
+              <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}>{open ? "▲" : "▼"}</button>
+            </div>
+            <div style={{ marginBottom:"0.4rem" }}>
+              <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}>{RL[rel]}</button>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem", marginBottom:"0.3rem" }}>
+              <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/>
+              <input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/>
+              <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/>
+              <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/>
             </div>
 
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}

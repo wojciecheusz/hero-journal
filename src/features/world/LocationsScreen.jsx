@@ -65,17 +65,15 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
         const isEditing = !!editing[loc.id];
         return (
           <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
-            <div className="entity-header">
-              <div className="flex1">
-                <div className="row" style={{ gap:"0.5rem", marginBottom:"0.25rem" }}>
-                  <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
-                    value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={t('LOCATIONS.editNamePh')}/>
-                  <span className="loc-type">{displayLocType(loc.type)}</span>
-                </div>
-              </div>
+            <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
+              <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
+                value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={t('LOCATIONS.editNamePh')}/>
               <PrzypnijBtn pinned={loc.pinned} onToggle={() => upd(loc.id, "pinned", !loc.pinned)}/>
               <button className="entity-toggle" onClick={() => startEdit(loc.id)} aria-label="Edit location">✎</button>
               <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}>{open ? "▲" : "▼"}</button>
+            </div>
+            <div style={{ marginBottom:"0.4rem" }}>
+              <span className="loc-type">{displayLocType(loc.type)}</span>
             </div>
 
             {loc.notes && !isEditing && (
