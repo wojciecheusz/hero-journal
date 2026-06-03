@@ -19,6 +19,10 @@ export const save = (key, val) => {
   _hooks.cloudSave?.(key, val);
 };
 
+export const remove = (key) => {
+  try { localStorage.removeItem(key); } catch {}
+};
+
 const charKey              = (slot, id) => `hj_${slot}_${id}`;
 export const loadChar       = (slot, id, fb) => load(charKey(slot, id), fb);
 export const saveChar       = (slot, id, val) => save(charKey(slot, id), val);

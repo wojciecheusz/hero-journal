@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { detectLang } from '../i18n/translations';
+import { save } from '../utils/storage';
 
 /**
  * Zarządza stanem języka aplikacji.
@@ -12,7 +13,7 @@ export function useLanguage() {
   const toggleLanguage = useCallback(() => {
     setLang(l => {
       const next = l === 'pl' ? 'en' : 'pl';
-      localStorage.setItem('hj_lang', next);
+      save('hj_lang', next);
       return next;
     });
   }, []);

@@ -18,7 +18,7 @@ export default function SkillsCard({ char, setChar, C, GENERIC_SKILLS, pb }) {
         {GENERIC_SKILLS.map(sk => {
           const prz = !!(char.skills||{})[sk.key];
           const exp = !!(char.skillExp||{})[sk.key];
-          const base  = Math.floor((char.stats[sk.attr]-10)/2);
+          const base  = Math.floor(((char.stats?.[sk.attr] ?? 10)-10)/2);
           const bonus = exp ? base+pb*2 : prz ? base+pb : base;
           const pipColor  = exp ? "var(--pip-exp)"  : prz ? "var(--pip-prof)" : "transparent";
           const pipBorder = exp ? "2px solid var(--pip-exp)" : prz ? "1.5px solid var(--pip-prof)" : "1.5px solid var(--pip-empty)";

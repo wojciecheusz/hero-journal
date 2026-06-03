@@ -7,7 +7,8 @@ const hpNumColor = pct => pct > 70 ? "#3a9a3a" : pct > 35 ? "#c06010" : "#c03030
 
 export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAbi, spellDC, onRestModal }) {
   const upd  = (f, v) => setChar(c => ({ ...c, [f]: v }));
-  const hpPct = Math.round(clamp((char.hp.current / char.hp.max) * 100, 0, 100));
+  const hp    = char.hp || { current: 0, max: 1, temp: 0 };
+  const hpPct = Math.round(clamp((hp.current / (hp.max || 1)) * 100, 0, 100));
   const ds   = char.deathSaves || { successes: 0, failures: 0 };
 
   const toggleCondition = useCallback(key => setChar(c => {
@@ -33,7 +34,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
           <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.4rem" }}>
             {[
               [C.ac, char.ac||0, v => upd("ac", parseInt(v)||0), C.ac],
-              [C.initiative, char.initiativeBonus !== undefined ? char.initiativeBonus : Math.floor((char.stats.DEX-10)/2), null, C.initiativeTip],
+              [C.initiative, char.initiativeBonus !== undefined ? char.initiativeBonus : Math.floor(((char.stats?.DEX ?? 10)-10)/2), null, C.initiativeTip],
               [C.speed, char.speed||30, v => upd("speed", parseInt(v)||30), C.speed],
               [C.profBonus, pb, v => upd("profBonus", parseInt(v)||2), C.profBonusTip],
             ].map(([label, val, onChange, tip], i) => (
@@ -54,30 +55,30 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
           </div>
 
           <div style={{ display:"grid", gridTemplateColumns:"36px 1fr 36px auto", gap:"0.3rem", alignItems:"stretch" }}>
-            <button className="btn-pm minus" aria-label="Decrease HP" onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+            <button className="btn-pm minus" aria-label="Decrease HP" onClick={() => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:clamp(h.current-1,0,h.max)}}; })}>−</button>
             <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.5rem", gap:0 }}>
               <span className="combat-box-label">{C.hp}</span>
               <div style={{ display:"flex", alignItems:"baseline", gap:"0.15rem" }}>
-                <input type="number" value={char.hp.current}
+                <input type="number" value={hp.current}
                   style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"1.4rem", fontWeight:700, width:52, color:hpNumColor(hpPct), transition:"color 0.5s" }}
                   onFocus={e => e.target.select()}
-                  onChange={e => setChar(c => ({...c, hp:{...c.hp, current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}
-                  onBlur={e => setChar(c => ({...c, hp:{...c.hp, current:clamp(parseInt(e.target.value)||0,0,c.hp.max)}}))}/>
+                  onChange={e => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
+                  onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
                 <span style={{ color:"var(--hj-text-muted)", opacity:0.5, fontSize:"0.85rem" }}>/</span>
-                <input type="number" value={char.hp.max}
+                <input type="number" value={hp.max}
                   style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", textAlign:"center", fontSize:"0.9rem", width:40, color:"var(--hj-text-muted)", opacity:0.85 }}
                   onFocus={e => e.target.select()}
-                  onChange={e => setChar(c => ({...c, hp:{...c.hp, max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}))}
-                  onBlur={e => setChar(c => ({...c, hp:{...c.hp, max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
+                  onChange={e => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
+                  onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
               </div>
             </div>
-            <button className="btn-pm plus" aria-label="Increase HP" onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+            <button className="btn-pm plus" aria-label="Increase HP" onClick={() => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:clamp(h.current+1,0,h.max)}}; })}>+</button>
             <div className="combat-box" style={{ minWidth:72 }}>
               <span className="combat-box-label">{C.hpTemp}</span>
-              <input className="combat-box-input" type="number" value={char.hp.temp||0}
+              <input className="combat-box-input" type="number" value={hp.temp||0}
                 onFocus={e => e.target.select()}
-                onChange={e => setChar(c => ({...c, hp:{...c.hp, temp:e.target.value===""?0:parseInt(e.target.value)||0}}))}
-                onBlur={e => setChar(c => ({...c, hp:{...c.hp, temp:parseInt(e.target.value)||0}}))}/>
+                onChange={e => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, temp:e.target.value===""?0:parseInt(e.target.value)||0}}; })}
+                onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, temp:parseInt(e.target.value)||0}}; })}/>
             </div>
           </div>
 

@@ -1,8 +1,9 @@
-import { useState, memo, useEffect } from 'react';
+import { useState, memo } from 'react';
 import { LOC_TYPES } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useTranslation } from 'react-i18next';
+import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 function LocationsScreen({ locations, setLocations, openEntity }) {
   const { t } = useTranslation();
@@ -13,14 +14,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
   const [editing,  setEditing]  = useState({});
   const [activeTag, setActiveTag] = useState(null);
 
-  useEffect(() => {
-    if (!openEntity?.name) return;
-    const found = locations.find(l => l.name?.toLowerCase() === openEntity.name.toLowerCase());
-    if (found) {
-      setExpanded(e => ({ ...e, [found.id]: true }));
-      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior:'smooth', block:'center' }), 150);
-    }
-  }, [openEntity]);
+  useScrollToEntity(openEntity, locations, setExpanded);
 
   const allTags = [...new Set(locations.flatMap(l => l.tags || []))].sort();
 

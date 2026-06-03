@@ -6,7 +6,7 @@ import { useT } from '../../i18n/translations';
 
 const numMod = v => v >= 0 ? `+${v}` : String(v);
 
-function SpellsScreen({ spells, setCzary, char, setChar }) {
+function SpellsScreen({ spells, setSpells, char, setChar }) {
   const T  = useT();
   const SP = T.SPELLS;
 
@@ -27,16 +27,16 @@ function SpellsScreen({ spells, setCzary, char, setChar }) {
 
   const addSpell = () => {
     const n = form.name.trim(); if (!n) return;
-    setCzary(l => [...l, { id: Date.now(), ...form, name: n, tags: [], pinned: false, inUse: false }]);
+    setSpells(l => [...l, { id: Date.now(), ...form, name: n, tags: [], pinned: false, inUse: false }]);
     setForm({ name:"", level:SPELL_LEVEL.CANTRIP, school:SPELL_SCHOOL.EVOCATION, castingTime:"1 action", zakres:"", duration:"", components:"", description:"", notes:"" });
     setShowForm(false);
   };
-  const upd       = (id, f, v) => setCzary(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
-  const del       = id => setCzary(l => l.filter(x => x.id!==id));
+  const upd       = (id, f, v) => setSpells(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
+  const del       = id => setSpells(l => l.filter(x => x.id!==id));
   const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
   const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
-  const toggleInUse = id => setCzary(l => l.map(x => x.id===id ? { ...x, inUse: !x.inUse } : x));
+  const toggleInUse = id => setSpells(l => l.map(x => x.id===id ? { ...x, inUse: !x.inUse } : x));
 
   return (
     <>

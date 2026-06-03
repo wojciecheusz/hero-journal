@@ -1,8 +1,9 @@
-import { useState, memo, useEffect } from 'react';
+import { useState, memo } from 'react';
 import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS } from '../../constants/gameConstants';
 import { FACTION_TYPE, FACTION_RANK } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
+import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 function FactionsPanel({ factions, setFactions, openEntity }) {
   const T = useT();
@@ -15,14 +16,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
   const [activeTag, setActiveTag] = useState(null);
   const [filterType, setFilterType] = useState(null);
 
-  useEffect(() => {
-    if (!openEntity?.name) return;
-    const found = factions.find(f => f.name?.toLowerCase() === openEntity.name.toLowerCase());
-    if (found) {
-      setExpanded(e => ({ ...e, [found.id]: true }));
-      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior:'smooth', block:'center' }), 150);
-    }
-  }, [openEntity]);
+  useScrollToEntity(openEntity, factions, setExpanded);
 
   const allTags  = [...new Set(factions.flatMap(f => f.tags||[]))].sort();
   const rankColor = r => FACTION_RANK_COLORS[r] || "#6a5a38";

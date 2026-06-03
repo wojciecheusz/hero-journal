@@ -3,7 +3,7 @@ import { STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstan
 import { clamp } from '../../utils/math';
 import { THEMES, PALETTES } from '../../theme/themes';
 import { useT } from '../../i18n/translations';
-// clamp used only in ProfileScreen level input
+import { save } from '../../utils/storage';
 
 export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, onCreateSample, onRename, theme }) {
   const t = THEMES[theme] || THEMES.mrok;
@@ -20,7 +20,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
     <div className="profile-screen">
       <div style={{ position:"absolute", top:"1rem", right:"1rem" }}>
         <button
-          onClick={() => { const idx = PALETTES.indexOf(theme); const next = PALETTES[(idx + 1) % PALETTES.length]; localStorage.setItem("hj_theme", JSON.stringify(next)); window.location.reload(); }}
+          onClick={() => { const idx = PALETTES.indexOf(theme); const next = PALETTES[(idx + 1) % PALETTES.length]; save("hj_theme", next); window.location.reload(); }}
           style={{ background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.1em", padding:"0.2rem 0.5rem", cursor:"pointer", textTransform:"uppercase" }}>
           {P.changeTheme}
         </button>
@@ -89,28 +89,28 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
   );
 }
 
-export function PostaćWizard({ onFinish, onAnuluj, theme }) {
+export function HeroWizard({ onFinish, onCancel, theme }) {
   const t = THEMES[theme] || THEMES.mrok;
   const T = useT();
   const P = T.PROFILES;
   const C = T.CHAR;
 
-  const [krok, setStep] = useState(0);
-  const [name, setImie] = useState("");
+  const [step, setStep] = useState(0);
+  const [name, setName] = useState("");
   const [cls, setCls] = useState(null);
-  const [level, setPoziom] = useState(1);
+  const [level, setLevel] = useState(1);
   const [bg, setBg] = useState("");
   const [align, setAlign] = useState("");
   const [statArray, setStatArray] = useState("Zestaw standardowy");
-  const [customCechy, setWlasneCechy] = useState({ STR:10, DEX:10, CON:10, INT:10, WIS:10, CHA:10 });
-  const [useWlasne, setUseWlasne] = useState(false);
+  const [customStats, setCustomStats] = useState({ STR:10, DEX:10, CON:10, INT:10, WIS:10, CHA:10 });
+  const [useCustom, setUseCustom] = useState(false);
   const [appearance, setAppearance] = useState({ age:"", height:"", weight:"", eyes:"", skin:"", hair:"" });
   const [traits, setTraits] = useState({ personality:"", ideals:"", bonds:"", flaws:"" });
 
   const STEPS = P.stepNames;
-  const stats = useWlasne ? customCechy : (STAT_ARRAYS[statArray] || STAT_ARRAYS["Zestaw standardowy"]);
+  const stats = useCustom ? customStats : (STAT_ARRAYS[statArray] || STAT_ARRAYS["Zestaw standardowy"]);
   const statMod = v => { const m = Math.floor((v - 10) / 2); return m >= 0 ? `+${m}` : String(m); };
-  const canNext = [name.trim().length > 0, cls !== null, true, true, true, true][krok];
+  const canNext = [name.trim().length > 0, cls !== null, true, true, true, true][step];
 
   const handleFinish = () => {
     const id = "profile_" + Date.now();
@@ -140,16 +140,16 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
     <div className="wizard-screen">
       <div className="wizard-box">
         <div className="wizard-step-dots">
-          {STEPS.map((s, i) => <div key={s} className={`wizard-dot${i <= krok ? " active" : ""}`}/>)}
+          {STEPS.map((s, i) => <div key={s} className={`wizard-dot${i <= step ? " active" : ""}`}/>)}
         </div>
         <div className="wizard-title">{P.wizardTitle}</div>
-        <div className="wizard-sub">{STEPS[krok]} — {P.step} {krok + 1} {P.of} {STEPS.length}</div>
+        <div className="wizard-sub">{STEPS[step]} — {P.step} {step + 1} {P.of} {STEPS.length}</div>
 
-        {krok === 0 && (
+        {step === 0 && (
           <>
             <div className="wizard-step-label">{P.nameQuestion}</div>
             <input autoFocus style={inputStyle} placeholder={P.namePh}
-              value={name} onChange={e => setImie(e.target.value)}
+              value={name} onChange={e => setName(e.target.value)}
               onKeyDown={e => e.key === "Enter" && canNext && setStep(1)}/>
             <div style={{ marginTop:"0.6rem", fontFamily:"Crimson Text,serif", fontSize:"0.9rem", color:t.textDim, fontStyle:"italic" }}>
               {P.nameHint}
@@ -157,7 +157,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
           </>
         )}
 
-        {krok === 1 && (
+        {step === 1 && (
           <>
             <div className="wizard-step-label">{P.classQuestion}</div>
             <div className="wizard-class-grid">
@@ -171,32 +171,32 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
             <div style={{ display:"flex", alignItems:"center", gap:"0.6rem", marginTop:"0.4rem" }}>
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.58rem", letterSpacing:"0.14em", color:t.textLabel, textTransform:"uppercase" }}>{P.levelLabel2}</span>
               <input type="number" min={1} max={20} value={level}
-                onChange={e => setPoziom(clamp(parseInt(e.target.value) || 1, 1, 20))}
+                onChange={e => setLevel(clamp(parseInt(e.target.value) || 1, 1, 20))}
                 style={{ ...inputStyle, width:64, textAlign:"center", fontFamily:"Cinzel,serif", fontSize:"1rem" }}/>
             </div>
           </>
         )}
 
-        {krok === 2 && (
+        {step === 2 && (
           <>
             <div className="wizard-step-label">{P.attrQuestion}</div>
             <div style={{ display:"flex", gap:"0.4rem", marginBottom:"0.8rem", flexWrap:"wrap" }}>
               {Object.keys(STAT_ARRAYS).map(arr => (
                 <button key={arr}
-                  style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${!useWlasne && statArray === arr ? t.accent : t.borderInput}`, color:!useWlasne && statArray === arr ? t.accent : t.textMuted, padding:"0.3rem 0.7rem", cursor:"pointer" }}
-                  onClick={() => { setStatArray(arr); setUseWlasne(false); }}>{arr}</button>
+                  style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${!useCustom && statArray === arr ? t.accent : t.borderInput}`, color:!useCustom && statArray === arr ? t.accent : t.textMuted, padding:"0.3rem 0.7rem", cursor:"pointer" }}
+                  onClick={() => { setStatArray(arr); setUseCustom(false); }}>{arr}</button>
               ))}
               <button
-                style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${useWlasne ? t.accent : t.borderInput}`, color:useWlasne ? t.accent : t.textMuted, padding:"0.3rem 0.7rem", cursor:"pointer" }}
-                onClick={() => setUseWlasne(true)}>{P.custom}</button>
+                style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${useCustom ? t.accent : t.borderInput}`, color:useCustom ? t.accent : t.textMuted, padding:"0.3rem 0.7rem", cursor:"pointer" }}
+                onClick={() => setUseCustom(true)}>{P.custom}</button>
             </div>
             <div className="wizard-stat-grid">
               {STAT_KEYS.map(k => (
                 <div key={k} className="wizard-stat-box">
                   <span className="wizard-stat-label">{k}</span>
-                  {useWlasne
-                    ? <input type="number" min={0} max={30} value={customCechy[k]}
-                        onChange={e => setWlasneCechy(s => ({ ...s, [k]: parseInt(e.target.value) ?? 0 }))}
+                  {useCustom
+                    ? <input type="number" min={0} max={30} value={customStats[k]}
+                        onChange={e => setCustomStats(s => ({ ...s, [k]: parseInt(e.target.value) ?? 0 }))}
                         onFocus={e => e.target.select()}
                         style={{ background:"transparent", border:"none", outline:"none", fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, color:t.accent, textAlign:"center", width:"100%" }}/>
                     : <span className="wizard-stat-val">{stats[k]}</span>
@@ -208,7 +208,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
           </>
         )}
 
-        {krok === 3 && (
+        {step === 3 && (
           <>
             <div className="wizard-step-label">{P.bgQuestion}</div>
             <input style={{ ...inputStyle, marginBottom:"0.6rem" }} placeholder={P.bgPh}
@@ -223,7 +223,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
           </>
         )}
 
-        {krok === 4 && (
+        {step === 4 && (
           <>
             <div className="wizard-step-label">{P.appearanceQuestion}</div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem" }}>
@@ -245,7 +245,7 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
           </>
         )}
 
-        {krok === 5 && (
+        {step === 5 && (
           <>
             <div className="wizard-step-label">{P.personalityQuestion}</div>
             <div style={{ display:"flex", flexDirection:"column", gap:"0.5rem" }}>
@@ -268,11 +268,11 @@ export function PostaćWizard({ onFinish, onAnuluj, theme }) {
         )}
 
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:"1.5rem", gap:"0.6rem" }}>
-          <button onClick={krok === 0 ? onAnuluj : () => setStep(s => s - 1)}
+          <button onClick={step === 0 ? onCancel : () => setStep(s => s - 1)}
             style={{ fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, padding:"0.5rem 1rem", cursor:"pointer", flex:"0 0 auto" }}>
-            {krok === 0 ? P.cancel : P.back}
+            {step === 0 ? P.cancel : P.back}
           </button>
-          {krok < STEPS.length - 1
+          {step < STEPS.length - 1
             ? <button disabled={!canNext} onClick={() => setStep(s => s + 1)}
                 style={{ fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:canNext?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${canNext?t.accent:t.borderInput}`, color:canNext?t.accent:t.textDim, padding:"0.5rem 1.5rem", cursor:canNext?"pointer":"default", flex:1 }}>
                 {P.next}

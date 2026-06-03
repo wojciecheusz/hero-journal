@@ -163,10 +163,10 @@ export function RestModal({ type, char, setChar, onClose }) {
   const R  = T.REST;
   const hd = char.hitDice || { type: "d8", max: 1, used: 0 };
   const available = Math.max(0, hd.max - hd.used);
-  const [hdWydaj, setHdWydaj] = useState(1);
+  const [hdSpend, setHdSpend] = useState(1);
 
   const doShortRest = () => {
-    const spend = clamp(hdWydaj, 0, available);
+    const spend = clamp(hdSpend, 0, available);
     const dieMax = parseInt(hd.type.replace("d", "")) || 8;
     const conMod = Math.floor((char.stats.CON - 10) / 2);
     const healed = spend > 0 ? spend * Math.ceil(dieMax / 2) + spend * conMod : 0;
@@ -215,15 +215,15 @@ export function RestModal({ type, char, setChar, onClose }) {
             <div className="modal-detail">
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.9 }}>{R.spend}</span>
-                <button onClick={() => setHdWydaj(s => Math.max(0, s - 1))} aria-label="Decrease dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>−</button>
-                <input type="number" min={0} max={available} value={hdWydaj}
-                  onChange={e => setHdWydaj(clamp(parseInt(e.target.value) || 0, 0, available))}
+                <button onClick={() => setHdSpend(s => Math.max(0, s - 1))} aria-label="Decrease dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>−</button>
+                <input type="number" min={0} max={available} value={hdSpend}
+                  onChange={e => setHdSpend(clamp(parseInt(e.target.value) || 0, 0, available))}
                   style={{ width: 36, fontFamily: "Cinzel,serif", fontSize: "1.1rem", fontWeight: 700, background: "transparent", border: "none", borderBottom: "1px solid currentColor", outline: "none", textAlign: "center", color: "inherit" }}/>
-                <button onClick={() => setHdWydaj(s => Math.min(available, s + 1))} aria-label="Increase dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>+</button>
+                <button onClick={() => setHdSpend(s => Math.min(available, s + 1))} aria-label="Increase dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>+</button>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.72rem", opacity: 0.9 }}>{hd.type}</span>
               </div>
               {(() => {
-                const spend = clamp(hdWydaj, 0, available);
+                const spend = clamp(hdSpend, 0, available);
                 const dieMax = parseInt(hd.type.replace("d", "")) || 8;
                 const conMod = Math.floor((char.stats.CON - 10) / 2);
                 const avg = spend * Math.ceil(dieMax / 2) + spend * conMod;
@@ -270,14 +270,14 @@ export function RestModal({ type, char, setChar, onClose }) {
   );
 }
 
-export function ResetModal({ onConfirm, onAnuluj }) {
+export function ResetModal({ onConfirm, onCancel }) {
   return (
-    <div className="modal-overlay" onClick={onAnuluj}>
+    <div className="modal-overlay" onClick={onCancel}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <div className="modal-title">⚠ Pełny reset karty</div>
         <p className="modal-text">Spowoduje to trwałe usunięcie wszystkich danych postaci. Tej operacji nie można cofnąć.</p>
         <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem" }}>
-          <button className="btn-ghost" onClick={onAnuluj}>Anuluj</button>
+          <button className="btn-ghost" onClick={onCancel}>Anuluj</button>
           <button className="btn-danger" onClick={onConfirm}>Usuń wszystko</button>
         </div>
       </div>

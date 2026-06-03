@@ -1,7 +1,8 @@
 import { THEMES } from '../theme/themes';
+import { load } from '../utils/storage';
 
 export default function LoginScreen({ onLogin, loading }) {
-  const savedTheme = (() => { try { return JSON.parse(localStorage.getItem("hj_theme")) || "mrok"; } catch { return "mrok"; } })();
+  const savedTheme = load("hj_theme", "mrok");
   const t = THEMES[savedTheme] || THEMES.mrok;
   return (
     <div className="profile-screen">

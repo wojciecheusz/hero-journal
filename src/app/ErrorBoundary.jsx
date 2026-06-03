@@ -1,4 +1,5 @@
 import React from 'react';
+import { remove } from '../utils/storage';
 
 /* ── Ekran błędu ────────────────────────────────────────────── */
 function CrashScreen({ error, onReload, onReset }) {
@@ -45,7 +46,7 @@ function CrashScreen({ error, onReload, onReset }) {
 
         <p style={{ marginTop:"1.5rem", fontSize:"0.82rem", color:"#4a2020", lineHeight:1.6 }}>
           If this keeps happening, try{" "}
-          <button onClick={() => { localStorage.removeItem("hj_tutorial_seen"); window.location.reload(); }}
+          <button onClick={() => { remove("hj_tutorial_seen"); window.location.reload(); }}
             style={{ background:"none", border:"none", color:"#804040", cursor:"pointer", textDecoration:"underline", fontFamily:"inherit", fontSize:"inherit", padding:0 }}>
             clearing tutorial state
           </button>

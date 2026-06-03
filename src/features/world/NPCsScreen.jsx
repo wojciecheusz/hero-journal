@@ -1,7 +1,8 @@
-import { useState, memo, useEffect } from 'react';
+import { useState, memo } from 'react';
 import { REL_CYCLE } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
+import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const T  = useT();
@@ -14,14 +15,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const [editing, setEditing] = useState({});
   const [activeTag, setActiveTag] = useState(null);
 
-  useEffect(() => {
-    if (!openEntity?.name) return;
-    const found = npcs.find(n => n.name?.toLowerCase() === openEntity.name.toLowerCase());
-    if (found) {
-      setExpanded(e => ({ ...e, [found.id]: true }));
-      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior:'smooth', block:'center' }), 150);
-    }
-  }, [openEntity]);
+  useScrollToEntity(openEntity, npcs, setExpanded);
 
   const allTags = [...new Set(npcs.flatMap(n => n.tags || []))].sort();
 

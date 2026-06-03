@@ -18,7 +18,7 @@ import HelpPanel     from './HelpPanel';
 import { detectLang, LangContext, TRANSLATIONS } from '../i18n/translations';
 import { createSampleHero } from '../constants/sampleHero';
 import { cloudSave } from '../firebase/firestore';
-import { ProfileScreen, PostaćWizard } from '../features/profiles/ProfileScreen';
+import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
 
 /* ── Lazy imports — każdy tab ładowany na żądanie ─────────────── */
@@ -76,7 +76,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [showReset, setShowReset]       = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp]         = useState(false);
-  const [showTutorial, setShowTutorial] = useState(() => !localStorage.getItem("hj_tutorial_seen"));
+  const [showTutorial, setShowTutorial] = useState(() => !load("hj_tutorial_seen", null));
   const [openEntity, setOpenEntity] = useState(null);
 
   /* ── Synchronizacja i18next z aktywnym językiem ─────────────── */
@@ -197,9 +197,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   if (screen === "wizard") return (
     <LangContext.Provider value={lang}>
-      <PostaćWizard
+      <HeroWizard
         theme={theme} onFinish={handleWizardFinish}
-        onAnuluj={profiles.length > 0 ? () => setScreen("profiles") : undefined}
+        onCancel={profiles.length > 0 ? () => setScreen("profiles") : undefined}
       />
     </LangContext.Provider>
   );
@@ -208,8 +208,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   return (
     <LangContext.Provider value={lang}>
     <div className="hj-root">
-      {showReset && <ResetModal onConfirm={handleReset} onAnuluj={() => setShowReset(false)}/>}
-      {showTutorial && <TutorialModal theme={theme} onClose={() => { setShowTutorial(false); localStorage.setItem("hj_tutorial_seen","1"); }}/>}
+      {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
+      {showTutorial && <TutorialModal theme={theme} onClose={() => { setShowTutorial(false); save("hj_tutorial_seen","1"); }}/>}
       {/* HelpPanel — tylko na mobile (sidebar przejmuje rolę na desktop) */}
       {showHelp && <HelpPanel tab={tab} theme={theme} onClose={() => setShowHelp(false)}/>}
 
@@ -443,17 +443,17 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             </div>
             <div className="screen-col">
               <div className="screen-col-header">{T.NAV.spells}</div>
-              <SpellsScreen spells={spells} setCzary={setSpells} char={char} setChar={setChar}/>
+              <SpellsScreen spells={spells} setSpells={setSpells} char={char} setChar={setChar}/>
             </div>
             <div className="screen-col">
               <div className="screen-col-header">{T.NAV.skills}</div>
-              <SkillsScreen skills={skills} setUmiejętności={setSkills} openEntity={openEntity}/>
+              <SkillsScreen skills={skills} setSkills={setSkills} openEntity={openEntity}/>
             </div>
           </div>
           <div className="single-col-mobile">
             {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
-            {tab === "skills"    && <SkillsScreen    skills={skills}       setUmiejętności={setSkills}  openEntity={openEntity}/>}
-            {tab === "spells"    && <SpellsScreen     spells={spells}       setCzary={setSpells}         char={char} setChar={setChar}/>}
+            {tab === "skills"    && <SkillsScreen    skills={skills}       setSkills={setSkills}  openEntity={openEntity}/>}
+            {tab === "spells"    && <SpellsScreen     spells={spells}       setSpells={setSpells}         char={char} setChar={setChar}/>}
             {tab === "equipment" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
           </div>
         </>}
@@ -482,8 +482,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
           </div>
         </>}
 
-        {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSesjas={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
-        {tab === "quests"    && <QuestScreen       quests={quests}       setZadania={setQuests}       openEntity={openEntity}/>}
+        {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSessions={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
+        {tab === "quests"    && <QuestScreen       quests={quests}       setQuests={setQuests}       openEntity={openEntity}/>}
       </Suspense>
       </main>
 

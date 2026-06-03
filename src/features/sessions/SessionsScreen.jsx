@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventory, skills, onNavigate }) {
+function SessionsScreen({ sessions, setSessions, npcs, locations, quests, inventory, skills, onNavigate }) {
   const { t } = useTranslation();
 
   const [openIds, setOpenIds] = useState({});
@@ -13,12 +13,12 @@ function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventor
 
   const addSesja = () => {
     const e = { id: Date.now(), number: sessions.length + 1, date: today(), title: `#${sessions.length + 1}`, notes: "" };
-    setSesjas(s => [e, ...s]);
+    setSessions(s => [e, ...s]);
     setOpenIds(o => ({ ...o, [e.id]: true }));
     setEditingId(e.id);
   };
-  const upd = (id, f, v) => setSesjas(s => s.map(x => x.id === id ? { ...x, [f]: v } : x));
-  const del = id => { setSesjas(s => s.filter(x => x.id !== id)); if (editingId === id) setEditingId(null); };
+  const upd = (id, f, v) => setSessions(s => s.map(x => x.id === id ? { ...x, [f]: v } : x));
+  const del = id => { setSessions(s => s.filter(x => x.id !== id)); if (editingId === id) setEditingId(null); };
   const toggle = id => { setOpenIds(o => ({ ...o, [id]: !o[id] })); if (!openIds[id]) setEditingId(null); };
 
   const hasAny = npcs.length > 0 || locations.length > 0 || quests.length > 0 || inventory.length > 0 || skills.length > 0;

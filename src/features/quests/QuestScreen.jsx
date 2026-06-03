@@ -1,38 +1,32 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, memo } from 'react';
 import { STATUS_CYCLE, QUEST_STATUSES } from '../../constants/enums.js';
 import { useTranslation } from 'react-i18next';
+import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-function QuestScreen({ quests, setZadania, openEntity }) {
+function QuestScreen({ quests, setQuests, openEntity }) {
   const { t } = useTranslation();
 
-  const [name, setImie] = useState("");
+  const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
-  const [reward, setNagroda] = useState("");
+  const [reward, setReward] = useState("");
   const [expanded, setExpanded] = useState({});
 
-  useEffect(() => {
-    if (!openEntity?.name) return;
-    const found = quests.find(q => q.name?.toLowerCase() === openEntity.name.toLowerCase());
-    if (found) {
-      setExpanded(e => ({ ...e, [found.id]: true }));
-      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior:'smooth', block:'center' }), 150);
-    }
-  }, [openEntity]);
+  useScrollToEntity(openEntity, quests, setExpanded);
 
   const addQuest = () => {
     const n = name.trim(); if (!n) return;
-    setZadania(q => [...q, { id: Date.now(), name: n, description: desc.trim(), reward: reward.trim(), status: "active", kroks: [] }]);
-    setImie(""); setDesc(""); setNagroda("");
+    setQuests(q => [...q, { id: Date.now(), name: n, description: desc.trim(), reward: reward.trim(), status: "active", kroks: [] }]);
+    setName(""); setDesc(""); setReward("");
   };
-  const cycle  = id => setZadania(q => q.map(x => x.id === id ? { ...x, status: STATUS_CYCLE[x.status] ?? "active" } : x));
-  const del    = id => setZadania(q => q.filter(x => x.id !== id));
-  const upd    = (id, f, v) => setZadania(q => q.map(x => x.id === id ? { ...x, [f]: v } : x));
+  const cycle  = id => setQuests(q => q.map(x => x.id === id ? { ...x, status: STATUS_CYCLE[x.status] ?? "active" } : x));
+  const del    = id => setQuests(q => q.filter(x => x.id !== id));
+  const upd    = (id, f, v) => setQuests(q => q.map(x => x.id === id ? { ...x, [f]: v } : x));
   const toggle = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const addStep   = id => setZadania(q => q.map(x => x.id === id ? { ...x, kroks: [...(x.kroks||[]), { id: Date.now(), text:"", done:false }] } : x));
-  const updStep   = (id,sid,f,v) => setZadania(q => q.map(x => x.id === id ? { ...x, kroks:(x.kroks||[]).map(s => s.id===sid?{...s,[f]:v}:s) } : x));
-  const delStep   = (id,sid) => setZadania(q => q.map(x => x.id === id ? { ...x, kroks:(x.kroks||[]).filter(s=>s.id!==sid) } : x));
+  const addStep   = id => setQuests(q => q.map(x => x.id === id ? { ...x, kroks: [...(x.kroks||[]), { id: Date.now(), text:"", done:false }] } : x));
+  const updStep   = (id,sid,f,v) => setQuests(q => q.map(x => x.id === id ? { ...x, kroks:(x.kroks||[]).map(s => s.id===sid?{...s,[f]:v}:s) } : x));
+  const delStep   = (id,sid) => setQuests(q => q.map(x => x.id === id ? { ...x, kroks:(x.kroks||[]).filter(s=>s.id!==sid) } : x));
 
   const statusClass = s => s === "active" ? "active" : s === "completed" ? "completed" : "failed";
 
@@ -41,9 +35,9 @@ function QuestScreen({ quests, setZadania, openEntity }) {
       <div className="card">
         <div className="sect-label">{t('QUESTS.newTitle')}</div>
         <div className="col">
-          <input className="g-input" placeholder={t('QUESTS.namePh')} value={name} onChange={e => setImie(e.target.value)} onKeyDown={e => e.key==="Enter" && addQuest()}/>
+          <input className="g-input" placeholder={t('QUESTS.namePh')} value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key==="Enter" && addQuest()}/>
           <input className="g-input" placeholder={t('QUESTS.descPh')} value={desc} onChange={e => setDesc(e.target.value)}/>
-          <input className="g-input" placeholder={t('QUESTS.rewardPh')} value={reward} onChange={e => setNagroda(e.target.value)}/>
+          <input className="g-input" placeholder={t('QUESTS.rewardPh')} value={reward} onChange={e => setReward(e.target.value)}/>
           <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addQuest}>{t('QUESTS.addBtn')}</button></div>
         </div>
       </div>
@@ -59,8 +53,8 @@ function QuestScreen({ quests, setZadania, openEntity }) {
             <div className="sect-label" style={{ color:lc }}>{displayStatus} <span style={{ opacity:0.5 }}>({filtered.length})</span></div>
             {filtered.map(quest => {
               const open  = !!expanded[quest.id];
-              const kroks = quest.kroks || [];
-              const doneCount = kroks.filter(s=>s.done).length;
+              const steps = quest.kroks || [];
+              const doneCount = steps.filter(s=>s.done).length;
               const cls   = statusClass(quest.status);
               return (
                 <div key={quest.id} id={`entity-${quest.id}`} className={`quest-entry ${cls}`}>
@@ -74,7 +68,7 @@ function QuestScreen({ quests, setZadania, openEntity }) {
                       <input className="iedit" style={{ fontSize:"0.92rem", fontStyle:"italic" }}
                         value={quest.description||""} onChange={e => upd(quest.id,"description",e.target.value)} placeholder={t('QUESTS.editDescPh')}/>
                       {quest.reward && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.1em", color:"var(--quest-reward)", marginTop:"0.3rem" }}>{t('QUESTS.reward')} {quest.reward}</div>}
-                      {kroks.length>0 && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", marginTop:"0.2rem", opacity:0.6 }}>{doneCount}/{kroks.length}</div>}
+                      {steps.length>0 && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", marginTop:"0.2rem", opacity:0.6 }}>{doneCount}/{steps.length}</div>}
                     </div>
                     <button className="entity-toggle" onClick={() => toggle(quest.id)} aria-label={open?"Collapse":"Expand"} style={{ marginTop:"0.1rem" }}>{open?"▲":"▼"}</button>
                     <button onClick={() => del(quest.id)} aria-label="Delete quest" style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:"0.85rem", padding:"0.1rem 0.2rem", flexShrink:0, opacity:0.4 }}
@@ -82,14 +76,14 @@ function QuestScreen({ quests, setZadania, openEntity }) {
                   </div>
                   {open && (
                     <div style={{ marginTop:"0.7rem" }}>
-                      {kroks.map(krok => (
-                        <div key={krok.id} className="checklist-item">
-                          <div className={`check-box${krok.done?" checked":""}`} onClick={() => updStep(quest.id,krok.id,"done",!krok.done)}/>
-                          <input className={`iedit flex1 checklist-text${krok.done?" done":""}`} style={{ fontSize:"0.92rem" }}
-                            value={krok.text} onChange={e => updStep(quest.id,krok.id,"text",e.target.value)} placeholder={t('QUESTS.stepPh')}/>
+                      {steps.map(step => (
+                        <div key={step.id} className="checklist-item">
+                          <div className={`check-box${step.done?" checked":""}`} onClick={() => updStep(quest.id,step.id,"done",!step.done)}/>
+                          <input className={`iedit flex1 checklist-text${step.done?" done":""}`} style={{ fontSize:"0.92rem" }}
+                            value={step.text} onChange={e => updStep(quest.id,step.id,"text",e.target.value)} placeholder={t('QUESTS.stepPh')}/>
                           <button aria-label="Delete step" style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:"0.75rem", opacity:0.3 }}
                             onMouseEnter={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="0.3"}
-                            onClick={() => delStep(quest.id,krok.id)}>✕</button>
+                            onClick={() => delStep(quest.id,step.id)}>✕</button>
                         </div>
                       ))}
                       <div className="row mt05" style={{ justifyContent:"space-between", alignItems:"flex-end" }}>

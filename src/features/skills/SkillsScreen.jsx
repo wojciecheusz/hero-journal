@@ -1,9 +1,10 @@
-import { useState, memo, useEffect } from 'react';
+import { useState, memo } from 'react';
 import { SKILL_CATS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import styles from './SkillsScreen.module.css';
+import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 const catColor = cat => ({
   // Enum keys (po migracji)
@@ -20,7 +21,7 @@ const catColor = cat => ({
   "Feat":            "#9a6030",
 })[cat] || "#8a7848";
 
-function SkillsScreen({ skills, setUmiejętności, openEntity }) {
+function SkillsScreen({ skills, setSkills, openEntity }) {
   const T    = useT();
   const SK   = T.SKILLS;
   const CATS = T.SKILL_CATS;
@@ -32,30 +33,23 @@ function SkillsScreen({ skills, setUmiejętności, openEntity }) {
   const [activeTag, setActiveTag] = useState(null);
   const [activeCat, setActiveCat] = useState(null);
 
-  useEffect(() => {
-    if (!openEntity?.name) return;
-    const found = skills.find(s => s.name?.toLowerCase() === openEntity.name.toLowerCase());
-    if (found) {
-      setExpanded(e => ({ ...e, [found.id]: true }));
-      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior:'smooth', block:'center' }), 150);
-    }
-  }, [openEntity]);
+  useScrollToEntity(openEntity, skills, setExpanded);
 
   const allTags    = [...new Set(skills.flatMap(s => s.tags||[]))].sort();
   const inUseCount = skills.filter(s => s.inUse).length;
 
   const addSkill = () => {
     const n = form.name.trim(); if (!n) return;
-    setUmiejętności(l => [...l, { id: Date.now(), name: n, category: form.category, description: form.description.trim(), level: form.level, tags: [], pinned: false, inUse: false }]);
+    setSkills(l => [...l, { id: Date.now(), name: n, category: form.category, description: form.description.trim(), level: form.level, tags: [], pinned: false, inUse: false }]);
     setForm({ name:"", category: SKILL_CAT.SKILL, description:"", level:0 });
     setShowForm(false);
   };
-  const upd       = (id, f, v) => setUmiejętności(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
-  const del       = id => setUmiejętności(l => l.filter(x => x.id!==id));
+  const upd       = (id, f, v) => setSkills(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
+  const del       = id => setSkills(l => l.filter(x => x.id!==id));
   const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
   const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
-  const toggleInUse = id => setUmiejętności(l => l.map(x => x.id===id ? { ...x, inUse: !x.inUse } : x));
+  const toggleInUse = id => setSkills(l => l.map(x => x.id===id ? { ...x, inUse: !x.inUse } : x));
 
   const visible = skills.filter(s =>
     (!activeTag || (s.tags||[]).includes(activeTag)) &&

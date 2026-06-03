@@ -1,8 +1,9 @@
-import { useState, memo, useEffect } from 'react';
+import { useState, memo } from 'react';
 import { ITEM_TYPES, ITEM_ICONS } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
 import { Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
+import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 function InventoryScreen({ inventory, setInventory, openEntity }) {
   const T = useT();
@@ -15,14 +16,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
   const [editing,  setEditing]  = useState({});
   const [filterType, setFilterType] = useState(null);
 
-  useEffect(() => {
-    if (!openEntity?.name) return;
-    const found = inventory.find(i => i.name?.toLowerCase() === openEntity.name.toLowerCase());
-    if (found) {
-      setExpanded(e => ({ ...e, [found.id]: true }));
-      setTimeout(() => document.getElementById(`entity-${found.id}`)?.scrollIntoView({ behavior:'smooth', block:'center' }), 150);
-    }
-  }, [openEntity]);
+  useScrollToEntity(openEntity, inventory, setExpanded);
 
   const addItem = () => {
     const n = form.name.trim(); if (!n) return;
