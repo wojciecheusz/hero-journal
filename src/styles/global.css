@@ -298,6 +298,11 @@ textarea { overflow-y: hidden; }
   cursor: pointer;
   transition: background 0.15s;
   overflow: hidden;
+  background: transparent;
+  border: none;
+  color: inherit;
+  width: 100%;
+  text-align: left;
 }
 .hj-sidebar-brand:hover { background: rgba(226,185,78,0.06); }
 
@@ -1067,7 +1072,7 @@ textarea { overflow-y: hidden; }
 .pack-field-input::placeholder { color: var(--hj-text-dim); font-style: italic; }
 
 /* ── Toggle ───────────────────────────────────────────────────── */
-.toggle-wrap  { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; user-select: none; }
+.toggle-wrap  { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; user-select: none; background: transparent; border: none; color: inherit; padding: 0; }
 .toggle-track { width: 32px; height: 17px; border-radius: 9px; background: var(--hj-border-sub); border: 1px solid var(--hj-border-input); position: relative; transition: all 0.2s; flex-shrink: 0; }
 .toggle-track.on        { background: rgba(226,185,78,0.25); border-color: var(--hj-accent-border); }
 .toggle-track.on-purple { background: rgba(168,122,204,0.25); border-color: #9a6acc; }
