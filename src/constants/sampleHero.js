@@ -33,7 +33,7 @@ export function createSampleHero() {
       bonds: "I swore to protect the innocent from the powers of darkness. I will not break that oath, whatever the cost.",
       flaws: "I act recklessly when I see suffering. I don't ask the price — I just strike.",
     },
-    personalNotes: "// Ritual of the White Oak: an unknown ritual that may seal the Lord Gnicia.\n// Leaden Sky: something like an 'entity', a pupil of Lord Gnicia\n// Echo of the First Oak: key to the Ritual of the White Oak",
+    personalNotes: "- Ask Captain Harwick about the missing supply caravan.\n- Investigate the old watchtower north of town — Elara saw lights there at night.\n- Return borrowed spellbook to the Temple of Ioun before next tenday.",
     backstory: "John Silverblade grew up in a small village on the kingdom's outskirts. As a young boy, he survived a demon-cult raid that reduced his home to ashes. Saved by a wandering paladin, he swore to dedicate his life to fighting evil. After years of service in the Order of the Silver Flame, he set out alone to face the growing threat of the Dragon Blood Cult — an organization that stole the Order's holy relic.",
     spellSlots: {
       [SPELL_LEVEL.L1]: { max: 4, used: 2 },
