@@ -536,6 +536,18 @@ textarea { overflow-y: hidden; }
   .hj-sidebar-group-label { font-size: 0.5rem; padding: 0.65rem 1.25rem 0.2rem; }
 }
 
+/* ── Podgląd opisu wpisu — jednolity styl we wszystkich ekranach ── */
+.entry-preview {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 0.95rem;
+  font-style: normal;
+  color: var(--hj-text);
+  opacity: 0.82;
+  line-height: 1.65;
+  word-break: break-word;
+  margin-top: 0.45rem;
+}
+
 /* ── Karty ────────────────────────────────────────────────────── */
 .card {
   background: var(--hj-bg-card);

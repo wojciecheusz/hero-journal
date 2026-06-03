@@ -86,7 +86,7 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
 
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
             {loc.notes && !isEditing && (
-              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:"var(--hj-text)", lineHeight:1.65, marginTop:"0.5rem", wordBreak:"break-word", opacity:0.88, ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{loc.notes}</p>
+              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{loc.notes}</p>
             )}
 
             <TagsEditor tags={loc.tags || []} onChange={v => upd(loc.id, "tags", v)}/>

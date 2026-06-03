@@ -122,7 +122,7 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
 
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
             {fac.notes && !isEditing && (
-              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:"var(--hj-text)", lineHeight:1.65, marginTop:"0.5rem", wordBreak:"break-word", opacity:0.88, ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{fac.notes}</p>
+              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{fac.notes}</p>
             )}
 
             <TagsEditor tags={fac.tags||[]} onChange={v => upd(fac.id,"tags",v)}/>

@@ -100,7 +100,7 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
 
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
             {npc.notes && !isEditing && (
-              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:"var(--hj-text)", lineHeight:1.65, marginTop:"0.5rem", wordBreak:"break-word", opacity:0.88, ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{npc.notes}</p>
+              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{npc.notes}</p>
             )}
 
             <TagsEditor tags={npc.tags||[]} onChange={v => upd(npc.id,"tags",v)}/>

@@ -120,7 +120,7 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
 
             {/* Podgląd — 2 linie gdy zwinięty, pełny gdy rozwinięty (ale nie w trybie edycji) */}
             {preview && !isEditing && (
-              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.9rem", color:"var(--hj-text-muted)", lineHeight:1.6, marginTop:"0.3rem", fontStyle:"italic", wordBreak:"break-word", opacity:0.85, ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>
+              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>
                 {preview}
               </p>
             )}

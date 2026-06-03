@@ -65,10 +65,6 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
                   onClick={() => setForm(f => ({ ...f, category: c }))}>{c}</button>
               ))}
             </div>
-            <div className="row" style={{ gap:"0.6rem" }}>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.58rem", textTransform:"uppercase", letterSpacing:"0.12em" }}>{SK.masteryLevel}</span>
-              <SkillPips value={form.level} onChange={v => setForm(f => ({ ...f, level: v }))}/>
-            </div>
             <textarea className="g-textarea" rows={3} placeholder={SK.descPh} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}/>
             <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addSkill}>{SK.addBtn}</button></div>
           </div>
@@ -117,7 +113,6 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
                   value={sk.name} onChange={e => upd(sk.id,"name",e.target.value)} placeholder={SK.editNamePh}/>
                 <div style={{ display:"flex", gap:"0.4rem", alignItems:"center", flexWrap:"wrap" }}>
                   <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.1rem 0.4rem", background:`${cc}0d`, flexShrink:0 }}>{displayCat}</span>
-                  {sk.level>0 && <SkillPips value={sk.level} onChange={v => upd(sk.id,"level",v)}/>}
                   <Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse?SK.active:SK.inactive} color="purple"/>
                 </div>
               </div>
@@ -128,7 +123,7 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
 
             {/* Podgląd opisu — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
             {sk.description && !isEditing && (
-              <p style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:"var(--hj-text)", lineHeight:1.65, marginTop:"0.4rem", wordBreak:"break-word", opacity:0.88, ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{sk.description}</p>
+              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{sk.description}</p>
             )}
 
             <TagsEditor tags={sk.tags||[]} onChange={v => upd(sk.id,"tags",v)}/>
@@ -137,10 +132,6 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
               <div style={{ marginTop:"0.8rem" }}>
                 <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
                   {CATS.map((c,i) => <button key={c} className="filter-tag" style={{ opacity: sk.category===SKILL_CATS[i]||sk.category===c?1:0.4, borderColor: sk.category===SKILL_CATS[i]||sk.category===c?catColor(c)+"88":"", color: sk.category===SKILL_CATS[i]||sk.category===c?catColor(c):"" }} onClick={() => upd(sk.id,"category",SKILL_CATS[i])}>{c}</button>)}
-                </div>
-                <div className="row" style={{ gap:"0.6rem", marginBottom:"0.7rem" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.58rem", textTransform:"uppercase", letterSpacing:"0.12em" }}>{SK.mastery}</span>
-                  <SkillPips value={sk.level} onChange={v => upd(sk.id,"level",v)}/>
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={SK.editDescPh} value={sk.description||""} onChange={e => upd(sk.id,"description",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
