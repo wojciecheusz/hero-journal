@@ -31,7 +31,7 @@ export default function CharCard({ char, setChar, C, open, onToggle }) {
                   onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],name:e.target.value}; return {...c,classes:cl}; })}/>
                 {i===0 && (char.classes||[]).length < 4 && (
                   <button className="btn-ghost" style={{ padding:"0.1rem 0.4rem", fontSize:"0.8rem", flexShrink:0 }}
-                    onClick={() => setChar(c => ({...c, classes:[...(c.classes||[]),{name:"",level:1}]}))}>+</button>
+                    onClick={() => setChar(c => ({...c, classes:[...(c.classes||[]),{name:"",level:1}]}))} aria-label="Add class">+</button>
                 )}
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.14em", opacity:0.4, flexShrink:0, textTransform:"uppercase" }}>{C.level}</span>
                 <input type="number" className="iedit"
@@ -40,7 +40,7 @@ export default function CharCard({ char, setChar, C, open, onToggle }) {
                   onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)}; return {...c,classes:cl}; })}/>
                 {i > 0 && (
                   <button className="btn-ghost" style={{ padding:"0.1rem 0.35rem", fontSize:"0.65rem", flexShrink:0 }}
-                    onClick={() => setChar(c => ({...c, classes:c.classes.filter((_,j) => j!==i)}))}>✕</button>
+                    onClick={() => setChar(c => ({...c, classes:c.classes.filter((_,j) => j!==i)}))} aria-label="Remove class">✕</button>
                 )}
               </div>
             ))}

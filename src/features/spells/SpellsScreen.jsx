@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS } from '../../constants/gameConstants';
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
 import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget } from '../../shared/ui';
@@ -6,7 +6,7 @@ import { useT } from '../../i18n/translations';
 
 const numMod = v => v >= 0 ? `+${v}` : String(v);
 
-export default function SpellsScreen({ spells, setCzary, char, setChar }) {
+function SpellsScreen({ spells, setCzary, char, setChar }) {
   const T  = useT();
   const SP = T.SPELLS;
 
@@ -119,7 +119,7 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
                 </div>
               </div>
               <PrzypnijBtn pinned={sp.pinned} onToggle={() => upd(sp.id,"pinned",!sp.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(sp.id)} title="Edytuj">✎</button>
+              <button className="entity-toggle" onClick={() => startEdit(sp.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(sp.id)}>{open?"▲":"▼"}</button>
             </div>
 
@@ -172,3 +172,4 @@ export default function SpellsScreen({ spells, setCzary, char, setChar }) {
     </>
   );
 }
+export default memo(SpellsScreen);

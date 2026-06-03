@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { REL_CYCLE } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
-export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
+function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const T  = useT();
   const N  = T.NPCS;
   const RL = T.REL_LABELS;
@@ -94,7 +94,7 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
                 </div>
               </div>
               <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id,"pinned",!npc.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(npc.id)} title="Edytuj">✎</button>
+              <button className="entity-toggle" onClick={() => startEdit(npc.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(npc.id)}>{open ? "▲" : "▼"}</button>
             </div>
 
@@ -120,3 +120,4 @@ export default function NPCsScreen({ npcs, setNPCs, openEntity }) {
     </>
   );
 }
+export default memo(NPCsScreen);

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { LOC_TYPES } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
-export default function LocationsScreen({ locations, setLocations, openEntity }) {
+function LocationsScreen({ locations, setLocations, openEntity }) {
   const T = useT();
   const L = T.LOCATIONS;
 
@@ -81,7 +81,7 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
                 </div>
               </div>
               <PrzypnijBtn pinned={loc.pinned} onToggle={() => upd(loc.id, "pinned", !loc.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(loc.id)} title="Edytuj">✎</button>
+              <button className="entity-toggle" onClick={() => startEdit(loc.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(loc.id)}>{open ? "▲" : "▼"}</button>
             </div>
 
@@ -113,3 +113,4 @@ export default function LocationsScreen({ locations, setLocations, openEntity })
     </>
   );
 }
+export default memo(LocationsScreen);

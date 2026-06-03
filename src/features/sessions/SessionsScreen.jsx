@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { LEGEND_ITEMS } from '../../constants/gameConstants';
 import { parseEntityLinksWithTooltips } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-export default function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventory, skills, onNavigate }) {
+function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventory, skills, onNavigate }) {
   const T  = useT();
   const S  = T.SESSIONS;
 
@@ -87,3 +87,4 @@ export default function SessionsScreen({ sessions, setSesjas, npcs, locations, q
     </>
   );
 }
+export default memo(SessionsScreen);

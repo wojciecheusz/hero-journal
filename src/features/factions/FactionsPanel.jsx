@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS } from '../../constants/gameConstants';
 import { FACTION_TYPE, FACTION_RANK } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
-export default function FactionsPanel({ factions, setFactions, openEntity }) {
+function FactionsPanel({ factions, setFactions, openEntity }) {
   const T = useT();
   const F = T.FACTIONS;
 
@@ -117,7 +117,7 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
                 </div>
               </div>
               <PrzypnijBtn pinned={fac.pinned} onToggle={() => upd(fac.id,"pinned",!fac.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(fac.id)} title="Edytuj">✎</button>
+              <button className="entity-toggle" onClick={() => startEdit(fac.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(fac.id)}>{open?"▲":"▼"}</button>
             </div>
 
@@ -146,3 +146,4 @@ export default function FactionsPanel({ factions, setFactions, openEntity }) {
     </>
   );
 }
+export default memo(FactionsPanel);

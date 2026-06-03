@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { STATUS_CYCLE, QUEST_STATUSES } from '../../constants/enums.js';
 import { useT } from '../../i18n/translations';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-export default function QuestScreen({ quests, setZadania, openEntity }) {
+function QuestScreen({ quests, setZadania, openEntity }) {
   const T  = useT();
   const Q  = T.QUESTS;
   const LB = T.LABELS;
@@ -113,3 +113,4 @@ export default function QuestScreen({ quests, setZadania, openEntity }) {
     </>
   );
 }
+export default memo(QuestScreen);

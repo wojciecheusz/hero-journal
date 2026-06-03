@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { ITEM_TYPES, ITEM_ICONS } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
 import { Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
-export default function InventoryScreen({ inventory, setInventory, openEntity }) {
+function InventoryScreen({ inventory, setInventory, openEntity }) {
   const T = useT();
   const I = T.INVENTORY;
   const displayItemType = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
@@ -115,7 +115,7 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
                   <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>
                 </div>
               </div>
-              <button className="entity-toggle" onClick={() => startEdit(item.id)} title="Edytuj">✎</button>
+              <button className="entity-toggle" onClick={() => startEdit(item.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(item.id)}>{open ? "▲" : "▼"}</button>
             </div>
 
@@ -167,3 +167,4 @@ export default function InventoryScreen({ inventory, setInventory, openEntity })
     </>
   );
 }
+export default memo(InventoryScreen);

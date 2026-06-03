@@ -6,6 +6,8 @@ import HeroJournal from './app/HeroJournal';
 import LoginScreen from './app/LoginScreen';
 import LoadingScreen from './app/LoadingScreen';
 import ErrorBoundary from './app/ErrorBoundary';
+import { Router } from 'wouter';
+import { useHashLocation } from 'wouter/use-hash-location';
 import './styles/global.css';
 
 export default function App() {
@@ -55,13 +57,15 @@ export default function App() {
   if (firebaseReady && !user)  return <LoginScreen onLogin={handleLogin} loading={loginLoading}/>;
 
   return (
-    <ErrorBoundary onReset={() => setAppKey(k => k + 1)}>
-      <HeroJournal
-        key={appKey}
-        user={user}
-        onLogout={user ? handleLogout : null}
-        onCloudRefresh={user ? handleCloudRefresh : null}
-      />
-    </ErrorBoundary>
+    <Router hook={useHashLocation}>
+      <ErrorBoundary onReset={() => setAppKey(k => k + 1)}>
+        <HeroJournal
+          key={appKey}
+          user={user}
+          onLogout={user ? handleLogout : null}
+          onCloudRefresh={user ? handleCloudRefresh : null}
+        />
+      </ErrorBoundary>
+    </Router>
   );
 }

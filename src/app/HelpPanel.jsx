@@ -33,7 +33,7 @@ export default function HelpPanel({ tab, theme, onClose }) {
             <span style={{ opacity:0.7 }}>?</span>
             <span>{content.title}</span>
           </div>
-          <button onClick={onClose}
+          <button onClick={onClose} aria-label="Close help"
             style={{ background:"transparent", border:"none", color:t.textDim, fontSize:"1rem", cursor:"pointer", lineHeight:1, padding:"0.2rem 0.3rem", transition:"color 0.15s" }}
             onMouseEnter={e => e.currentTarget.style.color=t.textMuted}
             onMouseLeave={e => e.currentTarget.style.color=t.textDim}>

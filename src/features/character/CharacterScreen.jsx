@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { clamp } from '../../utils/math';
 import { RestModal } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -14,7 +14,7 @@ import { CardHeader, LBL } from './cards/shared';
  * Orkiestruje wszystkie karty postaci.
  * Logika każdej karty jest zamknięta w osobnym sub-komponencie w ./cards/.
  */
-export default function CharacterScreen({ char, setChar, inventory, skills, spells }) {
+function CharacterScreen({ char, setChar, inventory, skills, spells }) {
   const T  = useT();
   const C  = T.CHAR;
   const GENERIC_SKILLS = T.GENERIC_SKILLS;
@@ -131,3 +131,4 @@ export default function CharacterScreen({ char, setChar, inventory, skills, spel
     </>
   );
 }
+export default memo(CharacterScreen);

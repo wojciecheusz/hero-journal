@@ -54,7 +54,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
           </div>
 
           <div style={{ display:"grid", gridTemplateColumns:"36px 1fr 36px auto", gap:"0.3rem", alignItems:"stretch" }}>
-            <button className="btn-pm minus" onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
+            <button className="btn-pm minus" aria-label="Decrease HP" onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current-1,0,c.hp.max)}}))}>−</button>
             <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.5rem", gap:0 }}>
               <span className="combat-box-label">{C.hp}</span>
               <div style={{ display:"flex", alignItems:"baseline", gap:"0.15rem" }}>
@@ -71,7 +71,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                   onBlur={e => setChar(c => ({...c, hp:{...c.hp, max:Math.max(1,parseInt(e.target.value)||1)}}))}/>
               </div>
             </div>
-            <button className="btn-pm plus" onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
+            <button className="btn-pm plus" aria-label="Increase HP" onClick={() => setChar(c => ({...c, hp:{...c.hp, current:clamp(c.hp.current+1,0,c.hp.max)}}))}>+</button>
             <div className="combat-box" style={{ minWidth:72 }}>
               <span className="combat-box-label">{C.hpTemp}</span>
               <input className="combat-box-input" type="number" value={char.hp.temp||0}
@@ -100,12 +100,12 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                   style={{ width:24, background:"transparent", border:"none", borderBottom:"1px dashed var(--hj-text-muted)", outline:"none", fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center", color:"var(--hj-text-muted)", opacity:0.8 }}/>
               </div>
             </div>
-            <button className="btn-rest short" onClick={() => onRestModal("short")}
+            <button className="btn-rest short" aria-label="Short rest" onClick={() => onRestModal("short")}
               style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem" }}>
               <span style={{ fontSize:"1rem", lineHeight:1 }}>☽</span>
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.shortRest}</span>
             </button>
-            <button className="btn-rest long" onClick={() => onRestModal("long")}
+            <button className="btn-rest long" aria-label="Long rest" onClick={() => onRestModal("long")}
               style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem" }}>
               <span style={{ fontSize:"1rem", lineHeight:1 }}>☀</span>
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.longRest}</span>

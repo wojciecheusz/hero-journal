@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import { useLocation } from 'wouter';
 import { THEMES, PALETTES, PALETTE_LABELS } from '../theme/themes';
 import { DEFAULT_CHAR } from '../constants/gameConstants';
 import {
@@ -18,15 +19,26 @@ import { createSampleHero } from '../constants/sampleHero';
 import { cloudSave } from '../firebase/firestore';
 import { ProfileScreen, PostaćWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
-import CharacterScreen  from '../features/character/CharacterScreen';
-import InventoryScreen  from '../features/inventory/InventoryScreen';
-import SkillsScreen     from '../features/skills/SkillsScreen';
-import SpellsScreen     from '../features/spells/SpellsScreen';
-import NPCsScreen       from '../features/world/NPCsScreen';
-import LocationsScreen  from '../features/world/LocationsScreen';
-import FactionsPanel    from '../features/factions/FactionsPanel';
-import SessionsScreen   from '../features/sessions/SessionsScreen';
-import QuestScreen      from '../features/quests/QuestScreen';
+
+/* ── Lazy imports — każdy tab ładowany na żądanie ─────────────── */
+const CharacterScreen  = lazy(() => import('../features/character/CharacterScreen'));
+const InventoryScreen  = lazy(() => import('../features/inventory/InventoryScreen'));
+const SkillsScreen     = lazy(() => import('../features/skills/SkillsScreen'));
+const SpellsScreen     = lazy(() => import('../features/spells/SpellsScreen'));
+const NPCsScreen       = lazy(() => import('../features/world/NPCsScreen'));
+const LocationsScreen  = lazy(() => import('../features/world/LocationsScreen'));
+const FactionsPanel    = lazy(() => import('../features/factions/FactionsPanel'));
+const SessionsScreen   = lazy(() => import('../features/sessions/SessionsScreen'));
+const QuestScreen      = lazy(() => import('../features/quests/QuestScreen'));
+
+/* Loader wyświetlany podczas ładowania chunka */
+function TabLoader() {
+  return (
+    <div style={{ display:"flex", alignItems:"center", justifyContent:"center", padding:"4rem 2rem", color:"var(--hj-text-dim)", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.18em", textTransform:"uppercase" }}>
+      Loading…
+    </div>
+  );
+}
 
 /* applyThemeVars → src/utils/themeUtils.js
    EMPTY_DATA / loadProfileData → src/hooks/useCharacterData.js */
@@ -47,8 +59,18 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     setSkills, setSpells, setSessions, setQuests, setFactions,
   } = useCharacterData(activeId);
 
+  /* ── URL routing — tab synchronizowany z hashem (#/character, #/inventory…) ── */
+  const [location, navigate] = useLocation();
+  const VALID_TABS = new Set([
+    "character","equipment","inventory","skills","spells",
+    "npcs","locations","factions","world-all",
+    "sessions","quests",
+  ]);
+  const tabFromUrl = location.replace(/^\//, '') || "character";
+  const tab = VALID_TABS.has(tabFromUrl) ? tabFromUrl : "character";
+  const setTab = useCallback((t) => navigate("/" + t), [navigate]);
+
   /* ── UI state (pozostaje w HeroJournal — czysto prezentacyjny) ── */
-  const [tab, setTab]               = useState("character");
   const [openGroup, setOpenGroup]   = useState(null);
   const [showReset, setShowReset]       = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -288,14 +310,14 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
         {/* ── Stopka: ? i ⚙ ── */}
         <div style={{ flexShrink:0, marginTop: showHelp ? 0 : "auto", padding:"0.5rem 0.6rem", borderTop:"1px solid var(--hj-border-sub)", display:"flex", gap:"0.4rem" }}>
-          <button onClick={() => { setShowHelp(s => !s); setShowSettings(false); }} title="Help"
+          <button onClick={() => { setShowHelp(s => !s); setShowSettings(false); }} aria-label="Open help" title="Help"
             style={{ flex:1, background:showHelp?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
             ?
           </button>
 
           {/* Ustawienia — dropdown fixed, nie obcięty przez overflow sidebara */}
           <div style={{ flex:1, position:"relative" }}>
-            <button onClick={() => setShowSettings(s => !s)} title="Ustawienia"
+            <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"
               style={{ width:"100%", height:32, background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
               ⚙
             </button>
@@ -356,7 +378,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
           {/* Panel ustawień */}
           <div style={{ position:"relative" }}>
-            <button onClick={() => setShowSettings(s => !s)} title="Ustawienia"
+            <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"
               style={{ background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", lineHeight:1, width:32, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
               ⚙
             </button>
@@ -408,6 +430,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       </header>
 
       <main className="hj-content">
+      <Suspense fallback={<TabLoader/>}>
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} skills={skills} spells={spells}/>}
 
         {/* ── Equipment (virtual desktop tab) + mobile individual tabs ── */}
@@ -460,6 +483,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
         {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSesjas={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab === "quests"    && <QuestScreen       quests={quests}       setZadania={setQuests}       openEntity={openEntity}/>}
+      </Suspense>
       </main>
 
       {/* Szuflada nawigacyjna */}

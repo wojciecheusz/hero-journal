@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { SKILL_CATS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../shared/ui';
@@ -19,7 +19,7 @@ const catColor = cat => ({
   "Feat":            "#9a6030",
 })[cat] || "#8a7848";
 
-export default function SkillsScreen({ skills, setUmiejętności, openEntity }) {
+function SkillsScreen({ skills, setUmiejętności, openEntity }) {
   const T    = useT();
   const SK   = T.SKILLS;
   const CATS = T.SKILL_CATS;
@@ -131,7 +131,7 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
                 </div>
               </div>
               <PrzypnijBtn pinned={sk.pinned} onToggle={() => upd(sk.id,"pinned",!sk.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(sk.id)} title="Edytuj">✎</button>
+              <button className="entity-toggle" onClick={() => startEdit(sk.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(sk.id)}>{open?"▲":"▼"}</button>
             </div>
 
@@ -160,3 +160,4 @@ export default function SkillsScreen({ skills, setUmiejętności, openEntity }) 
     </>
   );
 }
+export default memo(SkillsScreen);

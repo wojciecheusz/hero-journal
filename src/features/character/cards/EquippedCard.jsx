@@ -26,12 +26,12 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
               <div key={type} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"0.25rem" }}>
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", textTransform:"uppercase", color, lineHeight:1 }}>{label}</span>
                 <div style={{ display:"flex", alignItems:"center", gap:"0.2rem" }}>
-                  <button onClick={() => updCoins(type, val-1)} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>−</button>
+                  <button onClick={() => updCoins(type, val-1)} aria-label={`Decrease ${type}`} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>−</button>
                   <input type="number" min={0} value={val}
                     onChange={e => updCoins(type, parseInt(e.target.value)||0)}
                     onFocus={e => e.target.select()}
                     style={{ width:46, fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, textAlign:"center", background:"transparent", border:"none", borderBottom:`1px dashed ${color}`, outline:"none", color:"inherit" }}/>
-                  <button onClick={() => updCoins(type, val+1)} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>+</button>
+                  <button onClick={() => updCoins(type, val+1)} aria-label={`Increase ${type}`} style={{ width:22, height:22, background:"transparent", border:"1px solid var(--pip-empty)", cursor:"pointer", fontFamily:"monospace", fontSize:"0.85rem", color:"inherit", lineHeight:1 }}>+</button>
                 </div>
               </div>
             );
