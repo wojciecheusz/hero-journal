@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { useLocation } from 'wouter';
+import { syncI18nLang } from '../i18n/i18n';
 import { THEMES, PALETTES, PALETTE_LABELS } from '../theme/themes';
 import { DEFAULT_CHAR } from '../constants/gameConstants';
 import {
@@ -78,8 +79,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [showTutorial, setShowTutorial] = useState(() => !localStorage.getItem("hj_tutorial_seen"));
   const [openEntity, setOpenEntity] = useState(null);
 
-  /* ── setLang synchronizacja (detectLang może się różnić od TRANSLATIONS context) ── */
-  // lang jest zarządzany przez useLanguage i przekazany do LangContext
+  /* ── Synchronizacja i18next z aktywnym językiem ─────────────── */
+  useEffect(() => { syncI18nLang(lang); }, [lang]);
 
   /* ── Auto-resize textarea: listener na input ─────────────────── */
   useEffect(() => {

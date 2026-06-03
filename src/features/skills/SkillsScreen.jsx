@@ -3,6 +3,7 @@ import { SKILL_CATS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
+import styles from './SkillsScreen.module.css';
 
 const catColor = cat => ({
   // Enum keys (po migracji)
@@ -64,7 +65,7 @@ function SkillsScreen({ skills, setUmiejętności, openEntity }) {
   return (
     <>
       <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{SK.count(skills.length, inUseCount)}</span>
+        <span className={styles.countBar}>{SK.count(skills.length, inUseCount)}</span>
         <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? SK.cancel : SK.add}</button>
       </div>
 
@@ -98,13 +99,13 @@ function SkillsScreen({ skills, setUmiejętności, openEntity }) {
 
       {/* Legenda kategorii */}
       {skills.length > 0 && (
-        <div style={{ display:"flex", gap:"0.75rem", flexWrap:"wrap", padding:"0.4rem 0.6rem", background:"rgba(128,128,128,0.04)", border:"1px solid var(--hj-border)", borderRadius:"2px" }}>
+        <div className={styles.legend}>
           {[["Umiejętność","#c9943e"],["Cecha rasowa","#4a8aaa"],["Atut","#9a6030"]].map(([plCat,color],i) => {
             const displayLabel = CATS[i] ?? plCat;
             return (
-              <div key={plCat} style={{ display:"flex", alignItems:"center", gap:"0.3rem" }}>
-                <div style={{ width:8, height:8, borderRadius:"50%", background:color, flexShrink:0 }}/>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", textTransform:"uppercase", color }}>{displayLabel}</span>
+              <div key={plCat} className={styles.legendItem}>
+                <div className={styles.legendDot} style={{ background:color }}/>
+                <span className={styles.legendLabel} style={{ color }}>{displayLabel}</span>
               </div>
             );
           })}

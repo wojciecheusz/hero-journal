@@ -1,13 +1,12 @@
 import { useState, memo } from 'react';
 import { LEGEND_ITEMS } from '../../constants/gameConstants';
 import { parseEntityLinksWithTooltips } from '../../shared/ui';
-import { useT } from '../../i18n/translations';
+import { useTranslation } from 'react-i18next';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
 function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventory, skills, onNavigate }) {
-  const T  = useT();
-  const S  = T.SESSIONS;
+  const { t } = useTranslation();
 
   const [openIds, setOpenIds] = useState({});
   const [editingId, setEditingId] = useState(null);
@@ -27,13 +26,13 @@ function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventor
   return (
     <>
       <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{S.count(sessions.length)}</span>
-        <button className="btn-ghost" onClick={addSesja}>{S.add}</button>
+        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{sessions.length} {sessions.length === 1 ? "session" : "sessions"}</span>
+        <button className="btn-ghost" onClick={addSesja}>{t('SESSIONS.add')}</button>
       </div>
 
       {hasAny && (
         <div className="sess-legend">
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase" }}>{S.legendHint}</span>
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase" }}>{t('SESSIONS.legendHint')}</span>
           {LEGEND_ITEMS.map(li => {
             const counts = { npc: npcs.length, location: locations.length, quest: quests.length, inventory: inventory.length, skill: skills.length };
             if (!counts[li.type]) return null;
@@ -42,7 +41,7 @@ function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventor
         </div>
       )}
 
-      {sessions.length === 0 && <div className="card empty-state">{S.empty}</div>}
+      {sessions.length === 0 && <div className="card empty-state">{t('SESSIONS.empty')}</div>}
       {sessions.map(sess => {
         const open = !!openIds[sess.id];
         const editing = editingId === sess.id;
@@ -62,20 +61,20 @@ function SessionsScreen({ sessions, setSesjas, npcs, locations, quests, inventor
                 {editing ? (
                   <>
                     <textarea className="g-textarea" rows={6} autoFocus
-                      placeholder={S.notesPh}
+                      placeholder={t('SESSIONS.notesPh')}
                       value={sess.notes} onChange={e => upd(sess.id, "notes", e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(sess.id)}>{S.delete}</button>
-                      <button className="btn-ghost" onClick={() => setEditingId(null)}>{S.done}</button>
+                      <button className="btn-ghost" onClick={() => del(sess.id)}>{t('SESSIONS.delete')}</button>
+                      <button className="btn-ghost" onClick={() => setEditingId(null)}>{t('SESSIONS.done')}</button>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="sess-rendered" data-placeholder={S.emptyNote}
+                    <div className="sess-rendered" data-placeholder={t('SESSIONS.emptyNote')}
                       onClick={() => setEditingId(sess.id)}>{sess.notes ? parsed : null}</div>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(sess.id)}>{S.delete}</button>
-                      <button className="btn-ghost" style={{ opacity:0.7 }} onClick={() => setEditingId(sess.id)}>{S.edit}</button>
+                      <button className="btn-ghost" onClick={() => del(sess.id)}>{t('SESSIONS.delete')}</button>
+                      <button className="btn-ghost" style={{ opacity:0.7 }} onClick={() => setEditingId(sess.id)}>{t('SESSIONS.edit')}</button>
                     </div>
                   </>
                 )}

@@ -8,6 +8,7 @@ import LoadingScreen from './app/LoadingScreen';
 import ErrorBoundary from './app/ErrorBoundary';
 import { Router } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
+import './i18n/i18n.js';
 import './styles/global.css';
 
 export default function App() {
