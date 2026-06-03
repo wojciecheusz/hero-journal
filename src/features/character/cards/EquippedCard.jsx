@@ -1,9 +1,17 @@
 import { useState, useCallback } from 'react';
 import { ITEM_ICONS } from '../../../constants/gameConstants';
 import { SpellSlotsWidget } from '../../../shared/ui';
+import { useT } from '../../../i18n/translations';
 
 export default function EquippedCard({ char, setChar, C, inventory, skills, spells }) {
+  const T = useT();
+  const LB = T.LABELS;
   const [activeTab, setActiveTab] = useState("items");
+
+  const displayItemType  = type     => LB.itemType?.[type]  ?? type;
+  const displaySpellLevel= level    => LB.spellLevel?.[level] ?? level;
+  const displaySpellSchool= school  => LB.spellSchool?.[school] ?? school;
+  const displaySkillCat  = category => LB.skillCat?.[category] ?? category;
 
   const equippedItems = (inventory || []).filter(i => i.equipped);
   const activeSkills  = (skills || []).filter(s => s.inUse);
@@ -59,7 +67,7 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
             <div className="flex1">
               <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                 <span className="equipped-name">{item.name}</span>
-                <span className="equipped-type-badge">{item.type}</span>
+                <span className="equipped-type-badge">{displayItemType(item.type)}</span>
                 {item.qty && item.qty!=="1" && <span className="equipped-type-badge">×{item.qty}</span>}
               </div>
               {item.damage && <div className="equipped-stat">⚔ {item.damage}{item.damageType?` (${item.damageType})`:""}{item.modifier?` · +${parseInt(item.modifier)||0}`:""}</div>}
@@ -79,7 +87,7 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
             <div className="flex1">
               <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                 <span className="equipped-name">{sk.name}</span>
-                <span className="equipped-skill-badge">{sk.category}</span>
+                <span className="equipped-skill-badge">{displaySkillCat(sk.category)}</span>
               </div>
               {sk.description && <div className="equipped-stat">{sk.description}</div>}
             </div>
@@ -98,8 +106,8 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
                   <div className="flex1">
                     <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                       <span className="equipped-name" style={{ color:"var(--spell-text)" }}>{sp.name}</span>
-                      <span className="equipped-spell-badge">{sp.level}</span>
-                      {sp.school && <span className="equipped-spell-badge">{sp.school}</span>}
+                      <span className="equipped-spell-badge">{displaySpellLevel(sp.level)}</span>
+                      {sp.school && <span className="equipped-spell-badge">{displaySpellSchool(sp.school)}</span>}
                     </div>
                     {sp.description && <div className="equipped-stat">{sp.description}</div>}
                   </div>
