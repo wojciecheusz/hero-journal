@@ -75,6 +75,9 @@ export const TRANSLATIONS = {
       resetText:"Spowoduje to trwałe usunięcie wszystkich danych postaci. Tej operacji nie można cofnąć.",
       resetCancel:"Anuluj", resetConfirm:"Usuń wszystko",
       loading:"Synchronizacja…",
+      loadingAuth:"Sprawdzanie sesji…",
+      loadingSync:"Pobieranie danych z chmury…",
+      searchPlaceholder:"Szukaj…",
       loginTagline:"Zaloguj się, aby synchronizować kampanię między komputerem a telefonem.",
       loginBtn:"Zaloguj przez Google", loginBtnLoading:"Logowanie…",
       loginPrivacy:"Twoje dane kampanii są prywatne — dostępne wyłącznie na Twoim koncie Google.",
@@ -458,6 +461,9 @@ export const TRANSLATIONS = {
       resetText:"This will permanently delete all character data. This action cannot be undone.",
       resetCancel:"Cancel", resetConfirm:"Delete everything",
       loading:"Synchronizing…",
+      loadingAuth:"Checking session…",
+      loadingSync:"Downloading data from cloud…",
+      searchPlaceholder:"Search…",
       loginTagline:"Sign in to sync your campaign between your computer and phone.",
       loginBtn:"Sign in with Google", loginBtnLoading:"Signing in…",
       loginPrivacy:"Your campaign data is private — accessible only on your Google account.",
@@ -771,10 +777,4 @@ export const TRANSLATIONS = {
         items:[
           ["⊕ Add","New quest","Fill in name, description, and reward. Quest starts as Active."],
           ["STATUS","Cycle quest status","Tap the status badge: Active → Completed → Failed → Active."],
-          ["+ Step","Add a checklist step","Break the quest into smaller goals. Check them off as you progress."],
-          ["REWARD","Edit reward","Visible and editable inside the expanded quest. Update it as the DM changes the offer."],
-        ],
-      },
-    },
-  },
-};
+          ["+ S

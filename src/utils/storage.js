@@ -33,6 +33,66 @@ export const saveProfiles  = p  => save("hj_profiles", p);
 export const loadActiveId  = () => load("hj_active_profile", null);
 export const saveActiveId  = id => save("hj_active_profile", id);
 
+/* ── Klucze specjalne chronione przed usunięciem ───────────── */
+const PROTECTED_KEYS = new Set([
+  "hj_profiles",
+  "hj_active_profile",
+  "hj_tutorial_seen",
+  "hj_enum_migration_v1",
+  "hj_lang",
+]);
+
+/**
+ * Usuwa klucze localStorage powiązane z profilami, które nie istnieją
+ * w aktualnej liście `hj_profiles`. Bezpieczne do wywołania przy starcie.
+ *
+ * @returns {{ removed: number, kept: number }} statystyki operacji
+ */
+export function pruneOrphanedData() {
+  try {
+    const knownIds = new Set(loadProfiles().map(p => p.id));
+    // Wzorzec klucza: hj_{slot}_{profileId}
+    const slotSet = new Set(CHAR_SLOTS);
+    let removed = 0;
+    let kept = 0;
+
+    // Zbieramy klucze synchronicznie (localStorage jest synchroniczne)
+    const allKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      allKeys.push(localStorage.key(i));
+    }
+
+    for (const key of allKeys) {
+      if (!key.startsWith("hj_")) continue;
+      if (PROTECTED_KEYS.has(key)) { kept++; continue; }
+
+      // Format: hj_{slot}_{profileId} — profileId może zawierać "_"
+      // Szukamy pierwszego segmentu pasującego do CHAR_SLOTS
+      const withoutPrefix = key.slice(3); // usuń "hj_"
+      const underscoreIdx = withoutPrefix.indexOf("_");
+      if (underscoreIdx === -1) { kept++; continue; }
+
+      const slot      = withoutPrefix.slice(0, underscoreIdx);
+      const profileId = withoutPrefix.slice(underscoreIdx + 1);
+
+      if (slotSet.has(slot) && !knownIds.has(profileId)) {
+        localStorage.removeItem(key);
+        removed++;
+      } else {
+        kept++;
+      }
+    }
+
+    if (removed > 0) {
+      console.info(`[HeroJournal] pruneOrphanedData: usunięto ${removed} kluczy, zachowano ${kept}`);
+    }
+    return { removed, kept };
+  } catch (e) {
+    console.warn("[HeroJournal] pruneOrphanedData: błąd", e);
+    return { removed: 0, kept: 0 };
+  }
+}
+
 /* ── Walidacja danych postaci ───────────────────────────────── */
 /**
  * Zapewnia, że załadowane dane mają poprawny kształt.
@@ -147,44 +207,4 @@ const SPELL_SCHOOL_MAP = {
 function mm(val, map) { return map[val] ?? val; }
 
 function migrateQuests(q = [])    { return q.map(x => ({ ...x, status: mm(x.status, QUEST_STATUS_MAP) })); }
-function migrateSkills(s = [])    { return s.map(x => ({ ...x, category: mm(x.category, SKILL_CAT_MAP) })); }
-function migrateInventory(inv=[]) { return inv.map(x => ({ ...x, type: mm(x.type, ITEM_TYPE_MAP) })); }
-function migrateLocations(l=[])   { return l.map(x => ({ ...x, type: mm(x.type, LOC_TYPE_MAP) })); }
-function migrateFactions(f=[])    { return f.map(x => ({ ...x, type: mm(x.type, FACTION_TYPE_MAP), rank: mm(x.rank, FACTION_RANK_MAP) })); }
-function migrateSpells(s=[])      { return s.map(x => ({ ...x, level: mm(x.level, SPELL_LEVEL_MAP), school: mm(x.school, SPELL_SCHOOL_MAP) })); }
-function migrateSpellSlots(slots={}) {
-  const r = {};
-  for (const [k,v] of Object.entries(slots || {})) r[mm(k, SPELL_LEVEL_MAP)] = v;
-  return r;
-}
-function migrateChar(char={}) {
-  if (!char) return char;
-  return { ...char, spellSlots: migrateSpellSlots(char.spellSlots) };
-}
-
-export function migrateToEnums() {
-  if (localStorage.getItem(MIGRATION_KEY)) return;
-  loadProfiles().forEach(({ id }) => {
-    const c = loadChar("char",      id, null);
-    const i = loadChar("inventory", id, null);
-    const s = loadChar("skills",    id, null);
-    const sp= loadChar("spells",    id, null);
-    const l = loadChar("locations", id, null);
-    const f = loadChar("factions",  id, null);
-    const q = loadChar("quests",    id, null);
-    if (c)  saveChar("char",      id, migrateChar(c));
-    if (i)  saveChar("inventory", id, migrateInventory(i));
-    if (s)  saveChar("skills",    id, migrateSkills(s));
-    if (sp) saveChar("spells",    id, migrateSpells(sp));
-    if (l)  saveChar("locations", id, migrateLocations(l));
-    if (f)  saveChar("factions",  id, migrateFactions(f));
-    if (q)  saveChar("quests",    id, migrateQuests(q));
-  });
-  localStorage.setItem(MIGRATION_KEY, "1");
-}
-
-export const _migrationMaps = {
-  QUEST_STATUS_MAP, SKILL_CAT_MAP, ITEM_TYPE_MAP,
-  LOC_TYPE_MAP, FACTION_TYPE_MAP, FACTION_RANK_MAP,
-  SPELL_LEVEL_MAP, SPELL_SCHOOL_MAP,
-};
+function migrateSkills(s = [])    { return s.map(x => ({ ...x

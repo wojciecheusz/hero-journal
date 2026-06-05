@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { validateArray, validateCharData } from '../utils/storage.js';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { validateArray, validateCharData, pruneOrphanedData } from '../utils/storage.js';
 
 const DEFAULTS = {
   name: "", race: "", classes: [{ name: "Adventurer", level: 1 }],
@@ -70,6 +70,4 @@ describe('validateCharData()', () => {
   it('falls back to default for non-numeric xp', () => {
     const data = { ...DEFAULTS, xp: "invalid" };
     const result = validateCharData(data, DEFAULTS);
-    expect(result.xp).toBe(0);
-  });
-});
+    expect(

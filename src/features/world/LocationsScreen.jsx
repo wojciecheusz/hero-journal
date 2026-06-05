@@ -1,7 +1,7 @@
 import { useState, memo } from 'react';
 import { LOC_TYPES } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
-import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
+import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
@@ -13,6 +13,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
   const [expanded, setExpanded] = useState({});
   const [editing,  setEditing]  = useState({});
   const [activeTag, setActiveTag] = useState(null);
+  const [search, setSearch] = useState('');
 
   useScrollToEntity(openEntity, locations, setExpanded);
 
@@ -30,7 +31,11 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
   const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
 
-  const visible = locations.filter(l => !activeTag || (l.tags || []).includes(activeTag)).sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
+  const q = search.trim().toLowerCase();
+  const visible = locations
+    .filter(l => !activeTag || (l.tags || []).includes(activeTag))
+    .filter(l => !q || [l.name, l.notes].some(f => f?.toLowerCase().includes(q)))
+    .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
   const displayLocType = type => T.LABELS.locType[type] || type;
 
   return (
@@ -57,6 +62,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
         </div>
       )}
 
+      <SearchBar value={search} onChange={setSearch}/>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
       {locations.length === 0 && <div className="card empty-state">{T.LOCATIONS.empty}</div>}
 
@@ -93,14 +99,4 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
                 <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
                   <button className="btn-ghost" onClick={() => del(loc.id)}>{T.LOCATIONS.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(loc.id)}>✓</button>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </>
-  );
-}
-export default memo(LocationsScreen);
+ 

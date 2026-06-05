@@ -1,7 +1,7 @@
 import { useState, memo } from 'react';
 import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS } from '../../constants/gameConstants';
 import { FACTION_TYPE, FACTION_RANK } from '../../constants/enums.js';
-import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
+import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
@@ -15,6 +15,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
   const [editing, setEditing] = useState({});
   const [activeTag, setActiveTag] = useState(null);
   const [filterType, setFilterType] = useState(null);
+  const [search, setSearch] = useState('');
 
   useScrollToEntity(openEntity, factions, setExpanded);
 
@@ -38,7 +39,11 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
     return { ...x, rank: FACTION_RANKS[(idx+1)%FACTION_RANKS.length] };
   }));
 
-  const visible = factions.filter(f => (!activeTag||(f.tags||[]).includes(activeTag)) && (!filterType||f.type===filterType)).sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
+  const q = search.trim().toLowerCase();
+  const visible = factions
+    .filter(f => (!activeTag||(f.tags||[]).includes(activeTag)) && (!filterType||f.type===filterType))
+    .filter(f => !q || [f.name, f.goal, f.notes, f.leader, f.headquarters].some(v => v?.toLowerCase().includes(q)))
+    .sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
 
   return (
     <>
@@ -75,6 +80,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
         </div>
       )}
 
+      <SearchBar value={search} onChange={setSearch}/>
       <div className="filter-bar">
         <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={() => setFilterType(null)}>{F.all}</button>
         {FACTION_TYPES.map(t => { const c=factions.filter(f=>f.type===t).length; if(!c) return null; return <button key={t} className={`filter-tag${filterType===t?" active-filter":""}`} onClick={() => setFilterType(filterType===t?null:t)}>{t} ({c})</button>; })}
@@ -127,15 +133,4 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(fac.id)}>{F.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(fac.id)}>✓</button>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </>
-  );
-}
-export default memo(FactionsPanel);
+                  <button className="btn-ghost" onClick={() =

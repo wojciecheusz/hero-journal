@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { auth, googleProvider, firebaseReady } from './firebase/index';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { syncFromCloud } from './firebase/firestore';
+import { pruneOrphanedData } from './utils/storage';
 import HeroJournal from './app/HeroJournal';
 import LoginScreen from './app/LoginScreen';
 import LoadingScreen from './app/LoadingScreen';
@@ -17,13 +18,16 @@ export default function App() {
   const [loginLoading, setLogin]  = useState(false);
   const [appKey, setAppKey]       = useState(0);
   const [syncing, setSyncing]     = useState(false);
+  const [loadStage, setLoadStage] = useState('auth');
 
   useEffect(() => {
-    if (!firebaseReady) { setAuthReady(true); return; }
+    if (!firebaseReady) { pruneOrphanedData(); setAuthReady(true); return; }
     return onAuthStateChanged(auth, async firebaseUser => {
       if (firebaseUser) {
+        setLoadStage('sync');
         setSyncing(true);
         await syncFromCloud(firebaseUser.uid);
+        pruneOrphanedData();
         setSyncing(false);
         setUser(firebaseUser);
         setAppKey(k => k + 1);
@@ -48,25 +52,16 @@ export default function App() {
 
   const handleCloudRefresh = async () => {
     if (!user?.uid) return;
+    setLoadStage('sync');
     setSyncing(true);
     await syncFromCloud(user.uid);
     setSyncing(false);
     setAppKey(k => k + 1);
   };
 
-  if (!authReady || syncing) return <LoadingScreen/>;
+  if (!authReady || syncing) return <LoadingScreen stage={loadStage}/>;
   if (firebaseReady && !user)  return <LoginScreen onLogin={handleLogin} loading={loginLoading}/>;
 
   return (
     <Router hook={useHashLocation}>
-      <ErrorBoundary onReset={() => setAppKey(k => k + 1)}>
-        <HeroJournal
-          key={appKey}
-          user={user}
-          onLogout={user ? handleLogout : null}
-          onCloudRefresh={user ? handleCloudRefresh : null}
-        />
-      </ErrorBoundary>
-    </Router>
-  );
-}
+      <ErrorBoundary onReset={() => setAppKey(k => k + 1)}

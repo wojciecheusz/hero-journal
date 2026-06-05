@@ -1,6 +1,6 @@
 import { useState, memo } from 'react';
 import { REL_CYCLE } from '../../constants/gameConstants';
-import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
+import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
@@ -14,6 +14,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const [expanded, setExpanded] = useState({});
   const [editing, setEditing] = useState({});
   const [activeTag, setActiveTag] = useState(null);
+  const [search, setSearch] = useState('');
 
   useScrollToEntity(openEntity, npcs, setExpanded);
 
@@ -32,7 +33,12 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
   const cycleRel  = id => setNPCs(l => l.map(x => x.id === id ? { ...x, relation: REL_CYCLE[x.relation || "unknown"] } : x));
 
-  const visible = npcs.filter(n => !activeTag || (n.tags || []).includes(activeTag)).sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
+  const q = search.trim().toLowerCase();
+  const visible = npcs
+    .filter(n => !activeTag || (n.tags || []).includes(activeTag))
+    .filter(n => !q || [n.name, n.role, n.affiliation, n.notes, n.connections]
+      .some(f => f?.toLowerCase().includes(q)))
+    .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
 
   return (
     <>
@@ -64,6 +70,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
         </div>
       )}
 
+      <SearchBar value={search} onChange={setSearch}/>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
       {npcs.length === 0 && <div className="card empty-state">{N.empty}</div>}
 
@@ -101,15 +108,4 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
               <div style={{ marginTop:"0.8rem" }}>
                 <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(npc.id)}>✓</button>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </>
-  );
-}
-export default memo(NPCsScreen);
+                  <button className="btn-ghost"
