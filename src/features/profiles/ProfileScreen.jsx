@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstants';
-import { clamp } from '../../utils/math';
+import { clamp, statMod } from '../../utils/math';
 import { THEMES, PALETTES } from '../../theme/themes';
 import { useT } from '../../i18n/translations';
 import { save } from '../../utils/storage';
@@ -110,7 +110,6 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
 
   const STEPS = P.stepNames;
   const stats = useCustom ? customStats : (STAT_ARRAYS[statArray] || STAT_ARRAYS["Zestaw standardowy"]);
-  const statMod = v => { const m = Math.floor((v - 10) / 2); return m >= 0 ? `+${m}` : String(m); };
   const canNext = [name.trim().length > 0, cls !== null, true, true, true, true][step];
 
   const handleFinish = () => {

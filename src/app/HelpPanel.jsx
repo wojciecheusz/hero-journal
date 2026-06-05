@@ -50,8 +50,8 @@ export default function HelpPanel({ tab, theme, onClose }) {
           )}
 
           <div style={{ display:"flex", flexDirection:"column", gap:"0" }}>
-            {content.items.map(([icon, label, desc], i) => (
-              <div key={i} style={{ display:"flex", gap:"0.75rem", padding:"0.65rem 0", borderBottom:`1px solid ${t.borderSub}` }}>
+            {content.items.map(([icon, label, desc]) => (
+              <div key={label} style={{ display:"flex", gap:"0.75rem", padding:"0.65rem 0", borderBottom:`1px solid ${t.borderSub}` }}>
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:t.accent, minWidth:48, textAlign:"center", background:`${t.accent}12`, border:`1px solid ${t.accentBorder}`, padding:"0.2rem 0.3rem", borderRadius:"2px", flexShrink:0, alignSelf:"flex-start", lineHeight:1.5 }}>
                   {icon}
                 </span>

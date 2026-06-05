@@ -1,12 +1,12 @@
 import { useState, memo } from 'react';
 import { STATUS_CYCLE, QUEST_STATUSES } from '../../constants/enums.js';
-import { useTranslation } from 'react-i18next';
+import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
 function QuestScreen({ quests, setQuests, openEntity }) {
-  const { t } = useTranslation();
+  const T = useT();
 
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
@@ -33,20 +33,20 @@ function QuestScreen({ quests, setQuests, openEntity }) {
   return (
     <>
       <div className="card">
-        <div className="sect-label">{t('QUESTS.newTitle')}</div>
+        <div className="sect-label">{T.QUESTS.newTitle}</div>
         <div className="col">
-          <input className="g-input" placeholder={t('QUESTS.namePh')} value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key==="Enter" && addQuest()}/>
-          <input className="g-input" placeholder={t('QUESTS.descPh')} value={desc} onChange={e => setDesc(e.target.value)}/>
-          <input className="g-input" placeholder={t('QUESTS.rewardPh')} value={reward} onChange={e => setReward(e.target.value)}/>
-          <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addQuest}>{t('QUESTS.addBtn')}</button></div>
+          <input className="g-input" placeholder={T.QUESTS.namePh} value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key==="Enter" && addQuest()}/>
+          <input className="g-input" placeholder={T.QUESTS.descPh} value={desc} onChange={e => setDesc(e.target.value)}/>
+          <input className="g-input" placeholder={T.QUESTS.rewardPh} value={reward} onChange={e => setReward(e.target.value)}/>
+          <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addQuest}>{T.QUESTS.addBtn}</button></div>
         </div>
       </div>
 
-      {quests.length === 0 && <div className="card empty-state">{t('QUESTS.empty')}</div>}
+      {quests.length === 0 && <div className="card empty-state">{T.QUESTS.empty}</div>}
 
       {QUEST_STATUSES.map(status => {
         const filtered = quests.filter(q => q.status === status); if (!filtered.length) return null;
-        const displayStatus = t(`LABELS.questStatus.${status}`, status);
+        const displayStatus = T.LABELS.questStatus[status] || status;
         const lc = status==="active" ? "#c9943e" : status==="completed" ? "#5a8a5a" : "#8a3a3a";
         return (
           <div key={status} style={{ display:"flex", flexDirection:"column", gap:"0.5rem" }}>
@@ -62,12 +62,12 @@ function QuestScreen({ quests, setQuests, openEntity }) {
                     <div className="flex1">
                       <div className="row" style={{ marginBottom:"0.3rem", flexWrap:"wrap", gap:"0.4rem" }}>
                         <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.95rem", fontWeight:700 }}
-                          value={quest.name} onChange={e => upd(quest.id,"name",e.target.value)} placeholder={t('QUESTS.editNamePh')}/>
+                          value={quest.name} onChange={e => upd(quest.id,"name",e.target.value)} placeholder={T.QUESTS.editNamePh}/>
                         <button className={`badge ${cls}`} onClick={() => cycle(quest.id)} aria-label={`Change status: ${displayStatus}`}>{displayStatus}</button>
                       </div>
                       <input className="iedit" style={{ fontSize:"0.92rem", fontStyle:"italic" }}
-                        value={quest.description||""} onChange={e => upd(quest.id,"description",e.target.value)} placeholder={t('QUESTS.editDescPh')}/>
-                      {quest.reward && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.1em", color:"var(--quest-reward)", marginTop:"0.3rem" }}>{t('QUESTS.reward')} {quest.reward}</div>}
+                        value={quest.description||""} onChange={e => upd(quest.id,"description",e.target.value)} placeholder={T.QUESTS.editDescPh}/>
+                      {quest.reward && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.1em", color:"var(--quest-reward)", marginTop:"0.3rem" }}>{T.QUESTS.reward} {quest.reward}</div>}
                       {steps.length>0 && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", marginTop:"0.2rem", opacity:0.6 }}>{doneCount}/{steps.length}</div>}
                     </div>
                     <button className="entity-toggle" onClick={() => toggle(quest.id)} aria-label={open?"Collapse":"Expand"} style={{ marginTop:"0.1rem" }}>{open?"▲":"▼"}</button>
@@ -80,18 +80,18 @@ function QuestScreen({ quests, setQuests, openEntity }) {
                         <div key={step.id} className="checklist-item">
                           <div className={`check-box${step.done?" checked":""}`} onClick={() => updStep(quest.id,step.id,"done",!step.done)}/>
                           <input className={`iedit flex1 checklist-text${step.done?" done":""}`} style={{ fontSize:"0.92rem" }}
-                            value={step.text} onChange={e => updStep(quest.id,step.id,"text",e.target.value)} placeholder={t('QUESTS.stepPh')}/>
+                            value={step.text} onChange={e => updStep(quest.id,step.id,"text",e.target.value)} placeholder={T.QUESTS.stepPh}/>
                           <button aria-label="Delete step" style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:"0.75rem", opacity:0.3 }}
                             onMouseEnter={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="0.3"}
                             onClick={() => delStep(quest.id,step.id)}>✕</button>
                         </div>
                       ))}
                       <div className="row mt05" style={{ justifyContent:"space-between", alignItems:"flex-end" }}>
-                        <button className="btn-sm" onClick={() => addStep(quest.id)}>{t('QUESTS.addStep')}</button>
+                        <button className="btn-sm" onClick={() => addStep(quest.id)}>{T.QUESTS.addStep}</button>
                         <div style={{ display:"flex", flexDirection:"column", gap:"0.1rem" }}>
-                          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase", opacity:0.6 }}>{t('QUESTS.modifyReward')}</span>
+                          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase", opacity:0.6 }}>{T.QUESTS.modifyReward}</span>
                           <input className="iedit" style={{ fontSize:"0.88rem", color:"var(--quest-reward)", minWidth:120 }}
-                            value={quest.reward||""} onChange={e => upd(quest.id,"reward",e.target.value)} placeholder={t('QUESTS.rewardEditPh')}/>
+                            value={quest.reward||""} onChange={e => upd(quest.id,"reward",e.target.value)} placeholder={T.QUESTS.rewardEditPh}/>
                         </div>
                       </div>
                     </div>

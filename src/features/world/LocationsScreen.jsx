@@ -2,11 +2,11 @@ import { useState, memo } from 'react';
 import { LOC_TYPES } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn } from '../../shared/ui';
-import { useTranslation } from 'react-i18next';
+import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
 function LocationsScreen({ locations, setLocations, openEntity }) {
-  const { t } = useTranslation();
+  const T = useT();
 
   const [form, setForm] = useState({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"" });
   const [showForm, setShowForm] = useState(false);
@@ -31,34 +31,34 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
 
   const visible = locations.filter(l => !activeTag || (l.tags || []).includes(activeTag)).sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
-  const displayLocType = type => t(`LABELS.locType.${type}`, type);
+  const displayLocType = type => T.LABELS.locType[type] || type;
 
   return (
     <>
       <div className="row" style={{ justifyContent:"space-between" }}>
         <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{locations.length} {locations.length === 1 ? "location" : "locations"}</span>
-        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? t('LOCATIONS.cancel') : t('LOCATIONS.add')}</button>
+        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? T.LOCATIONS.cancel : T.LOCATIONS.add}</button>
       </div>
 
       {showForm && (
         <div className="add-form">
           <div className="col">
-            <input className="g-input" placeholder={t('LOCATIONS.namePh')} value={form.name}
+            <input className="g-input" placeholder={T.LOCATIONS.namePh} value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key==="Enter" && addLoc()}/>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
-              {LOC_TYPES.map((type, i) => (
+              {LOC_TYPES.map((type) => (
                 <button key={type} className="filter-tag" style={{ opacity: form.type===type?1:0.45, borderColor: form.type===type?"currentColor":"" }}
                   onClick={() => setForm(f => ({ ...f, type }))}>{displayLocType(type)}</button>
               ))}
             </div>
-            <textarea className="g-textarea" rows={3} placeholder={t('LOCATIONS.notesPh')} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addLoc}>{t('LOCATIONS.addBtn')}</button></div>
+            <textarea className="g-textarea" rows={3} placeholder={T.LOCATIONS.notesPh} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
+            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addLoc}>{T.LOCATIONS.addBtn}</button></div>
           </div>
         </div>
       )}
 
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-      {locations.length === 0 && <div className="card empty-state">{t('LOCATIONS.empty')}</div>}
+      {locations.length === 0 && <div className="card empty-state">{T.LOCATIONS.empty}</div>}
 
       {visible.map(loc => {
         const open = !!expanded[loc.id];
@@ -67,7 +67,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
           <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
-                value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={t('LOCATIONS.editNamePh')}/>
+                value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={T.LOCATIONS.editNamePh}/>
               <PrzypnijBtn pinned={loc.pinned} onToggle={() => upd(loc.id, "pinned", !loc.pinned)}/>
               <button className="entity-toggle" onClick={() => startEdit(loc.id)} aria-label="Edit location">✎</button>
               <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}>{open ? "▲" : "▼"}</button>
@@ -90,9 +90,9 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
                       onClick={() => upd(loc.id, "type", type)}>{displayLocType(type)}</button>
                   ))}
                 </div>
-                <textarea className="g-textarea" rows={4} placeholder={t('LOCATIONS.editNotesPh')} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
+                <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(loc.id)}>{t('LOCATIONS.delete')}</button>
+                  <button className="btn-ghost" onClick={() => del(loc.id)}>{T.LOCATIONS.delete}</button>
                   <button className="btn-ghost" onClick={() => stopEdit(loc.id)}>✓</button>
                 </div>
               </div>

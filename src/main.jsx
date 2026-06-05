@@ -6,10 +6,6 @@ import App from "./App";
 
 import "./styles/global.css";
 
-import { ThemeProvider } from "./theme/ThemeProvider";
-
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <ThemeProvider>
-    <App />
-  </ThemeProvider>
+  <App />
 );

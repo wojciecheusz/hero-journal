@@ -120,7 +120,10 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   }, [data.char.name, data.char.classes, activeId]);
 
   /* ── Cloud save (debounced 1.5 s per klucz) ─────────────────── */
-  const _cloudQueue = useRef(new Map());
+  const _cloudQueue    = useRef(new Map());
+  const _cloudErrCount = useRef(0);
+  const [syncFailed, setSyncFailed] = useState(false);
+
   useEffect(() => {
     if (!user?.uid) { setCloudSaveHook(null); return; }
     const uid   = user.uid;
@@ -128,7 +131,11 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     setCloudSaveHook((key, val) => {
       clearTimeout(queue.get(key));
       queue.set(key, setTimeout(() => {
-        cloudSave(uid, key, val).catch(e => console.warn('[HJ] cloudSave error:', e.message));
+        cloudSave(uid, key, val).catch(e => {
+          console.warn('[HJ] cloudSave error:', e.message);
+          _cloudErrCount.current += 1;
+          if (_cloudErrCount.current >= 3) setSyncFailed(true);
+        });
         queue.delete(key);
       }, 1500));
     });
@@ -209,6 +216,13 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     <LangContext.Provider value={lang}>
     <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
+      {syncFailed && (
+        <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"#5a1a1a", border:"1px solid #8a3a3a", color:"#f0c0c0", fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.5rem 1rem", display:"flex", gap:"0.8rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 4px 16px rgba(0,0,0,0.5)" }}>
+          <span>☁ Błąd synchronizacji — dane zapisane lokalnie</span>
+          <button onClick={() => { setSyncFailed(false); _cloudErrCount.current = 0; }}
+            style={{ background:"transparent", border:"none", color:"inherit", cursor:"pointer", fontSize:"0.9rem", lineHeight:1, padding:0, flexShrink:0 }}>✕</button>
+        </div>
+      )}
       {showTutorial && <TutorialModal theme={theme} onClose={() => { setShowTutorial(false); save("hj_tutorial_seen","1"); }}/>}
       {/* HelpPanel — tylko na mobile (sidebar przejmuje rolę na desktop) */}
       {showHelp && <HelpPanel tab={tab} theme={theme} onClose={() => setShowHelp(false)}/>}
@@ -288,8 +302,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
                 </p>
               )}
               {/* Pozycje pomocy */}
-              {hc.items.map(([icon, label, desc], i) => (
-                <div key={i} style={{ paddingBottom:"0.5rem", marginBottom:"0.5rem", borderBottom:"1px solid var(--hj-border-sub)" }}>
+              {hc.items.map(([icon, label, desc]) => (
+                <div key={label} style={{ paddingBottom:"0.5rem", marginBottom:"0.5rem", borderBottom:"1px solid var(--hj-border-sub)" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", marginBottom: desc ? "0.2rem" : 0 }}>
                     <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", color:"var(--hj-accent)", background:`rgba(226,185,78,0.1)`, border:"1px solid var(--hj-accent-border)", padding:"0.12rem 0.3rem", borderRadius:"2px", flexShrink:0, whiteSpace:"nowrap" }}>
                       {icon}
