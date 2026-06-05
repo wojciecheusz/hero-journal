@@ -46,9 +46,10 @@ export function FilterBar({ allTags, activeTag, onSelect }) {
 
 export function SearchBar({ value, onChange }) {
   const T = useT();
+  const clearSearch = () => onChange('');
   return (
     <div style={{ position:"relative", display:"flex", alignItems:"center" }}>
-      <span style={{ position:"absolute", left:"0.5rem", fontSize:"0.75rem", opacity:0.45, pointerEvents:"none" }}>🔍</span>
+      <span style={{ position:"absolute", left:"0.5rem", fontSize:"0.75rem", opacity:0.45, pointerEvents:"none" }}>?</span>
       <input
         type="search"
         className="g-input"
@@ -59,10 +60,10 @@ export function SearchBar({ value, onChange }) {
       />
       {value && (
         <button
-          onClick={() => onChange('')}
-          aria-label="Wyczyść"
+          onClick={clearSearch}
+          aria-label="Wyczysc"
           style={{ position:"absolute", right:"0.4rem", background:"none", border:"none", cursor:"pointer", fontSize:"0.8rem", opacity:0.5, color:"inherit" }}
-        >✕</button>
+        >x</button>
       )}
     </div>
   );
@@ -286,4 +287,28 @@ export function RestModal({ type, char, setChar, onClose }) {
               ))}
             </div>
             <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem" }}>
-              <bu
+              <button className="btn-ghost" onClick={onClose}>{R.cancel}</button>
+              <button className="btn-ghost" onClick={doLongRest}>{R.doLongRest}</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ResetModal({ onConfirm, onCancel }) {
+  const T = useT();
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}>
+        <div className="modal-title">{T.UI.resetTitle}</div>
+        <p className="modal-text">{T.UI.resetText}</p>
+        <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem" }}>
+          <button className="btn-ghost" onClick={onCancel}>{T.UI.resetCancel}</button>
+          <button className="btn-danger" onClick={onConfirm}>{T.UI.resetConfirm}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
