@@ -56,12 +56,26 @@ export default function App() {
     setSyncing(true);
     await syncFromCloud(user.uid);
     setSyncing(false);
-    setAppKey(k => k + 1);
+    setAppKey(n => n + 1);
   };
 
-  if (!authReady || syncing) return <LoadingScreen stage={loadStage}/>;
+  // Callback wyciągnięty poza JSX — Rolldown (Linux) ma bug z `k => k+1` wewnątrz atrybutu JSX
+  const handleReset = () => setAppKey(n => n + 1);
+  const loadingStage = loadStage;
+
+  if (!authReady || syncing) return <LoadingScreen stage={loadingStage} />;
   if (firebaseReady && !user)  return <LoginScreen onLogin={handleLogin} loading={loginLoading}/>;
 
   return (
     <Router hook={useHashLocation}>
-      <ErrorBoundary onReset={() => setAppKey(k => k + 1)}
+      <ErrorBoundary onReset={handleReset}>
+        <HeroJournal
+          key={appKey}
+          user={user}
+          onLogout={user ? handleLogout : null}
+          onCloudRefresh={user ? handleCloudRefresh : null}
+        />
+      </ErrorBoundary>
+    </Router>
+  );
+}
