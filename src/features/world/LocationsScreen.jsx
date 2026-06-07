@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { LOC_TYPES } from '../../constants/gameConstants';
+import { LOC_TYPES, SUGGESTED_LOCATION_TAGS } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -86,7 +86,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
               <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{loc.notes}</p>
             )}
 
-            <TagsEditor tags={loc.tags || []} onChange={v => upd(loc.id, "tags", v)}/>
+            <TagsEditor tags={loc.tags || []} onChange={v => upd(loc.id, "tags", v)} suggestions={SUGGESTED_LOCATION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>

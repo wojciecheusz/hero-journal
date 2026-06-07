@@ -67,7 +67,7 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Motyw kolorystyczny", resetChar:"↺ Reset postaci", syncData:"☁ Synchronizuj dane",
       logout:"⎋ Wyloguj", changeHero:"Zmień bohatera", hero:"Bohater", langToggle:"EN",
-      tagPlaceholder:"tag…", tagAdd:"+ tag",
+      tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Sugerowane:",
       filterLabel:"Filtr:", filterAll:"Wszystkie",
       noLevelSpells:"Brak zapisanych czarów poziomowych (innych niż sztuczki).",
       spellCount:(n) => `${n} czar${n !== 1 ? "y" : ""}`,
@@ -452,7 +452,7 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Color theme", resetChar:"↺ Reset character", syncData:"☁ Sync data",
       logout:"⎋ Log out", changeHero:"Change hero", hero:"Hero", langToggle:"PL",
-      tagPlaceholder:"tag…", tagAdd:"+ tag",
+      tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Suggested:",
       filterLabel:"Filter:", filterAll:"All",
       noLevelSpells:"No leveled spells saved (cantrips not counted).",
       spellCount:(n) => `${n} spell${n !== 1 ? "s" : ""}`,

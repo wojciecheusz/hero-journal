@@ -93,14 +93,15 @@ i zamienić pole tekstowe na `<select>` analogicznie do wyboru szkoły czaru
 w `SpellsScreen.jsx`.
 Pliki: `enums.js`, `gameConstants.js`, `translations.js`, `InventoryScreen.jsx`.
 
-**P5.6 — Nowe tagi lokacji: miasto, stolica, metropolia**
-`LocationsScreen.jsx` (linia ~89) używa `TagsEditor` z dowolnym tekstem — tagi są
-swobodne, nie enumem. Dodać listę sugerowanych tagów (np. `SUGGESTED_LOCATION_TAGS`
-w `gameConstants.js` z wartościami "Miasto", "Stolica", "Metropolia" + ew. inne
-typowe) wyświetlaną jako szybkie przyciski/chipsy obok edytora tagów, klikalne
-do dodania.
-Pliki: `gameConstants.js`, `LocationsScreen.jsx`, ew. `shared/ui.jsx` (TagsEditor —
-opcjonalny prop `suggestions`).
+**✅ P5.6 — Nowe tagi lokacji: miasto, stolica, metropolia — UKOŃCZONE**
+Dodano stałą `SUGGESTED_LOCATION_TAGS` (`gameConstants.js`) z wartościami
+miasto/stolica/metropolia/wioska/twierdza/świątynia. `TagsEditor` (`shared/ui.jsx`)
+otrzymał opcjonalny prop `suggestions` — wyświetla chipsy "+ tag" pod edytorem
+dla tagów jeszcze nie dodanych, klikalne do dodania jednym ruchem. Podłączono
+w `LocationsScreen.jsx` (`<TagsEditor … suggestions={SUGGESTED_LOCATION_TAGS}/>`).
+Dodano tłumaczenia `tagSuggestions` (PL/EN) i style `.tags-suggestions`,
+`.tags-suggest-label`, `.tag-suggestion` w `global.css`.
+Pliki: `gameConstants.js`, `shared/ui.jsx`, `LocationsScreen.jsx`, `translations.js`, `global.css`.
 
 **P5.7 — Różne ikony dla rodzajów zdolności (cecha rasowa / atut / umiejętność)**
 `SkillsScreen.jsx` koduje kategorię (`SKILL_CAT`) tylko kolorem (linie 9-22),

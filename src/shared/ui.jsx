@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { clamp } from '../utils/math';
 import { useT } from '../i18n/translations';
 
-export function TagsEditor({ tags, onChange }) {
+export function TagsEditor({ tags, onChange, suggestions }) {
   const T = useT();
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
@@ -11,20 +11,33 @@ export function TagsEditor({ tags, onChange }) {
     if (t && !tags.includes(t)) onChange([...tags, t]);
     setDraft(""); setAdding(false);
   };
+  const remaining = (suggestions || []).filter(s => !tags.includes(s));
   return (
-    <div className="tags-row">
-      {tags.map(tag => (
-        <span key={tag} className="tag tag-default">
-          {tag}
-          <button className="tag-remove" onClick={() => onChange(tags.filter(x => x !== tag))} aria-label="Remove tag">✕</button>
-        </span>
-      ))}
-      {adding
-        ? <input className="tag-input" autoFocus value={draft} placeholder={T.UI.tagPlaceholder}
-            onChange={e => setDraft(e.target.value)} onBlur={commit}
-            onKeyDown={e => { if (e.key === "Enter") commit(); if (e.key === "Escape") { setAdding(false); setDraft(""); } }}/>
-        : <button className="tag-add-btn" onClick={() => setAdding(true)}>{T.UI.tagAdd}</button>
-      }
+    <div>
+      <div className="tags-row">
+        {tags.map(tag => (
+          <span key={tag} className="tag tag-default">
+            {tag}
+            <button className="tag-remove" onClick={() => onChange(tags.filter(x => x !== tag))} aria-label="Remove tag">✕</button>
+          </span>
+        ))}
+        {adding
+          ? <input className="tag-input" autoFocus value={draft} placeholder={T.UI.tagPlaceholder}
+              onChange={e => setDraft(e.target.value)} onBlur={commit}
+              onKeyDown={e => { if (e.key === "Enter") commit(); if (e.key === "Escape") { setAdding(false); setDraft(""); } }}/>
+          : <button className="tag-add-btn" onClick={() => setAdding(true)}>{T.UI.tagAdd}</button>
+        }
+      </div>
+      {remaining.length > 0 && (
+        <div className="tags-row tags-suggestions">
+          <span className="tags-suggest-label">{T.UI.tagSuggestions}</span>
+          {remaining.map(tag => (
+            <button key={tag} className="tag tag-suggestion" onClick={() => onChange([...tags, tag])}>
+              + {tag}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

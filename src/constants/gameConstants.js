@@ -28,6 +28,8 @@ export const SPELL_SCHOOLS = SPELL_SCHOOLS_ENUM;
 export const SPELL_LEVELS  = SPELL_LEVELS_ENUM;
 export const SPELL_SLOT_LABELS = SPELL_LEVELS_ENUM.filter(l => l !== "cantrip");
 
+export const SUGGESTED_LOCATION_TAGS = ["miasto", "stolica", "metropolia", "wioska", "twierdza", "świątynia"];
+
 export const FACTION_RANK_COLORS = {
   [FACTION_RANK.UNKNOWN]: "#6a5a38",
   [FACTION_RANK.ALLY]:    "#5a8a5a",
