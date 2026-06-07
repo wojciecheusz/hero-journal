@@ -50,14 +50,16 @@ meta-tagu `apple-mobile-web-app-capable` to nieszkodliwe info przeglądarki
 Użytkownik zatwierdził cały pakiet poleceniem "Wykonaj wszystko". Realizacja w kolejności:
 P5.2 → P5.6 → P5.7 → P5.8 → P5.3 → P5.5 → P5.1 → P5.4. Plan szczegółowy poniżej.
 
-**P5.1 — Edytowalne wartości: bierna percepcja, DC umiejętności, atak czarami**
-Obecnie `10 + percBonus` (CombatCard.jsx:122), `8 + pb + spellAbi` (CombatCard.jsx:126)
-i bonus ataku czarami (CombatCard.jsx:130) są tylko wyświetlane (auto-liczone w
-CharacterScreen.jsx:34-36). Dodać pole nadpisania (override) analogiczne do
-`savingThrowOverride` — przechowywać w `char` (np. `passivePerceptionOverride`,
-`skillDCOverride`, `spellAttackOverride`), a w UI: wartość liczona domyślnie,
-edytowalna ręcznie z przyciskiem powrotu do auto.
-Pliki: `CombatCard.jsx`, `CharacterScreen.jsx`, `gameConstants.js` (DEFAULT_CHAR).
+**✅ P5.1 — Edytowalne wartości: bierna percepcja, DC umiejętności, atak czarami — UKOŃCZONE**
+Pola bierna percepcja / DC czarów / atak czarami w `CombatCard.jsx` zamieniono
+ze statycznych `<span>` na edytowalne `<input>` z mechanizmem nadpisania (override),
+wzorem `savingThrowOverride`. Nowe pola w `char`: `passivePerceptionOverride`,
+`skillDCOverride`, `spellAttackOverride` (dodane do `DEFAULT_CHAR` w `gameConstants.js`
+oraz do kreatora postaci `ProfileScreen.jsx`). Wartość liczona automatycznie,
+gdy pole puste/niepoprawne — czyszczone na `onBlur` (powrót do auto), wzorem
+istniejącego `initiativeBonus`. Aktywne nadpisanie podświetlone kolorem
+`var(--hj-pip-prof)`. Dodano tłumaczenie `overrideTip` (PL/EN) jako `title` pola.
+Pliki: `CombatCard.jsx`, `gameConstants.js`, `ProfileScreen.jsx`, `translations.js`.
 
 **✅ P5.2 — Długi odpoczynek resetuje stany (warunki) — UKOŃCZONE**
 W `doLongRest` (`src/shared/ui.jsx:197-211`) dodano `conditions: {}` do obiektu

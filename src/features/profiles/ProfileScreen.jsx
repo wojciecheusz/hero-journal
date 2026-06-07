@@ -109,6 +109,7 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
       name: name.trim(), race: "", classes: [{ name: cls?.name || "Poszukiwacz przygód", level }],
       stats: { ...stats }, profBonus: 2, hp: { current: 10, max: 10, temp: 0 }, ac: 10,
       initiativeBonus: undefined, savingThrows: {}, savingThrowExp: {}, savingThrowOverride: {},
+      passivePerceptionOverride: undefined, skillDCOverride: undefined, spellAttackOverride: undefined,
       skills: {}, skillExp: {}, alignment: align, background: bg.trim(),
       traits,
       personalNotes:"", backstory:"", spellSlots:{}, spellcastingAbility:"INT",

@@ -117,18 +117,31 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
         {/* ── PRAWA: Percepcja / Stany / Śmierć ── */}
         <div className="combat-group">
           <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"0.4rem" }}>
-            <div className="combat-box">
-              <span className="combat-box-label">{C.passivePerc}</span>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center" }}>{10+percBonus}</span>
-            </div>
-            <div className="combat-box">
-              <span className="combat-box-label">{C.spellDC}</span>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--hj-spell-accent)" }}>{spellDC}</span>
-            </div>
-            <div className="combat-box">
-              <span className="combat-box-label">{C.spellAtk}</span>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, display:"block", textAlign:"center", color:"var(--hj-spell-accent)" }}>{numMod(pb+spellAbi)}</span>
-            </div>
+            {[
+              [C.passivePerc, "passivePerceptionOverride", 10+percBonus, undefined],
+              [C.spellDC,     "skillDCOverride",           spellDC,       "var(--hj-spell-accent)"],
+              [C.spellAtk,    "spellAttackOverride",       pb+spellAbi,   "var(--hj-spell-accent)"],
+            ].map(([label, key, computed, color]) => {
+              const over = char[key];
+              const val  = over !== undefined ? over : computed;
+              const display = key==="spellAttackOverride" ? numMod(val) : val;
+              return (
+                <div key={key} className="combat-box" title={C.overrideTip}>
+                  <span className="combat-box-label">{label}</span>
+                  <input className="combat-box-input" type="text" inputMode="numeric" value={display}
+                    style={{ fontFamily:"Cinzel,serif", fontSize:"1.1rem", fontWeight:700, textAlign:"center", color: over !== undefined ? "var(--hj-pip-prof)" : color }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => {
+                      const raw = e.target.value.replace(/[^-\d]/g, "");
+                      upd(key, raw===""?undefined:parseInt(raw));
+                    }}
+                    onBlur={e => {
+                      if (e.target.value==="" || isNaN(parseInt(e.target.value)))
+                        setChar(c => { const o={...c}; delete o[key]; return o; });
+                    }}/>
+                </div>
+              );
+            })}
           </div>
 
           <div>

@@ -132,6 +132,7 @@ export const DEFAULT_CHAR = {
   stats: { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 },
   profBonus: 2, hp: { current: 10, max: 10, temp: 0 }, ac: 10,
   initiativeBonus: undefined,
+  passivePerceptionOverride: undefined, skillDCOverride: undefined, spellAttackOverride: undefined,
   savingThrows: {}, savingThrowExp: {}, savingThrowOverride: {},
   skills: {}, skillExp: {},
   alignment: "Bezwzględnie neutralny", background: "", race: "",
