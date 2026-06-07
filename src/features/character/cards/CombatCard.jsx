@@ -31,7 +31,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
 
         {/* ── LEWA: AC / HP / Hit Dice ── */}
         <div className="combat-group">
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.4rem" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4, minmax(0,1fr))", gap:"0.4rem" }}>
             {[
               [C.ac, char.ac||0, v => upd("ac", parseInt(v)||0), C.ac],
               [C.initiative, char.initiativeBonus !== undefined ? char.initiativeBonus : Math.floor(((char.stats?.DEX ?? 10)-10)/2), null, C.initiativeTip],
@@ -116,7 +116,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
 
         {/* ── PRAWA: Percepcja / Stany / Śmierć ── */}
         <div className="combat-group">
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"0.4rem" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3, minmax(0,1fr))", gap:"0.4rem" }}>
             {[
               [C.passivePerc, "passivePerceptionOverride", 10+percBonus, undefined],
               [C.spellDC,     "skillDCOverride",           spellDC,       "var(--hj-spell-accent)"],

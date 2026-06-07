@@ -6,6 +6,26 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P7 — Nieczytelne pole "KP" w karcie Walka przy 1920×1080 — UKOŃCZONE
+**Przyczyna:** siatka 4 boksów AC/Inicjatywa/Prędkość/Biegłość w `CombatCard.jsx`
+używała `gridTemplateColumns:"repeat(4,1fr)"`. `1fr` to skrót `minmax(auto,1fr)`
+— przy wąskiej dostępnej szerokości (przy układzie dwukolumnowym karty postaci
+na 1920px szerokość `.combat-group` wynosiła ~302px) silnik Grid przydzielał
+kolumnom miejsce wg ich `min-content` (najdłuższe nierozdzielne słowo etykiety),
+więc kolumna "KP" (najkrótsza etykieta, 16px) skurczyła się do ~30px — za wąsko
+na wartość "18" (21px czcionki, ~36px), która nachodziła na etykietę. Pozostałe
+3 kolumny ("Inicjatywa" 91px, "Prędkość" 80px, "Biegłość" 77px) "zabierały"
+przestrzeń kosztem najkrótszej.
+**Poprawka:** zmieniono na `repeat(4, minmax(0,1fr))` (i analogicznie
+`repeat(3, minmax(0,1fr))` dla siatki Percepcja/DC czarów/Atak czarami) —
+wymusza równe szerokości kolumn niezależnie od długości treści, z `min-width:0`
+pozwalającym na poprawne ścieśnianie zawartości. Zweryfikowano w Playwright
+przy viewport 1920×1080: wszystkie 4 boksy mają teraz równą szerokość ~68px,
+wartość "18" mieści się czytelnie w boksie "KP".
+Plik: `CombatCard.jsx`.
+
+---
+
 ### ✅ P6 — Pakiet 5 poprawek: Zdolności/Czary/Aktywne i Wyposażone — UKOŃCZONE
 Polecenie użytkownika rozbite na 5 niezależnych zadań:
 
