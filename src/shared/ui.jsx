@@ -49,14 +49,13 @@ export function SearchBar({ value, onChange }) {
   const clearSearch = () => onChange('');
   return (
     <div style={{ position:"relative", display:"flex", alignItems:"center" }}>
-      <span style={{ position:"absolute", left:"0.5rem", fontSize:"0.75rem", opacity:0.45, pointerEvents:"none" }}>?</span>
       <input
-        type="search"
+        type="text"
         className="g-input"
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={T.UI.searchPlaceholder}
-        style={{ paddingLeft:"1.8rem", width:"100%", minWidth:"160px" }}
+        style={{ width:"100%", minWidth:"160px" }}
       />
       {value && (
         <button
