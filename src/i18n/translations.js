@@ -777,4 +777,10 @@ export const TRANSLATIONS = {
         items:[
           ["⊕ Add","New quest","Fill in name, description, and reward. Quest starts as Active."],
           ["STATUS","Cycle quest status","Tap the status badge: Active → Completed → Failed → Active."],
-          ["+ S
+          ["+ Step","Add a checklist step","Break the quest into smaller goals. Check them off as you progress."],
+          ["REWARD","Edit reward","Visible and editable inside the expanded quest. Update it as the DM changes the offer."],
+        ],
+      },
+    },
+  },
+};

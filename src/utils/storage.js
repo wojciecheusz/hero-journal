@@ -207,4 +207,44 @@ const SPELL_SCHOOL_MAP = {
 function mm(val, map) { return map[val] ?? val; }
 
 function migrateQuests(q = [])    { return q.map(x => ({ ...x, status: mm(x.status, QUEST_STATUS_MAP) })); }
-function migrateSkills(s = [])    { return s.map(x => ({ ...x
+function migrateSkills(s = [])    { return s.map(x => ({ ...x, category: mm(x.category, SKILL_CAT_MAP) })); }
+function migrateInventory(inv=[]) { return inv.map(x => ({ ...x, type: mm(x.type, ITEM_TYPE_MAP) })); }
+function migrateLocations(l=[])   { return l.map(x => ({ ...x, type: mm(x.type, LOC_TYPE_MAP) })); }
+function migrateFactions(f=[])    { return f.map(x => ({ ...x, type: mm(x.type, FACTION_TYPE_MAP), rank: mm(x.rank, FACTION_RANK_MAP) })); }
+function migrateSpells(s=[])      { return s.map(x => ({ ...x, level: mm(x.level, SPELL_LEVEL_MAP), school: mm(x.school, SPELL_SCHOOL_MAP) })); }
+function migrateSpellSlots(slots={}) {
+  const r = {};
+  for (const [k,v] of Object.entries(slots || {})) r[mm(k, SPELL_LEVEL_MAP)] = v;
+  return r;
+}
+function migrateChar(char={}) {
+  if (!char) return char;
+  return { ...char, spellSlots: migrateSpellSlots(char.spellSlots) };
+}
+
+export function migrateToEnums() {
+  if (localStorage.getItem(MIGRATION_KEY)) return;
+  loadProfiles().forEach(({ id }) => {
+    const c = loadChar("char",      id, null);
+    const i = loadChar("inventory", id, null);
+    const s = loadChar("skills",    id, null);
+    const sp= loadChar("spells",    id, null);
+    const l = loadChar("locations", id, null);
+    const f = loadChar("factions",  id, null);
+    const q = loadChar("quests",    id, null);
+    if (c)  saveChar("char",      id, migrateChar(c));
+    if (i)  saveChar("inventory", id, migrateInventory(i));
+    if (s)  saveChar("skills",    id, migrateSkills(s));
+    if (sp) saveChar("spells",    id, migrateSpells(sp));
+    if (l)  saveChar("locations", id, migrateLocations(l));
+    if (f)  saveChar("factions",  id, migrateFactions(f));
+    if (q)  saveChar("quests",    id, migrateQuests(q));
+  });
+  localStorage.setItem(MIGRATION_KEY, "1");
+}
+
+export const _migrationMaps = {
+  QUEST_STATUS_MAP, SKILL_CAT_MAP, ITEM_TYPE_MAP,
+  LOC_TYPE_MAP, FACTION_TYPE_MAP, FACTION_RANK_MAP,
+  SPELL_LEVEL_MAP, SPELL_SCHOOL_MAP,
+};

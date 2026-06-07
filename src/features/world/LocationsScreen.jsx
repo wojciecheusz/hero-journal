@@ -99,4 +99,14 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
                 <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
                   <button className="btn-ghost" onClick={() => del(loc.id)}>{T.LOCATIONS.delete}</button>
- 
+                  <button className="btn-ghost" onClick={() => stopEdit(loc.id)}>✓</button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+export default memo(LocationsScreen);

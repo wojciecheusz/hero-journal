@@ -133,4 +133,15 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() =
+                  <button className="btn-ghost" onClick={() => del(fac.id)}>{F.delete}</button>
+                  <button className="btn-ghost" onClick={() => stopEdit(fac.id)}>✓</button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+export default memo(FactionsPanel);

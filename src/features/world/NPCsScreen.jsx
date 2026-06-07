@@ -108,4 +108,15 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
               <div style={{ marginTop:"0.8rem" }}>
                 <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost"
+                  <button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button>
+                  <button className="btn-ghost" onClick={() => stopEdit(npc.id)}>✓</button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+export default memo(NPCsScreen);
