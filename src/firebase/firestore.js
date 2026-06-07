@@ -26,5 +26,9 @@ export async function syncFromCloud(uid) {
  */
 export async function cloudSave(uid, key, value) {
   if (!db) return;
-  await setDoc(doc(db, 'users', uid, 'data', key), { value });
+  /* Firestore odrzuca pola o wartości `undefined` (np. initiativeBonus jako
+     sentinel "brak nadpisania") — JSON round-trip usuwa je rekurencyjnie,
+     analogicznie do zapisu w localStorage. */
+  const sanitized = JSON.parse(JSON.stringify({ value }));
+  await setDoc(doc(db, 'users', uid, 'data', key), sanitized);
 }
