@@ -3,7 +3,7 @@ import { _migrationMaps } from '../utils/storage.js';
 
 const {
   QUEST_STATUS_MAP, SKILL_CAT_MAP, ITEM_TYPE_MAP,
-  LOC_TYPE_MAP, FACTION_TYPE_MAP, FACTION_RANK_MAP,
+  LOC_TYPE_MAP, FACTION_RANK_MAP,
   SPELL_LEVEL_MAP, SPELL_SCHOOL_MAP,
 } = _migrationMaps;
 

@@ -106,16 +106,6 @@ export function StatBox({ label, value, onChange }) {
   );
 }
 
-export function SkillPips({ value, onChange }) {
-  return (
-    <div className="skill-pips">
-      {[1, 2, 3, 4, 5].map(i => (
-        <div key={i} className={`pip${i <= value ? " filled" : ""}`} onClick={() => onChange(i === value ? 0 : i)}/>
-      ))}
-    </div>
-  );
-}
-
 export function EntityLink({ match, part, onNavigate }) {
   return (
     <span

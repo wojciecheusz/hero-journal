@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { useLocation } from 'wouter';
 import { syncI18nLang } from '../i18n/i18n';
-import { THEMES, PALETTES } from '../theme/themes';
-import { DEFAULT_CHAR } from '../constants/gameConstants';
 import {
-  CHAR_SLOTS, saveChar, loadProfiles, saveProfiles, saveActiveId,
+  CHAR_SLOTS, saveChar, saveProfiles,
   load, save, setCloudSaveHook, clearCloudSaveHook,
 } from '../utils/storage';
 import { useTheme }         from '../hooks/useTheme';
@@ -12,11 +10,9 @@ import { useLanguage }      from '../hooks/useLanguage';
 import { useCharacterData, EMPTY_DATA, loadProfileData } from '../hooks/useCharacterData';
 import { useProfileManager } from '../hooks/useProfileManager';
 import { getNavGroups, getNavGroupsDesktop } from './navigation';
-import { applyThemeVars } from '../utils/themeUtils';
 import TutorialModal from './TutorialModal';
 import HelpPanel     from './HelpPanel';
-import { detectLang, LangContext, TRANSLATIONS } from '../i18n/translations';
-import { createSampleHero } from '../constants/sampleHero';
+import { LangContext, TRANSLATIONS } from '../i18n/translations';
 import { cloudSave } from '../firebase/firestore';
 import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
@@ -42,16 +38,15 @@ function TabLoader() {
   );
 }
 
-/* applyThemeVars → src/utils/themeUtils.js
-   EMPTY_DATA / loadProfileData → src/hooks/useCharacterData.js */
+/* EMPTY_DATA / loadProfileData → src/hooks/useCharacterData.js */
 
 export default function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
   /* ── Custom hooks ────────────────────────────────────────────── */
   const { theme, setTheme }            = useTheme();
-  const { lang, setLang, toggleLanguage } = useLanguage();
+  const { lang, toggleLanguage } = useLanguage();
 
   const {
-    profiles, setProfiles, activeId, setActiveId, screen, setScreen,
+    profiles, setProfiles, activeId, screen, setScreen,
     selectProfile, finishWizard, createSample, renameProfile, deleteProfile,
   } = useProfileManager();
 

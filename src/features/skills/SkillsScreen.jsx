@@ -1,7 +1,7 @@
 import { useState, memo } from 'react';
 import { SKILL_CATS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
-import { TagsEditor, FilterBar, PrzypnijBtn, Toggle, SkillPips } from '../../shared/ui';
+import { TagsEditor, FilterBar, PrzypnijBtn, Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import styles from './SkillsScreen.module.css';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';

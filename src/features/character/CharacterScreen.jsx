@@ -1,5 +1,4 @@
 import { useState, memo } from 'react';
-import { clamp } from '../../utils/math';
 import { RestModal } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 

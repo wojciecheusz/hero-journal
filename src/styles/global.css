@@ -1087,11 +1087,6 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .toggle-track.on-blue   .toggle-thumb { background: #64a0e6; }
 .toggle-label { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hj-text-dim); transition: color 0.15s; }
 
-/* ── Skill pips ───────────────────────────────────────────────── */
-.skill-pips { display: flex; gap: 3px; align-items: center; flex-shrink: 0; }
-.pip        { width: 8px; height: 8px; border: 1px solid var(--hj-border-input); cursor: pointer; transition: all 0.15s; }
-.pip.filled { background: var(--hj-accent); border-color: var(--hj-accent-border); }
-
 /* ── Odznaki czarów ───────────────────────────────────────────── */
 .spell-level-badge  { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid var(--spell-border); color: var(--spell-accent); background: var(--spell-bg); flex-shrink: 0; text-transform: uppercase; }
 .spell-school-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; border: 1px solid #2a2a5a; color: #8888cc; background: rgba(100,100,200,0.06); flex-shrink: 0; text-transform: uppercase; }

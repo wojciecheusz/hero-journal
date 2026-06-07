@@ -139,7 +139,7 @@ describe('pruneOrphanedData()', () => {
 
   it('działa bez błędu gdy localStorage jest pusty', () => {
     expect(() => pruneOrphanedData()).not.toThrow();
-    const { removed, kept } = pruneOrphanedData();
+    const { removed } = pruneOrphanedData();
     expect(removed).toBe(0);
   });
 

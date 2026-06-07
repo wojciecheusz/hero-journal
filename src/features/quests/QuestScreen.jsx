@@ -3,8 +3,6 @@ import { STATUS_CYCLE, QUEST_STATUSES } from '../../constants/enums.js';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
-const today = () => new Date().toISOString().slice(0, 10);
-
 function QuestScreen({ quests, setQuests, openEntity }) {
   const T = useT();
 

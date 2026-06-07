@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstants';
 import { clamp, statMod } from '../../utils/math';
-import { THEMES, PALETTES } from '../../theme/themes';
+import { THEMES } from '../../theme/themes';
 import { useT } from '../../i18n/translations';
-import { save } from '../../utils/storage';
 
 export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, onCreateSample, onRename, theme }) {
   const t = THEMES[theme] || THEMES.mrok;
@@ -18,14 +17,6 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 
   return (
     <div className="profile-screen">
-      <div style={{ position:"absolute", top:"1rem", right:"1rem" }}>
-        <button
-          onClick={() => { const idx = PALETTES.indexOf(theme); const next = PALETTES[(idx + 1) % PALETTES.length]; save("hj_theme", next); window.location.reload(); }}
-          style={{ background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.1em", padding:"0.2rem 0.5rem", cursor:"pointer", textTransform:"uppercase" }}>
-          {P.changeTheme}
-        </button>
-      </div>
-
       <div className="profile-logo">⚔ Hero Journal</div>
       <div className="profile-tagline">{P.tagline}</div>
 

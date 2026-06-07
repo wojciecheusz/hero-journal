@@ -290,7 +290,6 @@ export const TRANSLATIONS = {
       alignQuestion:"Charakter moralny", alignPh:"np. CN, LG, NE… (max 8 znaków)",
       readyHint:"Twój bohater jest gotowy do drogi. Każdą wartość będziesz mógł swobodnie edytować podczas kampanii.",
       cancel:"Anuluj", back:"← Wstecz", next:"Dalej →", start:"⚔ Rozpocznij Przygodę",
-      changeTheme:"Zmień motyw",
     },
 
     TUTORIAL: {
@@ -676,7 +675,6 @@ export const TRANSLATIONS = {
       alignQuestion:"Moral alignment", alignPh:"e.g. CN, LG, NE… (max 8 chars)",
       readyHint:"Your hero is ready for the road. You can freely edit every value during the campaign.",
       cancel:"Cancel", back:"← Back", next:"Next →", start:"⚔ Begin Adventure",
-      changeTheme:"Change theme",
     },
 
     TUTORIAL: {
