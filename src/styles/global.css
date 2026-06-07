@@ -1089,8 +1089,17 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .spell-slot-input  { background: transparent; border: none; outline: none; font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: var(--spell-accent); text-align: center; width: 100%; }
 
 /* ── Plecak ───────────────────────────────────────────────────── */
-.pack-item            { background: var(--hj-bg-card); border: 1px solid var(--hj-border); padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; border-radius: 2px; }
+.pack-item            { background: var(--hj-bg-card); border: 1px solid var(--hj-border); padding: 0.7rem 0.85rem; margin-bottom: 0.4rem; transition: border-color 0.15s; border-radius: 2px; position: relative; }
 .pack-item.equipped-active { border-color: var(--hj-accent-border); border-left: 3px solid var(--hj-accent); }
+.pack-item.pinned     { border-color: var(--hj-accent-border); }
+.pack-item.pinned::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,transparent,var(--hj-accent),transparent);
+  pointer-events: none;
+}
 .pack-item-header     { display: flex; align-items: center; gap: 0.5rem; }
 .pack-item-body       { margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
 .pack-item-row        { display: flex; gap: 0.5rem; flex-wrap: wrap; }

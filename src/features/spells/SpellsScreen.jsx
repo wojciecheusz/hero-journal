@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS } from '../../constants/gameConstants';
+import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
 import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -153,7 +153,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
               <p className="entry-preview" style={{ fontSize:"0.88rem", whiteSpace:"pre-wrap", opacity:0.65 }}>{sp.notes}</p>
             )}
 
-            <TagsEditor tags={sp.tags||[]} onChange={v => upd(sp.id,"tags",v)}/>
+            <TagsEditor tags={sp.tags||[]} onChange={v => upd(sp.id,"tags",v)} suggestions={SUGGESTED_ACTION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>

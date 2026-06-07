@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { SKILL_CATS, SKILL_CAT_ICONS } from '../../constants/gameConstants';
+import { SKILL_CATS, SKILL_CAT_ICONS, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -121,7 +121,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
               <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{sk.description}</p>
             )}
 
-            <TagsEditor tags={sk.tags||[]} onChange={v => upd(sk.id,"tags",v)}/>
+            <TagsEditor tags={sk.tags||[]} onChange={v => upd(sk.id,"tags",v)} suggestions={SUGGESTED_ACTION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>

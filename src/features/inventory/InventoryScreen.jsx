@@ -1,7 +1,7 @@
 import { useState, memo } from 'react';
-import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES } from '../../constants/gameConstants';
+import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
-import { Toggle } from '../../shared/ui';
+import { Toggle, TagsEditor, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
@@ -21,7 +21,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
 
   const addItem = () => {
     const n = form.name.trim(); if (!n) return;
-    setInventory(inv => [...inv, { id: Date.now(), equipped: false, ...form, name: n }]);
+    setInventory(inv => [...inv, { id: Date.now(), equipped: false, tags: [], pinned: false, ...form, name: n }]);
     setForm({ name:"", type:"Ogólny", qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
     setShowForm(false);
   };
@@ -32,7 +32,8 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
   const stopEdit    = id => setEditing(e => ({ ...e, [id]: false }));
   const toggleEquip = id => setInventory(inv => inv.map(x => x.id === id ? { ...x, equipped: !x.equipped } : x));
 
-  const visible      = filterType ? inventory.filter(i => i.type === filterType) : inventory;
+  const visible      = (filterType ? inventory.filter(i => i.type === filterType) : [...inventory])
+    .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
   const equippedCount = inventory.filter(i => i.equipped).length;
   const needsExtras  = t => [ITEM_TYPE.WEAPON, ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
 
@@ -102,7 +103,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
         const isEditing = !!editing[item.id];
         const preview   = [item.effect, item.note].filter(Boolean).join(" · ");
         return (
-          <div key={item.id} id={`entity-${item.id}`} className={`pack-item${item.equipped ? " equipped-active" : ""}`}>
+          <div key={item.id} id={`entity-${item.id}`} className={`pack-item${item.equipped ? " equipped-active" : ""}${item.pinned ? " pinned" : ""}`}>
 
             {/* Nagłówek */}
             <div className="pack-item-header">
@@ -115,6 +116,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
                   <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>
                 </div>
               </div>
+              <PrzypnijBtn pinned={item.pinned} onToggle={() => upd(item.id,"pinned",!item.pinned)}/>
               <button className="entity-toggle" onClick={() => startEdit(item.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(item.id)}>{open ? "▲" : "▼"}</button>
             </div>
@@ -125,6 +127,8 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
                 {preview}
               </p>
             )}
+
+            <TagsEditor tags={item.tags||[]} onChange={v => upd(item.id,"tags",v)} suggestions={SUGGESTED_ACTION_TAGS}/>
 
             {/* Statystyki broni/czaru — zawsze widoczne gdy rozwinięty i nie w edycji */}
             {open && !isEditing && (item.damage || item.charges) && (

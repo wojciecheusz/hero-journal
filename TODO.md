@@ -6,6 +6,41 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P9 — Skrócone etykiety walki + tagi akcji + przypinanie Przedmiotów — UKOŃCZONE
+Trzy niezależne polecenia użytkownika:
+1. **Skrócenie etykiet w karcie Walka** — `Inicjatywa→Inicjat.`, `Prędkość→Pręd.`,
+   `Biegłość→Biegł.` (tylko PL — etykiety EN już były krótkie). Zmiana w
+   `translations.js` (`CHAR.initiative/speed/profBonus`), bez zmian w komponencie.
+2. **Tagi "Akcja"/"Bonus Akcja" we wszystkich wpisach Wyposażenia** — dodano
+   stałą `SUGGESTED_ACTION_TAGS = ["akcja","bonus akcja"]` w `gameConstants.js`
+   i podpięto jako `suggestions` do `TagsEditor` w Przedmiotach, Zdolnościach
+   i Czarach (zakładka "Wyposażenie" to widok 3-kolumnowy łączący te 3 ekrany).
+3. **Przypinanie wpisów Przedmiotów** — Przedmioty jako jedyny ekran encji nie
+   miały pola `pinned`/przycisku `PrzypnijBtn`/sortowania wg przypięcia, mimo że
+   mają już system tagów (dodany w tym samym zadaniu — wcześniej `InventoryScreen`
+   nie miał `TagsEditor` wcale). Dodano `tags:[]`, `pinned:false` przy tworzeniu,
+   `PrzypnijBtn` w nagłówku, `TagsEditor` z sugestiami oraz sort
+   `(a,b)=>(b.pinned?1:0)-(a.pinned?1:0)`, plus klasę CSS `.pack-item.pinned`
+   (analogiczną do `.card.pinned`, której `.pack-item` nie miało).
+Pliki: `translations.js`, `gameConstants.js`, `InventoryScreen.jsx`,
+`SkillsScreen.jsx`, `SpellsScreen.jsx`, `global.css`.
+Zweryfikowano w Playwright na przykładowej postaci (1500×950 i 1920×1080).
+
+---
+
+### ✅ P8 — Tag/typ "Tarcza" w Przedmiotach + osobna ikona "Pancerza" — UKOŃCZONE
+Dwa polecenia użytkownika dotyczące "tagów" Przedmiotów — po analizie okazało
+się, że `InventoryScreen` nie ma systemu tagów, a "tagi" odnoszą się do
+filtrowalnych **typów przedmiotów** (`ITEM_TYPE`, wyświetlanych jako przyciski
+`filter-tag` z ikoną z `ITEM_ICONS`). Dodano nowy typ `ITEM_TYPE.SHIELD`
+(`"shield"`/"Tarcza") z ikoną tarczy 🛡️ oraz zmieniono ikonę istniejącego typu
+`ARMOR` ("Pancerz") na 🥋, by oba typy miały odrębne, czytelne ikony (wcześniej
+oba współdzieliły 🛡️). Zmiany w `enums.js` (`ITEM_TYPE.SHIELD`,
+`ITEM_TYPES_ENUM`), `translations.js` (PL/EN etykiety i tablice `ITEM_TYPES`)
+oraz `gameConstants.js` (`ITEM_ICONS`, w tym klucze legacy PL).
+
+---
+
 ### ✅ P7 — Nieczytelne pole "KP" w karcie Walka przy 1920×1080 — UKOŃCZONE
 **Przyczyna:** siatka 4 boksów AC/Inicjatywa/Prędkość/Biegłość w `CombatCard.jsx`
 używała `gridTemplateColumns:"repeat(4,1fr)"`. `1fr` to skrót `minmax(auto,1fr)`
