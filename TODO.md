@@ -46,9 +46,9 @@ meta-tagu `apple-mobile-web-app-capable` to nieszkodliwe info przeglądarki
 
 ---
 
-### ⏳ P5 — Pakiet 8 usprawnień karty postaci/świata (ZATWIERDZONE — W TRAKCIE)
-Użytkownik zatwierdził cały pakiet poleceniem "Wykonaj wszystko". Realizacja w kolejności:
-P5.2 → P5.6 → P5.7 → P5.8 → P5.3 → P5.5 → P5.1 → P5.4. Plan szczegółowy poniżej.
+### ✅ P5 — Pakiet 8 usprawnień karty postaci/świata — UKOŃCZONY
+Użytkownik zatwierdził cały pakiet poleceniem "Wykonaj wszystko". Zrealizowano w kolejności:
+P5.2 → P5.6 → P5.7 → P5.8 → P5.3 → P5.5 → P5.1 → P5.4 (wszystkie 8 ukończone). Szczegóły poniżej.
 
 **✅ P5.1 — Edytowalne wartości: bierna percepcja, DC umiejętności, atak czarami — UKOŃCZONE**
 Pola bierna percepcja / DC czarów / atak czarami w `CombatCard.jsx` zamieniono
@@ -79,15 +79,24 @@ dwuklik czyści override). Dodano prop `pb` do `SavingThrowsCard` (przekazywany
 z `CharacterScreen.jsx`) oraz tłumaczenie `proficiency` (PL/EN, etykieta `title`/`aria-label`).
 Pliki: `SavingThrowsCard.jsx`, `CharacterScreen.jsx`, `translations.js`.
 
-**P5.4 — Zmiana kolejności kafelków na karcie "Aktywne i Wyposażone" (drag&drop) + sortowanie czarów wg szkół magii**
-a) `EquippedCard.jsx` renderuje `equippedItems` w kolejności z tablicy ekwipunku,
-   bez możliwości zmiany. Brak biblioteki drag&drop w projekcie — dodać obsługę
-   przeciągania (HTML5 `draggable`/`dragover`/`drop` natywnie, bez nowej zależności,
-   żeby nie rozdmuchiwać bundle'a) i zapisywać nową kolejność do `inventory`.
-b) `SpellsScreen.jsx` filtruje obecnie tylko wg poziomu czaru (linia ~17-23).
-   Dodać grupowanie/sortowanie wg `school` (SPELL_SCHOOL, enums.js:77-87) —
-   np. dodatkowy przełącznik sortowania poziom/szkoła.
-Pliki: `EquippedCard.jsx`, `SpellsScreen.jsx`.
+**✅ P5.4 — Zmiana kolejności kafelków na karcie "Aktywne i Wyposażone" (drag&drop) + sortowanie czarów wg szkół magii — UKOŃCZONE**
+a) Dodano natywny HTML5 drag&drop (`draggable`/`onDragStart`/`onDragOver`/`onDrop`,
+   bez nowej zależności) do listy przedmiotów w `EquippedCard.jsx` — uchwyt ⠿
+   (`.equipped-drag-handle`) przy każdym wyposażonym przedmiocie. Upuszczenie
+   przenosi przeciągany przedmiot na pozycję docelowego w pełnej tablicy
+   `inventory` (zachowując względną kolejność pozostałych) i zapisuje przez
+   nowy prop `setInventory` przekazany przez `CharacterScreen` ← `HeroJournal`.
+b) W `SpellsScreen.jsx` dodano przełącznik sortowania „Wg poziomu / Wg szkoły”
+   (`sortMode`) w pasku filtrów — w trybie „szkoła” lista czarów grupowana jest
+   alfabetycznie wg `school` (SPELL_SCHOOL) i filtrowana przyciskami szkół
+   (z ikonami `SPELL_SCHOOL_ICONS` i licznikami), analogicznie do filtra poziomów.
+   Dodano stan `activeSchool` i tłumaczenia `sortByLevel`/`sortBySchool` (PL/EN).
+Przetestowano w przeglądarce (Playwright): przeciąganie zmienia kolejność
+przedmiotów (np. Longsword +1 ↔ Plate Armor), sortowanie wg szkoły grupuje
+poprawnie (Odrzucanie → Przywoływanie → Surogacja → Wywoływanie), filtrowanie
+do jednej szkoły i powrót do sortowania wg poziomu działają bez błędów konsoli.
+Pliki: `EquippedCard.jsx`, `SpellsScreen.jsx`, `CharacterScreen.jsx`,
+`HeroJournal.jsx`, `translations.js`, `global.css`.
 
 **✅ P5.5 — Rodzaj obrażeń broni jako lista wyboru (wzorem szkół magii) — UKOŃCZONE**
 Dodano enum `DAMAGE_TYPE`/`DAMAGE_TYPES_ENUM` w `enums.js` (13 typów: cięte,

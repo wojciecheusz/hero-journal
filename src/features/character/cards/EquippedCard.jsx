@@ -3,10 +3,11 @@ import { ITEM_ICONS } from '../../../constants/gameConstants';
 import { SpellSlotsWidget } from '../../../shared/ui';
 import { useT } from '../../../i18n/translations';
 
-export default function EquippedCard({ char, setChar, C, inventory, skills, spells }) {
+export default function EquippedCard({ char, setChar, C, inventory, setInventory, skills, spells }) {
   const T = useT();
   const LB = T.LABELS;
   const [activeTab, setActiveTab] = useState("items");
+  const [dragId, setDragId] = useState(null);
 
   const displayItemType  = type     => LB.itemType?.[type]  ?? type;
   const displaySpellLevel= level    => LB.spellLevel?.[level] ?? level;
@@ -20,6 +21,20 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
   const updCoins = useCallback((type, val) => setChar(c => ({
     ...c, coins: { ...(c.coins||{gold:0,silver:0,copper:0}), [type]: Math.max(0, parseInt(val)||0) }
   })), [setChar]);
+
+  const dropOnItem = useCallback(targetId => {
+    if (dragId == null || dragId === targetId) return;
+    setInventory(list => {
+      const next = [...list];
+      const fromIdx = next.findIndex(i => i.id === dragId);
+      const toIdx   = next.findIndex(i => i.id === targetId);
+      if (fromIdx === -1 || toIdx === -1) return list;
+      const [moved] = next.splice(fromIdx, 1);
+      next.splice(toIdx, 0, moved);
+      return next;
+    });
+    setDragId(null);
+  }, [dragId, setInventory]);
 
   return (
     <div className="card">
@@ -62,7 +77,14 @@ export default function EquippedCard({ char, setChar, C, inventory, skills, spel
       {activeTab==="items" && (equippedItems.length===0
         ? <div className="empty-state">{C.emptyItems}</div>
         : equippedItems.map(item => (
-          <div key={item.id} className="equipped-item">
+          <div key={item.id} className="equipped-item"
+            draggable
+            onDragStart={() => setDragId(item.id)}
+            onDragOver={e => e.preventDefault()}
+            onDrop={() => dropOnItem(item.id)}
+            onDragEnd={() => setDragId(null)}
+            style={{ opacity: dragId===item.id ? 0.4 : 1, cursor:"grab" }}>
+            <span className="equipped-drag-handle" title={C.dragToReorder} aria-label={C.dragToReorder}>⠿</span>
             <span className="equipped-icon">{ITEM_ICONS[item.type]||"◈"}</span>
             <div className="flex1">
               <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>

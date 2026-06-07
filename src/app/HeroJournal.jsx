@@ -382,7 +382,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
       <main className="hj-content">
       <Suspense fallback={<TabLoader/>}>
-        {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} skills={skills} spells={spells}/>}
+        {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} skills={skills} spells={spells}/>}
 
         {/* ── Equipment (virtual desktop tab) + mobile individual tabs ── */}
         {(tab === "equipment" || ["inventory","skills","spells"].includes(tab)) && <>

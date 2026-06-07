@@ -13,7 +13,7 @@ import { CardHeader, LBL } from './cards/shared';
  * Orkiestruje wszystkie karty postaci.
  * Logika każdej karty jest zamknięta w osobnym sub-komponencie w ./cards/.
  */
-function CharacterScreen({ char, setChar, inventory, skills, spells }) {
+function CharacterScreen({ char, setChar, inventory, setInventory, skills, spells }) {
   const T  = useT();
   const C  = T.CHAR;
   const GENERIC_SKILLS = T.GENERIC_SKILLS;
@@ -61,7 +61,7 @@ function CharacterScreen({ char, setChar, inventory, skills, spells }) {
         {/* ══ PRAWA KOLUMNA: wyposażenie i osobowość ══ */}
         <div className="char-col">
           <EquippedCard char={char} setChar={setChar} C={C}
-            inventory={inventory} skills={skills} spells={spells}/>
+            inventory={inventory} setInventory={setInventory} skills={skills} spells={spells}/>
 
           {/* Notatki osobiste */}
           <div className="card">

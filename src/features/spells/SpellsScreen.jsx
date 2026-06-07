@@ -15,12 +15,16 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
   const [expanded, setExpanded] = useState({});
   const [editing, setEditing] = useState({});
   const [activeLevel, setActiveLevel] = useState(null);
+  const [activeSchool, setActiveSchool] = useState(null);
+  const [sortMode, setSortMode] = useState("level"); // 'level' | 'school'
   const [showSlots, setShowSlots] = useState(false);
 
   const pb = char.profBonus || 2;
   const spMod = Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2;
   const inUseCount = spells.filter(s => s.inUse).length;
-  const visible = activeLevel ? spells.filter(s => s.level===activeLevel) : spells;
+  const visible = sortMode === "school"
+    ? (activeSchool ? spells.filter(s => s.school===activeSchool) : [...spells].sort((a,b) => (a.school||"").localeCompare(b.school||"")))
+    : (activeLevel ? spells.filter(s => s.level===activeLevel) : spells);
 
   const displayLevel  = lv => T.LABELS.spellLevel[lv]  ?? lv;
   const displaySchool = sc => `${SPELL_SCHOOL_ICONS[sc] || ""} ${T.LABELS.spellSchool[sc] ?? sc}`.trim();
@@ -92,8 +96,20 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
       )}
 
       <div className="filter-bar">
-        <button className={`filter-tag${!activeLevel?" active-filter":""}`} onClick={() => setActiveLevel(null)}>{SP.all}</button>
-        {SPELL_LEVELS.map((lv,i) => { const count=spells.filter(s=>s.level===lv).length; if(!count) return null; return <button key={lv} className={`filter-tag${activeLevel===lv?" active-filter":""}`} style={{ borderColor: activeLevel===lv?"var(--hj-spell-border)":"", color: activeLevel===lv?"var(--hj-spell-accent)":"" }} onClick={() => setActiveLevel(activeLevel===lv?null:lv)}>{T.SPELL_LEVELS[i]??lv} ({count})</button>; })}
+        <button className={`filter-tag${sortMode==="level"?" active-filter":""}`} style={{ borderColor: sortMode==="level"?"var(--hj-spell-border)":"", color: sortMode==="level"?"var(--hj-spell-accent)":"" }} onClick={() => setSortMode("level")}>{SP.sortByLevel}</button>
+        <button className={`filter-tag${sortMode==="school"?" active-filter":""}`} style={{ borderColor: sortMode==="school"?"var(--hj-spell-border)":"", color: sortMode==="school"?"var(--hj-spell-accent)":"" }} onClick={() => setSortMode("school")}>{SP.sortBySchool}</button>
+        <span style={{ width:1, alignSelf:"stretch", background:"rgba(128,128,128,0.18)", margin:"0 0.15rem" }}/>
+        {sortMode === "level" ? (
+          <>
+            <button className={`filter-tag${!activeLevel?" active-filter":""}`} onClick={() => setActiveLevel(null)}>{SP.all}</button>
+            {SPELL_LEVELS.map((lv,i) => { const count=spells.filter(s=>s.level===lv).length; if(!count) return null; return <button key={lv} className={`filter-tag${activeLevel===lv?" active-filter":""}`} style={{ borderColor: activeLevel===lv?"var(--hj-spell-border)":"", color: activeLevel===lv?"var(--hj-spell-accent)":"" }} onClick={() => setActiveLevel(activeLevel===lv?null:lv)}>{T.SPELL_LEVELS[i]??lv} ({count})</button>; })}
+          </>
+        ) : (
+          <>
+            <button className={`filter-tag${!activeSchool?" active-filter":""}`} onClick={() => setActiveSchool(null)}>{SP.all}</button>
+            {SPELL_SCHOOLS.map((sc,i) => { const count=spells.filter(s=>s.school===sc).length; if(!count) return null; return <button key={sc} className={`filter-tag${activeSchool===sc?" active-filter":""}`} style={{ borderColor: activeSchool===sc?"var(--hj-spell-border)":"", color: activeSchool===sc?"var(--hj-spell-accent)":"" }} onClick={() => setActiveSchool(activeSchool===sc?null:sc)}>{SPELL_SCHOOL_ICONS[sc]||""} {T.SPELL_SCHOOLS[i]??sc} ({count})</button>; })}
+          </>
+        )}
       </div>
 
       {spells.length===0 && <div className="card empty-state">{SP.empty}</div>}
