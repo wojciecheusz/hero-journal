@@ -19,11 +19,17 @@ Zamieniono inline styles legendy i licznika na klasy z modułu CSS.
 - Dodano inicjalizację i18n w `App.jsx` i synchronizację z `HeroJournal`
 - Istniejący `useT()` i `TRANSLATIONS` pozostają aktywne (migracja przyrostowa)
 
-### ✅ P4.3 — i18next: migracja pierwszych 3 komponentów
-Zmigrowano z `useT()` na `useTranslation()` z react-i18next:
-- `QuestScreen.jsx` — wszystkie stringi przez `t('QUESTS.*')`
-- `SessionsScreen.jsx` — wszystkie stringi przez `t('SESSIONS.*')`
-- `LocationsScreen.jsx` — wszystkie stringi przez `t('LOCATIONS.*')`, typy lokacji przez `t('LABELS.locType.*')`
+### ↩️ P4.3 — i18next: migracja pierwszych 3 komponentów (cofnięta)
+Pierwotnie zmigrowano `QuestScreen.jsx`, `SessionsScreen.jsx`, `LocationsScreen.jsx`
+z `useT()` na `useTranslation()`/`t('QUESTS.*')` z react-i18next (commit 895ecd2).
+
+Cofnięto w ramach commitu `ed04a02` ("unifikacja i18n") — `locales/pl.json`/`en.json`
+pokrywają tylko ułamek tekstów (NAV, UI, LABELS, SESSIONS, QUESTS, LOCATIONS — 57 linii),
+podczas gdy `TRANSLATIONS` w `translations.js` obejmuje kompletnie wszystkie ekrany
+(784 linie: CHAR, INVENTORY, SKILLS, SPELLS, NPCS, FACTIONS, PROFILES…). Trzymanie
+dwóch równoległych systemów groziło rozjazdami kluczy, więc wrócono do jednego
+spójnego `useT()`. Pełne przejście na react-i18next pozostaje możliwe, ale wymagałoby
+osobnej, zaplanowanej migracji całego zbioru tłumaczeń — nie tylko trzech ekranów.
 
 ---
 *Plik zarządzany przez automatycznego agenta. Dodaj zadania w sekcjach "W trakcie" lub "Do zrobienia".*
