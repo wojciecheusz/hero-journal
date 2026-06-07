@@ -205,6 +205,7 @@ export function RestModal({ type, char, setChar, onClose }) {
       hitDice: { ...hd, used: newUsed },
       spellSlots: newSlots,
       deathSaves: { successes: 0, failures: 0 },
+      conditions: {},
     }));
     onClose();
   };

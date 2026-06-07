@@ -59,11 +59,11 @@ CharacterScreen.jsx:34-36). Dodać pole nadpisania (override) analogiczne do
 edytowalna ręcznie z przyciskiem powrotu do auto.
 Pliki: `CombatCard.jsx`, `CharacterScreen.jsx`, `gameConstants.js` (DEFAULT_CHAR).
 
-**P5.2 — Długi odpoczynek resetuje stany (warunki)**
-`doLongRest` w `shared/ui.jsx` (RestModal, ok. linii 197-210) resetuje HP, sloty
-czarów, kości wytrzymałości i death saves, ale NIE czyści `char.conditions`.
-Dodać reset `conditions: {}` (włącznie z poziomem wycieńczenia/exhaustion) do
-długiego odpoczynku.
+**✅ P5.2 — Długi odpoczynek resetuje stany (warunki) — UKOŃCZONE**
+W `doLongRest` (`src/shared/ui.jsx:197-211`) dodano `conditions: {}` do obiektu
+zwracanego przez `setChar`, obok istniejącego resetu HP/slotów/kości/death saves.
+Czyści to wszystkie aktywne warunki, w tym poziom wycieńczenia (exhaustion),
+zgodnie z zasadą, że długi odpoczynek usuwa stany.
 Plik: `src/shared/ui.jsx`.
 
 **P5.3 — Przycisk biegłości (proficiency) przy rzutach obronnych**
