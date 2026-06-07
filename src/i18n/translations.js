@@ -17,9 +17,10 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   pl: {
     PALETTE_LABELS: {
-      mrok:"🩸 Mrok", obsydian:"🔮 Obsydian", wschod:"🌅 Wschód",
-      pergamin:"📜 Pergamin", karczma:"🍺 Karczma", puszcza:"🍂 Puszcza",
-      bone:"🦴 Kość", ocean:"🌊 Ocean",
+      pergamin:"📜 Pergamin", wschod:"🌅 Wschód",
+      oath:"🕊️ Przysięga", astral:"🌌 Astralny", quill:"🪶 Pióro",
+      feywild:"🍄 Feywild", eldritch:"🌀 Wieczny", dungeon:"🗝️ Loch",
+      underdark:"🕸️ Podmrok", wrath:"🔥 Gniew",
     },
     LABELS: {
       questStatus: { active:"Aktywne", completed:"Ukończone", failed:"Nieudane" },
@@ -29,7 +30,7 @@ export const TRANSLATIONS = {
       factionType: { guild:"Gildia", order:"Zakon", cult:"Kult", government:"Rząd", military:"Armia", criminals:"Przestępcy", merchants:"Kupcy", religious:"Religijna", political:"Polityczna", other:"Inna" },
       factionRank: { unknown:"Nieznany", ally:"Sojusznik", neutral:"Neutralny", enemy:"Wróg", member:"Członek", officer:"Oficer", leader:"Przywódca" },
       spellLevel:  { cantrip:"Sztuczka", level1:"1. poziom", level2:"2. poziom", level3:"3. poziom", level4:"4. poziom", level5:"5. poziom", level6:"6. poziom", level7:"7. poziom", level8:"8. poziom", level9:"9. poziom" },
-      spellSchool: { abjuration:"Odrzucanie", conjuration:"Przywoływanie", divination:"Wieszczenie", enchantment:"Surogacja", evocation:"Wywoływanie", illusion:"Iluzja", necromancy:"Nekromancja", transmutation:"Przemiana", other:"Inna" },
+      spellSchool: { abjuration:"Odrzucanie", conjuration:"Przywoływanie", divination:"Poznanie", enchantment:"Oczarowanie", evocation:"Wywoływanie", illusion:"Iluzja", necromancy:"Nekromancja", transmutation:"Przemiana", other:"Inna" },
       damageType:  { slashing:"Cięte", piercing:"Kłute", bludgeoning:"Obuchowe", acid:"Kwas", cold:"Zimno", fire:"Ogień", force:"Siłowe", lightning:"Piorun", necrotic:"Nekrotyczne", poison:"Trucizna", psychic:"Psychiczne", radiant:"Promieniste", thunder:"Dźwięk" },
     },
     REL_LABELS:    { ally:"Sprzymierzeniec", neutral:"Neutralny", hostile:"Wrogi", unknown:"Nieznany" },
@@ -39,7 +40,7 @@ export const TRANSLATIONS = {
     ALIGNMENTS:    ["Praworządny dobry","Neutralny dobry","Chaotyczny dobry","Praworządny neutralny","Bezwzględnie neutralny","Chaotyczny neutralny","Praworządny zły","Neutralny zły","Chaotyczny zły"],
     ITEM_TYPES:    ["Ogólny","Broń","Pancerz","Tarcza","Zwój z czarem","Cudowny przedmiot","Jednorazowy","Narzędzie","Inny"],
     SKILL_CATS:    ["Umiejętność","Cecha rasowa","Atut"],
-    SPELL_SCHOOLS: ["Odrzucanie","Przywoływanie","Wieszczenie","Surogacja","Wywoływanie","Iluzja","Nekromancja","Przemiana","Inna"],
+    SPELL_SCHOOLS: ["Odrzucanie","Przywoływanie","Poznanie","Oczarowanie","Wywoływanie","Iluzja","Nekromancja","Przemiana","Inna"],
     DAMAGE_TYPES:  ["Cięte","Kłute","Obuchowe","Kwas","Zimno","Ogień","Siłowe","Piorun","Nekrotyczne","Trucizna","Psychiczne","Promieniste","Dźwięk"],
     SPELL_LEVELS:  ["Sztuczka","1. poziom","2. poziom","3. poziom","4. poziom","5. poziom","6. poziom","7. poziom","8. poziom","9. poziom"],
     SAVING_THROWS: [
@@ -69,6 +70,7 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Motyw kolorystyczny", resetChar:"↺ Reset postaci", syncData:"☁ Synchronizuj dane",
       logout:"⎋ Wyloguj", changeHero:"Zmień bohatera", hero:"Bohater", langToggle:"EN",
+      downloadSheet:"Pobierz kartę postaci",
       tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Sugerowane:",
       filterLabel:"Filtr:", filterAll:"Wszystkie",
       noLevelSpells:"Brak zapisanych czarów poziomowych (innych niż sztuczki).",
@@ -243,11 +245,11 @@ export const TRANSLATIONS = {
     },
 
     CONDITIONS: {
-      blinded:"Oślepiony", charmed:"Oczarowany", deafened:"Ogłuchy",
-      frightened:"Przestraszony", grappled:"Chwycony", incapacitated:"Ubezwłasnowolniony",
+      blinded:"Oślepiony", charmed:"Zauroczony", deafened:"Głuchy",
+      frightened:"Przerażony", grappled:"Schwytany", incapacitated:"Obezwładniony",
       invisible:"Niewidzialny", paralyzed:"Sparaliżowany", petrified:"Skamieniały",
-      poisoned:"Zatruty", prone:"Leżący", restrained:"Obezwładniony",
-      stunned:"Ogłuszony", unconscious:"Nieprzytomny",
+      poisoned:"Otruty", prone:"Powalony", restrained:"Unieruchomiony",
+      stunned:"Oszołomiony", unconscious:"Nieprzytomny", exhausted:"Wyczerpany",
     },
 
     REST: {
@@ -407,9 +409,10 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   en: {
     PALETTE_LABELS: {
-      mrok:"🩸 Darkness", obsydian:"🔮 Obsidian", wschod:"🌅 Dawn",
-      pergamin:"📜 Parchment", karczma:"🍺 Tavern", puszcza:"🍂 Wilderness",
-      bone:"🦴 Bone", ocean:"🌊 Ocean",
+      pergamin:"📜 Parchment", wschod:"🌅 Dawn",
+      oath:"🕊️ Oath", astral:"🌌 Astral", quill:"🪶 Quill",
+      feywild:"🍄 Feywild", eldritch:"🌀 Eldritch", dungeon:"🗝️ Dungeon",
+      underdark:"🕸️ Underdark", wrath:"🔥 Wrath",
     },
     LABELS: {
       questStatus: { active:"Active", completed:"Completed", failed:"Failed" },
@@ -459,6 +462,7 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Color theme", resetChar:"↺ Reset character", syncData:"☁ Sync data",
       logout:"⎋ Log out", changeHero:"Change hero", hero:"Hero", langToggle:"PL",
+      downloadSheet:"Download character sheet",
       tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Suggested:",
       filterLabel:"Filter:", filterAll:"All",
       noLevelSpells:"No leveled spells saved (cantrips not counted).",
@@ -637,7 +641,7 @@ export const TRANSLATIONS = {
       frightened:"Frightened", grappled:"Grappled", incapacitated:"Incapacitated",
       invisible:"Invisible", paralyzed:"Paralyzed", petrified:"Petrified",
       poisoned:"Poisoned", prone:"Prone", restrained:"Restrained",
-      stunned:"Stunned", unconscious:"Unconscious",
+      stunned:"Stunned", unconscious:"Unconscious", exhausted:"Exhausted",
     },
 
     REST: {

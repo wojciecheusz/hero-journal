@@ -86,19 +86,20 @@ export const ITEM_ICONS = {
 
 export const CONDITIONS = [
   { key: "blinded",       label: "Oślepiony" },
-  { key: "charmed",       label: "Oczarowany" },
-  { key: "deafened",      label: "Ogłuchy" },
-  { key: "frightened",    label: "Przestraszony" },
-  { key: "grappled",      label: "Chwycony" },
-  { key: "incapacitated", label: "Ubezwłasnowolniony" },
+  { key: "charmed",       label: "Zauroczony" },
+  { key: "deafened",      label: "Głuchy" },
+  { key: "frightened",    label: "Przerażony" },
+  { key: "grappled",      label: "Schwytany" },
+  { key: "incapacitated", label: "Obezwładniony" },
   { key: "invisible",     label: "Niewidzialny" },
   { key: "paralyzed",     label: "Sparaliżowany" },
   { key: "petrified",     label: "Skamieniały" },
-  { key: "poisoned",      label: "Zatruty" },
-  { key: "prone",         label: "Leżący" },
-  { key: "restrained",    label: "Obezwładniony" },
-  { key: "stunned",       label: "Ogłuszony" },
+  { key: "poisoned",      label: "Otruty" },
+  { key: "prone",         label: "Powalony" },
+  { key: "restrained",    label: "Unieruchomiony" },
+  { key: "stunned",       label: "Oszołomiony" },
   { key: "unconscious",   label: "Nieprzytomny" },
+  { key: "exhausted",     label: "Wyczerpany" },
 ];
 
 export const SAVING_THROWS = [

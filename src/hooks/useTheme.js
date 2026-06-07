@@ -9,14 +9,14 @@ import { load, save } from '../utils/storage';
  */
 export function useTheme() {
   const [theme, setTheme] = useState(() => {
-    const s = load("hj_theme", "mrok");
-    const name = PALETTES.includes(s) ? s : "mrok";
-    applyThemeVars(THEMES[name] || THEMES.mrok);
+    const s = load("hj_theme", "pergamin");
+    const name = PALETTES.includes(s) ? s : "pergamin";
+    applyThemeVars(THEMES[name] || THEMES.pergamin);
     return name;
   });
 
   useEffect(() => {
-    applyThemeVars(THEMES[theme] || THEMES.mrok);
+    applyThemeVars(THEMES[theme] || THEMES.pergamin);
     save("hj_theme", theme);
   }, [theme]);
 

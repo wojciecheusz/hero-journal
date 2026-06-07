@@ -3,8 +3,8 @@ import { load } from '../utils/storage';
 import { detectLang, TRANSLATIONS } from '../i18n/translations';
 
 export default function LoginScreen({ onLogin, loading }) {
-  const savedTheme = load("hj_theme", "mrok");
-  const t = THEMES[savedTheme] || THEMES.mrok;
+  const savedTheme = load("hj_theme", "pergamin");
+  const t = THEMES[savedTheme] || THEMES.pergamin;
   const T = TRANSLATIONS[detectLang()];
   return (
     <div className="profile-screen">

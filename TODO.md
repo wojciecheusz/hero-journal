@@ -6,6 +6,35 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P11 — Oficjalne nazwy stanów/szkół magii + wymiana motywów kolorystycznych — UKOŃCZONE
+Cztery powiązane polecenia użytkownika na podstawie załączonych materiałów
+(PDF "Stany" z oficjalnymi PL nazwami warunków + obrazek "8 Schools of Magic"):
+1. **Nazwy stanów (`CONDITIONS`)** — poprawiono 9 z 14 etykiet PL na zgodne z
+   oficjalnym tłumaczeniem podręcznika (np. `Oczarowany→Zauroczony`,
+   `Ogłuchy→Głuchy`, `Chwycony→Schwytany`, `Zatruty→Otruty`,
+   `Leżący→Powalony`, `Ogłuszony→Oszołomiony`) oraz dodano brakujący stan
+   `exhausted`/"Wyczerpany" (PL+EN) w `gameConstants.js` i `translations.js`.
+2. **Nazwy szkół magii** — poprawiono 2 z 9 błędnych tłumaczeń PL:
+   `Wieszczenie→Poznanie` (Divination), `Surogacja→Oczarowanie` (Enchantment);
+   pozostałe już zgadzały się z oficjalną terminologią. EN nie wymagało zmian.
+3. **Redukcja motywów** — usunięto 6 starych palet (`mrok`, `obsydian`,
+   `karczma`, `puszcza`, `bone`, `ocean`), zachowując tylko `pergamin`/`wschod`;
+   `pergamin` ustawiono jako nowy domyślny motyw (zastępując usunięty `mrok`)
+   w `useTheme.js`, `LoginScreen.jsx`, `global.css` (`:root`), `HelpPanel.jsx`,
+   `TutorialModal.jsx`, `ProfileScreen.jsx`.
+4. **8 nowych motywów** wg opisów estetyki/kolorów użytkownika — w pełni
+   zdefiniowane (3 jasne: `oath`, `astral`, `quill`; 3 średnie: `feywild`,
+   `eldritch`, `dungeon`; 2 ciemne: `underdark`, `wrath`) w `themes.js`
+   (`PALETTES` + `THEMES`, ~38 zmiennych CSS na motyw) wraz z etykietami
+   PL/EN (z emoji) w `PALETTE_LABELS`.
+Pliki: `gameConstants.js`, `translations.js`, `themes.js`, `useTheme.js`,
+`LoginScreen.jsx`, `global.css`, `HelpPanel.jsx`, `TutorialModal.jsx`,
+`ProfileScreen.jsx`. Zweryfikowano w Playwright: wszystkie 10 nazw motywów
+renderuje się poprawnie w menu ustawień, a wszystkie 8 nowych motywów
+wygląda zgodnie z opisaną estetyką (sprawdzono kontrast i czytelność).
+
+---
+
 ### ✅ P10 — "Pasywna" wśród sugerowanych tagów + wzajemne wykluczanie — UKOŃCZONE
 Polecenie: dodać tag "Pasywna" do sugerowanych tagów wpisów w Wyposażeniu oraz
 po wyborze jednego z nich (akcja/bonus akcja/pasywna) ukryć całą sugestię w tym

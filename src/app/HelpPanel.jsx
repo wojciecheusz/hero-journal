@@ -14,7 +14,7 @@ function helpKey(tab) {
 export default function HelpPanel({ tab, theme, onClose }) {
   const T       = useT();
   const H       = T.HELP;
-  const t       = THEMES[theme] || THEMES.mrok;
+  const t       = THEMES[theme] || THEMES.pergamin;
   const content = H[helpKey(tab)];
 
   if (!content) return null;
