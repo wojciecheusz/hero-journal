@@ -1,7 +1,7 @@
 import {
   SKILL_CATS_ENUM, ITEM_TYPES_ENUM, LOC_TYPES_ENUM,
   FACTION_TYPES_ENUM, FACTION_RANKS_ENUM,
-  SPELL_LEVELS_ENUM, SPELL_SCHOOLS_ENUM,
+  SPELL_LEVELS_ENUM, SPELL_SCHOOLS_ENUM, DAMAGE_TYPES_ENUM,
   FACTION_RANK, SKILL_CAT, SPELL_SCHOOL,
 } from './enums.js';
 
@@ -27,6 +27,7 @@ export const SKILL_CATS    = SKILL_CATS_ENUM;
 export const SPELL_SCHOOLS = SPELL_SCHOOLS_ENUM;
 export const SPELL_LEVELS  = SPELL_LEVELS_ENUM;
 export const SPELL_SLOT_LABELS = SPELL_LEVELS_ENUM.filter(l => l !== "cantrip");
+export const DAMAGE_TYPES = DAMAGE_TYPES_ENUM;
 
 export const SUGGESTED_LOCATION_TAGS = ["miasto", "stolica", "metropolia", "wioska", "twierdza", "świątynia"];
 

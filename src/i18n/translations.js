@@ -30,6 +30,7 @@ export const TRANSLATIONS = {
       factionRank: { unknown:"Nieznany", ally:"Sojusznik", neutral:"Neutralny", enemy:"Wróg", member:"Członek", officer:"Oficer", leader:"Przywódca" },
       spellLevel:  { cantrip:"Sztuczka", level1:"1. poziom", level2:"2. poziom", level3:"3. poziom", level4:"4. poziom", level5:"5. poziom", level6:"6. poziom", level7:"7. poziom", level8:"8. poziom", level9:"9. poziom" },
       spellSchool: { abjuration:"Odrzucanie", conjuration:"Przywoływanie", divination:"Wieszczenie", enchantment:"Surogacja", evocation:"Wywoływanie", illusion:"Iluzja", necromancy:"Nekromancja", transmutation:"Przemiana", other:"Inna" },
+      damageType:  { slashing:"Cięte", piercing:"Kłute", bludgeoning:"Obuchowe", acid:"Kwas", cold:"Zimno", fire:"Ogień", force:"Siłowe", lightning:"Piorun", necrotic:"Nekrotyczne", poison:"Trucizna", psychic:"Psychiczne", radiant:"Promieniste", thunder:"Dźwięk" },
     },
     REL_LABELS:    { ally:"Sprzymierzeniec", neutral:"Neutralny", hostile:"Wrogi", unknown:"Nieznany" },
     LOC_TYPES:     ["Osada","Podziemia","Dzicz","Budynek","Ruiny","Punkt Orientacyjny","Inne"],
@@ -39,6 +40,7 @@ export const TRANSLATIONS = {
     ITEM_TYPES:    ["Ogólny","Broń","Pancerz","Zwój z czarem","Cudowny przedmiot","Jednorazowy","Narzędzie","Inny"],
     SKILL_CATS:    ["Umiejętność","Cecha rasowa","Atut"],
     SPELL_SCHOOLS: ["Odrzucanie","Przywoływanie","Wieszczenie","Surogacja","Wywoływanie","Iluzja","Nekromancja","Przemiana","Inna"],
+    DAMAGE_TYPES:  ["Cięte","Kłute","Obuchowe","Kwas","Zimno","Ogień","Siłowe","Piorun","Nekrotyczne","Trucizna","Psychiczne","Promieniste","Dźwięk"],
     SPELL_LEVELS:  ["Sztuczka","1. poziom","2. poziom","3. poziom","4. poziom","5. poziom","6. poziom","7. poziom","8. poziom","9. poziom"],
     SAVING_THROWS: [
       {key:"str",label:"Siła",attr:"STR"},{key:"dex",label:"Zręczność",attr:"DEX"},
@@ -415,6 +417,7 @@ export const TRANSLATIONS = {
       factionRank: { unknown:"Unknown", ally:"Ally", neutral:"Neutral", enemy:"Enemy", member:"Member", officer:"Officer", leader:"Leader" },
       spellLevel:  { cantrip:"Cantrip", level1:"1st level", level2:"2nd level", level3:"3rd level", level4:"4th level", level5:"5th level", level6:"6th level", level7:"7th level", level8:"8th level", level9:"9th level" },
       spellSchool: { abjuration:"Abjuration", conjuration:"Conjuration", divination:"Divination", enchantment:"Enchantment", evocation:"Evocation", illusion:"Illusion", necromancy:"Necromancy", transmutation:"Transmutation", other:"Other" },
+      damageType:  { slashing:"Slashing", piercing:"Piercing", bludgeoning:"Bludgeoning", acid:"Acid", cold:"Cold", fire:"Fire", force:"Force", lightning:"Lightning", necrotic:"Necrotic", poison:"Poison", psychic:"Psychic", radiant:"Radiant", thunder:"Thunder" },
     },
     REL_LABELS:    { ally:"Ally", neutral:"Neutral", hostile:"Hostile", unknown:"Unknown" },
     LOC_TYPES:     ["Settlement","Dungeon","Wilderness","Building","Ruins","Landmark","Other"],
@@ -424,6 +427,7 @@ export const TRANSLATIONS = {
     ITEM_TYPES:    ["General","Weapon","Armor","Spell Scroll","Wondrous Item","Consumable","Tool","Other"],
     SKILL_CATS:    ["Skill","Racial Feature","Feat"],
     SPELL_SCHOOLS: ["Abjuration","Conjuration","Divination","Enchantment","Evocation","Illusion","Necromancy","Transmutation","Other"],
+    DAMAGE_TYPES:  ["Slashing","Piercing","Bludgeoning","Acid","Cold","Fire","Force","Lightning","Necrotic","Poison","Psychic","Radiant","Thunder"],
     SPELL_LEVELS:  ["Cantrip","1st level","2nd level","3rd level","4th level","5th level","6th level","7th level","8th level","9th level"],
     SAVING_THROWS: [
       {key:"str",label:"Strength",attr:"STR"},{key:"dex",label:"Dexterity",attr:"DEX"},

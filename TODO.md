@@ -87,13 +87,16 @@ b) `SpellsScreen.jsx` filtruje obecnie tylko wg poziomu czaru (linia ~17-23).
    np. dodatkowy przełącznik sortowania poziom/szkoła.
 Pliki: `EquippedCard.jsx`, `SpellsScreen.jsx`.
 
-**P5.5 — Rodzaj obrażeń broni jako lista wyboru (wzorem szkół magii)**
-`InventoryScreen.jsx` (linie ~64-69, 137-142) ma `damageType` jako wolny tekst.
-Dodać enum `DAMAGE_TYPE` w `enums.js` (cięte/kłute/obuchowe + ew. żywiołowe typy
-z 5e: ogień, zimno, kwas, piorun, dźwięk, trucizna, psychiczne, nekrotyczne,
-promieniste, siłowe), tłumaczenia PL/EN w `translations.js` (LABELS.damageType),
-i zamienić pole tekstowe na `<select>` analogicznie do wyboru szkoły czaru
-w `SpellsScreen.jsx`.
+**✅ P5.5 — Rodzaj obrażeń broni jako lista wyboru (wzorem szkół magii) — UKOŃCZONE**
+Dodano enum `DAMAGE_TYPE`/`DAMAGE_TYPES_ENUM` w `enums.js` (13 typów: cięte,
+kłute, obuchowe + 10 żywiołowych/innych z 5e: kwas, zimno, ogień, siłowe,
+piorun, nekrotyczne, trucizna, psychiczne, promieniste, dźwięk), wyeksportowano
+jako `DAMAGE_TYPES` z `gameConstants.js`. Dodano tłumaczenia PL/EN
+(`LABELS.damageType` + tablica `DAMAGE_TYPES`) w `translations.js`. Pole
+tekstowe `damageType` w `InventoryScreen.jsx` zamieniono na `<select>`
+analogicznie do wyboru szkoły czaru — zarówno w formularzu dodawania, jak
+i przy edycji przedmiotu; podgląd wyświetla przetłumaczoną nazwę przez
+nowy helper `displayDamageType`.
 Pliki: `enums.js`, `gameConstants.js`, `translations.js`, `InventoryScreen.jsx`.
 
 **✅ P5.6 — Nowe tagi lokacji: miasto, stolica, metropolia — UKOŃCZONE**
