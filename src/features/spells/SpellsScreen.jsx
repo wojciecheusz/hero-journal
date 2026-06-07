@@ -153,7 +153,8 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
               <p className="entry-preview" style={{ fontSize:"0.88rem", whiteSpace:"pre-wrap", opacity:0.65 }}>{sp.notes}</p>
             )}
 
-            <TagsEditor tags={sp.tags||[]} onChange={v => upd(sp.id,"tags",v)} suggestions={SUGGESTED_ACTION_TAGS}/>
+            <TagsEditor tags={sp.tags||[]} onChange={v => upd(sp.id,"tags",v)}
+              suggestions={(sp.tags||[]).some(t => SUGGESTED_ACTION_TAGS.includes(t)) ? [] : SUGGESTED_ACTION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>

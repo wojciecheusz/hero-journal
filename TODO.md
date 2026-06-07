@@ -6,6 +6,21 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P10 — "Pasywna" wśród sugerowanych tagów + wzajemne wykluczanie — UKOŃCZONE
+Polecenie: dodać tag "Pasywna" do sugerowanych tagów wpisów w Wyposażeniu oraz
+po wyborze jednego z nich (akcja/bonus akcja/pasywna) ukryć całą sugestię w tym
+wpisie — traktując je jako wzajemnie wykluczającą się grupę (pozycja D&D może
+być albo Akcją, albo Akcją Dodatkową, albo cechą Pasywną — nie kilkoma naraz).
+Dodano `"pasywna"` do `SUGGESTED_ACTION_TAGS` w `gameConstants.js`. Zamiast
+zmieniać generyczny `TagsEditor` (używany też przez Lokacje z niewykluczającymi
+się sugestiami), w miejscach wywołania (`InventoryScreen`, `SkillsScreen`,
+`SpellsScreen`) obliczono `suggestions` jako `[]`, gdy wpis ma już którykolwiek
+z tagów grupy, w przeciwnym razie pełną listę `SUGGESTED_ACTION_TAGS`.
+Zweryfikowano w Playwright: po kliknięciu "+ akcja" sugestie "+ bonus akcja" i
+"+ pasywna" znikają z tego wpisu.
+
+---
+
 ### ✅ P9 — Skrócone etykiety walki + tagi akcji + przypinanie Przedmiotów — UKOŃCZONE
 Trzy niezależne polecenia użytkownika:
 1. **Skrócenie etykiet w karcie Walka** — `Inicjatywa→Inicjat.`, `Prędkość→Pręd.`,

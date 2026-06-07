@@ -121,7 +121,8 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
               <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{sk.description}</p>
             )}
 
-            <TagsEditor tags={sk.tags||[]} onChange={v => upd(sk.id,"tags",v)} suggestions={SUGGESTED_ACTION_TAGS}/>
+            <TagsEditor tags={sk.tags||[]} onChange={v => upd(sk.id,"tags",v)}
+              suggestions={(sk.tags||[]).some(t => SUGGESTED_ACTION_TAGS.includes(t)) ? [] : SUGGESTED_ACTION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>
