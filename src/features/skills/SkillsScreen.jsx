@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { SKILL_CATS } from '../../constants/gameConstants';
+import { SKILL_CATS, SKILL_CAT_ICONS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -69,9 +69,9 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
             <input className="g-input" placeholder={SK.namePh} value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key==="Enter" && addSkill()}/>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
-              {CATS.map(c => (
+              {CATS.map((c,i) => (
                 <button key={c} className="filter-tag" style={{ opacity: form.category===c?1:0.45, borderColor: form.category===c?catColor(c)+"88":"", color: form.category===c?catColor(c):"" }}
-                  onClick={() => setForm(f => ({ ...f, category: c }))}>{c}</button>
+                  onClick={() => setForm(f => ({ ...f, category: c }))}>{SKILL_CAT_ICONS[SKILL_CATS[i]] || ""} {c}</button>
               ))}
             </div>
             <textarea className="g-textarea" rows={3} placeholder={SK.descPh} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}/>
@@ -86,7 +86,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
           const plCat = SKILL_CATS[i];
           const count = skills.filter(s => s.category===plCat || s.category===c).length;
           if (!count) return null;
-          return <button key={c} className={`filter-tag${activeCat===c?" active-filter":""}`} style={{ borderColor: activeCat===c?catColor(c)+"88":"", color: activeCat===c?catColor(c):"" }} onClick={() => setActiveCat(activeCat===c?null:c)}>{c} ({count})</button>;
+          return <button key={c} className={`filter-tag${activeCat===c?" active-filter":""}`} style={{ borderColor: activeCat===c?catColor(c)+"88":"", color: activeCat===c?catColor(c):"" }} onClick={() => setActiveCat(activeCat===c?null:c)}>{SKILL_CAT_ICONS[plCat] || ""} {c} ({count})</button>;
         })}
       </div>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
@@ -99,7 +99,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
             return (
               <div key={plCat} className={styles.legendItem}>
                 <div className={styles.legendDot} style={{ background:color }}/>
-                <span className={styles.legendLabel} style={{ color }}>{displayLabel}</span>
+                <span className={styles.legendLabel} style={{ color }}>{SKILL_CAT_ICONS[SKILL_CATS[i]] || ""} {displayLabel}</span>
               </div>
             );
           })}
@@ -121,7 +121,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
                 <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", fontWeight:700, width:"100%" }}
                   value={sk.name} onChange={e => upd(sk.id,"name",e.target.value)} placeholder={SK.editNamePh}/>
                 <div style={{ display:"flex", gap:"0.4rem", alignItems:"center", flexWrap:"wrap" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.1rem 0.4rem", background:`${cc}0d`, flexShrink:0 }}>{displayCat}</span>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.1rem 0.4rem", background:`${cc}0d`, flexShrink:0 }}>{SKILL_CAT_ICONS[sk.category] || ""} {displayCat}</span>
                   <Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse?SK.active:SK.inactive} color="purple"/>
                 </div>
               </div>
@@ -140,7 +140,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>
                 <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
-                  {CATS.map((c,i) => <button key={c} className="filter-tag" style={{ opacity: sk.category===SKILL_CATS[i]||sk.category===c?1:0.4, borderColor: sk.category===SKILL_CATS[i]||sk.category===c?catColor(c)+"88":"", color: sk.category===SKILL_CATS[i]||sk.category===c?catColor(c):"" }} onClick={() => upd(sk.id,"category",SKILL_CATS[i])}>{c}</button>)}
+                  {CATS.map((c,i) => <button key={c} className="filter-tag" style={{ opacity: sk.category===SKILL_CATS[i]||sk.category===c?1:0.4, borderColor: sk.category===SKILL_CATS[i]||sk.category===c?catColor(c)+"88":"", color: sk.category===SKILL_CATS[i]||sk.category===c?catColor(c):"" }} onClick={() => upd(sk.id,"category",SKILL_CATS[i])}>{SKILL_CAT_ICONS[SKILL_CATS[i]] || ""} {c}</button>)}
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={SK.editDescPh} value={sk.description||""} onChange={e => upd(sk.id,"description",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>

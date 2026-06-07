@@ -103,12 +103,12 @@ Dodano tłumaczenia `tagSuggestions` (PL/EN) i style `.tags-suggestions`,
 `.tags-suggest-label`, `.tag-suggestion` w `global.css`.
 Pliki: `gameConstants.js`, `shared/ui.jsx`, `LocationsScreen.jsx`, `translations.js`, `global.css`.
 
-**P5.7 — Różne ikony dla rodzajów zdolności (cecha rasowa / atut / umiejętność)**
-`SkillsScreen.jsx` koduje kategorię (`SKILL_CAT`) tylko kolorem (linie 9-22),
-bez ikon. Dodać mapę `SKILL_CAT_ICONS` w `gameConstants.js` (wzorem `ITEM_ICONS`,
-linie 41-60) i wyświetlać ikonę przy każdej zdolności oraz w legendzie.
-Pliki: `gameConstants.js`, `SkillsScreen.jsx`, opcjonalnie `EquippedCard.jsx`
-(zakładka zdolności pokazuje obecnie stałe "✨").
+**✅ P5.7 — Różne ikony dla rodzajów zdolności (cecha rasowa / atut / umiejętność) — UKOŃCZONE**
+Dodano mapę `SKILL_CAT_ICONS` w `gameConstants.js` (🎯 umiejętność, 🧬 cecha
+rasowa, ⭐ atut), wzorem `ITEM_ICONS`. Ikony wyświetlane są teraz przy: badge'u
+kategorii na karcie zdolności, w legendzie kategorii, w przyciskach filtra,
+w formularzu dodawania i w selektorze kategorii podczas edycji.
+Pliki: `gameConstants.js`, `SkillsScreen.jsx`.
 
 **P5.8 — Różne ikony dla czarów wg szkół magii**
 `SpellsScreen.jsx` pokazuje szkołę czaru jako sam tekst (badge, linia ~113),

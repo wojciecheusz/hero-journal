@@ -2,7 +2,7 @@ import {
   SKILL_CATS_ENUM, ITEM_TYPES_ENUM, LOC_TYPES_ENUM,
   FACTION_TYPES_ENUM, FACTION_RANKS_ENUM,
   SPELL_LEVELS_ENUM, SPELL_SCHOOLS_ENUM,
-  FACTION_RANK,
+  FACTION_RANK, SKILL_CAT,
 } from './enums.js';
 
 export { STATUS_CYCLE } from './enums.js';
@@ -29,6 +29,12 @@ export const SPELL_LEVELS  = SPELL_LEVELS_ENUM;
 export const SPELL_SLOT_LABELS = SPELL_LEVELS_ENUM.filter(l => l !== "cantrip");
 
 export const SUGGESTED_LOCATION_TAGS = ["miasto", "stolica", "metropolia", "wioska", "twierdza", "świątynia"];
+
+export const SKILL_CAT_ICONS = {
+  [SKILL_CAT.SKILL]:  "🎯",
+  [SKILL_CAT.RACIAL]: "🧬",
+  [SKILL_CAT.FEAT]:   "⭐",
+};
 
 export const FACTION_RANK_COLORS = {
   [FACTION_RANK.UNKNOWN]: "#6a5a38",
