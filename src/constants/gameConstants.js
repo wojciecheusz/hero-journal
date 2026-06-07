@@ -63,7 +63,8 @@ export const ITEM_ICONS = {
   // Enum keys (po migracji)
   general:      "📦",
   weapon:       "⚔️",
-  armor:        "🛡️",
+  armor:        "🥋",
+  shield:       "🛡️",
   spell_scroll: "📜",
   wondrous:     "✨",
   consumable:   "🧪",
@@ -72,7 +73,8 @@ export const ITEM_ICONS = {
   // Legacy Polish keys (przed migracją — backward compatibility)
   "Ogólny":          "📦",
   "Broń":            "⚔️",
-  "Pancerz":         "🛡️",
+  "Pancerz":         "🥋",
+  "Tarcza":          "🛡️",
   "Zwój z czarem":   "📜",
   "Cudowny przedmiot":"✨",
   "Jednorazowy":     "🧪",
