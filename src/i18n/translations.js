@@ -30,7 +30,7 @@ export const TRANSLATIONS = {
       factionType: { guild:"Gildia", order:"Zakon", cult:"Kult", government:"Rząd", military:"Armia", criminals:"Przestępcy", merchants:"Kupcy", religious:"Religijna", political:"Polityczna", other:"Inna" },
       factionRank: { unknown:"Nieznany", ally:"Sojusznik", neutral:"Neutralny", enemy:"Wróg", member:"Członek", officer:"Oficer", leader:"Przywódca" },
       spellLevel:  { cantrip:"Sztuczka", level1:"1. poziom", level2:"2. poziom", level3:"3. poziom", level4:"4. poziom", level5:"5. poziom", level6:"6. poziom", level7:"7. poziom", level8:"8. poziom", level9:"9. poziom" },
-      spellSchool: { abjuration:"Odrzucanie", conjuration:"Przywoływanie", divination:"Poznanie", enchantment:"Oczarowanie", evocation:"Wywoływanie", illusion:"Iluzja", necromancy:"Nekromancja", transmutation:"Przemiana", other:"Inna" },
+      spellSchool: { abjuration:"Odpychanie", conjuration:"Przywoływanie", divination:"Wieszczenie", enchantment:"Uroki", evocation:"Wywoływanie", illusion:"Iluzja", necromancy:"Nekromancja", transmutation:"Przemiany", other:"Inna" },
       damageType:  { slashing:"Cięte", piercing:"Kłute", bludgeoning:"Obuchowe", acid:"Kwas", cold:"Zimno", fire:"Ogień", force:"Siłowe", lightning:"Piorun", necrotic:"Nekrotyczne", poison:"Trucizna", psychic:"Psychiczne", radiant:"Promieniste", thunder:"Dźwięk" },
     },
     REL_LABELS:    { ally:"Sprzymierzeniec", neutral:"Neutralny", hostile:"Wrogi", unknown:"Nieznany" },
@@ -40,7 +40,7 @@ export const TRANSLATIONS = {
     ALIGNMENTS:    ["Praworządny dobry","Neutralny dobry","Chaotyczny dobry","Praworządny neutralny","Bezwzględnie neutralny","Chaotyczny neutralny","Praworządny zły","Neutralny zły","Chaotyczny zły"],
     ITEM_TYPES:    ["Ogólny","Broń","Pancerz","Tarcza","Zwój z czarem","Cudowny przedmiot","Jednorazowy","Narzędzie","Inny"],
     SKILL_CATS:    ["Umiejętność","Cecha rasowa","Atut"],
-    SPELL_SCHOOLS: ["Odrzucanie","Przywoływanie","Poznanie","Oczarowanie","Wywoływanie","Iluzja","Nekromancja","Przemiana","Inna"],
+    SPELL_SCHOOLS: ["Odpychanie","Przywoływanie","Wieszczenie","Uroki","Wywoływanie","Iluzja","Nekromancja","Przemiany","Inna"],
     DAMAGE_TYPES:  ["Cięte","Kłute","Obuchowe","Kwas","Zimno","Ogień","Siłowe","Piorun","Nekrotyczne","Trucizna","Psychiczne","Promieniste","Dźwięk"],
     SPELL_LEVELS:  ["Sztuczka","1. poziom","2. poziom","3. poziom","4. poziom","5. poziom","6. poziom","7. poziom","8. poziom","9. poziom"],
     SAVING_THROWS: [

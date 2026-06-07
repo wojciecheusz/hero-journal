@@ -14,9 +14,12 @@ Cztery powiązane polecenia użytkownika na podstawie załączonych materiałów
    `Ogłuchy→Głuchy`, `Chwycony→Schwytany`, `Zatruty→Otruty`,
    `Leżący→Powalony`, `Ogłuszony→Oszołomiony`) oraz dodano brakujący stan
    `exhausted`/"Wyczerpany" (PL+EN) w `gameConstants.js` i `translations.js`.
-2. **Nazwy szkół magii** — poprawiono 2 z 9 błędnych tłumaczeń PL:
-   `Wieszczenie→Poznanie` (Divination), `Surogacja→Oczarowanie` (Enchantment);
-   pozostałe już zgadzały się z oficjalną terminologią. EN nie wymagało zmian.
+2. **Nazwy szkół magii** — po doprecyzowaniu przez użytkownika oficjalnej listy
+   z podręcznika gracza 5e PL skorygowano 4 etykiety: `Odrzucanie→Odpychanie`
+   (Abjuration), `Surogacja→Uroki` (Enchantment), `→Wieszczenie` (Divination,
+   wcześniejsza poprawka na "Poznanie" cofnięta jako błędna), `Przemiana→Przemiany`
+   (Transmutation); pozostałe już zgadzały się z oficjalną terminologią
+   (`Iluzja`, `Nekromancja`, `Przywoływanie`, `Wywoływanie`). EN bez zmian.
 3. **Redukcja motywów** — usunięto 6 starych palet (`mrok`, `obsydian`,
    `karczma`, `puszcza`, `bone`, `ocean`), zachowując tylko `pergamin`/`wschod`;
    `pergamin` ustawiono jako nowy domyślny motyw (zastępując usunięty `mrok`)
