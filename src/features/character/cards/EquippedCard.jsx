@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import { ITEM_ICONS } from '../../../constants/gameConstants';
+import { ITEM_ICONS, SKILL_CAT_ICONS, SPELL_SCHOOL_ICONS } from '../../../constants/gameConstants';
 import { SpellSlotsWidget } from '../../../shared/ui';
 import { useT } from '../../../i18n/translations';
 
-export default function EquippedCard({ char, setChar, C, inventory, setInventory, skills, spells }) {
+export default function EquippedCard({ char, setChar, C, inventory, setInventory, skills, setSkills, spells, setSpells }) {
   const T = useT();
   const LB = T.LABELS;
   const [activeTab, setActiveTab] = useState("items");
@@ -22,19 +22,32 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
     ...c, coins: { ...(c.coins||{gold:0,silver:0,copper:0}), [type]: Math.max(0, parseInt(val)||0) }
   })), [setChar]);
 
-  const dropOnItem = useCallback(targetId => {
-    if (dragId == null || dragId === targetId) return;
-    setInventory(list => {
+  const reorder = useCallback((setList, fromId, toId) => {
+    setList(list => {
       const next = [...list];
-      const fromIdx = next.findIndex(i => i.id === dragId);
-      const toIdx   = next.findIndex(i => i.id === targetId);
+      const fromIdx = next.findIndex(i => i.id === fromId);
+      const toIdx   = next.findIndex(i => i.id === toId);
       if (fromIdx === -1 || toIdx === -1) return list;
       const [moved] = next.splice(fromIdx, 1);
       next.splice(toIdx, 0, moved);
       return next;
     });
+  }, []);
+
+  const dropOnItem = useCallback(targetId => {
+    if (dragId != null && dragId !== targetId) reorder(setInventory, dragId, targetId);
     setDragId(null);
-  }, [dragId, setInventory]);
+  }, [dragId, setInventory, reorder]);
+
+  const dropOnSkill = useCallback(targetId => {
+    if (dragId != null && dragId !== targetId) reorder(setSkills, dragId, targetId);
+    setDragId(null);
+  }, [dragId, setSkills, reorder]);
+
+  const dropOnSpell = useCallback(targetId => {
+    if (dragId != null && dragId !== targetId) reorder(setSpells, dragId, targetId);
+    setDragId(null);
+  }, [dragId, setSpells, reorder]);
 
   return (
     <div className="card">
@@ -104,8 +117,15 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
       {activeTab==="skills" && (activeSkills.length===0
         ? <div className="empty-state">{C.emptyAbilities}</div>
         : activeSkills.map(sk => (
-          <div key={sk.id} className="equipped-item">
-            <span className="equipped-icon">✨</span>
+          <div key={sk.id} className="equipped-item"
+            draggable
+            onDragStart={() => setDragId(sk.id)}
+            onDragOver={e => e.preventDefault()}
+            onDrop={() => dropOnSkill(sk.id)}
+            onDragEnd={() => setDragId(null)}
+            style={{ opacity: dragId===sk.id ? 0.4 : 1, cursor:"grab" }}>
+            <span className="equipped-drag-handle" title={C.dragToReorder} aria-label={C.dragToReorder}>⠿</span>
+            <span className="equipped-icon">{SKILL_CAT_ICONS[sk.category] || "✨"}</span>
             <div className="flex1">
               <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                 <span className="equipped-name">{sk.name}</span>
@@ -123,8 +143,15 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
           {activeSpells.length > 0 && (
             <div style={{ marginTop:"0.8rem" }}>
               {activeSpells.map(sp => (
-                <div key={sp.id} className="equipped-item">
-                  <span className="equipped-icon">🔮</span>
+                <div key={sp.id} className="equipped-item"
+                  draggable
+                  onDragStart={() => setDragId(sp.id)}
+                  onDragOver={e => e.preventDefault()}
+                  onDrop={() => dropOnSpell(sp.id)}
+                  onDragEnd={() => setDragId(null)}
+                  style={{ opacity: dragId===sp.id ? 0.4 : 1, cursor:"grab" }}>
+                  <span className="equipped-drag-handle" title={C.dragToReorder} aria-label={C.dragToReorder}>⠿</span>
+                  <span className="equipped-icon">{SPELL_SCHOOL_ICONS[sp.school] || "🔮"}</span>
                   <div className="flex1">
                     <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                       <span className="equipped-name" style={{ color:"var(--hj-spell-text)" }}>{sp.name}</span>

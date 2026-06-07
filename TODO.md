@@ -6,6 +6,37 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P6 — Pakiet 5 poprawek: Zdolności/Czary/Aktywne i Wyposażone — UKOŃCZONE
+Polecenie użytkownika rozbite na 5 niezależnych zadań:
+
+- [x] **P6.1** — Przypięte czary nie trafiały na szczyt listy: `SpellsScreen.jsx`
+  nie miało sortowania `pinned` w `visible` (jedyny ekran z `pinned`, który go
+  nie miał — Skills/NPCs/Locations/Factions mają). Dodano `pinned` jako sort
+  nadrzędny nad sortowaniem wg szkoły/poziomu (`[...filtered].sort(...)`,
+  zachowuje stabilność reszty kolejności).
+- [x] **P6.2** — Ikony zdolności/czarów przeniesione obok pola nazwy (osobny
+  `<span style={{fontSize:"1.1rem"}}>` w `entity-header`, analogicznie do
+  `ITEM_ICONS[item.type]` w `InventoryScreen.jsx`), zamiast wewnątrz odznaki
+  kategorii/szkoły pod nazwą. `SpellsScreen.jsx`: `displaySchool()` zwraca już
+  tylko nazwę (bez ikony — usunięcie duplikatu). `SkillsScreen.jsx`: ikona
+  usunięta z odznaki kategorii.
+- [x] **P6.3** — Usunięto legendę kategorii zdolności (`SkillsScreen.jsx`, blok
+  `{/* Legenda kategorii */}`) wraz z nieużywanymi klasami `.legend`/`.legendItem`/
+  `.legendDot`/`.legendLabel` z `SkillsScreen.module.css`.
+- [x] **P6.4** — Statyczne ikony zdolności/czarów (✨ / 🔮) w `EquippedCard.jsx`
+  zamienione na `SKILL_CAT_ICONS[sk.category]` / `SPELL_SCHOOL_ICONS[sp.school]`
+  (z fallbackiem do starych emoji) — odzwierciedlają teraz kategorię/szkołę
+  wpisaną w zakładce Wyposażenie, tak jak `ITEM_ICONS[item.type]` dla przedmiotów.
+- [x] **P6.5** — Drag&drop ręczne sortowanie dodane też do podzakładek "Zdolności"
+  i "Czary" w `EquippedCard.jsx` (uchwyt ⠿, te same handlery co w "Przedmiotach"
+  z P5.4, wydzielona wspólna funkcja `reorder`). Dodano `setSkills`/`setSpells`
+  do łańcucha propsów `HeroJournal` → `CharacterScreen` → `EquippedCard`
+  (operują na pełnych tablicach `skills`/`spells`, analogicznie do `inventory`).
+Pliki: `SpellsScreen.jsx`, `SkillsScreen.jsx`, `SkillsScreen.module.css`,
+`EquippedCard.jsx`, `CharacterScreen.jsx`, `HeroJournal.jsx`.
+
+---
+
 ### ✅ P5.0 — PRIORYTET: napraw błąd synchronizacji z chmurą "DANE ZAPISANE LOKALNIE" — UKOŃCZONE
 **Wdrożona poprawka:** w `cloudSave()` (`src/firebase/firestore.js:27-34`) dane są
 teraz oczyszczane przez `JSON.parse(JSON.stringify({ value }))` tuż przed wysyłką

@@ -1,35 +1,5 @@
 /* SkillsScreen — statyczne style wydzielone z inline JSX */
 
-.legend {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  padding: 0.4rem 0.6rem;
-  background: rgba(128,128,128,0.04);
-  border: 1px solid var(--hj-border);
-  border-radius: 2px;
-}
-
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.legendDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.legendLabel {
-  font-family: 'Cinzel', serif;
-  font-size: 0.46rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .countBar {
   font-family: 'Cinzel', serif;
   font-size: 0.62rem;

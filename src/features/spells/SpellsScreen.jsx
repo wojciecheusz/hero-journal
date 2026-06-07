@@ -22,12 +22,17 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
   const pb = char.profBonus || 2;
   const spMod = Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2;
   const inUseCount = spells.filter(s => s.inUse).length;
-  const visible = sortMode === "school"
-    ? (activeSchool ? spells.filter(s => s.school===activeSchool) : [...spells].sort((a,b) => (a.school||"").localeCompare(b.school||"")))
+  const filtered = sortMode === "school"
+    ? (activeSchool ? spells.filter(s => s.school===activeSchool) : spells)
     : (activeLevel ? spells.filter(s => s.level===activeLevel) : spells);
+  const visible = [...filtered].sort((a, b) => {
+    const pinDiff = (b.pinned?1:0) - (a.pinned?1:0);
+    if (pinDiff) return pinDiff;
+    return (sortMode === "school" && !activeSchool) ? (a.school||"").localeCompare(b.school||"") : 0;
+  });
 
   const displayLevel  = lv => T.LABELS.spellLevel[lv]  ?? lv;
-  const displaySchool = sc => `${SPELL_SCHOOL_ICONS[sc] || ""} ${T.LABELS.spellSchool[sc] ?? sc}`.trim();
+  const displaySchool = sc => T.LABELS.spellSchool[sc] ?? sc;
 
   const addSpell = () => {
     const n = form.name.trim(); if (!n) return;
@@ -120,6 +125,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
         return (
           <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"var(--hj-spell-border)", borderLeftWidth:2 }}>
             <div className="entity-header">
+              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{SPELL_SCHOOL_ICONS[sp.school] || "◈"}</span>
               <div className="flex1">
                 <div style={{ display:"flex", flexDirection:"column", gap:"0.2rem", flex:1, minWidth:0 }}>
                   <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", color:"var(--hj-spell-text)", fontWeight:700, width:"100%" }}
