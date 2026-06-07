@@ -110,10 +110,13 @@ kategorii na karcie zdolności, w legendzie kategorii, w przyciskach filtra,
 w formularzu dodawania i w selektorze kategorii podczas edycji.
 Pliki: `gameConstants.js`, `SkillsScreen.jsx`.
 
-**P5.8 — Różne ikony dla czarów wg szkół magii**
-`SpellsScreen.jsx` pokazuje szkołę czaru jako sam tekst (badge, linia ~113),
-bez ikony. Dodać mapę `SPELL_SCHOOL_ICONS` w `gameConstants.js` (9 szkół +
-"inna") i renderować ikonę obok/zamiast nazwy szkoły.
+**✅ P5.8 — Różne ikony dla czarów wg szkół magii — UKOŃCZONE**
+Dodano mapę `SPELL_SCHOOL_ICONS` w `gameConstants.js` (po jednej ikonie dla
+8 szkół + "inna": 🛡️ abjuracja, 🌀 przywołanie, 👁️ wróżbiarstwo, 💫 zauroczenie,
+🔥 ewokacja, 🎭 iluzja, 💀 nekromancja, 🔄 transmutacja, ✨ inna). `displaySchool()`
+w `SpellsScreen.jsx` dołącza ikonę do nazwy szkoły — widoczne na badge'u czaru
+oraz w obu rozwijanych listach wyboru szkoły (formularz dodawania i edycja).
+Pliki: `gameConstants.js`, `SpellsScreen.jsx`.
 Pliki: `gameConstants.js`, `SpellsScreen.jsx`, opcjonalnie `EquippedCard.jsx`
 (zakładka przygotowanych czarów).
 

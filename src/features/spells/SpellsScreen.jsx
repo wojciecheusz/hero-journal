@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS } from '../../constants/gameConstants';
+import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS } from '../../constants/gameConstants';
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
 import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -23,7 +23,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
   const visible = activeLevel ? spells.filter(s => s.level===activeLevel) : spells;
 
   const displayLevel  = lv => T.LABELS.spellLevel[lv]  ?? lv;
-  const displaySchool = sc => T.LABELS.spellSchool[sc] ?? sc;
+  const displaySchool = sc => `${SPELL_SCHOOL_ICONS[sc] || ""} ${T.LABELS.spellSchool[sc] ?? sc}`.trim();
 
   const addSpell = () => {
     const n = form.name.trim(); if (!n) return;
@@ -70,7 +70,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
               <input className="g-input" placeholder={SP.namePh} value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key==="Enter" && addSpell()}/>
               <select className="g-select" value={form.school} onChange={e => setForm(f => ({ ...f, school: e.target.value }))}>
-                {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{T.SPELL_SCHOOLS[i]??s}</option>)}
+                {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{SPELL_SCHOOL_ICONS[s] || ""} {T.SPELL_SCHOOLS[i]??s}</option>)}
               </select>
             </div>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
@@ -145,7 +145,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
                   <div>
                     <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.12em", color:"var(--hj-spell-muted)", textTransform:"uppercase", display:"block", marginBottom:"0.2rem" }}>{SP.school}</span>
                     <select className="g-select" style={{ fontSize:"0.82rem", padding:"0.25rem 0.5rem", borderColor:"var(--hj-spell-border)" }} value={sp.school} onChange={e => upd(sp.id,"school",e.target.value)}>
-                      {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{T.SPELL_SCHOOLS[i]??s}</option>)}
+                      {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{SPELL_SCHOOL_ICONS[s] || ""} {T.SPELL_SCHOOLS[i]??s}</option>)}
                     </select>
                   </div>
                 </div>
