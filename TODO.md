@@ -66,13 +66,16 @@ Czyści to wszystkie aktywne warunki, w tym poziom wycieńczenia (exhaustion),
 zgodnie z zasadą, że długi odpoczynek usuwa stany.
 Plik: `src/shared/ui.jsx`.
 
-**P5.3 — Przycisk biegłości (proficiency) przy rzutach obronnych**
-`SavingThrowsCard.jsx` ma pole nadpisania wartości, ale nie ma przełącznika
-biegłości — mimo że `char.savingThrows`/`char.savingThrowExp` istnieją w
-DEFAULT_CHAR i są nieużywane. Dodać przełącznik analogiczny do `cycleSkill`
-w `SkillsCard.jsx` (pip: brak → biegłość → ekspertyza, jeśli dotyczy) dla
-każdego z 6 rzutów obronnych, z odpowiednim bonusem do wartości.
-Plik: `src/features/character/cards/SavingThrowsCard.jsx`.
+**✅ P5.3 — Przycisk biegłości (proficiency) przy rzutach obronnych — UKOŃCZONE**
+Dodano `cycleSavingThrow` w `SavingThrowsCard.jsx`, dokładnie wzorem `cycleSkill`
+z `SkillsCard.jsx` — klikalny pip (brak → biegły ● → ekspert ◆) w rogu każdego
+pola rzutu obronnego, zapisujący do istniejących (wcześniej nieużywanych) pól
+`char.savingThrows`/`char.savingThrowExp`. Wartość rzutu liczona jest teraz jako
+`baza + pb` (biegły) lub `baza + pb*2` (ekspert), z zachowaniem priorytetu
+ręcznego nadpisania `savingThrowOverride` (działa identycznie jak wcześniej —
+dwuklik czyści override). Dodano prop `pb` do `SavingThrowsCard` (przekazywany
+z `CharacterScreen.jsx`) oraz tłumaczenie `proficiency` (PL/EN, etykieta `title`/`aria-label`).
+Pliki: `SavingThrowsCard.jsx`, `CharacterScreen.jsx`, `translations.js`.
 
 **P5.4 — Zmiana kolejności kafelków na karcie "Aktywne i Wyposażone" (drag&drop) + sortowanie czarów wg szkół magii**
 a) `EquippedCard.jsx` renderuje `equippedItems` w kolejności z tablicy ekwipunku,

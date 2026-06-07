@@ -48,7 +48,7 @@ function CharacterScreen({ char, setChar, inventory, skills, spells }) {
           <CharCard char={char} setChar={setChar} C={C}
             open={charOpen} onToggle={() => setCharOpen(o => !o)}/>
 
-          <SavingThrowsCard char={char} setChar={setChar} C={C}/>
+          <SavingThrowsCard char={char} setChar={setChar} C={C} pb={pb}/>
 
           <SkillsCard char={char} setChar={setChar} C={C}
             GENERIC_SKILLS={GENERIC_SKILLS} pb={pb}/>
