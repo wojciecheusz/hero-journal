@@ -487,7 +487,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 }
 .screen-col-header .col-title {
   font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
+  font-size: calc(0.62rem + 2px);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--hj-text-label);

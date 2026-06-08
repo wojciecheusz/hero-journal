@@ -137,7 +137,7 @@ export const TRANSLATIONS = {
 
     INVENTORY: {
       count:(n,eq) => `${n} przedmiotów${eq>0?` · ${eq} wyposażonych`:""}`,
-      cancel:"✕ Anuluj", add:"⊕ Dodaj przedmiot", save:"⊕ Zapisz przedmiot",
+      cancel:"✕ Anuluj", add:"⊕ Dodaj", save:"⊕ Zapisz przedmiot",
       namePh:"Nazwa przedmiotu…", qty:"Ilość",
       damageDice:"Kości obrażeń", damageType:"Typ obrażeń", hitBonus:"Premia do trafienia",
       charges:"Ładunki", effect:"Efekt działania", note:"Własne notatki…",
@@ -149,7 +149,7 @@ export const TRANSLATIONS = {
 
     SKILLS: {
       count:(n,a) => `${n} wpisów${a>0?` · ${a} aktywnych`:""}`,
-      cancel:"✕ Anuluj", add:"⊕ Dodaj wpis", addBtn:"⊕ Dodaj",
+      cancel:"✕ Anuluj", add:"⊕ Dodaj", addBtn:"⊕ Dodaj",
       namePh:"Nazwa zdolności…", masteryLevel:"Poziom Mistrzostwa",
       descPh:"Opis działania, wymagania, modyfikatory mechaniczne…",
       all:"Wszystkie", empty:"Brak zapisanych umiejętności, cech rasowych ani atutów.",
@@ -159,7 +159,7 @@ export const TRANSLATIONS = {
 
     SPELLS: {
       count:(n,u) => `${n} czarów${u>0?` · ${u} przygotowanych`:""}`,
-      cancel:"✕ Anuluj", add:"⊕ Dodaj czar", save:"⊕ Zapisz czar",
+      cancel:"✕ Anuluj", add:"⊕ Dodaj", save:"⊕ Zapisz czar",
       hideSlots:"✕ Ukryj komórki", manageSlots:"⚙ Komórki",
       slotsTitle:"Komórki czarów i rzucanie magii",
       castingAbility:"Cecha rzucania",
@@ -181,7 +181,7 @@ export const TRANSLATIONS = {
 
     NPCS: {
       count:(n) => `${n} znanych postaci`,
-      cancel:"✕ Anuluj", add:"⊕ Dodaj postać", addBtn:"⊕ Dodaj postać",
+      cancel:"✕ Anuluj", add:"⊕ Dodaj", addBtn:"⊕ Dodaj",
       namePh:"Imię / Nazwa postaci…", rolePh:"Rola / Profesja postaci…",
       affiliationPh:"Przynależność / Frakcja…", metAtPh:"Miejsce poznania…",
       connectionsPh:"Powiązania z innymi bohaterami…", notesPh:"Notatki dodatkowe, sekrety postawy…",
@@ -195,7 +195,7 @@ export const TRANSLATIONS = {
 
     LOCATIONS: {
       count:(n) => `${n} lokacji`,
-      cancel:"✕ Anuluj", add:"⊕ Dodaj lokację", addBtn:"⊕ Dodaj",
+      cancel:"✕ Anuluj", add:"⊕ Dodaj", addBtn:"⊕ Dodaj",
       namePh:"Nazwa geograficzna lokacji…",
       notesPh:"Opis, klimat, geografia, niebezpieczeństwa, ważne punkty…",
       empty:"Brak zapisanych lokacji. Mapuj odkryty świat!",
@@ -206,7 +206,7 @@ export const TRANSLATIONS = {
 
     FACTIONS: {
       count:(n) => `${n} udokumentowanych frakcji`,
-      cancel:"✕ Anuluj", add:"⊕ Dodaj frakcję", addBtn:"⊕ Dodaj ugrupowanie",
+      cancel:"✕ Anuluj", add:"⊕ Dodaj", addBtn:"⊕ Dodaj",
       namePh:"Nazwa ugrupowania / frakcji…", leaderPh:"Przywódca / Dowódca struktury…",
       hqPh:"Główna kwatera / Terytorium wpływów…", goalPh:"Główny cel organizacji…",
       notesPh:"Historia ugrupowania, dogmaty wewnętrzne, sekrety kapituły…",
@@ -242,7 +242,7 @@ export const TRANSLATIONS = {
       editNamePh:"Nazwa zlecenia…", editDescPh:"Opis…",
       reward:"⭐ Nagroda:",
       progress:(d,t) => `Postęp krokowy: ${d}/${t} wykonanych celów`,
-      stepPh:"Opis kroku szczegółowego…", addStep:"+ Dodaj krok",
+      stepPh:"Opis kroku szczegółowego…", addStep:"+ Dodaj",
       modifyReward:"Modyfikuj nagrodę", rewardEditPh:"Nagroda…",
     },
 
@@ -530,7 +530,7 @@ export const TRANSLATIONS = {
 
     INVENTORY: {
       count:(n,eq) => `${n} item${n!==1?"s":""}${eq>0?` · ${eq} equipped`:""}`,
-      cancel:"✕ Cancel", add:"⊕ Add item", save:"⊕ Save item",
+      cancel:"✕ Cancel", add:"⊕ Add", save:"⊕ Save item",
       namePh:"Item name…", qty:"Qty",
       damageDice:"Damage dice", damageType:"Damage type", hitBonus:"Hit bonus",
       charges:"Charges", effect:"Effect", note:"Personal notes…",
@@ -542,7 +542,7 @@ export const TRANSLATIONS = {
 
     SKILLS: {
       count:(n,a) => `${n} entr${n!==1?"ies":"y"}${a>0?` · ${a} active`:""}`,
-      cancel:"✕ Cancel", add:"⊕ Add entry", addBtn:"⊕ Add",
+      cancel:"✕ Cancel", add:"⊕ Add", addBtn:"⊕ Add",
       namePh:"Ability name…", masteryLevel:"Mastery Level",
       descPh:"Description, requirements, mechanical modifiers…",
       all:"All", empty:"No saved skills, racial features, or feats.",
@@ -552,7 +552,7 @@ export const TRANSLATIONS = {
 
     SPELLS: {
       count:(n,u) => `${n} spell${n!==1?"s":""}${u>0?` · ${u} prepared`:""}`,
-      cancel:"✕ Cancel", add:"⊕ Add spell", save:"⊕ Save spell",
+      cancel:"✕ Cancel", add:"⊕ Add", save:"⊕ Save spell",
       hideSlots:"✕ Hide slots", manageSlots:"⚙ Manage slots",
       slotsTitle:"Spell Slots & Spellcasting",
       castingAbility:"Spellcasting ability",
@@ -574,7 +574,7 @@ export const TRANSLATIONS = {
 
     NPCS: {
       count:(n) => `${n} known character${n!==1?"s":""}`,
-      cancel:"✕ Cancel", add:"⊕ Add character", addBtn:"⊕ Add character",
+      cancel:"✕ Cancel", add:"⊕ Add", addBtn:"⊕ Add",
       namePh:"Name / Character name…", rolePh:"Role / Profession…",
       affiliationPh:"Affiliation / Faction…", metAtPh:"Where met…",
       connectionsPh:"Connections to other heroes…", notesPh:"Additional notes, attitude secrets…",
@@ -588,7 +588,7 @@ export const TRANSLATIONS = {
 
     LOCATIONS: {
       count:(n) => `${n} location${n!==1?"s":""}`,
-      cancel:"✕ Cancel", add:"⊕ Add location", addBtn:"⊕ Add",
+      cancel:"✕ Cancel", add:"⊕ Add", addBtn:"⊕ Add",
       namePh:"Location name…",
       notesPh:"Description, climate, geography, dangers, key points…",
       empty:"No locations saved. Map the discovered world!",
@@ -599,7 +599,7 @@ export const TRANSLATIONS = {
 
     FACTIONS: {
       count:(n) => `${n} documented faction${n!==1?"s":""}`,
-      cancel:"✕ Cancel", add:"⊕ Add faction", addBtn:"⊕ Add organization",
+      cancel:"✕ Cancel", add:"⊕ Add", addBtn:"⊕ Add",
       namePh:"Faction / group name…", leaderPh:"Leader / Commander…",
       hqPh:"Headquarters / Territory…", goalPh:"Main goal…",
       notesPh:"History, internal dogma, chapter secrets…",
@@ -635,7 +635,7 @@ export const TRANSLATIONS = {
       editNamePh:"Quest name…", editDescPh:"Description…",
       reward:"⭐ Reward:",
       progress:(d,t) => `Progress: ${d}/${t} goals completed`,
-      stepPh:"Step description…", addStep:"+ Add step",
+      stepPh:"Step description…", addStep:"+ Add",
       modifyReward:"Modify reward", rewardEditPh:"Reward…",
     },
 
