@@ -21,6 +21,7 @@ export const TRANSLATIONS = {
       oath:"🕊️ Przysięga", astral:"🌌 Astralny", quill:"🪶 Pióro",
       feywild:"🍄 Feywild", eldritch:"🌀 Wieczny", dungeon:"🗝️ Loch",
       underdark:"🕸️ Podmrok", wrath:"🔥 Gniew",
+      forest:"🌲 Puszcza", meadow:"🌻 Łąka", shore:"🏖️ Wybrzeże", shadowfell:"🌑 Cienista Otchłań",
     },
     LABELS: {
       questStatus: { active:"Aktywne", completed:"Ukończone", failed:"Nieudane" },
@@ -411,6 +412,7 @@ export const TRANSLATIONS = {
       oath:"🕊️ Oath", astral:"🌌 Astral", quill:"🪶 Quill",
       feywild:"🍄 Feywild", eldritch:"🌀 Eldritch", dungeon:"🗝️ Dungeon",
       underdark:"🕸️ Underdark", wrath:"🔥 Wrath",
+      forest:"🌲 Forest", meadow:"🌻 Meadow", shore:"🏖️ Shore", shadowfell:"🌑 Shadowfell",
     },
     LABELS: {
       questStatus: { active:"Active", completed:"Completed", failed:"Failed" },
