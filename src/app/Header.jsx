@@ -27,6 +27,12 @@ export default function Header({
           ?
         </button>
 
+        {/* Wsparcie autora — placeholder, funkcja jeszcze nieaktywna */}
+        <button disabled aria-label={T.UI.buyBeer} title={`${T.UI.buyBeer} — ${T.UI.buyBeerSoon}`}
+          style={{ background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", opacity:0.5, fontSize:"1.05rem", lineHeight:1, width:32, height:32, cursor:"default", display:"flex", alignItems:"center", justifyContent:"center" }}>
+          🍺
+        </button>
+
         {/* Panel ustawień */}
         <div style={{ position:"relative" }}>
           <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"

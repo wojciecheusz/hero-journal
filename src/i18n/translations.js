@@ -71,6 +71,7 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Motyw kolorystyczny", resetChar:"↺ Reset postaci", syncData:"☁ Synchronizuj dane",
       logout:"⎋ Wyloguj", changeHero:"Zmień bohatera", hero:"Bohater", langToggle:"EN",
+      buyBeer:"Kup piwo karczmarzowi", buyBeerSoon:"Już niedługo — dziękujemy za chęć wsparcia! 🍺",
       downloadSheet:"Pobierz kartę postaci",
       tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Sugerowane:",
       filterLabel:"Filtr:", filterAll:"Wszystkie",
@@ -468,6 +469,7 @@ export const TRANSLATIONS = {
     UI: {
       themeColor:"Color theme", resetChar:"↺ Reset character", syncData:"☁ Sync data",
       logout:"⎋ Log out", changeHero:"Change hero", hero:"Hero", langToggle:"PL",
+      buyBeer:"Buy the innkeeper a beer", buyBeerSoon:"Coming soon — thanks for wanting to chip in! 🍺",
       downloadSheet:"Download character sheet",
       tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Suggested:",
       filterLabel:"Filter:", filterAll:"All",

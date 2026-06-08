@@ -112,6 +112,12 @@ export default function Sidebar({
           ?
         </button>
 
+        {/* Wsparcie autora — placeholder, funkcja jeszcze nieaktywna */}
+        <button disabled aria-label={T.UI.buyBeer} title={`${T.UI.buyBeer} — ${T.UI.buyBeerSoon}`}
+          style={{ flexShrink:0, width:32, height:32, background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", opacity:0.5, fontSize:"1.05rem", lineHeight:1, cursor:"default", display:"flex", alignItems:"center", justifyContent:"center" }}>
+          🍺
+        </button>
+
         {/* Ustawienia — dropdown fixed, nie obcięty przez overflow sidebara */}
         <div style={{ flex:1, position:"relative" }}>
           <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"
