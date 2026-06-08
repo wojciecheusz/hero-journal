@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { REL_CYCLE } from '../../constants/gameConstants';
+import { REL_CYCLE, REL_ICONS } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
@@ -88,7 +88,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}>{open ? "▲" : "▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}>{RL[rel]}</button>
+              <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}>{REL_ICONS[rel]} {RL[rel]}</button>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem", marginBottom:"0.3rem" }}>
               <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/>

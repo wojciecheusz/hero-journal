@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { LOC_TYPES, SUGGESTED_LOCATION_TAGS } from '../../constants/gameConstants';
+import { LOC_TYPES, SUGGESTED_LOCATION_TAGS, LOC_TYPE_ICONS } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -8,7 +8,7 @@ import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 function LocationsScreen({ locations, setLocations, openEntity }) {
   const T = useT();
 
-  const [form, setForm] = useState({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"" });
+  const [form, setForm] = useState({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"", tags:[] });
   const [showForm, setShowForm] = useState(false);
   const [expanded, setExpanded] = useState({});
   const [editing,  setEditing]  = useState({});
@@ -21,8 +21,8 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
 
   const addLoc = () => {
     const n = form.name.trim(); if (!n) return;
-    setLocations(l => [...l, { id: Date.now(), name: n, type: form.type, notes: form.notes.trim(), tags: [], pinned: false }]);
-    setForm({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"" });
+    setLocations(l => [...l, { id: Date.now(), name: n, type: form.type, notes: form.notes.trim(), tags: form.tags, pinned: false }]);
+    setForm({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"", tags:[] });
     setShowForm(false);
   };
   const upd       = (id, f, v) => setLocations(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));
@@ -53,7 +53,15 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
               {LOC_TYPES.map((type) => (
                 <button key={type} className="filter-tag" style={{ opacity: form.type===type?1:0.45, borderColor: form.type===type?"currentColor":"" }}
-                  onClick={() => setForm(f => ({ ...f, type }))}>{displayLocType(type)}</button>
+                  onClick={() => setForm(f => ({ ...f, type }))}>{LOC_TYPE_ICONS[type]} {displayLocType(type)}</button>
+              ))}
+            </div>
+            <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
+              {SUGGESTED_LOCATION_TAGS.map((tag) => (
+                <button key={tag} className="tag tag-suggestion" style={{ opacity: form.tags.includes(tag) ? 1 : 0.45 }}
+                  onClick={() => setForm(f => ({ ...f, tags: f.tags.includes(tag) ? f.tags.filter(t => t !== tag) : [...f.tags, tag] }))}>
+                  {form.tags.includes(tag) ? "✓ " : "+ "}{tag}
+                </button>
               ))}
             </div>
             <textarea className="g-textarea" rows={3} placeholder={T.LOCATIONS.notesPh} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
@@ -79,21 +87,21 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}>{open ? "▲" : "▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <span className="loc-type">{displayLocType(loc.type)}</span>
+              <span className="loc-type">{LOC_TYPE_ICONS[loc.type]} {displayLocType(loc.type)}</span>
             </div>
 
             {loc.notes && !isEditing && (
               <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{loc.notes}</p>
             )}
 
-            <TagsEditor tags={loc.tags || []} onChange={v => upd(loc.id, "tags", v)} suggestions={SUGGESTED_LOCATION_TAGS}/>
+            <TagsEditor tags={loc.tags || []} onChange={v => upd(loc.id, "tags", v)}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>
                 <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.7rem" }}>
                   {LOC_TYPES.map((type) => (
                     <button key={type} className="filter-tag" style={{ opacity: loc.type===type?1:0.4, borderColor: loc.type===type?"currentColor":"" }}
-                      onClick={() => upd(loc.id, "type", type)}>{displayLocType(type)}</button>
+                      onClick={() => upd(loc.id, "type", type)}>{LOC_TYPE_ICONS[type]} {displayLocType(type)}</button>
                   ))}
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>

@@ -6,6 +6,33 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P12 — Ikony tagów/odznak w zakładce Świat + usunięcie reputacji frakcji + przeniesienie sugerowanych tagów lokacji — UKOŃCZONE
+Trzy powiązane polecenia użytkownika dot. ujednolicenia wyglądu zakładki
+"Świat" (NPC/Lokacje/Frakcje) z benchmarkiem zakładki "Wyposażenie"
+(gdzie typ przedmiotu wyświetla się z ikoną, np. `ITEM_ICONS[item.type]`):
+1. **Ikony przy odznakach** — dodano 3 nowe mapy ikon w `gameConstants.js`
+   (`REL_ICONS` dla relacji NPC: 🤝/⚖️/⚔️/❓, `FACTION_RANK_ICONS` dla rang
+   frakcji: 🤝/⚖️/⚔️/👤/🎖️/👑/❓, `LOC_TYPE_ICONS` dla typów lokacji:
+   🏘️/🕳️/🌲/🏛️/🏚️/🗿/◈) i wyświetlono je przed etykietą w `rel-badge`
+   (`NPCsScreen.jsx`), odznace rangi (`FactionsPanel.jsx`) oraz `loc-type`
+   i przyciskach wyboru typu w formularzu (`LocationsScreen.jsx`).
+2. **Usunięcie paska reputacji frakcji** — usunięto cały suwak −100..+100
+   wraz z opisem z wpisów `FactionsPanel.jsx`, pole `reputation` z tworzenia
+   nowych frakcji i danych przykładowych (`sampleHero.js`), oraz osierocone
+   klucze tłumaczeń `FACTIONS.reputation` i wpisy samouczka "REP." (PL+EN).
+3. **Przeniesienie sugerowanych tagów lokacji** — usunięto sekcję "sugerowane"
+   (`suggestions={SUGGESTED_LOCATION_TAGS}`) z wpisów `TagsEditor` lokacji
+   i dodano w jej miejsce rząd przełączalnych przycisków domyślnych tagów
+   (miasto/stolica/metropolia/wioska/twierdza/świątynia) w formularzu
+   tworzenia nowej lokacji — wybrane trafiają od razu do `tags` nowego wpisu.
+Pliki: `gameConstants.js`, `NPCsScreen.jsx`, `LocationsScreen.jsx`,
+`FactionsPanel.jsx`, `translations.js`, `sampleHero.js`. Zweryfikowano
+w Playwright: ikony renderują się poprawnie przy odznakach (🤝 SPRZYMIERZENIEC,
+🕳️ PODZIEMIA, 🎖️ OFFICER), pasek reputacji zniknął z kart frakcji, a formularz
+nowej lokacji pokazuje przełączalne tagi domyślne (✓ po zaznaczeniu).
+
+---
+
 ### ✅ P11 — Oficjalne nazwy stanów/szkół magii + wymiana motywów kolorystycznych — UKOŃCZONE
 Cztery powiązane polecenia użytkownika na podstawie załączonych materiałów
 (PDF "Stany" z oficjalnymi PL nazwami warunków + obrazek "8 Schools of Magic"):

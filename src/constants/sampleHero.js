@@ -285,7 +285,7 @@ export function createSampleHero() {
       headquarters: "Silver Citadel, northern mountains",
       goal: "Protect the innocent and destroy supernatural evil across the realm",
       notes: "John's home order. They sent him on this mission to recover the stolen relic. They have resources but are spread thin across the continent. Contact: send a silver raven to the Citadel.",
-      tags: ["order", "home", "paladin"], pinned: true, reputation: 80,
+      tags: ["order", "home", "paladin"], pinned: true,
     },
     {
       id: 802, name: "Dragon Blood Cult", type: FACTION_TYPE.CULT,
@@ -293,7 +293,7 @@ export function createSampleHero() {
       headquarters: "Unknown — likely underground",
       goal: "Summon a dragon god through stolen sacred artifacts",
       notes: "Enemy faction. Operates in cells — each cell knows little of the others. Mrak Thornwood is their regional leader. Members identified by a demoness tattoo on the left wrist.",
-      tags: ["cult", "enemy", "dangerous"], pinned: false, reputation: -90,
+      tags: ["cult", "enemy", "dangerous"], pinned: false,
     },
     {
       id: 803, name: "Baldur's Gate City Watch", type: FACTION_TYPE.MILITARY,
@@ -301,7 +301,7 @@ export function createSampleHero() {
       headquarters: "East Gate Barracks, Baldur's Gate",
       goal: "Maintain law and order in the city",
       notes: "Useful allies within the city. Overstretched — can't act outside the walls. Help with passes and official backing. Sir Aldric trusts John after the caravan report.",
-      tags: ["guard", "official", "ally"], pinned: false, reputation: 40,
+      tags: ["guard", "official", "ally"], pinned: false,
     },
   ];
 

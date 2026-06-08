@@ -2,7 +2,7 @@ import {
   SKILL_CATS_ENUM, ITEM_TYPES_ENUM, LOC_TYPES_ENUM,
   FACTION_TYPES_ENUM, FACTION_RANKS_ENUM,
   SPELL_LEVELS_ENUM, SPELL_SCHOOLS_ENUM, DAMAGE_TYPES_ENUM,
-  FACTION_RANK, SKILL_CAT, SPELL_SCHOOL,
+  FACTION_RANK, SKILL_CAT, SPELL_SCHOOL, LOC_TYPE,
 } from './enums.js';
 
 export { STATUS_CYCLE } from './enums.js';
@@ -59,6 +59,33 @@ export const FACTION_RANK_COLORS = {
   [FACTION_RANK.MEMBER]:  "#4a7aaa",
   [FACTION_RANK.OFFICER]: "#c9a84c",
   [FACTION_RANK.LEADER]:  "#e2b94e",
+};
+
+export const REL_ICONS = {
+  ally:    "🤝",
+  neutral: "⚖️",
+  hostile: "⚔️",
+  unknown: "❓",
+};
+
+export const FACTION_RANK_ICONS = {
+  [FACTION_RANK.UNKNOWN]: "❓",
+  [FACTION_RANK.ALLY]:    "🤝",
+  [FACTION_RANK.NEUTRAL]: "⚖️",
+  [FACTION_RANK.ENEMY]:   "⚔️",
+  [FACTION_RANK.MEMBER]:  "👤",
+  [FACTION_RANK.OFFICER]: "🎖️",
+  [FACTION_RANK.LEADER]:  "👑",
+};
+
+export const LOC_TYPE_ICONS = {
+  [LOC_TYPE.SETTLEMENT]: "🏘️",
+  [LOC_TYPE.DUNGEON]:    "🕳️",
+  [LOC_TYPE.WILDERNESS]: "🌲",
+  [LOC_TYPE.BUILDING]:   "🏛️",
+  [LOC_TYPE.RUINS]:      "🏚️",
+  [LOC_TYPE.LANDMARK]:   "🗿",
+  [LOC_TYPE.OTHER]:      "◈",
 };
 
 export const ITEM_ICONS = {

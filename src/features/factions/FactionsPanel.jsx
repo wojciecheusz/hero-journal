@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS } from '../../constants/gameConstants';
+import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS, FACTION_RANK_ICONS } from '../../constants/gameConstants';
 import { FACTION_TYPE, FACTION_RANK } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -24,7 +24,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
 
   const addFaction = () => {
     const n = form.name.trim(); if (!n) return;
-    setFactions(l => [...l, { id: Date.now(), ...form, name: n, tags: [], pinned: false, reputation: 0 }]);
+    setFactions(l => [...l, { id: Date.now(), ...form, name: n, tags: [], pinned: false }]);
     setForm({ name:"", type:FACTION_TYPE.GUILD, rank:FACTION_RANK.UNKNOWN, leader:"", headquarters:"", goal:"", notes:"" });
     setShowForm(false);
   };
@@ -93,7 +93,6 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
         const open = !!expanded[fac.id];
         const isEditing = !!editing[fac.id];
         const rc  = rankColor(fac.rank||FACTION_RANK.UNKNOWN);
-        const rep = fac.reputation||0;
         return (
           <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
@@ -104,7 +103,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(fac.id)} aria-label={open?"Collapse":"Expand"}>{open?"▲":"▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${fac.rank||FACTION_RANK.UNKNOWN}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", userSelect:"none" }}>{fac.rank||FACTION_RANK.UNKNOWN}</button>
+              <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${fac.rank||FACTION_RANK.UNKNOWN}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", userSelect:"none" }}>{FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]} {fac.rank||FACTION_RANK.UNKNOWN}</button>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem", marginBottom:"0.3rem" }}>
               <input className="iedit" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)} placeholder="…"/>
@@ -112,13 +111,6 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
               <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/>
               <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/>
             </div>
-            <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", marginBottom:"0.3rem" }}>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.1em", opacity:0.5, textTransform:"uppercase", flexShrink:0 }}>{F.reputation}</span>
-              <input type="range" min={-100} max={100} value={rep} onChange={e => upd(fac.id,"reputation",parseInt(e.target.value))}
-                style={{ flex:1, accentColor: rep>0?"#5a9a5a":rep<0?"#8a3a3a":"#6a5a38", cursor:"pointer" }}/>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.65rem", fontWeight:700, minWidth:36, textAlign:"right", color: rep>50?"#5a9a5a":rep>0?"#8a9a5a":rep<-50?"#8a3a3a":rep<0?"#9a6a3a":"#6a5a38" }}>{rep>0?"+":""}{rep}</span>
-            </div>
-
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
             {fac.notes && !isEditing && (
               <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{fac.notes}</p>
