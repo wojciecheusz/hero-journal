@@ -1,9 +1,22 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Każdy użytkownik ma dostęp wyłącznie do własnych danych
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    match /users/{userId}/data/{slotKey} {
+      // Odczyt (get + list) — tylko właściciel, zalogowany
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Zapis — tylko właściciel + walidacja struktury dokumentu:
+      //   • dokument musi mieć dokładnie jedno pole 'value' (zapobiega
+      //     zapisywaniu arbitralnych pól przez złośliwy/buggy klient)
+      //   • 'value' nie może być null
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.data.keys().hasOnly(['value'])
+                   && request.resource.data.keys().size() == 1
+                   && request.resource.data.value != null;
+
+      // Usuwanie (na wypadek przyszłego pruning starych slotów)
+      allow delete: if request.auth != null && request.auth.uid == userId;
     }
   }
 }

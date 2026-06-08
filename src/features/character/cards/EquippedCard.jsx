@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ITEM_ICONS, SKILL_CAT_ICONS, SPELL_SCHOOL_ICONS } from '../../../constants/gameConstants';
-import { SpellSlotsWidget } from '../../../shared/ui';
+import { SpellSlotsWidget } from '../widgets/SpellSlotsWidget';
 import { useT } from '../../../i18n/translations';
 import { useDragReorder } from '../../../hooks/useDragReorder';
 

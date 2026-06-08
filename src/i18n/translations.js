@@ -360,7 +360,7 @@ export const TRANSLATIONS = {
           ["STANY","Stany i Wyczerpanie","Tapnij stan aby aktywować / dezaktywować. Wyczerpanie: 0 = brak, 1–6 = poziomy siły efektu."],
           ["☠ ○○○","Rzuty obronne przy śmierci","Trzy kółka sukcesów i trzy porażek. Kliknij kółko aby ustawić. 3 sukcesy = stabilny."],
           ["☽ / ☀","Krótki / Długi odpoczynek","Otwiera modal. Krótki: wydaj Kości Wyt. aby odzyskać PŻ. Długi: pełna regeneracja."],
-          ["AKTYWNE","Aktywne i Wyposażone","Dolna karta: wyposażone przedmioty, aktywne zdolności i czary. Monety (złoto/srebro/miedź)."],
+          ["AKTYWNE","Aktywne i Wyposażone","Dolna karta: wyposażone przedmioty, aktywne zdolności i czary. Monety (złoto/srebro/miedź). Przeciągnij ⠿ aby zmienić kolejność — działa też palcem na mobile."],
         ],
       },
       equipment:{
@@ -373,6 +373,7 @@ export const TRANSLATIONS = {
           ["⬤ Toggle","Wyposażony / Aktywny","Przedmioty: Wyposażony ↔ W plecaku. Czary i zdolności: Aktywny ↔ Nieaktywny. Aktywne trafiają na kartę Postać."],
           ["SLOTY","Zarządzaj slotami czarów","Kliknij 'Zarządzaj slotami' nad listą czarów. Ustaw max i wydane sloty dla każdego poziomu."],
           ["KAT.","Kategorie zdolności","Złoty = Umiejętność, niebieski = Cecha rasowa, brązowy = Atut. Legenda nad paskiem filtrów."],
+          ["# TAG","Filtruj po tagu (Plecak / Czary / Zdolności)","Kliknij tag w pasku filtrów aby pokazać tylko wpisy z tym tagiem. Ponowne kliknięcie usuwa filtr. Tagi dodajesz w trybie edycji każdego wpisu."],
         ],
       },
       world:{
@@ -380,7 +381,7 @@ export const TRANSLATIONS = {
         intro:"Postacie, Miejsca i Frakcje w trzech kolumnach na desktopie. Na mobile przełączaj zakładki.",
         items:[
           ["⊕ Dodaj","Utwórz nowy wpis","Wpisz nazwę i kluczowe informacje. Wpis pojawia się na liście natychmiast."],
-          ["▼ / ▲","Zwiń / rozwiń","Zwinięty = podgląd notatek (2 linie). Rozwinięty = pełne detale i edycja pól."],
+          ["▼ / ▲","Zwiń / rozwiń","Zwinięty = tylko nazwa + tagi. Rozwinięty = pełne detale i edycja pól."],
           ["✎ Edytuj","Tryb edycji wpisu","Modyfikuj pola, typ i notatki. Kliknij ✓ aby zamknąć."],
           ["RELACJA","Nastawienie NPC — zmień tapem","Odznaka pod nazwą postaci. Tapnij aby cyklować: Nieznany → Sojusznik → Neutralny → Wrogi."],
           ["RANGA","Ranga Frakcji — zmień tapem","Odznaka pod nazwą frakcji. Tapnij aby cyklować dostępne rangi (Nieznany, Sojusznik, Wróg…)."],
@@ -759,7 +760,7 @@ export const TRANSLATIONS = {
           ["COND.","Conditions & Exhaustion","Tap a condition to toggle it on or off. Exhaustion: 0 = none, 1–6 = increasing severity."],
           ["☠ ○○○","Death saving throws","Three success circles and three failure circles. Click a circle to set it. 3 successes = stable."],
           ["☽ / ☀","Short / Long Rest","Opens a modal. Short: spend Hit Dice to recover HP. Long: full recovery."],
-          ["ACTIVE","Active & Equipped","Bottom card: equipped items, active abilities, and active spells. Coins (gold/silver/copper)."],
+          ["ACTIVE","Active & Equipped","Bottom card: equipped items, active abilities, and active spells. Coins (gold/silver/copper). Drag ⠿ to reorder — works with a finger on mobile too."],
         ],
       },
       equipment:{
@@ -772,6 +773,7 @@ export const TRANSLATIONS = {
           ["⬤ Toggle","Equipped / Active","Items: Equipped ↔ In bag. Spells & abilities: Active ↔ Inactive. Active entries appear on the Character card."],
           ["SLOTS","Manage spell slots","Click 'Manage slots' above the spell list. Set max and spent slots per spell level."],
           ["CAT.","Ability categories","Gold = Skill, blue = Racial Feature, brown = Feat. See the legend above the filter bar."],
+          ["# TAG","Filter by tag (Inventory / Spells / Abilities)","Click a tag in the filter bar to show only entries with that tag. Click again to clear. Add tags from any entry's edit mode."],
         ],
       },
       world:{
@@ -779,7 +781,7 @@ export const TRANSLATIONS = {
         intro:"NPCs, Locations, and Factions in three columns on desktop. On mobile, switch using the sub-tabs.",
         items:[
           ["⊕ Add","Create a new entry","Fill in the name and key fields. The entry appears on the list immediately."],
-          ["▼ / ▲","Collapse / expand","Collapsed = 2-line note preview. Expanded = full details and editable fields."],
+          ["▼ / ▲","Collapse / expand","Collapsed = name + tags only. Expanded = full details and editable fields."],
           ["✎ Edit","Edit mode","Modify fields, type, and notes. Click ✓ to close."],
           ["REL.","NPC relation — tap to change","Badge below the NPC name. Tap to cycle: Unknown → Ally → Neutral → Hostile."],
           ["RANK","Faction rank — tap to change","Badge below the faction name. Tap to cycle through ranks (Unknown, Ally, Enemy…)."],

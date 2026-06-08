@@ -1,7 +1,8 @@
 import { useState, memo } from 'react';
 import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
-import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget, FilterBar } from '../../shared/ui';
+import { TagsEditor, PrzypnijBtn, Toggle, FilterBar } from '../../shared/ui';
+import { SpellSlotsWidget } from '../character/widgets/SpellSlotsWidget';
 import { useT } from '../../i18n/translations';
 import { useEntityList } from '../../hooks/useEntityList';
 

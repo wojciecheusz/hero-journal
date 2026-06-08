@@ -3,7 +3,6 @@ import { SKILL_CATS, SKILL_CAT_ICONS, SUGGESTED_ACTION_TAGS } from '../../consta
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
-import styles from './SkillsScreen.module.css';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 
@@ -58,7 +57,7 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
       <div className="screen-col-header">
         <span className="col-title">{title}</span>
         <span className="col-actions">
-          <span className={styles.countBar}>{SK.count(skills.length, inUseCount)}</span>
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{SK.count(skills.length, inUseCount)}</span>
           <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? SK.cancel : SK.add}</button>
         </span>
       </div>

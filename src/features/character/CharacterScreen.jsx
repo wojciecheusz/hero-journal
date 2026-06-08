@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { RestModal } from '../../shared/ui';
+import { RestModal } from './widgets/RestModal';
 import { useT } from '../../i18n/translations';
 
 import CharCard        from './cards/CharCard';
