@@ -7,8 +7,6 @@ import {
 
 export { STATUS_CYCLE } from './enums.js';
 
-export const REL_CYCLE = { unknown:"ally", ally:"neutral", neutral:"hostile", hostile:"unknown" };
-
 export const today = () => new Date().toISOString().slice(0, 10);
 
 export const XP_THRESHOLDS = [

@@ -97,6 +97,7 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
         return (
           <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
+              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{LOC_TYPE_ICONS[loc.type]}</span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={T.LOCATIONS.editNamePh}/>
               <PrzypnijBtn pinned={loc.pinned} onToggle={() => upd(loc.id, "pinned", !loc.pinned)}/>
@@ -104,7 +105,7 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}>{open ? "▲" : "▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <span className="loc-type"><span className="badge-icon">{LOC_TYPE_ICONS[loc.type]}</span> {displayLocType(loc.type)}</span>
+              <span className="loc-type">{displayLocType(loc.type)}</span>
             </div>
 
             {loc.notes && !isEditing && (

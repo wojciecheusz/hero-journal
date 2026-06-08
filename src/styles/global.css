@@ -496,6 +496,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   display: flex;
   align-items: baseline;
   gap: 0.6rem;
+  margin-left: auto;
 }
 
 /* Karta postaci — aktualizacje dla szerszych breakpointów */

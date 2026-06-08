@@ -35,11 +35,6 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
   const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
   const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
-  const cycleRank = id => setFactions(l => l.map(x => {
-    if (x.id!==id) return x;
-    const idx = FACTION_RANKS.indexOf(x.rank||FACTION_RANK.UNKNOWN);
-    return { ...x, rank: FACTION_RANKS[(idx+1)%FACTION_RANKS.length] };
-  }));
 
   const q = search.trim().toLowerCase();
   const visible = factions
@@ -101,6 +96,7 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
         return (
           <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
+              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}</span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={fac.name} onChange={e => upd(fac.id,"name",e.target.value)} placeholder={F.editNamePh}/>
               <PrzypnijBtn pinned={fac.pinned} onToggle={() => upd(fac.id,"pinned",!fac.pinned)}/>
@@ -108,16 +104,18 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(fac.id)} aria-label={open?"Collapse":"Expand"}>{open?"▲":"▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", userSelect:"none" }}><span className="badge-icon">{FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}</span> {displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}</button>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12` }}>{displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}</span>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem", marginBottom:"0.3rem" }}>
-              <select className="g-select" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)}>
-                <option value="">—</option>
-                {FACTION_TYPES.map(t => <option key={t} value={t}>{displayFactionType(t)}</option>)}
-              </select>
-              <input className="iedit" style={{ fontSize:"0.82rem", opacity:0.7 }} value={fac.leader||""} onChange={e => upd(fac.id,"leader",e.target.value)} placeholder={F.leaderEditPh}/>
-              <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/>
-              <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/>
+              <div className="pack-field"><span className="pack-field-label">{F.type}</span>
+                <select className="g-select" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)}>
+                  <option value="">—</option>
+                  {FACTION_TYPES.map(t => <option key={t} value={t}>{displayFactionType(t)}</option>)}
+                </select>
+              </div>
+              <div className="pack-field"><span className="pack-field-label">{F.leader}</span><input className="iedit" style={{ fontSize:"0.82rem", opacity:0.7 }} value={fac.leader||""} onChange={e => upd(fac.id,"leader",e.target.value)} placeholder={F.leaderEditPh}/></div>
+              <div className="pack-field"><span className="pack-field-label">{F.headquarters}</span><input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/></div>
+              <div className="pack-field"><span className="pack-field-label">{F.goal}</span><input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/></div>
             </div>
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
             {fac.notes && !isEditing && (
@@ -129,7 +127,7 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>
                 <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
-                  {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}>{displayFactionRank(r)}</button>)}
+                  {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}>{FACTION_RANK_ICONS[r]} {displayFactionRank(r)}</button>)}
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>

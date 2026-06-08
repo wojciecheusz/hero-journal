@@ -160,7 +160,7 @@ export const TRANSLATIONS = {
     SPELLS: {
       count:(n,u) => `${n} czarów${u>0?` · ${u} przygotowanych`:""}`,
       cancel:"✕ Anuluj", add:"⊕ Dodaj czar", save:"⊕ Zapisz czar",
-      hideSlots:"✕ Ukryj komórki", manageSlots:"⚙ Zarządzaj komórkami",
+      hideSlots:"✕ Ukryj komórki", manageSlots:"⚙ Komórki",
       slotsTitle:"Komórki czarów i rzucanie magii",
       castingAbility:"Cecha rzucania",
       spellStats:(dc,atk) => `Trudność czarów (DC): ${dc} · Modyfikator ataku: ${atk}`,
@@ -186,6 +186,7 @@ export const TRANSLATIONS = {
       affiliationPh:"Przynależność / Frakcja…", metAtPh:"Miejsce poznania…",
       connectionsPh:"Powiązania z innymi bohaterami…", notesPh:"Notatki dodatkowe, sekrety postawy…",
       empty:"Brak zapisanych postaci w kartotece świata.",
+      role:"Rola", affiliation:"Przynależność", metAt:"Miejsce poznania", connections:"Powiązania",
       editNamePh:"Imię postaci…", editRolePh:"Rola…", editAffilPh:"Frakcja…",
       editMetAtPh:"Miejsce poznania…", editConnPh:"Powiązania…",
       editNotesPh:"Zgromadzone fakty, sekrety, plotki, cechy charakterystyczne…",
@@ -193,7 +194,7 @@ export const TRANSLATIONS = {
     },
 
     LOCATIONS: {
-      count:(n) => `${n} lokacji naniesionych na mapę`,
+      count:(n) => `${n} lokacji`,
       cancel:"✕ Anuluj", add:"⊕ Dodaj lokację", addBtn:"⊕ Dodaj",
       namePh:"Nazwa geograficzna lokacji…",
       notesPh:"Opis, klimat, geografia, niebezpieczeństwa, ważne punkty…",
@@ -212,6 +213,7 @@ export const TRANSLATIONS = {
       all:"Wszystkie",
       empty:"Brak zapisanych organizacji w świecie gry.",
       emptySub:"Zapisuj gildie kupieckie, potężne zakony rycerskie lub tajne sekty…",
+      type:"Typ", leader:"Przywódca", headquarters:"Siedziba", goal:"Cel",
       editNamePh:"Nazwa frakcji…", leaderEditPh:"Przywódca…",
       hqEditPh:"Siedziba główna…", goalEditPh:"Nadrzędny cel…",
       editNotesPh:"Zgromadzone fakty, wewnętrzne dogmaty, hierarchia, sekrety operacyjne ugrupowania…",
@@ -577,6 +579,7 @@ export const TRANSLATIONS = {
       affiliationPh:"Affiliation / Faction…", metAtPh:"Where met…",
       connectionsPh:"Connections to other heroes…", notesPh:"Additional notes, attitude secrets…",
       empty:"No characters saved in the world file.",
+      role:"Role", affiliation:"Affiliation", metAt:"Where met", connections:"Connections",
       editNamePh:"Character name…", editRolePh:"Role…", editAffilPh:"Faction…",
       editMetAtPh:"Where met…", editConnPh:"Connections…",
       editNotesPh:"Gathered facts, secrets, rumors, characteristics…",
@@ -584,7 +587,7 @@ export const TRANSLATIONS = {
     },
 
     LOCATIONS: {
-      count:(n) => `${n} location${n!==1?"s":""} on the map`,
+      count:(n) => `${n} location${n!==1?"s":""}`,
       cancel:"✕ Cancel", add:"⊕ Add location", addBtn:"⊕ Add",
       namePh:"Location name…",
       notesPh:"Description, climate, geography, dangers, key points…",
@@ -603,6 +606,7 @@ export const TRANSLATIONS = {
       all:"All",
       empty:"No organizations saved in the game world.",
       emptySub:"Record merchant guilds, powerful knightly orders, or secret sects…",
+      type:"Type", leader:"Leader", headquarters:"Headquarters", goal:"Goal",
       editNamePh:"Faction name…", leaderEditPh:"Leader…",
       hqEditPh:"Headquarters…", goalEditPh:"Main goal…",
       editNotesPh:"Gathered facts, internal dogma, hierarchy, operational secrets…",

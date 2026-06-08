@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { REL_CYCLE, REL_ICONS } from '../../constants/gameConstants';
+import { REL_ICONS } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
@@ -32,7 +32,6 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
   const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
   const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
   const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
-  const cycleRel  = id => setNPCs(l => l.map(x => x.id === id ? { ...x, relation: REL_CYCLE[x.relation || "unknown"] } : x));
 
   const q = search.trim().toLowerCase();
   const visible = npcs
@@ -98,6 +97,7 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
         return (
           <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
+              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{REL_ICONS[rel]}</span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={npc.name} onChange={e => upd(npc.id, "name", e.target.value)} placeholder={N.editNamePh}/>
               <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id,"pinned",!npc.pinned)}/>
@@ -105,13 +105,13 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}>{open ? "▲" : "▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}><span className="badge-icon">{REL_ICONS[rel]}</span> {RL[rel]}</button>
+              <span className={`rel-badge rel-${rel}`}>{RL[rel]}</span>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem", marginBottom:"0.3rem" }}>
-              <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/>
-              <input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/>
-              <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/>
-              <input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/>
+              <div className="pack-field"><span className="pack-field-label">{N.role}</span><input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/></div>
+              <div className="pack-field"><span className="pack-field-label">{N.affiliation}</span><input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/></div>
+              <div className="pack-field"><span className="pack-field-label">{N.metAt}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/></div>
+              <div className="pack-field"><span className="pack-field-label">{N.connections}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/></div>
             </div>
 
             {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
@@ -123,6 +123,12 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>
+                <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
+                  {["unknown","ally","neutral","hostile"].map(r => (
+                    <button key={r} className="filter-tag" style={{ opacity: rel===r?1:0.4, borderColor: rel===r?"currentColor":"" }}
+                      onClick={() => upd(npc.id,"relation",r)}>{REL_ICONS[r]} {RL[r]}</button>
+                  ))}
+                </div>
                 <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
                   <button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button>

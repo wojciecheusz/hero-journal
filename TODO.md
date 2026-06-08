@@ -3,6 +3,41 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P15 — Pakiet poprawek: czary, wpisy Świata jak w Wyposażeniu, etykiety pól edycji — UKOŃCZONE
+Sześć powiązanych poleceń użytkownika:
+- [x] **P15.1** — W kolumnie Czary zmieniono tekst przycisku "⚙ Zarządzaj komórkami"
+  na samo "Komórki" (`SP.manageSlots` w `translations.js:163`).
+- [x] **P15.2** — Rząd z licznikiem czarów i przyciskami w nagłówku kolumny Czary
+  był niewyrównany do prawej przy zawijaniu (`flex-wrap` w `.screen-col-header`
+  z `justify-content:space-between` — pojedynczy element na zawiniętej linii
+  lądował przy lewej krawędzi). Naprawiono przez `margin-left:auto` na
+  `.screen-col-header .col-actions` (`global.css`).
+- [x] **P15.3** — Wpisy zakładki Świat (Postacie/Lokacje/Frakcje) wyglądają teraz
+  jak wpisy Wyposażenia: duża ikona typu (1.1rem, wzorem `ITEM_ICONS` w
+  `InventoryScreen`) obok pola nazwy w nagłówku karty (relacja NPC — `REL_ICONS`,
+  typ lokacji — `LOC_TYPE_ICONS`, ranga frakcji — `FACTION_RANK_ICONS`), odznaka
+  pod nazwą stała się statycznym tekstem bez ikony (uniknięcie duplikacji wizualnej).
+  Klasa `.badge-icon` pozostała — nadal używana w paskach filtrów (NPC/Lokacje).
+- [x] **P15.4** — Wybór relacji NPC / rangi frakcji działa teraz przez bezpośredni
+  wybór z rzędu przycisków (analogicznie do typu lokacji w `LocationsScreen`),
+  zamiast przeklikiwania odznaki. Usunięto `cycleRel`/`cycleRank` oraz nieużywaną
+  już stałą `REL_CYCLE` z `gameConstants.js`; w trybie edycji dodano rzędy przycisków
+  z bezpośrednim `upd(id,"relation"/"rank",val)` (z ikonami `REL_ICONS`/`FACTION_RANK_ICONS`).
+- [x] **P15.5** — Usunięto tekst "naniesionych na mapę" / "on the map" z licznika
+  lokacji (`T.LOCATIONS.count` w `translations.js`, PL i EN).
+- [x] **P15.6** — W oknach edycji wpisów Postaci i Frakcji pola (rola,
+  przynależność, miejsce poznania, powiązania / typ, lider, siedziba, cel) miały
+  tylko placeholdery, które znikały po wypełnieniu. Owinięto je w `.pack-field`/
+  `.pack-field-label` (wzorem `InventoryScreen`) z nowymi kluczami tłumaczeń
+  (`T.NPCS.role/affiliation/metAt/connections`, `T.FACTIONS.type/leader/headquarters/goal`),
+  dzięki czemu etykieta pola jest zawsze widoczna.
+
+Zweryfikowano wizualnie w Playwright na przykładowej postaci ("John Silverblade"):
+przycisk komórek czarów = "⚙ Komórki" i wiersz wyrównany do prawej; karty NPC/Lokacji/
+Frakcji mają dużą ikonę typu obok nazwy i odznakę tekstową; tryb edycji NPC/Frakcji
+pokazuje etykiety pól oraz rzędy przycisków bezpośredniego wyboru relacji/rangi
+(z ikonami); licznik lokacji nie zawiera już "naniesionych na mapę".
+
 ### ✅ P13 — Kolejność kolumn podzakładek Wyposażenia na PC — UKOŃCZONE
 Polecenie: zmienić kolejność 3-kolumnowego widoku desktopowego zakładki
 "Wyposażenie" z `Plecak, Czary, Zdolności` na `Plecak, Zdolności, Czary`.
