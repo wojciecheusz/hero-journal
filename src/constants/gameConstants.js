@@ -124,7 +124,8 @@ export const CONDITIONS = [
   { key: "restrained",    label: "Unieruchomiony" },
   { key: "stunned",       label: "Oszołomiony" },
   { key: "unconscious",   label: "Nieprzytomny" },
-  { key: "exhausted",     label: "Wyczerpany" },
+  // "Wyczerpany" (exhausted) celowo pominięte — 5e to stan poziomowany (0-6),
+  // obsługiwany osobno w CombatCard jako conditions.exhaustion
 ];
 
 export const SAVING_THROWS = [

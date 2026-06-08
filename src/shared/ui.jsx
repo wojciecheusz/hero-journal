@@ -212,14 +212,20 @@ export function RestModal({ type, char, setChar, onClose }) {
     const newUsed = Math.max(0, hd.used - recover);
     const newSlots = {};
     Object.entries(char.spellSlots || {}).forEach(([k, v]) => { newSlots[k] = { ...v, used: 0 }; });
-    setChar(c => ({
-      ...c,
-      hp: { ...c.hp, current: c.hp.max, temp: 0 },
-      hitDice: { ...hd, used: newUsed },
-      spellSlots: newSlots,
-      deathSaves: { successes: 0, failures: 0 },
-      conditions: {},
-    }));
+    setChar(c => {
+      const prevCond = c.conditions || {};
+      const prevExh  = prevCond.exhaustion || 0;
+      return {
+        ...c,
+        hp: { ...c.hp, current: c.hp.max, temp: 0 },
+        hitDice: { ...hd, used: newUsed },
+        spellSlots: newSlots,
+        deathSaves: { successes: 0, failures: 0 },
+        // Długi odpoczynek zmniejsza Wycieńczenie o 1 poziom (min 0), ale NIE
+        // kasuje pozostałych stanów (ich czas trwania zależy od efektu/czaru)
+        conditions: { ...prevCond, exhaustion: Math.max(0, prevExh - 1) },
+      };
+    });
     onClose();
   };
 

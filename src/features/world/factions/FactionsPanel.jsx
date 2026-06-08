@@ -1,10 +1,10 @@
 import { useState, memo } from 'react';
-import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS, FACTION_RANK_ICONS } from '../../constants/gameConstants';
-import { FACTION_TYPE, FACTION_RANK } from '../../constants/enums.js';
-import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
-import { useT } from '../../i18n/translations';
-import { useScrollToEntity } from '../../hooks/useScrollToEntity';
-import { useEntityList } from '../../hooks/useEntityList';
+import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS, FACTION_RANK_ICONS } from '../../../constants/gameConstants';
+import { FACTION_TYPE, FACTION_RANK } from '../../../constants/enums.js';
+import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../../shared/ui';
+import { useT } from '../../../i18n/translations';
+import { useScrollToEntity } from '../../../hooks/useScrollToEntity';
+import { useEntityList } from '../../../hooks/useEntityList';
 
 function FactionsPanel({ title, factions, setFactions, openEntity }) {
   const T = useT();
@@ -17,7 +17,7 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, toggle, startEdit, stopEdit,
+    upd, del, pendingDelete, toggle, startEdit, stopEdit,
   } = useEntityList(factions, setFactions);
 
   useScrollToEntity(openEntity, factions, setExpanded);
@@ -130,7 +130,9 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
                     </div>
                     <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(fac.id)}>{F.delete}</button>
+                      <button className="btn-ghost" onClick={() => del(fac.id)}
+                        style={pendingDelete[fac.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
+                        {pendingDelete[fac.id] ? T.UI.confirmDelete : F.delete}</button>
                       <button className="btn-ghost" onClick={() => stopEdit(fac.id)}>✓</button>
                     </div>
                   </div>

@@ -20,7 +20,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, toggle, startEdit, stopEdit,
+    upd, del, pendingDelete, toggle, startEdit, stopEdit,
   } = useEntityList(spells, setSpells);
 
   const pb = char.profBonus || 2;
@@ -186,7 +186,9 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
                   <textarea className="g-textarea" rows={2} value={sp.notes||""} placeholder={SP.higherLevelsPh} onChange={e => upd(sp.id,"notes",e.target.value)}/>
                 </div>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(sp.id)}>{SP.delete}</button>
+                  <button className="btn-ghost" onClick={() => del(sp.id)}
+                    style={pendingDelete[sp.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
+                    {pendingDelete[sp.id] ? T.UI.confirmDelete : SP.delete}</button>
                   <button className="btn-ghost" onClick={() => stopEdit(sp.id)}>✓</button>
                 </div>
               </div>

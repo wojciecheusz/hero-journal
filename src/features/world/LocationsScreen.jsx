@@ -16,7 +16,7 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, toggle, startEdit, stopEdit,
+    upd, del, pendingDelete, toggle, startEdit, stopEdit,
   } = useEntityList(locations, setLocations);
 
   useScrollToEntity(openEntity, locations, setExpanded);
@@ -122,7 +122,9 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
                     </div>
                     <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(loc.id)}>{T.LOCATIONS.delete}</button>
+                      <button className="btn-ghost" onClick={() => del(loc.id)}
+                        style={pendingDelete[loc.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
+                        {pendingDelete[loc.id] ? T.UI.confirmDelete : T.LOCATIONS.delete}</button>
                       <button className="btn-ghost" onClick={() => stopEdit(loc.id)}>✓</button>
                     </div>
                   </div>

@@ -18,7 +18,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, toggle, startEdit, stopEdit,
+    upd, del, pendingDelete, toggle, startEdit, stopEdit,
   } = useEntityList(inventory, setInventory);
 
   useScrollToEntity(openEntity, inventory, setExpanded);
@@ -177,7 +177,9 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
                 </div>
                 <div className="pack-field"><span className="pack-field-label">{I.notes}</span><input className="pack-field-input" value={item.note || ""} onChange={e => upd(item.id, "note", e.target.value)}/></div>
                 <div className="row" style={{ justifyContent:"space-between", marginTop:"0.3rem" }}>
-                  <button className="btn-ghost" onClick={() => del(item.id)}>{I.delete}</button>
+                  <button className="btn-ghost" onClick={() => del(item.id)}
+                    style={pendingDelete[item.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
+                    {pendingDelete[item.id] ? T.UI.confirmDelete : I.delete}</button>
                   <button className="btn-ghost" onClick={() => stopEdit(item.id)}>✓</button>
                 </div>
               </div>

@@ -33,7 +33,7 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, toggle, startEdit, stopEdit,
+    upd, del, pendingDelete, toggle, startEdit, stopEdit,
   } = useEntityList(skills, setSkills);
 
   useScrollToEntity(openEntity, skills, setExpanded);
@@ -131,7 +131,9 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={SK.editDescPh} value={sk.description||""} onChange={e => upd(sk.id,"description",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(sk.id)}>{SK.delete}</button>
+                  <button className="btn-ghost" onClick={() => del(sk.id)}
+                    style={pendingDelete[sk.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
+                    {pendingDelete[sk.id] ? T.UI.confirmDelete : SK.delete}</button>
                   <button className="btn-ghost" onClick={() => stopEdit(sk.id)}>✓</button>
                 </div>
               </div>

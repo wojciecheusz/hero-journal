@@ -17,7 +17,7 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, toggle, startEdit, stopEdit,
+    upd, del, pendingDelete, toggle, startEdit, stopEdit,
   } = useEntityList(npcs, setNPCs);
 
   useScrollToEntity(openEntity, npcs, setExpanded);
@@ -129,7 +129,9 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
                     </div>
                     <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button>
+                      <button className="btn-ghost" onClick={() => del(npc.id)}
+                        style={pendingDelete[npc.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
+                        {pendingDelete[npc.id] ? T.UI.confirmDelete : N.delete}</button>
                       <button className="btn-ghost" onClick={() => stopEdit(npc.id)}>✓</button>
                     </div>
                   </div>

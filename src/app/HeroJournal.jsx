@@ -26,7 +26,7 @@ const SkillsScreen     = lazy(() => import('../features/skills/SkillsScreen'));
 const SpellsScreen     = lazy(() => import('../features/spells/SpellsScreen'));
 const NPCsScreen       = lazy(() => import('../features/world/NPCsScreen'));
 const LocationsScreen  = lazy(() => import('../features/world/LocationsScreen'));
-const FactionsPanel    = lazy(() => import('../features/factions/FactionsPanel'));
+const FactionsPanel    = lazy(() => import('../features/world/factions/FactionsPanel'));
 const SessionsScreen   = lazy(() => import('../features/sessions/SessionsScreen'));
 const QuestScreen      = lazy(() => import('../features/quests/QuestScreen'));
 
@@ -94,7 +94,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   }, [data.char.name, data.char.classes, activeId]);
 
   /* ── Cloud save (debounced 1.5 s per klucz) ─────────────────── */
-  const { syncFailed, dismissSyncError } = useCloudSaveQueue(user);
+  const { syncWarning, syncFailed, dismissSyncError } = useCloudSaveQueue(user);
 
   /* ── Nawigacja ───────────────────────────────────────────────── */
   const handleNavigate = useCallback((tt, name = null) => {
@@ -170,6 +170,11 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     <LangContext.Provider value={lang}>
     <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
+      {syncWarning && !syncFailed && (
+        <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"rgba(40,32,8,0.95)", border:"1px solid #8a7020", color:"#d4aa40", fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.35rem 0.8rem", display:"flex", gap:"0.6rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 2px 8px rgba(0,0,0,0.4)", pointerEvents:"none" }}>
+          ☁ Synchronizacja…
+        </div>
+      )}
       {syncFailed && (
         <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"#5a1a1a", border:"1px solid #8a3a3a", color:"#f0c0c0", fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.5rem 1rem", display:"flex", gap:"0.8rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 4px 16px rgba(0,0,0,0.5)" }}>
           <span>☁ Błąd synchronizacji — dane zapisane lokalnie</span>

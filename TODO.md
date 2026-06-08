@@ -3,7 +3,70 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
-### 🔄 P19 — Audyt całościowy (struktura/UX-lore/bezpieczeństwo/inżynieria) + plan poprawek (W TRAKCIE WDRAŻANIA)
+### 📋 P20 — Plan: customowe profile niezależne od systemu D&D (PLAN — czeka na akceptację, nic nie wdrożono)
+Polecenie: zaplanować prosty, ale użyteczny sposób tworzenia w aplikacji profili
+niezależnych od D&D 5e — użytkownik sam ustawia karty/zakładki/zasoby "po swojemu".
+Poniżej plan fazowy (bez implementacji).
+
+**Punkt wyjścia — odkryto martwy szkic:** `src/constants/systems.js` zawiera
+`SYSTEMS` (z wpisem `"universal"` / "Sam określasz atrybuty, zasoby i sekcje karty"),
+`DEFAULT_UNIVERSAL_SCHEMA`, `buildUniversalNavGroups(schema)`, `makeUniversalDefaultChar`
+— kompletnie niepodłączone do reszty appki (zero referencji poza tym plikiem;
+`ProfileScreen`/`CharacterScreen`/`navigation.js` są na sztywno D&D 5e). To dobry
+fundament — plan poniżej go rozwija zamiast zaczynać od zera.
+
+**Zasada przewodnia:** NIE budować pełnego, dowolnego page-buildera (drag&drop
+siatka, dowolne pola) — zbyt drogie wdrożeniowo i pielęgnacyjnie (PDF export,
+cloud sync, migracje danych musiałyby obsłużyć dowolność). Zamiast tego: kurator
+mały zestaw gotowych, generycznych "typów kart/widżetów", które user układa
+i konfiguruje (nazwa, kolejność, włącz/wyłącz) — pokrywa ~80% potrzeb homebrew
+przy ułamku złożoności.
+
+**Faza 1 — odpalić istniejący szkic "Uniwersalny" (najmniejszy koszt, realna wartość):**
+- Przy zakładaniu profilu z systemem `"universal"` zamiast kreatora D&D pokazać
+  prosty formularz: nazwa postaci + checkboxy funkcji (`features.inventory/world/
+  journal/quests` — pola już istnieją w `DEFAULT_UNIVERSAL_SCHEMA`).
+- Zbudować `UniversalCharacterScreen` z 3 generycznymi typami kart, renderowanymi
+  z `schema` + zapisem do `char.custom[id]` (wzorzec już naszkicowany
+  w `makeUniversalDefaultChar`):
+  - **Karta Atrybutów** — nazwane wartości liczbowe, pogrupowane (`statGroups`)
+  - **Karta Zasobów** — liczniki current/max (HP-podobne, np. "Many", "Wytrzymałości")
+  - **Karta Notatek** — dowolne nazwane bloki tekstowe (`textFields`)
+- Ekwipunek/Świat/Dziennik = **odsyłacz do istniejących generycznych ekranów**
+  (`InventoryScreen`, `NPCsScreen`, `LocationsScreen`, `SessionsScreen`, `QuestScreen`
+  już są systemowo-neutralne — działają na ogólnym kształcie `{id,name,tags,...}`).
+  `buildUniversalNavGroups(schema)` (już istnieje) generuje z tego nawigację.
+- Efekt: user dostaje działającą, samodzielną kartę postaci dla dowolnego systemu
+  bez czekania na fazę 2 — krzywa naturalna, jak przy P19.3 (`useEntityList`).
+
+**Faza 2 — edytowalny układ (dodawaj/usuwaj/zmieniaj kolejność):**
+- W ustawieniach profilu: tryb "Edytuj układ karty" — dodawanie/usuwanie/przemianowanie/
+  zmiana kolejności grup atrybutów, zasobów, bloków tekstowych i zakładek.
+- Reorder przez już zbudowany `useDragReorder` (P19.5) — ten sam wzorzec
+  (mysz + dotyk) co w `EquippedCard`.
+- Krytyczne dla integralności danych: **stabilne `id` + edytowalna `name`**
+  (już tak zaprojektowano w `DEFAULT_UNIVERSAL_SCHEMA` — `{id:"st1",name:"Atrybut 1"}`)
+  — zmiana nazwy nie gubi danych zapisanych pod `custom[id]`.
+- Persystencja: `schema` jako część metadanych profilu (Firestore + localStorage,
+  obok `char`), współdzielona przez `cloudSave`/`cloudLoad` z istniejącym pipeline'm.
+
+**Faza 3 — opcjonalna, długoterminowa (tylko jeśli faza 1-2 się przyjmie):**
+- Customowe listy encji wykraczające poza Ekwipunek/Świat (np. "Kontakty",
+  "Mutacje", system-specific rzeczy) — re-use `useEntityList` + generyczny
+  renderer pól na bazie prostego opisu kolumn (`{key,label,type:"text"|"number"|"tags"}`).
+- Gotowe szablony startowe (np. "Ogólne fantasy", "Sci-fi", "Horror") jako punkt
+  wyjścia zamiast pustej kartki — redukuje tarcie "od czego zacząć".
+
+**Co NIE robić (świadome ograniczenie zakresu):** dowolna siatka/pozycjonowanie
+widżetów, pola o w pełni dowolnym typie/walidacji, eksport PDF dla customowych
+schematów (na start — może być "tylko D&D ma PDF", z jasnym komunikatem).
+
+**Pliki, które trzeba będzie ruszyć:** `systems.js` (rozbudowa, nie przepisanie),
+`ProfileScreen.jsx` (rozgałęzienie kreatora wg `SYSTEMS`), nowy katalog
+`features/universal/` (ekran + karty), `navigation.js` (połączenie z
+`buildUniversalNavGroups`), `useProfileManager.js`/storage (persystencja `schema`).
+
+ — Audyt całościowy (struktura/UX-lore/bezpieczeństwo/inżynieria) + plan poprawek (W TRAKCIE WDRAŻANIA)
 Polecenie: przeprowadzić 4 audyty (strukturalny, UX/UI+lore D&D 5e, bezpieczeństwo
 pod kątem udostępnienia testerom + publikacji w Google Play, inżynierii
 oprogramowania) i zaplanować priorytet wdrożenia poprawek. Wykonano czterema
@@ -95,49 +158,63 @@ to osobne, przyszłe polecenia.**
    syncFromCloud (mock Firestore) + smoke testy hooków.
 
 #### 🟡 Priorytet ŚREDNI
-9. **Brak potwierdzenia usuwania pojedynczych wpisów** (przedmioty/czary/NPC/...) —
-   `del(id)` wywoływane wprost z przycisku, np. `InventoryScreen.jsx:184`,
-   `SpellsScreen.jsx:192`, `NPCsScreen.jsx:136`. Dodać lekkie potwierdzenie
-   (toast z "Cofnij" lub dwuetapowy przycisk).
-10. **`user-scalable=no` blokuje pinch-zoom** (`index.html:5`) — antywzorzec
-    dostępności, szczególnie szkodliwy dla osób słabowidzących w aplikacji
-    pełnej drobnego tekstu. Usunąć `user-scalable=no`/`maximum-scale=1.0`.
-11. **Brak nagłówka Content-Security-Policy** (`Vercel.json`/`index.html`) —
-    dobra praktyka przed udostępnieniem publicznym i wymóg jakości przy
-    przeglądzie TWA do Google Play. Dodać CSP w `Vercel.json`.
+9. [x] **Brak potwierdzenia usuwania pojedynczych wpisów** (przedmioty/czary/NPC/...) —
+   `del(id)` wywoływane wprost z przycisku. Dodać lekkie potwierdzenie.
+   ✅ **UKOŃCZONE** — 2-step delete w `useEntityList`: pierwsze kliknięcie ustawia
+   `pendingDelete[id]` i podświetla przycisk na czerwono z etykietą `⚠ Usuń?`
+   (klucz `T.UI.confirmDelete`); drugie w ciągu 2.5 s faktycznie usuwa; brak
+   drugiego kliknięcia auto-resetuje po czasie. Wdrożone we wszystkich 6 ekranach
+   encji. Pliki: `useEntityList.js`, `InventoryScreen`, `SkillsScreen`,
+   `SpellsScreen`, `NPCsScreen`, `LocationsScreen`, `FactionsPanel`, `translations.js`.
+10. [x] **`user-scalable=no` blokuje pinch-zoom** (`index.html:5`) — antywzorzec
+    dostępności, szczególnie szkodliwy dla osób słabowidzących.
+    ✅ **UKOŃCZONE** — usunięto `maximum-scale=1.0`, `minimum-scale=1.0`,
+    `user-scalable=no` z meta viewport w `index.html`; pozostało tylko
+    `width=device-width, initial-scale=1.0, viewport-fit=cover`.
+11. [x] **Brak nagłówka Content-Security-Policy** (`Vercel.json`/`index.html`).
+    ✅ **UKOŃCZONE** — dodano CSP + `X-Content-Type-Options: nosniff` +
+    `X-Frame-Options: DENY` + `Referrer-Policy` w `vercel.json` dla wszystkich
+    ścieżek `(.*)`. CSP pokrywa Firebase Auth/Firestore (Google APIs, WebSocket),
+    Google Fonts (style/font-src), Google OAuth (frame-src/accounts.google.com);
+    `style-src 'unsafe-inline'` zachowany (wymagany przez React inline styles).
 12. **Reguły Firestore bez walidacji kształtu/rozmiaru danych** (`firestore.rules`) —
     poprawnie izolują dane per-user, ale zalogowany użytkownik może zapisać
     dowolnie duży/zniekształcony dokument (koszty/awarie klienta). Dodać
     `request.resource.size()` i podstawową walidację typów/rozmiaru w `allow write`.
-13. **Podwójna reprezentacja Wycieńczenia (lore bug)** — `gameConstants.js:127`
-    ma binarny stan `exhausted` w liście `CONDITIONS`, a `CombatCard.jsx:180-194`
-    ma osobny licznik poziomów 0-6 (`conditions.exhaustion`) — to dwa równoległe,
-    sprzeczne modele tego samego stanu wg 5e (Wycieńczenie to stan poziomowany,
-    nie przełącznik). Usunąć binarny toggle `exhausted` z `CONDITIONS`.
-14. **Długi odpoczynek całkowicie czyści Wycieńczenie zamiast zmniejszać o 1
-    poziom** — `ui.jsx:221` `conditions: {}` — wg PHB 2014 długi odpoczynek z
-    jedzeniem/piciem usuwa tylko 1 poziom wycieńczenia (i nie wszystkie inne
-    stany kończą się odpoczynkiem, np. skamieniały/oczarowany). Poprawić
-    `doLongRest`, by dekrementował `exhaustion` o 1 (min. 0) zamiast czyścić
-    wszystko.
+13. [x] **Podwójna reprezentacja Wycieńczenia (lore bug)** — binarny `exhausted`
+    w `CONDITIONS` sprzeczny z licznikiem poziomów 0-6 `conditions.exhaustion`.
+    ✅ **UKOŃCZONE** — usunięto wpis `{ key:"exhausted", label:"Wyczerpany" }`
+    z `CONDITIONS` w `gameConstants.js`; komentarz wyjaśnia dlaczego. Licznik
+    poziomów w `CombatCard` pozostaje jako jedyna reprezentacja Wycieńczenia.
+14. [x] **Długi odpoczynek całkowicie czyścił Wycieńczenie** (`ui.jsx conditions:{}`)
+    — wg PHB 2014 usuwa tylko 1 poziom; pozostałe stany (Skamieniały, Otruty...)
+    nie kończą się snem.
+    ✅ **UKOŃCZONE** — `doLongRest` w `shared/ui.jsx` teraz robi `conditions:
+    {...prevCond, exhaustion: Math.max(0, prevExh - 1)}` zamiast `conditions: {}`
+    — Wycieńczenie dekrementuje o 1, wszystkie inne stany zachowane.
 15. [x] **`dev-dist/` (artefakty builda PWA) commitowane do gita** — brak w
     `.gitignore` (jest tylko `dist`/`dist-ssr`), pliki `dev-dist/registerSW.js`,
     `sw.js`, `workbox-*.js` powtarzalnie trafiają do commitów. Dodać `dev-dist`
     do `.gitignore` i `git rm -r --cached dev-dist`.
     ✅ **UKOŃCZONE** — dodano `dev-dist` do `.gitignore`, odpięto z repo
     (`git rm -r --cached dev-dist`).
-16. **Niespójne umiejscowienie Frakcji** — `NPCsScreen`/`LocationsScreen` są w
-    `features/world/`, ale `FactionsPanel` osobno w `features/factions/`, mimo
-    że to ten sam typ encji "Świata" używany razem w zakładce `world-all`.
-    Przenieść `factions/` do `world/` dla spójności.
+16. [x] **Niespójne umiejscowienie Frakcji** — `FactionsPanel` był w `features/factions/`
+    zamiast obok `NPCsScreen`/`LocationsScreen` w `features/world/`.
+    ✅ **UKOŃCZONE** — przeniesiono do `features/world/factions/FactionsPanel.jsx`;
+    zaktualizowano ścieżki importów (wszystkie `../../` → `../../../`); import
+    w `HeroJournal.jsx` zaktualizowany; stary katalog `features/factions/` usunięty.
+    Build zweryfikowany.
 17. **System migracji danych nieskalowalny** — dwie migracje (`migrateLegacy`,
     `migrateToEnums`, `storage.js:149-244`) oparte na ad-hoc flagach/sprawdzeniach
     obecności, bez numerowanej wersji schematu. Wprowadzić `schemaVersion` per
     profil + łańcuch migracji `v1→v2→v3…` zanim pojawi się trzecia zmiana schematu.
-18. **Komunikat o błędzie synchronizacji dopiero po 3 niepowodzeniach** —
-    `HeroJournal.jsx:120,214-219` — licznik nigdy nie resetuje się po sukcesie,
-    a pojedyncze niepowodzenia są tylko `console.warn`-owane. Pokazać lżejszy
-    wskaźnik stanu (np. ikona chmury) zamiast czekać na 3 ciche błędy.
+18. [x] **Komunikat o błędzie synchronizacji dopiero po 3 niepowodzeniach** —
+    licznik nigdy nie resetował się po sukcesie; pojedyncze błędy ciche.
+    ✅ **UKOŃCZONE** — `useCloudSaveQueue` teraz: (a) eksportuje `syncWarning`
+    ustawiany po 1. błędzie — pokazuje delikatny żółty baner `☁ Synchronizacja…`
+    (non-interactive, `pointerEvents:none`); (b) `syncFailed` nadal po 3+; (c) licznik
+    i `syncWarning` resetują się przy każdym udanym zapisie (`.then(() => { ... })`).
+    Pliki: `useCloudSaveQueue.js`, `HeroJournal.jsx`.
 
 #### 🟢 Priorytet NISKI (porządki kosmetyczne/techniczne)
 19. **Literówka w kluczu danych `sleightzhand`** (`gameConstants.js:154`,
