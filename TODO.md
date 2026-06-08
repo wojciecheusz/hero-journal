@@ -6,6 +6,16 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P13 — Kolejność kolumn podzakładek Wyposażenia na PC — UKOŃCZONE
+Polecenie: zmienić kolejność 3-kolumnowego widoku desktopowego zakładki
+"Wyposażenie" z `Plecak, Czary, Zdolności` na `Plecak, Zdolności, Czary`.
+Zmieniono kolejność `<div className="screen-col">` w `HeroJournal.jsx`
+(linie ~394-401, widok `multi-col-desktop`) — zamieniono miejscami kolumny
+`SkillsScreen`/`SpellsScreen`. Zweryfikowano w Playwright na przykładowej
+postaci: nagłówki kolumn renderują się w kolejności `["Plecak","Zdolności","Czary"]`.
+
+---
+
 ### ✅ P12 — Ikony tagów/odznak w zakładce Świat + usunięcie reputacji frakcji + przeniesienie sugerowanych tagów lokacji — UKOŃCZONE
 Trzy powiązane polecenia użytkownika dot. ujednolicenia wyglądu zakładki
 "Świat" (NPC/Lokacje/Frakcje) z benchmarkiem zakładki "Wyposażenie"

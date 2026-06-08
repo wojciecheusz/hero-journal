@@ -392,12 +392,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
               <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>
             </div>
             <div className="screen-col">
-              <div className="screen-col-header">{T.NAV.spells}</div>
-              <SpellsScreen spells={spells} setSpells={setSpells} char={char} setChar={setChar}/>
-            </div>
-            <div className="screen-col">
               <div className="screen-col-header">{T.NAV.skills}</div>
               <SkillsScreen skills={skills} setSkills={setSkills} openEntity={openEntity}/>
+            </div>
+            <div className="screen-col">
+              <div className="screen-col-header">{T.NAV.spells}</div>
+              <SpellsScreen spells={spells} setSpells={setSpells} char={char} setChar={setChar}/>
             </div>
           </div>
           <div className="single-col-mobile">
