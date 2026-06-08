@@ -5,6 +5,7 @@ import { TagsEditor, FilterBar, PrzypnijBtn, Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import styles from './SkillsScreen.module.css';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
+import { useEntityList } from '../../hooks/useEntityList';
 
 const catColor = cat => ({
   // Enum keys (po migracji)
@@ -28,14 +29,15 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
 
   const [form, setForm] = useState({ name:"", category: SKILL_CAT.SKILL, description:"", level:0 });
   const [showForm, setShowForm] = useState(false);
-  const [expanded, setExpanded] = useState({});
-  const [editing, setEditing] = useState({});
-  const [activeTag, setActiveTag] = useState(null);
   const [activeCat, setActiveCat] = useState(null);
+
+  const {
+    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
+    upd, del, toggle, startEdit, stopEdit,
+  } = useEntityList(skills, setSkills);
 
   useScrollToEntity(openEntity, skills, setExpanded);
 
-  const allTags    = [...new Set(skills.flatMap(s => s.tags||[]))].sort();
   const inUseCount = skills.filter(s => s.inUse).length;
 
   const addSkill = () => {
@@ -44,11 +46,6 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
     setForm({ name:"", category: SKILL_CAT.SKILL, description:"", level:0 });
     setShowForm(false);
   };
-  const upd       = (id, f, v) => setSkills(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
-  const del       = id => setSkills(l => l.filter(x => x.id!==id));
-  const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
-  const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
   const toggleInUse = id => setSkills(l => l.map(x => x.id===id ? { ...x, inUse: !x.inUse } : x));
 
   const visible = skills.filter(s =>

@@ -3,6 +3,7 @@ import { REL_ICONS } from '../../constants/gameConstants';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
+import { useEntityList } from '../../hooks/useEntityList';
 
 function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
   const T  = useT();
@@ -11,15 +12,15 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
 
   const [formState, setForm] = useState({ name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"" });
   const [showForm, setShowForm] = useState(false);
-  const [expanded, setExpanded] = useState({});
-  const [editing, setEditing] = useState({});
-  const [activeTag, setActiveTag] = useState(null);
   const [filterRel, setFilterRel] = useState(null);
   const [search, setSearch] = useState('');
 
-  useScrollToEntity(openEntity, npcs, setExpanded);
+  const {
+    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
+    upd, del, toggle, startEdit, stopEdit,
+  } = useEntityList(npcs, setNPCs);
 
-  const allTags = [...new Set(npcs.flatMap(n => n.tags || []))].sort();
+  useScrollToEntity(openEntity, npcs, setExpanded);
 
   const addNPC = () => {
     const n = formState.name.trim(); if (!n) return;
@@ -27,11 +28,6 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
     setForm({ name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"" });
     setShowForm(false);
   };
-  const upd       = (id, f, v) => setNPCs(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));
-  const del       = id => setNPCs(l => l.filter(x => x.id !== id));
-  const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
-  const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
 
   const q = search.trim().toLowerCase();
   const visible = npcs

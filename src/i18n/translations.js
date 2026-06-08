@@ -86,6 +86,7 @@ export const TRANSLATIONS = {
       loginTagline:"Zaloguj się, aby synchronizować kampanię między komputerem a telefonem.",
       loginBtn:"Zaloguj przez Google", loginBtnLoading:"Logowanie…",
       loginPrivacy:"Twoje dane kampanii są prywatne — dostępne wyłącznie na Twoim koncie Google.",
+      loginPrivacyLink:"Polityka prywatności",
     },
 
     CHAR: {
@@ -299,6 +300,9 @@ export const TRANSLATIONS = {
       alignQuestion:"Charakter moralny", alignPh:"np. CN, LG, NE… (max 8 znaków)",
       readyHint:"Twój bohater jest gotowy do drogi. Każdą wartość będziesz mógł swobodnie edytować podczas kampanii.",
       cancel:"Anuluj", back:"← Wstecz", next:"Dalej →", start:"⚔ Rozpocznij Przygodę",
+      deleteTitle:"⚠ Usuń bohatera",
+      deleteText:(name) => `Czy na pewno chcesz trwale usunąć postać „${name}” wraz z całą jej zawartością (ekwipunkiem, czarami, światem, sesjami)? Tej operacji nie można cofnąć.`,
+      deleteCancel:"Anuluj", deleteConfirm:"Usuń bohatera",
     },
 
     TUTORIAL: {
@@ -479,6 +483,7 @@ export const TRANSLATIONS = {
       loginTagline:"Sign in to sync your campaign between your computer and phone.",
       loginBtn:"Sign in with Google", loginBtnLoading:"Signing in…",
       loginPrivacy:"Your campaign data is private — accessible only on your Google account.",
+      loginPrivacyLink:"Privacy Policy",
     },
 
     CHAR: {
@@ -692,6 +697,9 @@ export const TRANSLATIONS = {
       alignQuestion:"Moral alignment", alignPh:"e.g. CN, LG, NE… (max 8 chars)",
       readyHint:"Your hero is ready for the road. You can freely edit every value during the campaign.",
       cancel:"Cancel", back:"← Back", next:"Next →", start:"⚔ Begin Adventure",
+      deleteTitle:"⚠ Delete hero",
+      deleteText:(name) => `Are you sure you want to permanently delete "${name}" along with all of its content (inventory, spells, world, sessions)? This action cannot be undone.`,
+      deleteCancel:"Cancel", deleteConfirm:"Delete hero",
     },
 
     TUTORIAL: {

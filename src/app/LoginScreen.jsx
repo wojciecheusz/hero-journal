@@ -23,6 +23,10 @@ export default function LoginScreen({ onLogin, loading }) {
       <div style={{ marginTop:"1.5rem", fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.9rem", color:t.textDim, textAlign:"center", maxWidth:"300px", lineHeight:1.7, fontStyle:"italic" }}>
         {T.UI.loginPrivacy}
       </div>
+      <a href="/polityka-prywatnosci.html" target="_blank" rel="noopener noreferrer"
+        style={{ marginTop:"0.6rem", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", color:t.textMuted, textDecoration:"underline", textUnderlineOffset:"0.2em" }}>
+        {T.UI.loginPrivacyLink}
+      </a>
     </div>
   );
 }

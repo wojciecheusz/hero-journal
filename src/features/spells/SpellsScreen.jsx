@@ -3,6 +3,7 @@ import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS, SUGGESTED_A
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
 import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget, FilterBar } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
+import { useEntityList } from '../../hooks/useEntityList';
 
 const numMod = v => v >= 0 ? `+${v}` : String(v);
 
@@ -12,18 +13,19 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
 
   const [form, setForm] = useState({ name:"", level:SPELL_LEVEL.CANTRIP, school:SPELL_SCHOOL.EVOCATION, castingTime:"1 action", zakres:"", duration:"", components:"", description:"", notes:"" });
   const [showForm, setShowForm] = useState(false);
-  const [expanded, setExpanded] = useState({});
-  const [editing, setEditing] = useState({});
   const [activeLevel, setActiveLevel] = useState(null);
   const [activeSchool, setActiveSchool] = useState(null);
   const [sortMode, setSortMode] = useState("level"); // 'level' | 'school'
   const [showSlots, setShowSlots] = useState(false);
-  const [activeTag, setActiveTag] = useState(null);
+
+  const {
+    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
+    upd, del, toggle, startEdit, stopEdit,
+  } = useEntityList(spells, setSpells);
 
   const pb = char.profBonus || 2;
   const spMod = Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2;
   const inUseCount = spells.filter(s => s.inUse).length;
-  const allTags = [...new Set(spells.flatMap(s => s.tags || []))].sort();
   const filtered = (sortMode === "school"
     ? (activeSchool ? spells.filter(s => s.school===activeSchool) : spells)
     : (activeLevel ? spells.filter(s => s.level===activeLevel) : spells))
@@ -43,11 +45,6 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
     setForm({ name:"", level:SPELL_LEVEL.CANTRIP, school:SPELL_SCHOOL.EVOCATION, castingTime:"1 action", zakres:"", duration:"", components:"", description:"", notes:"" });
     setShowForm(false);
   };
-  const upd       = (id, f, v) => setSpells(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
-  const del       = id => setSpells(l => l.filter(x => x.id!==id));
-  const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
-  const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
   const toggleInUse = id => setSpells(l => l.map(x => x.id===id ? { ...x, inUse: !x.inUse } : x));
 
   return (

@@ -4,6 +4,7 @@ import { ITEM_TYPE } from '../../constants/enums.js';
 import { Toggle, TagsEditor, PrzypnijBtn, FilterBar } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
+import { useEntityList } from '../../hooks/useEntityList';
 
 function InventoryScreen({ title, inventory, setInventory, openEntity }) {
   const T = useT();
@@ -13,14 +14,14 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name:"", type:ITEM_TYPE.GENERAL, qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
-  const [expanded, setExpanded] = useState({});
-  const [editing,  setEditing]  = useState({});
   const [filterType, setFilterType] = useState(null);
-  const [activeTag, setActiveTag] = useState(null);
+
+  const {
+    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
+    upd, del, toggle, startEdit, stopEdit,
+  } = useEntityList(inventory, setInventory);
 
   useScrollToEntity(openEntity, inventory, setExpanded);
-
-  const allTags = [...new Set(inventory.flatMap(i => i.tags || []))].sort();
 
   const addItem = () => {
     const n = form.name.trim(); if (!n) return;
@@ -28,11 +29,6 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
     setForm({ name:"", type:"Ogólny", qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
     setShowForm(false);
   };
-  const upd         = (id, f, v) => setInventory(inv => inv.map(x => x.id === id ? { ...x, [f]: v } : x));
-  const del         = id => setInventory(inv => inv.filter(x => x.id !== id));
-  const toggle      = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const startEdit   = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
-  const stopEdit    = id => setEditing(e => ({ ...e, [id]: false }));
   const toggleEquip = id => setInventory(inv => inv.map(x => x.id === id ? { ...x, equipped: !x.equipped } : x));
 
   const visible      = inventory

@@ -11,9 +11,11 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName]   = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const startEdit = (e, p) => { e.stopPropagation(); setEditingId(p.id); setEditName(p.name || ""); };
   const commitEdit = (id) => { const trimmed = editName.trim(); if (trimmed && onRename) onRename(id, trimmed); setEditingId(null); };
+  const confirmDeleteProfile = () => { if (confirmDelete) onDelete(confirmDelete.id); setConfirmDelete(null); };
 
   return (
     <div className="profile-screen">
@@ -57,7 +59,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
             </div>
 
             {profiles.length > 1 && editingId !== p.id && (
-              <button className="profile-card-del" onClick={e => { e.stopPropagation(); onDelete(p.id); }}>✕</button>
+              <button className="profile-card-del" onClick={e => { e.stopPropagation(); setConfirmDelete(p); }}>✕</button>
             )}
           </button>
         ))}
@@ -77,6 +79,19 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
       <div style={{ marginTop:"1.5rem", fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", color:t.textDim, textTransform:"uppercase", textAlign:"center" }}>
         {P.heroCount(profiles.length)}
       </div>
+
+      {confirmDelete && (
+        <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">{P.deleteTitle}</div>
+            <p className="modal-text">{P.deleteText(confirmDelete.name || P.unnamed)}</p>
+            <div className="row" style={{ justifyContent:"flex-end", gap:"0.6rem" }}>
+              <button className="btn-ghost" onClick={() => setConfirmDelete(null)}>{P.deleteCancel}</button>
+              <button className="btn-danger" onClick={confirmDeleteProfile}>{P.deleteConfirm}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

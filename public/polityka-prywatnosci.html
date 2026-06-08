@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Polityka prywatności — Hero Journal</title>
+  <style>
+    body { font-family: Georgia, "Crimson Text", serif; max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; line-height: 1.6; color: #2a241c; background: #f5efe1; }
+    h1 { font-family: Cinzel, Georgia, serif; font-size: 1.5rem; letter-spacing: 0.04em; }
+    h2 { font-family: Cinzel, Georgia, serif; font-size: 1.1rem; margin-top: 2.2rem; letter-spacing: 0.03em; }
+    hr { border: none; border-top: 1px solid #c9b89a; margin: 3rem 0 2rem; }
+    a { color: #8a5a1f; }
+    .updated { color: #6b6052; font-size: 0.9rem; font-style: italic; }
+    ul { padding-left: 1.4rem; }
+  </style>
+</head>
+<body>
+  <h1>Polityka prywatności — Hero Journal</h1>
+  <p class="updated">Ostatnia aktualizacja: 8 czerwca 2026</p>
+
+  <p>Hero Journal to aplikacja typu PWA (Progressive Web App) służąca do prowadzenia
+  cyfrowego dziennika postaci do gry fabularnej D&amp;D 5e. Niniejszy dokument opisuje,
+  jakie dane gromadzimy, w jaki sposób są przechowywane i kto ma do nich dostęp.</p>
+
+  <h2>1. Jakie dane są gromadzone</h2>
+  <ul>
+    <li><strong>Dane logowania:</strong> przy logowaniu przez konto Google otrzymujemy
+    identyfikator konta, adres e-mail oraz nazwę wyświetlaną — wyłącznie w celu
+    rozpoznania użytkownika i powiązania go z jego danymi w aplikacji.</li>
+    <li><strong>Dane kampanii RPG:</strong> wszystko, co użytkownik wpisuje samodzielnie —
+    karta postaci, ekwipunek, czary, umiejętności, NPC, lokacje, frakcje, sesje, questy,
+    notatki itp. Są to dane tworzone i kontrolowane wyłącznie przez użytkownika.</li>
+  </ul>
+  <p>Aplikacja <strong>nie zbiera</strong> danych o lokalizacji, kontaktach, zdjęciach,
+  danych finansowych ani żadnych innych danych spoza wymienionych powyżej.</p>
+
+  <h2>2. Jak dane są przechowywane</h2>
+  <p>Dane karty postaci są zapisywane lokalnie na urządzeniu użytkownika (localStorage)
+  oraz — jeśli użytkownik zdecyduje się zalogować — synchronizowane z usługą
+  <a href="https://firebase.google.com/" target="_blank" rel="noopener">Firebase
+  (Cloud Firestore)</a> dostarczaną przez Google. Reguły bezpieczeństwa Firestore
+  zapewniają, że każdy użytkownik ma dostęp wyłącznie do własnych danych
+  (<code>request.auth.uid == userId</code>) — nikt inny, łącznie z innymi
+  użytkownikami aplikacji, nie ma do nich dostępu.</p>
+
+  <h2>3. Udostępnianie danych stronom trzecim</h2>
+  <p>Nie sprzedajemy, nie udostępniamy ani nie wymieniamy danych użytkowników z
+  żadnymi podmiotami trzecimi w celach marketingowych czy reklamowych. Jedynym
+  podmiotem przetwarzającym dane w naszym imieniu jest Google (usługi Firebase
+  Authentication i Cloud Firestore) — zgodnie z
+  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">polityką
+  prywatności Google</a>.</p>
+
+  <h2>4. Usuwanie danych</h2>
+  <p>Użytkownik może w każdej chwili usunąć swoją postać (wraz z całą jej zawartością)
+  bezpośrednio w aplikacji — z poziomu ekranu wyboru bohatera. Usunięcie postaci
+  trwale kasuje powiązane z nią dane zarówno lokalnie, jak i w chmurze. Aby usunąć
+  całe konto wraz z historią logowania, prosimy o kontakt pod adresem podanym poniżej.</p>
+
+  <h2>5. Pliki cookie i przechowywanie lokalne</h2>
+  <p>Aplikacja korzysta z localStorage przeglądarki do przechowywania danych postaci
+  oraz preferencji (np. wybranego motywu kolorystycznego, języka) i działa offline
+  jako PWA dzięki technologii Service Worker. Nie wykorzystujemy plików cookie do
+  śledzenia ani profilowania reklamowego.</p>
+
+  <h2>6. Kontakt</h2>
+  <p>W sprawach dotyczących prywatności i danych osobowych prosimy o kontakt:
+  <a href="mailto:mwojciechowski069@gmail.com">mwojciechowski069@gmail.com</a>.</p>
+
+  <hr/>
+
+  <h1>Privacy Policy — Hero Journal (English)</h1>
+  <p class="updated">Last updated: June 8, 2026</p>
+
+  <p>Hero Journal is a Progressive Web App (PWA) for keeping a digital character
+  journal for the D&amp;D 5e tabletop role-playing game. This document explains what
+  data we collect, how it is stored, and who can access it.</p>
+
+  <h2>1. What data is collected</h2>
+  <ul>
+    <li><strong>Sign-in data:</strong> when signing in with a Google account, we
+    receive your account ID, email address, and display name — solely to identify
+    you and link you to your data within the app.</li>
+    <li><strong>Campaign data:</strong> everything you enter yourself — character
+    sheet, inventory, spells, skills, NPCs, locations, factions, sessions, quests,
+    notes, etc. This data is created and controlled entirely by you.</li>
+  </ul>
+  <p>The app does <strong>not</strong> collect location data, contacts, photos,
+  financial information, or any data beyond what is listed above.</p>
+
+  <h2>2. How data is stored</h2>
+  <p>Character data is stored locally on your device (localStorage) and — if you
+  choose to sign in — synced to Google's
+  <a href="https://firebase.google.com/" target="_blank" rel="noopener">Firebase
+  (Cloud Firestore)</a> service. Firestore security rules guarantee that each user
+  can only access their own data (<code>request.auth.uid == userId</code>) — no one
+  else, including other app users, can access it.</p>
+
+  <h2>3. Sharing data with third parties</h2>
+  <p>We do not sell, share, or trade user data with any third parties for marketing
+  or advertising purposes. The only data processor acting on our behalf is Google
+  (Firebase Authentication and Cloud Firestore services), per
+  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's
+  Privacy Policy</a>.</p>
+
+  <h2>4. Deleting your data</h2>
+  <p>You can delete your character (and all of its content) at any time directly
+  within the app, from the hero-selection screen. Deleting a character permanently
+  removes its data both locally and in the cloud. To delete your entire account
+  including sign-in history, please contact us at the address below.</p>
+
+  <h2>5. Cookies and local storage</h2>
+  <p>The app uses the browser's localStorage to store character data and
+  preferences (e.g. chosen color theme, language) and works offline as a PWA via
+  a Service Worker. We do not use cookies for tracking or ad profiling.</p>
+
+  <h2>6. Contact</h2>
+  <p>For privacy and personal-data questions, please contact:
+  <a href="mailto:mwojciechowski069@gmail.com">mwojciechowski069@gmail.com</a>.</p>
+</body>
+</html>

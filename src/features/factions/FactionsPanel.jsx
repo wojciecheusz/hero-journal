@@ -4,6 +4,7 @@ import { FACTION_TYPE, FACTION_RANK } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
+import { useEntityList } from '../../hooks/useEntityList';
 
 function FactionsPanel({ title, factions, setFactions, openEntity }) {
   const T = useT();
@@ -11,15 +12,16 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
 
   const [form, setForm] = useState({ name:"", type:FACTION_TYPE.GUILD, rank:FACTION_RANK.UNKNOWN, leader:"", headquarters:"", goal:"", notes:"" });
   const [showForm, setShowForm] = useState(false);
-  const [expanded, setExpanded] = useState({});
-  const [editing, setEditing] = useState({});
-  const [activeTag, setActiveTag] = useState(null);
   const [filterType, setFilterType] = useState(null);
   const [search, setSearch] = useState('');
 
+  const {
+    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
+    upd, del, toggle, startEdit, stopEdit,
+  } = useEntityList(factions, setFactions);
+
   useScrollToEntity(openEntity, factions, setExpanded);
 
-  const allTags  = [...new Set(factions.flatMap(f => f.tags||[]))].sort();
   const rankColor = r => FACTION_RANK_COLORS[r] || "#6a5a38";
   const displayFactionType = type => T.LABELS.factionType[type] || type;
   const displayFactionRank = rank => T.LABELS.factionRank[rank] || rank;
@@ -30,11 +32,6 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
     setForm({ name:"", type:FACTION_TYPE.GUILD, rank:FACTION_RANK.UNKNOWN, leader:"", headquarters:"", goal:"", notes:"" });
     setShowForm(false);
   };
-  const upd       = (id, f, v) => setFactions(l => l.map(x => x.id===id ? { ...x, [f]: v } : x));
-  const del       = id => setFactions(l => l.filter(x => x.id!==id));
-  const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
-  const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
 
   const q = search.trim().toLowerCase();
   const visible = factions

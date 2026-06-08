@@ -4,21 +4,22 @@ import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
+import { useEntityList } from '../../hooks/useEntityList';
 
 function LocationsScreen({ title, locations, setLocations, openEntity }) {
   const T = useT();
 
   const [form, setForm] = useState({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"", tags:[] });
   const [showForm, setShowForm] = useState(false);
-  const [expanded, setExpanded] = useState({});
-  const [editing,  setEditing]  = useState({});
-  const [activeTag, setActiveTag] = useState(null);
   const [filterType, setFilterType] = useState(null);
   const [search, setSearch] = useState('');
 
-  useScrollToEntity(openEntity, locations, setExpanded);
+  const {
+    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
+    upd, del, toggle, startEdit, stopEdit,
+  } = useEntityList(locations, setLocations);
 
-  const allTags = [...new Set(locations.flatMap(l => l.tags || []))].sort();
+  useScrollToEntity(openEntity, locations, setExpanded);
 
   const addLoc = () => {
     const n = form.name.trim(); if (!n) return;
@@ -26,11 +27,6 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
     setForm({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"", tags:[] });
     setShowForm(false);
   };
-  const upd       = (id, f, v) => setLocations(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));
-  const del       = id => setLocations(l => l.filter(x => x.id !== id));
-  const toggle    = id => setExpanded(e => ({ ...e, [id]: !e[id] }));
-  const startEdit = id => { setExpanded(e => ({ ...e, [id]: true })); setEditing(e => ({ ...e, [id]: true })); };
-  const stopEdit  = id => setEditing(e => ({ ...e, [id]: false }));
 
   const q = search.trim().toLowerCase();
   const visible = locations

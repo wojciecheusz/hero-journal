@@ -3,6 +3,188 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### 🔄 P19 — Audyt całościowy (struktura/UX-lore/bezpieczeństwo/inżynieria) + plan poprawek (W TRAKCIE WDRAŻANIA)
+Polecenie: przeprowadzić 4 audyty (strukturalny, UX/UI+lore D&D 5e, bezpieczeństwo
+pod kątem udostępnienia testerom + publikacji w Google Play, inżynierii
+oprogramowania) i zaplanować priorytet wdrożenia poprawek. Wykonano czterema
+równoległymi agentami badawczymi (read-only); poniżej skonsolidowana,
+zdeduplikowana lista poprawek do wdrożenia w kolejnych zadaniach (P20+),
+podzielona wg priorytetu. **To zadanie = sam audyt i plan; wdrożenie poprawek
+to osobne, przyszłe polecenia.**
+
+#### 🔴 Priorytet WYSOKI (dane użytkownika / blokery publikacji / dług architektoniczny)
+1. [x] **Brak potwierdzenia usunięcia całego profilu/postaci** — `ProfileScreen.jsx:60`
+   → `useProfileManager.js:80 deleteProfile` kasuje wszystkie dane postaci jednym
+   kliknięciem `✕`, bez modala potwierdzenia (wzorem istniejącego `ResetModal`).
+   Najbardziej destrukcyjna akcja w aplikacji, zero zabezpieczenia.
+   ✅ **UKOŃCZONE** — dodano stan `confirmDelete` + modal w `ProfileScreen.jsx`
+   (wzorowany na `modal-overlay`/`modal-box` z `ResetModal`), nowe klucze
+   `deleteTitle/deleteText/deleteCancel/deleteConfirm` w `translations.js` (PL+EN).
+2. [x] **Brak polityki prywatności** — wymagana przez Google Play (sekcja "Bezpieczeństwo
+   danych"/Data Safety) dla aplikacji z logowaniem Google i danymi osobowymi.
+   Obecnie tylko luźny string `loginPrivacy` (`translations.js:88,481`). Trzeba
+   napisać i opublikować stronę polityki prywatności + link z ekranu logowania.
+   ✅ **UKOŃCZONE** — utworzono dwujęzyczną statyczną stronę
+   `public/polityka-prywatnosci.html` (stylizowana jak reszta appki: Cinzel/
+   Crimson Text, kolory pergaminu; opisuje dane logowania Google, przechowywanie
+   w localStorage+Firestore z regułami per-user, brak udostępniania stronom
+   trzecim, sposób usunięcia danych, kontakt: mwojciechowski069@gmail.com),
+   dodano link `T.UI.loginPrivacyLink` pod tekstem na `LoginScreen.jsx`.
+3. [x] **Masowa duplikacja logiki CRUD encji** — 8 niemal identycznych implementacji
+   `add*/upd/del/toggle/pin/filterByTag` w `InventoryScreen`, `SkillsScreen`,
+   `SpellsScreen`, `NPCsScreen`, `LocationsScreen`, `FactionsPanel` (np.
+   `InventoryScreen.jsx:25-43`, `NPCsScreen.jsx:24,30-34,42-46`). Wyodrębnić
+   współdzielony hook `useEntityList(items, setItems)` (`add/update/remove/
+   toggle/pin/filterByTag/sortPinned`) — szacunkowo redukuje setki linii i
+   centralizuje przyszłe poprawki (np. filtrowanie po tagach trzeba było
+   powielić 6×, jak w P17).
+   ✅ **UKOŃCZONE** — nowy hook `src/hooks/useEntityList.js`
+   (`expanded/editing/activeTag/allTags` + `upd/del/toggle/startEdit/stopEdit`),
+   wdrożony we wszystkich 6 ekranach encji (`InventoryScreen`, `SkillsScreen`,
+   `SpellsScreen`, `NPCsScreen`, `LocationsScreen`, `FactionsPanel`) — lokalne
+   pozostały tylko filtry specyficzne dla ekranu (`filterType/activeCat/
+   activeLevel/activeSchool/filterRel/search`) i operacje spoza wzorca
+   (`toggleEquip` w Inventory, `toggleInUse` w Skills/Spells).
+4. [x] **`HeroJournal.jsx` jako god component** (477 linii) — sidebar (linie 225-271),
+   panel pomocy (274-319), kolejka cloud-save (117-138), auto-resize textarea
+   (82-100) renderowane/zarządzane inline zamiast w wydzielonych komponentach/
+   hookach. Wydzielić `Sidebar`, renderer treści `HelpPanel`, kolejkę zapisu do
+   chmury jako osobny hook.
+   ✅ **UKOŃCZONE** — plik skrócony z 477 do 251 linii. Wydzielono:
+   `src/app/Sidebar.jsx` (sidebar desktopowy + wewnętrzny `SidebarHelp`),
+   `src/app/Header.jsx` (pasek mobile), `src/app/MobileNav.jsx` (szuflada +
+   dolna nawigacja, z lokalnym stanem `openGroup`), `src/hooks/
+   useTextareaAutoResize.js` (oba efekty auto-resize textarea), `src/hooks/
+   useCloudSaveQueue.js` (kolejka debounce + licznik błędów + `syncFailed`).
+5. **Drag&drop reorder nie działa na ekranach dotykowych** — `EquippedCard.jsx:93-115`
+   (Przedmioty/Zdolności/Czary) używa natywnego HTML5 DnD (`draggable`,
+   `onDragStart/onDragOver/onDrop`) — to wzorzec myszy desktopowej; na telefonie/PWA/
+   Google Play (czyli docelowej platformie) użytkownik **nie może** zmienić
+   kolejności wyposażenia. Zamienić na touch-friendly wzorzec (long-press +
+   pointer events, albo prościej: przyciski ↑/↓).
+6. [x] **Martwe podwójne systemy i18n** — `react-i18next`/`i18next` +
+   `src/i18n/locales/{pl,en}.json` są zainicjalizowane (`i18n.js`, importy w
+   `App.jsx`/`HeroJournal.jsx:3,79`), ale `useTranslation()` nigdzie nie jest
+   wywoływane — realny system to `useT()`/`TRANSLATIONS` z `translations.js`
+   (migracja P4.3 została cofnięta, zostały po niej "duchy"). Usunąć zależności
+   `i18next`/`react-i18next`, `i18n.js`, `locales/`, wywołanie `syncI18nLang`.
+   ✅ **UKOŃCZONE** — usunięto `src/i18n/i18n.js`, `src/i18n/locales/`,
+   import `i18n.js` w `App.jsx`, wywołanie `syncI18nLang` w `HeroJournal.jsx`,
+   odinstalowano pakiety `i18next`/`react-i18next` (`npm uninstall`, -7 paczek,
+   0 podatności).
+7. **Ryzyko wyścigu (race condition) przy synchronizacji z chmurą** —
+   `syncFromCloud` (`firestore.js:8-21`) nadpisuje `localStorage` całościowo przy
+   logowaniu, bez znaczników czasu/scalania (`updatedAt`/last-write-wins);
+   edycja w trakcie synchronizacji może zostać ubita. Dodać sygnaturę czasową
+   per-klucz i logikę scalania, albo zablokować edycję do końca synchronizacji.
+8. **Zerowe pokrycie testami warstwy synchronizacji z Firestore** —
+   `firestore.js` (cloudSave/syncFromCloud — kod o najwyższym ryzyku utraty
+   danych), hooki `useCharacterData`/`useProfileManager` i logika CRUD w
+   ekranach nie są testowane (coverage ograniczone do `enums.js`/`storage.js`/
+   `math.js` w `vite.config.js:14`). Dodać testy integracyjne dla cloudSave/
+   syncFromCloud (mock Firestore) + smoke testy hooków.
+
+#### 🟡 Priorytet ŚREDNI
+9. **Brak potwierdzenia usuwania pojedynczych wpisów** (przedmioty/czary/NPC/...) —
+   `del(id)` wywoływane wprost z przycisku, np. `InventoryScreen.jsx:184`,
+   `SpellsScreen.jsx:192`, `NPCsScreen.jsx:136`. Dodać lekkie potwierdzenie
+   (toast z "Cofnij" lub dwuetapowy przycisk).
+10. **`user-scalable=no` blokuje pinch-zoom** (`index.html:5`) — antywzorzec
+    dostępności, szczególnie szkodliwy dla osób słabowidzących w aplikacji
+    pełnej drobnego tekstu. Usunąć `user-scalable=no`/`maximum-scale=1.0`.
+11. **Brak nagłówka Content-Security-Policy** (`Vercel.json`/`index.html`) —
+    dobra praktyka przed udostępnieniem publicznym i wymóg jakości przy
+    przeglądzie TWA do Google Play. Dodać CSP w `Vercel.json`.
+12. **Reguły Firestore bez walidacji kształtu/rozmiaru danych** (`firestore.rules`) —
+    poprawnie izolują dane per-user, ale zalogowany użytkownik może zapisać
+    dowolnie duży/zniekształcony dokument (koszty/awarie klienta). Dodać
+    `request.resource.size()` i podstawową walidację typów/rozmiaru w `allow write`.
+13. **Podwójna reprezentacja Wycieńczenia (lore bug)** — `gameConstants.js:127`
+    ma binarny stan `exhausted` w liście `CONDITIONS`, a `CombatCard.jsx:180-194`
+    ma osobny licznik poziomów 0-6 (`conditions.exhaustion`) — to dwa równoległe,
+    sprzeczne modele tego samego stanu wg 5e (Wycieńczenie to stan poziomowany,
+    nie przełącznik). Usunąć binarny toggle `exhausted` z `CONDITIONS`.
+14. **Długi odpoczynek całkowicie czyści Wycieńczenie zamiast zmniejszać o 1
+    poziom** — `ui.jsx:221` `conditions: {}` — wg PHB 2014 długi odpoczynek z
+    jedzeniem/piciem usuwa tylko 1 poziom wycieńczenia (i nie wszystkie inne
+    stany kończą się odpoczynkiem, np. skamieniały/oczarowany). Poprawić
+    `doLongRest`, by dekrementował `exhaustion` o 1 (min. 0) zamiast czyścić
+    wszystko.
+15. [x] **`dev-dist/` (artefakty builda PWA) commitowane do gita** — brak w
+    `.gitignore` (jest tylko `dist`/`dist-ssr`), pliki `dev-dist/registerSW.js`,
+    `sw.js`, `workbox-*.js` powtarzalnie trafiają do commitów. Dodać `dev-dist`
+    do `.gitignore` i `git rm -r --cached dev-dist`.
+    ✅ **UKOŃCZONE** — dodano `dev-dist` do `.gitignore`, odpięto z repo
+    (`git rm -r --cached dev-dist`).
+16. **Niespójne umiejscowienie Frakcji** — `NPCsScreen`/`LocationsScreen` są w
+    `features/world/`, ale `FactionsPanel` osobno w `features/factions/`, mimo
+    że to ten sam typ encji "Świata" używany razem w zakładce `world-all`.
+    Przenieść `factions/` do `world/` dla spójności.
+17. **System migracji danych nieskalowalny** — dwie migracje (`migrateLegacy`,
+    `migrateToEnums`, `storage.js:149-244`) oparte na ad-hoc flagach/sprawdzeniach
+    obecności, bez numerowanej wersji schematu. Wprowadzić `schemaVersion` per
+    profil + łańcuch migracji `v1→v2→v3…` zanim pojawi się trzecia zmiana schematu.
+18. **Komunikat o błędzie synchronizacji dopiero po 3 niepowodzeniach** —
+    `HeroJournal.jsx:120,214-219` — licznik nigdy nie resetuje się po sukcesie,
+    a pojedyncze niepowodzenia są tylko `console.warn`-owane. Pokazać lżejszy
+    wskaźnik stanu (np. ikona chmury) zamiast czekać na 3 ciche błędy.
+
+#### 🟢 Priorytet NISKI (porządki kosmetyczne/techniczne)
+19. **Literówka w kluczu danych `sleightzhand`** (`gameConstants.js:154`,
+    powielona w `translations.js:60,453`) zamiast `sleightofhand` — etykiety
+    poprawne (Polskie/EN nazwy OK), ale klucz wprowadza w błąd; wymaga migracji
+    danych przy zmianie.
+20. **Osierocony `SkillsScreen.module.css`** — jedyny moduł CSS w całym
+    `features/`, reszta ekranów używa `global.css` (1326 linii). Ujednolicić
+    konwencję stylowania (albo rozszerzyć moduły CSS wszędzie, albo usunąć ten jeden).
+21. **`shared/ui.jsx` jako "worek" 317 linii** — miesza generyczne prymitywy
+    (`TagsEditor`, `FilterBar`, `SearchBar`, `Toggle`) z widżetami domenowymi
+    (`RestModal`, `SpellSlotsWidget`, linie 153-303). Rozbić na `shared/ui/`
+    (prymitywy) i np. `features/character/widgets/` (domenowe).
+22. **Drobna pośrednia warstwa w `gameConstants.js`** — re-eksportuje/przemianowuje
+    tablice z `enums.js` (linie 7,18-25), co utrudnia odnalezienie źródła wartości.
+23. **`translations.js` jako jeden płaski plik 800 linii** — działa, ale trudny
+    w przeglądaniu/diff'owaniu; rozważyć podział wg funkcji (per-feature namespaces).
+24. **Brak typowania (JSDoc/TS/PropTypes)** — w pełni nietypowany JS dla
+    aplikacji z zagnieżdżonymi strukturami danych (`char.stats`, `spellSlots`...),
+    którą `validateCharData` musi bronić defensywnie w runtime. Rozważyć
+    `@typedef`y JSDoc + `checkJs` w `jsconfig.json` (bez pełnej migracji do TS).
+25. **Tutorial/Pomoc mogą nie nadążać za nowymi funkcjami** — brak slajdów/wpisów
+    o filtrowaniu po tagach i zwijaniu kart Świata (dodanych w P17/P18).
+    Zaktualizować `TutorialModal`/`HelpPanel`.
+
+#### Pozycje sprawdzone i uznane za poprawne (bez akcji)
+- Bezpieczeństwo: brak XSS (`dangerouslySetInnerHTML`/`eval` nie występują),
+  `npm audit` = 0 podatności, sekrety nieobecne w repo (mitygacje z incydentu
+  [[Wyciek klucza Firebase]] nadal aktywne — `.gitignore`, restrykcje klucza w GCP,
+  reguły Firestore), `ErrorBoundary` nie wycieka stack trace do użytkownika,
+  `localStorage` nie przechowuje tokenów/poświadczeń.
+- Lore D&D 5e: formuły poprawne (percepcja bierna `10+mod`, DC czarów `8+pb+mod`,
+  atak czarami `pb+mod`, inicjatywa = mod. Zręczności, rzuty śmierci ograniczone
+  do 3), kompletne i poprawne listy: 18 umiejętności, 8 szkół magii, 13 typów
+  obrażeń, polskie nazewnictwo zgodne z oficjalnym podręcznikiem PHB.
+- Inżynieria: dobra separacja warstwy danych (`useCharacterData`/`storage.js`/
+  `firestore.js`) od UI, code-splitting przez `React.lazy` na wszystkie ekrany,
+  sanityzacja `JSON.parse(JSON.stringify())` konsekwentnie stosowana w jedynym
+  punkcie zapisu do Firestore (`cloudSave`).
+
+**Sugerowana kolejność wdrażania:** zacząć od pozycji 1-2 (najmniejszy nakład,
+największe ryzyko — utrata danych usera / blokada publikacji), potem 6 i 15
+(czyszczenie, niskie ryzyko regresji), następnie 3-4 (refaktoryzacja strukturalna
+— duży nakład, ale odblokowuje szybsze wdrażanie kolejnych funkcji), na końcu
+pakiety 9-14 i 16-25 wg dostępnego czasu.
+
+**Status wdrożenia (2026-06-08):** Wykonano pozycje 1, 2, 3, 4, 6, 15 (pierwsza
+runda — najwyższy priorytet + najniższe ryzyko regresji), zgodnie z sugerowaną
+kolejnością. Każdy krok zweryfikowany przez `npx vite build` (sukces) i
+`npx vitest run` — stabilnie 37 zielonych / 6 czerwonych (te same 6 niepowiązanych
+awarii sprzed audytu: `ITEM_TYPES_ENUM toHaveLength(8)` i `LS.clear is not a
+function` w `storage.test.js`, potwierdzone via `git stash` jako pre-existing
+na `main`, nie regresje). Pozostałe pozycje (5, 7-14, 16-25) czekają na kolejne
+zadania/polecenia.
+
+---
+
 ### ✅ P18 — Edycja typu Przedmiotów po utworzeniu + zwinięte karty Świata = nazwa+tagi — UKOŃCZONE
 Dwa powiązane polecenia użytkownika:
 - [x] **P18.1** — Po utworzeniu Przedmiotu (np. z typem "Broń") nie dało się zmienić
