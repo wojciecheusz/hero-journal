@@ -5,7 +5,7 @@ import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
-function FactionsPanel({ factions, setFactions, openEntity }) {
+function FactionsPanel({ title, factions, setFactions, openEntity }) {
   const T = useT();
   const F = T.FACTIONS;
 
@@ -21,6 +21,8 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
 
   const allTags  = [...new Set(factions.flatMap(f => f.tags||[]))].sort();
   const rankColor = r => FACTION_RANK_COLORS[r] || "#6a5a38";
+  const displayFactionType = type => T.LABELS.factionType[type] || type;
+  const displayFactionRank = rank => T.LABELS.factionRank[rank] || rank;
 
   const addFaction = () => {
     const n = form.name.trim(); if (!n) return;
@@ -47,9 +49,12 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
 
   return (
     <>
-      <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{F.count(factions.length)}</span>
-        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? F.cancel : F.add}</button>
+      <div className="screen-col-header">
+        <span className="col-title">{title}</span>
+        <span className="col-actions">
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{F.count(factions.length)}</span>
+          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? F.cancel : F.add}</button>
+        </span>
       </div>
 
       {showForm && (
@@ -65,13 +70,13 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
             <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap" }}>
               {FACTION_TYPES.map(t => (
                 <button key={t} className="filter-tag" style={{ opacity: form.type===t?1:0.45, borderColor: form.type===t?"currentColor":"" }}
-                  onClick={() => setForm(f => ({ ...f, type: t }))}>{t}</button>
+                  onClick={() => setForm(f => ({ ...f, type: t }))}>{displayFactionType(t)}</button>
               ))}
             </div>
             <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap" }}>
               {FACTION_RANKS.map(r => (
                 <button key={r} className="filter-tag" style={{ opacity: form.rank===r?1:0.4, borderColor: form.rank===r?rankColor(r)+"88":"", color: form.rank===r?rankColor(r):"" }}
-                  onClick={() => setForm(f => ({ ...f, rank: r }))}>{r}</button>
+                  onClick={() => setForm(f => ({ ...f, rank: r }))}>{displayFactionRank(r)}</button>
               ))}
             </div>
             <textarea className="g-textarea" rows={3} placeholder={F.notesPh} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
@@ -83,7 +88,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
       <SearchBar value={search} onChange={setSearch}/>
       <div className="filter-bar">
         <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={() => setFilterType(null)}>{F.all}</button>
-        {FACTION_TYPES.map(t => { const c=factions.filter(f=>f.type===t).length; if(!c) return null; return <button key={t} className={`filter-tag${filterType===t?" active-filter":""}`} onClick={() => setFilterType(filterType===t?null:t)}>{t} ({c})</button>; })}
+        {FACTION_TYPES.map(t => { const c=factions.filter(f=>f.type===t).length; if(!c) return null; return <button key={t} className={`filter-tag${filterType===t?" active-filter":""}`} onClick={() => setFilterType(filterType===t?null:t)}>{displayFactionType(t)} ({c})</button>; })}
       </div>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
 
@@ -103,10 +108,13 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(fac.id)} aria-label={open?"Collapse":"Expand"}>{open?"▲":"▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${fac.rank||FACTION_RANK.UNKNOWN}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", userSelect:"none" }}>{FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]} {fac.rank||FACTION_RANK.UNKNOWN}</button>
+              <button onClick={() => cycleRank(fac.id)} aria-label={`Change rank: ${displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}`} style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, cursor:"pointer", userSelect:"none" }}><span className="badge-icon">{FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}</span> {displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}</button>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem", marginBottom:"0.3rem" }}>
-              <input className="iedit" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)} placeholder="…"/>
+              <select className="g-select" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)}>
+                <option value="">—</option>
+                {FACTION_TYPES.map(t => <option key={t} value={t}>{displayFactionType(t)}</option>)}
+              </select>
               <input className="iedit" style={{ fontSize:"0.82rem", opacity:0.7 }} value={fac.leader||""} onChange={e => upd(fac.id,"leader",e.target.value)} placeholder={F.leaderEditPh}/>
               <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/>
               <input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/>
@@ -121,7 +129,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>
                 <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
-                  {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}>{r}</button>)}
+                  {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}>{displayFactionRank(r)}</button>)}
                 </div>
                 <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>

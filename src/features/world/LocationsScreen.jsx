@@ -5,7 +5,7 @@ import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
-function LocationsScreen({ locations, setLocations, openEntity }) {
+function LocationsScreen({ title, locations, setLocations, openEntity }) {
   const T = useT();
 
   const [form, setForm] = useState({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"", tags:[] });
@@ -13,6 +13,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
   const [expanded, setExpanded] = useState({});
   const [editing,  setEditing]  = useState({});
   const [activeTag, setActiveTag] = useState(null);
+  const [filterType, setFilterType] = useState(null);
   const [search, setSearch] = useState('');
 
   useScrollToEntity(openEntity, locations, setExpanded);
@@ -34,15 +35,19 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
   const q = search.trim().toLowerCase();
   const visible = locations
     .filter(l => !activeTag || (l.tags || []).includes(activeTag))
+    .filter(l => !filterType || l.type === filterType)
     .filter(l => !q || [l.name, l.notes].some(f => f?.toLowerCase().includes(q)))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
   const displayLocType = type => T.LABELS.locType[type] || type;
 
   return (
     <>
-      <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{locations.length} {locations.length === 1 ? "location" : "locations"}</span>
-        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? T.LOCATIONS.cancel : T.LOCATIONS.add}</button>
+      <div className="screen-col-header">
+        <span className="col-title">{title}</span>
+        <span className="col-actions">
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{T.LOCATIONS.count(locations.length)}</span>
+          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? T.LOCATIONS.cancel : T.LOCATIONS.add}</button>
+        </span>
       </div>
 
       {showForm && (
@@ -71,6 +76,18 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
       )}
 
       <SearchBar value={search} onChange={setSearch}/>
+      <div className="filter-bar">
+        <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={() => setFilterType(null)}>{T.UI.filterAll}</button>
+        {LOC_TYPES.map(type => {
+          const c = locations.filter(l => l.type === type).length;
+          if (!c) return null;
+          return (
+            <button key={type} className={`filter-tag${filterType===type?" active-filter":""}`} onClick={() => setFilterType(filterType===type?null:type)}>
+              <span className="badge-icon">{LOC_TYPE_ICONS[type]}</span> {displayLocType(type)} ({c})
+            </button>
+          );
+        })}
+      </div>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
       {locations.length === 0 && <div className="card empty-state">{T.LOCATIONS.empty}</div>}
 
@@ -87,7 +104,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}>{open ? "▲" : "▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <span className="loc-type">{LOC_TYPE_ICONS[loc.type]} {displayLocType(loc.type)}</span>
+              <span className="loc-type"><span className="badge-icon">{LOC_TYPE_ICONS[loc.type]}</span> {displayLocType(loc.type)}</span>
             </div>
 
             {loc.notes && !isEditing && (

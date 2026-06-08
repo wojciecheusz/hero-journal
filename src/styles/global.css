@@ -1168,6 +1168,9 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .rel-unknown { border: 1px solid var(--hj-border); color: var(--hj-text-dim); background: transparent; }
 .rel-badge:hover { filter: brightness(1.2); }
 
+/* Ikona wewnątrz odznaki (rel-badge / loc-type / ranga frakcji) — dopasowana do wysokości linii tekstu odznaki (0.5rem uppercase Cinzel) */
+.badge-icon { font-size: 0.5rem; vertical-align: -0.04em; line-height: 1; }
+
 .loc-type { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.15rem 0.55rem; border: 1px solid var(--hj-border); color: var(--hj-text-muted); background: rgba(226,185,78,0.04); flex-shrink: 0; }
 
 /* ── Linki do encji w tekście ─────────────────────────────────── */

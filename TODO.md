@@ -1,31 +1,5 @@
 # Lista zadań — Hero Journal
 
-## W trakcie
-### 🔄 P14 — Pakiet 5 poprawek: ikony tagów, tłumaczenia frakcji, filtry, układ nagłówków
-Pięć powiązanych poleceń użytkownika:
-- [ ] **P14.1** — Ikony odznak (relacja NPC / typ lokacji / ranga frakcji) mają
-  wyglądać "na wysokości linii pod nazwą" jak ikona typu w Wyposażeniu — obecnie
-  emoji w `rel-badge`/`loc-type`/odznace rangi renderuje się znacznie większe
-  niż otaczający tekst (0.5rem uppercase Cinzel), wygląda nieproporcjonalnie.
-  Poprawka: owinąć ikony w `<span>` ze zmniejszonym `fontSize`/`verticalAlign`
-  dopasowanym do wysokości linii tekstu odznaki.
-- [ ] **P14.2** — Nazwy rang/typów frakcji w polskiej wersji renderują się po
-  angielsku (surowe wartości enumów: "officer","enemy","ally","guild"...) zamiast
-  tłumaczeń z `T.LABELS.factionRank`/`factionType`. Dodać helpery
-  `displayFactionType`/`displayFactionRank` (wzorem `displayLocType`/`displayItemType`)
-  i użyć ich we wszystkich miejscach renderujących `fac.type`/`fac.rank`/`t`/`r`
-  w `FactionsPanel.jsx` (odznaka rangi, filtry typu, formularz dodawania, edycja).
-- [ ] **P14.3** — Dodać pod wyszukiwarką filtr kategorii (analogiczny do filtra
-  typu frakcji w `FactionsPanel`, z licznikami) w `NPCsScreen` (filtr wg relacji:
-  Sojusznik/Neutralny/Wrogi/Nieznany) i `LocationsScreen` (filtr wg typu lokacji)
-  — obecnie obie mają tylko filtr po tagach, brakuje kategoryzacji jak we Frakcjach.
-- [ ] **P14.4** — W podzakładkach Wyposażenia (Przedmioty/Zdolności/Czary)
-  przenieść sekcje pod nagłówkiem (licznik typu "5 przedmiotów - 2 wyposażonych"
-  + przycisk "dodaj przedmiot"/"dodaj wpis") z osobnego wiersza do rzędu nagłówka
-  (nad linią), analogicznie do wzorca z innych ekranów.
-- [ ] **P14.5** — Zrobić to samo (przeniesienie licznika + przycisku dodawania
-  do rzędu nagłówka) w zakładce Świat (Postacie/Lokacje/Frakcje).
-
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
@@ -335,6 +309,39 @@ Pliki: `gameConstants.js`, `SpellsScreen.jsx`, opcjonalnie `EquippedCard.jsx`
 tłumaczenia), na końcu P5.1 i P5.4 (najbardziej złożone — nowe pola override / drag&drop).
 
 ## Ukończone
+
+### ✅ P14 — Pakiet 5 poprawek: ikony tagów, tłumaczenia frakcji, filtry, układ nagłówków — UKOŃCZONE
+Pięć powiązanych poleceń użytkownika:
+- [x] **P14.1** — Ikony odznak (relacja NPC / typ lokacji / ranga frakcji) owinięte
+  w `<span className="badge-icon">` z dopasowanym `font-size: 0.5rem` i
+  `vertical-align: -0.04em` (nowa współdzielona klasa w `global.css`) — teraz
+  renderują się na wysokości linii tekstu odznaki, proporcjonalnie do reszty.
+  Zastosowano w `loc-type` (`LocationsScreen.jsx`) i odznace rangi frakcji
+  (`FactionsPanel.jsx`); `rel-badge` w `NPCsScreen.jsx` miał to już wcześniej.
+- [x] **P14.2** — Dodano helpery `displayFactionType`/`displayFactionRank`
+  (`T.LABELS.factionType`/`factionRank`) w `FactionsPanel.jsx` i użyto ich
+  wszędzie: odznaka rangi, filtry typu, formularz dodawania, widok edycji.
+  Pole `fac.type` zamieniono ze swobodnego `<input>` na `<select>` z
+  `<option value={enum}>{tłumaczenie}</option>`, by nie nadpisywać surowej
+  wartości enumu polskim tłumaczeniem (wzorem `displayDamageType` z P5.5).
+- [x] **P14.3** — Dodano filtr typu lokacji (z licznikami, wzorem filtra
+  frakcji) w `LocationsScreen.jsx` wraz ze stanem `filterType`; filtr relacji
+  w `NPCsScreen.jsx` już istniał z wcześniejszego commitu `e93bdca`.
+- [x] **P14.4** — Sprawdzono `InventoryScreen`/`SkillsScreen`/`SpellsScreen` —
+  licznik i przycisk dodawania były już w rzędzie nagłówka (`screen-col-header`)
+  z wcześniejszego commitu `e93bdca`, zmiany nie były potrzebne.
+- [x] **P14.5** — Przeniesiono licznik + przycisk dodawania do rzędu nagłówka
+  (`screen-col-header`/`col-title`/`col-actions`) w `LocationsScreen.jsx` i
+  `FactionsPanel.jsx` (oba dotąd nie przyjmowały nawet propsa `title`);
+  `NPCsScreen.jsx` miał to już zrobione. Przy okazji poprawiono licznik lokacji
+  z zahardkodowanego angielskiego tekstu na `T.LOCATIONS.count(n)`.
+
+Zweryfikowano wizualnie zrzutami ekranu (Playwright/chromium-cli) każdy
+podpunkt osobno — ikony, tłumaczenia, filtry, układ nagłówków na obu
+zakładkach (Świat i Wyposażenie), w tym porównanie zachowania `flex-wrap`
+nagłówków na wąskich szerokościach (zgodne z istniejącym wzorcem, nie regresja).
+
+---
 
 ### ✅ P4.1 — CSS Modules: pilot na SkillsScreen
 Utworzono `SkillsScreen.module.css` z klasami `.legend`, `.legendItem`, `.legendDot`, `.legendLabel`, `.countBar`.
