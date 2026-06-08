@@ -3,6 +3,29 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P18 — Edycja typu Przedmiotów po utworzeniu + zwinięte karty Świata = nazwa+tagi — UKOŃCZONE
+Dwa powiązane polecenia użytkownika:
+- [x] **P18.1** — Po utworzeniu Przedmiotu (np. z typem "Broń") nie dało się zmienić
+  jego typu/kategorii (np. na "Pancerz") — brakowało selektora typu w trybie edycji
+  `InventoryScreen`. Dodano rząd przycisków wyboru typu na początku `pack-item-body`
+  w edycji (ikony `ITEM_ICONS` + `T.ITEM_TYPES`, `onClick={() => upd(item.id,"type",t)}`),
+  analogicznie do wyboru typu w `LocationsScreen`/`FactionsPanel`. Sprawdzono też
+  `NPCsScreen` — relacja (odpowiednik "kategorii") była już w pełni edytowalna
+  (rząd przycisków w trybie edycji), więc nie wymagała poprawki.
+- [x] **P18.2** — Zwinięty wpis w podzakładkach Świata (Postacie/Miejsca/Frakcje)
+  pokazuje teraz WYŁĄCZNIE nazwę i tagi; cała reszta treści (odznaka relacji/typu/
+  rangi, pola szczegółowe, podgląd notatek, formularz edycji) renderuje się dopiero
+  po rozwinięciu — przeniesiona pod wspólny blok `{open && (...)}` w `NPCsScreen.jsx`,
+  `LocationsScreen.jsx` i `FactionsPanel.jsx`. Usunięto przy okazji zbędne
+  dwustanowe (2-linie/pełny tekst) style `entry-preview`, bo podgląd notatek
+  renderuje się teraz tylko w stanie rozwiniętym (zawsze pełny, `whiteSpace:pre-wrap`).
+
+Zweryfikowano wizualnie w Playwright na przykładowej postaci: dodanie Przedmiotu
+z typem "Broń", zmiana w edycji na "Pancerz" → odznaka typu w nagłówku zmienia się
+("Broń"→"Pancerz"); zwinięte karty NPC/Lokacji/Frakcji pokazują tylko nazwę i
+odznaki tagów (np. "Elara Moonwhisp" + priest/elf/ally), rozwinięte pokazują
+odznakę relacji/typu/rangi, pola szczegółowe i pełną treść notatek.
+
 ### ✅ P17 — Filtrowanie po tagach (Plecak/Czary) + tagi w karcie "Aktywne i Wyposażone" — UKOŃCZONE
 Dwa powiązane polecenia użytkownika:
 - [x] **P17.1** — W kolumnach Plecak i Czary dodano filtrowanie po ręcznie dodanych

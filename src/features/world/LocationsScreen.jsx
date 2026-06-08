@@ -104,30 +104,34 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
               <button className="entity-toggle" onClick={() => startEdit(loc.id)} aria-label="Edit location">✎</button>
               <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}>{open ? "▲" : "▼"}</button>
             </div>
-            <div style={{ marginBottom:"0.4rem" }}>
-              <span className="loc-type">{displayLocType(loc.type)}</span>
-            </div>
-
-            {loc.notes && !isEditing && (
-              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{loc.notes}</p>
-            )}
-
             <TagsEditor tags={loc.tags || []} onChange={v => upd(loc.id, "tags", v)}/>
 
-            {open && isEditing && (
-              <div style={{ marginTop:"0.8rem" }}>
-                <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.7rem" }}>
-                  {LOC_TYPES.map((type) => (
-                    <button key={type} className="filter-tag" style={{ opacity: loc.type===type?1:0.4, borderColor: loc.type===type?"currentColor":"" }}
-                      onClick={() => upd(loc.id, "type", type)}>{LOC_TYPE_ICONS[type]} {displayLocType(type)}</button>
-                  ))}
+            {open && (
+              <>
+                <div style={{ margin:"0.4rem 0" }}>
+                  <span className="loc-type">{displayLocType(loc.type)}</span>
                 </div>
-                <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
-                <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(loc.id)}>{T.LOCATIONS.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(loc.id)}>✓</button>
-                </div>
-              </div>
+
+                {loc.notes && !isEditing && (
+                  <p className="entry-preview" style={{ whiteSpace:"pre-wrap" }}>{loc.notes}</p>
+                )}
+
+                {isEditing && (
+                  <div style={{ marginTop:"0.8rem" }}>
+                    <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.7rem" }}>
+                      {LOC_TYPES.map((type) => (
+                        <button key={type} className="filter-tag" style={{ opacity: loc.type===type?1:0.4, borderColor: loc.type===type?"currentColor":"" }}
+                          onClick={() => upd(loc.id, "type", type)}>{LOC_TYPE_ICONS[type]} {displayLocType(type)}</button>
+                      ))}
+                    </div>
+                    <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
+                    <div className="row mt05" style={{ justifyContent:"space-between" }}>
+                      <button className="btn-ghost" onClick={() => del(loc.id)}>{T.LOCATIONS.delete}</button>
+                      <button className="btn-ghost" onClick={() => stopEdit(loc.id)}>✓</button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         );

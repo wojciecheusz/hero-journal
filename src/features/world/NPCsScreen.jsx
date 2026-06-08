@@ -104,37 +104,41 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
               <button className="entity-toggle" onClick={() => startEdit(npc.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}>{open ? "▲" : "▼"}</button>
             </div>
-            <div style={{ marginBottom:"0.4rem" }}>
-              <span className={`rel-badge rel-${rel}`}>{RL[rel]}</span>
-            </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem", marginBottom:"0.3rem" }}>
-              <div className="pack-field"><span className="pack-field-label">{N.role}</span><input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/></div>
-              <div className="pack-field"><span className="pack-field-label">{N.affiliation}</span><input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/></div>
-              <div className="pack-field"><span className="pack-field-label">{N.metAt}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/></div>
-              <div className="pack-field"><span className="pack-field-label">{N.connections}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/></div>
-            </div>
-
-            {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
-            {npc.notes && !isEditing && (
-              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{npc.notes}</p>
-            )}
 
             <TagsEditor tags={npc.tags||[]} onChange={v => upd(npc.id,"tags",v)}/>
 
-            {open && isEditing && (
-              <div style={{ marginTop:"0.8rem" }}>
-                <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
-                  {["unknown","ally","neutral","hostile"].map(r => (
-                    <button key={r} className="filter-tag" style={{ opacity: rel===r?1:0.4, borderColor: rel===r?"currentColor":"" }}
-                      onClick={() => upd(npc.id,"relation",r)}>{REL_ICONS[r]} {RL[r]}</button>
-                  ))}
+            {open && (
+              <>
+                <div style={{ margin:"0.4rem 0" }}>
+                  <span className={`rel-badge rel-${rel}`}>{RL[rel]}</span>
                 </div>
-                <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
-                <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(npc.id)}>✓</button>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem", marginBottom:"0.3rem" }}>
+                  <div className="pack-field"><span className="pack-field-label">{N.role}</span><input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/></div>
+                  <div className="pack-field"><span className="pack-field-label">{N.affiliation}</span><input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/></div>
+                  <div className="pack-field"><span className="pack-field-label">{N.metAt}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/></div>
+                  <div className="pack-field"><span className="pack-field-label">{N.connections}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/></div>
                 </div>
-              </div>
+
+                {npc.notes && !isEditing && (
+                  <p className="entry-preview" style={{ whiteSpace:"pre-wrap" }}>{npc.notes}</p>
+                )}
+
+                {isEditing && (
+                  <div style={{ marginTop:"0.8rem" }}>
+                    <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
+                      {["unknown","ally","neutral","hostile"].map(r => (
+                        <button key={r} className="filter-tag" style={{ opacity: rel===r?1:0.4, borderColor: rel===r?"currentColor":"" }}
+                          onClick={() => upd(npc.id,"relation",r)}>{REL_ICONS[r]} {RL[r]}</button>
+                      ))}
+                    </div>
+                    <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
+                    <div className="row mt05" style={{ justifyContent:"space-between" }}>
+                      <button className="btn-ghost" onClick={() => del(npc.id)}>{N.delete}</button>
+                      <button className="btn-ghost" onClick={() => stopEdit(npc.id)}>✓</button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         );

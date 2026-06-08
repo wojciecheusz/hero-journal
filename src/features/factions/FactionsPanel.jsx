@@ -103,38 +103,42 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
               <button className="entity-toggle" onClick={() => startEdit(fac.id)} aria-label="Edit entry">✎</button>
               <button className="entity-toggle" onClick={() => toggle(fac.id)} aria-label={open?"Collapse":"Expand"}>{open?"▲":"▼"}</button>
             </div>
-            <div style={{ marginBottom:"0.4rem" }}>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12` }}>{displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}</span>
-            </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem", marginBottom:"0.3rem" }}>
-              <div className="pack-field"><span className="pack-field-label">{F.type}</span>
-                <select className="g-select" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)}>
-                  <option value="">—</option>
-                  {FACTION_TYPES.map(t => <option key={t} value={t}>{displayFactionType(t)}</option>)}
-                </select>
-              </div>
-              <div className="pack-field"><span className="pack-field-label">{F.leader}</span><input className="iedit" style={{ fontSize:"0.82rem", opacity:0.7 }} value={fac.leader||""} onChange={e => upd(fac.id,"leader",e.target.value)} placeholder={F.leaderEditPh}/></div>
-              <div className="pack-field"><span className="pack-field-label">{F.headquarters}</span><input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/></div>
-              <div className="pack-field"><span className="pack-field-label">{F.goal}</span><input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/></div>
-            </div>
-            {/* Podgląd notatek — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
-            {fac.notes && !isEditing && (
-              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>{fac.notes}</p>
-            )}
-
             <TagsEditor tags={fac.tags||[]} onChange={v => upd(fac.id,"tags",v)}/>
 
-            {open && isEditing && (
-              <div style={{ marginTop:"0.8rem" }}>
-                <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
-                  {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}>{FACTION_RANK_ICONS[r]} {displayFactionRank(r)}</button>)}
+            {open && (
+              <>
+                <div style={{ margin:"0.4rem 0" }}>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12` }}>{displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}</span>
                 </div>
-                <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
-                <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                  <button className="btn-ghost" onClick={() => del(fac.id)}>{F.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(fac.id)}>✓</button>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem", marginBottom:"0.3rem" }}>
+                  <div className="pack-field"><span className="pack-field-label">{F.type}</span>
+                    <select className="g-select" style={{ fontSize:"0.82rem", fontStyle:"italic", opacity:0.7 }} value={fac.type||""} onChange={e => upd(fac.id,"type",e.target.value)}>
+                      <option value="">—</option>
+                      {FACTION_TYPES.map(t => <option key={t} value={t}>{displayFactionType(t)}</option>)}
+                    </select>
+                  </div>
+                  <div className="pack-field"><span className="pack-field-label">{F.leader}</span><input className="iedit" style={{ fontSize:"0.82rem", opacity:0.7 }} value={fac.leader||""} onChange={e => upd(fac.id,"leader",e.target.value)} placeholder={F.leaderEditPh}/></div>
+                  <div className="pack-field"><span className="pack-field-label">{F.headquarters}</span><input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.headquarters||""} onChange={e => upd(fac.id,"headquarters",e.target.value)} placeholder={F.hqEditPh}/></div>
+                  <div className="pack-field"><span className="pack-field-label">{F.goal}</span><input className="iedit" style={{ fontSize:"0.8rem", opacity:0.55 }} value={fac.goal||""} onChange={e => upd(fac.id,"goal",e.target.value)} placeholder={F.goalEditPh}/></div>
                 </div>
-              </div>
+
+                {fac.notes && !isEditing && (
+                  <p className="entry-preview" style={{ whiteSpace:"pre-wrap" }}>{fac.notes}</p>
+                )}
+
+                {isEditing && (
+                  <div style={{ marginTop:"0.8rem" }}>
+                    <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
+                      {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}>{FACTION_RANK_ICONS[r]} {displayFactionRank(r)}</button>)}
+                    </div>
+                    <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
+                    <div className="row mt05" style={{ justifyContent:"space-between" }}>
+                      <button className="btn-ghost" onClick={() => del(fac.id)}>{F.delete}</button>
+                      <button className="btn-ghost" onClick={() => stopEdit(fac.id)}>✓</button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         );

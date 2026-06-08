@@ -152,6 +152,12 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
             {/* Formularz edycji */}
             {isEditing && (
               <div className="pack-item-body">
+                <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
+                  {ITEM_TYPES.map((t, i) => (
+                    <button key={t} className="filter-tag" style={{ opacity: item.type === t ? 1 : 0.45, borderColor: item.type === t ? "currentColor" : "" }}
+                      onClick={() => upd(item.id, "type", t)}>{ITEM_ICONS[t]} {T.ITEM_TYPES[i] ?? t}</button>
+                  ))}
+                </div>
                 <div className="pack-item-row">
                   <div className="pack-field"><span className="pack-field-label">{I.qty}</span><input className="pack-field-input" value={item.qty || "1"} onChange={e => upd(item.id, "qty", e.target.value)}/></div>
                   {item.type === ITEM_TYPE.WEAPON && (
