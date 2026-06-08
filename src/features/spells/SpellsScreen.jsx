@@ -6,7 +6,7 @@ import { useT } from '../../i18n/translations';
 
 const numMod = v => v >= 0 ? `+${v}` : String(v);
 
-function SpellsScreen({ spells, setSpells, char, setChar }) {
+function SpellsScreen({ title, spells, setSpells, char, setChar }) {
   const T  = useT();
   const SP = T.SPELLS;
 
@@ -49,12 +49,13 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
 
   return (
     <>
-      <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em", color:"var(--hj-spell-muted)" }}>{SP.count(spells.length, inUseCount)}</span>
-        <div className="row" style={{ gap:"0.5rem" }}>
+      <div className="screen-col-header">
+        <span className="col-title">{title}</span>
+        <span className="col-actions">
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em", color:"var(--hj-spell-muted)" }}>{SP.count(spells.length, inUseCount)}</span>
           <button className="btn-shadow" style={{ borderColor:"var(--hj-spell-border)", color:"var(--hj-spell-accent)", background:"transparent", cursor:"pointer" }} onClick={() => setShowSlots(s => !s)}>{showSlots ? SP.hideSlots : SP.manageSlots}</button>
           <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? SP.cancel : SP.add}</button>
-        </div>
+        </span>
       </div>
 
       {showSlots && (

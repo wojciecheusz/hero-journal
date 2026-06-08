@@ -21,7 +21,7 @@ const catColor = cat => ({
   "Feat":            "#9a6030",
 })[cat] || "#8a7848";
 
-function SkillsScreen({ skills, setSkills, openEntity }) {
+function SkillsScreen({ title, skills, setSkills, openEntity }) {
   const T    = useT();
   const SK   = T.SKILLS;
   const CATS = T.SKILL_CATS;
@@ -58,9 +58,12 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
 
   return (
     <>
-      <div className="row" style={{ justifyContent:"space-between" }}>
-        <span className={styles.countBar}>{SK.count(skills.length, inUseCount)}</span>
-        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? SK.cancel : SK.add}</button>
+      <div className="screen-col-header">
+        <span className="col-title">{title}</span>
+        <span className="col-actions">
+          <span className={styles.countBar}>{SK.count(skills.length, inUseCount)}</span>
+          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? SK.cancel : SK.add}</button>
+        </span>
       </div>
 
       {showForm && (

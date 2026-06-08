@@ -388,23 +388,20 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         {(tab === "equipment" || ["inventory","skills","spells"].includes(tab)) && <>
           <div className="multi-col-desktop">
             <div className="screen-col">
-              <div className="screen-col-header">{T.NAV.inventory}</div>
-              <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>
+              <InventoryScreen title={T.NAV.inventory} inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>
             </div>
             <div className="screen-col">
-              <div className="screen-col-header">{T.NAV.skills}</div>
-              <SkillsScreen skills={skills} setSkills={setSkills} openEntity={openEntity}/>
+              <SkillsScreen title={T.NAV.skills} skills={skills} setSkills={setSkills} openEntity={openEntity}/>
             </div>
             <div className="screen-col">
-              <div className="screen-col-header">{T.NAV.spells}</div>
-              <SpellsScreen spells={spells} setSpells={setSpells} char={char} setChar={setChar}/>
+              <SpellsScreen title={T.NAV.spells} spells={spells} setSpells={setSpells} char={char} setChar={setChar}/>
             </div>
           </div>
           <div className="single-col-mobile">
-            {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
-            {tab === "skills"    && <SkillsScreen    skills={skills}       setSkills={setSkills}  openEntity={openEntity}/>}
-            {tab === "spells"    && <SpellsScreen     spells={spells}       setSpells={setSpells}         char={char} setChar={setChar}/>}
-            {tab === "equipment" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
+            {tab === "inventory" && <InventoryScreen title={T.NAV.inventory} inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
+            {tab === "skills"    && <SkillsScreen    title={T.NAV.skills}    skills={skills}       setSkills={setSkills}  openEntity={openEntity}/>}
+            {tab === "spells"    && <SpellsScreen    title={T.NAV.spells}    spells={spells}       setSpells={setSpells}         char={char} setChar={setChar}/>}
+            {tab === "equipment" && <InventoryScreen title={T.NAV.inventory} inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
           </div>
         </>}
 
@@ -412,23 +409,20 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         {(tab === "world-all" || ["npcs","locations","factions"].includes(tab)) && <>
           <div className="multi-col-desktop">
             <div className="screen-col">
-              <div className="screen-col-header">{T.NAV.npcs}</div>
-              <NPCsScreen npcs={npcs} setNPCs={setNPCs} openEntity={openEntity}/>
+              <NPCsScreen title={T.NAV.npcs} npcs={npcs} setNPCs={setNPCs} openEntity={openEntity}/>
             </div>
             <div className="screen-col">
-              <div className="screen-col-header">{T.NAV.locations}</div>
-              <LocationsScreen locations={locations} setLocations={setLocations} openEntity={openEntity}/>
+              <LocationsScreen title={T.NAV.locations} locations={locations} setLocations={setLocations} openEntity={openEntity}/>
             </div>
             <div className="screen-col">
-              <div className="screen-col-header">{T.NAV.factions}</div>
-              <FactionsPanel factions={factions} setFactions={setFactions} openEntity={openEntity}/>
+              <FactionsPanel title={T.NAV.factions} factions={factions} setFactions={setFactions} openEntity={openEntity}/>
             </div>
           </div>
           <div className="single-col-mobile">
-            {tab === "npcs"      && <NPCsScreen       npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
-            {tab === "locations" && <LocationsScreen  locations={locations} setLocations={setLocations}  openEntity={openEntity}/>}
-            {tab === "factions"  && <FactionsPanel    factions={factions}   setFactions={setFactions}    openEntity={openEntity}/>}
-            {tab === "world-all" && <NPCsScreen       npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
+            {tab === "npcs"      && <NPCsScreen       title={T.NAV.npcs}      npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
+            {tab === "locations" && <LocationsScreen  title={T.NAV.locations} locations={locations} setLocations={setLocations}  openEntity={openEntity}/>}
+            {tab === "factions"  && <FactionsPanel    title={T.NAV.factions}  factions={factions}   setFactions={setFactions}    openEntity={openEntity}/>}
+            {tab === "world-all" && <NPCsScreen       title={T.NAV.npcs}      npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
           </div>
         </>}
 

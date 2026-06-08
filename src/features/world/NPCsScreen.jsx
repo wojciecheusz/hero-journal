@@ -4,7 +4,7 @@ import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
-function NPCsScreen({ npcs, setNPCs, openEntity }) {
+function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
   const T  = useT();
   const N  = T.NPCS;
   const RL = T.REL_LABELS;
@@ -14,6 +14,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const [expanded, setExpanded] = useState({});
   const [editing, setEditing] = useState({});
   const [activeTag, setActiveTag] = useState(null);
+  const [filterRel, setFilterRel] = useState(null);
   const [search, setSearch] = useState('');
 
   useScrollToEntity(openEntity, npcs, setExpanded);
@@ -36,15 +37,19 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const q = search.trim().toLowerCase();
   const visible = npcs
     .filter(n => !activeTag || (n.tags || []).includes(activeTag))
+    .filter(n => !filterRel || (n.relation || "unknown") === filterRel)
     .filter(n => !q || [n.name, n.role, n.affiliation, n.notes, n.connections]
       .some(f => f?.toLowerCase().includes(q)))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
 
   return (
     <>
-      <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{N.count(npcs.length)}</span>
-        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? N.cancel : N.add}</button>
+      <div className="screen-col-header">
+        <span className="col-title">{title}</span>
+        <span className="col-actions">
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{N.count(npcs.length)}</span>
+          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? N.cancel : N.add}</button>
+        </span>
       </div>
 
       {showForm && (
@@ -71,6 +76,18 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
       )}
 
       <SearchBar value={search} onChange={setSearch}/>
+      <div className="filter-bar">
+        <button className={`filter-tag${!filterRel?" active-filter":""}`} onClick={() => setFilterRel(null)}>{T.UI.filterAll}</button>
+        {["unknown","ally","neutral","hostile"].map(r => {
+          const c = npcs.filter(n => (n.relation||"unknown")===r).length;
+          if (!c) return null;
+          return (
+            <button key={r} className={`filter-tag${filterRel===r?" active-filter":""}`} onClick={() => setFilterRel(filterRel===r?null:r)}>
+              <span className="badge-icon">{REL_ICONS[r]}</span> {RL[r]} ({c})
+            </button>
+          );
+        })}
+      </div>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
       {npcs.length === 0 && <div className="card empty-state">{N.empty}</div>}
 
@@ -88,7 +105,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
               <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}>{open ? "▲" : "▼"}</button>
             </div>
             <div style={{ marginBottom:"0.4rem" }}>
-              <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}>{REL_ICONS[rel]} {RL[rel]}</button>
+              <button className={`rel-badge rel-${rel}`} onClick={() => cycleRel(npc.id)} aria-label={`Change relation: ${RL[rel]}`}><span className="badge-icon">{REL_ICONS[rel]}</span> {RL[rel]}</button>
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem", marginBottom:"0.3rem" }}>
               <input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/>

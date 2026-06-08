@@ -5,7 +5,7 @@ import { Toggle, TagsEditor, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
-function InventoryScreen({ inventory, setInventory, openEntity }) {
+function InventoryScreen({ title, inventory, setInventory, openEntity }) {
   const T = useT();
   const I = T.INVENTORY;
   const displayItemType = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
@@ -39,11 +39,14 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
 
   return (
     <>
-      <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>
-          {I.count(inventory.length, equippedCount)}
+      <div className="screen-col-header">
+        <span className="col-title">{title}</span>
+        <span className="col-actions">
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>
+            {I.count(inventory.length, equippedCount)}
+          </span>
+          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? I.cancel : I.add}</button>
         </span>
-        <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? I.cancel : I.add}</button>
       </div>
 
       {showForm && (

@@ -472,17 +472,30 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
     gap: 1rem;
     min-width: 0;
   }
-  /* Nagłówek kolumny */
-  .screen-col-header {
-    font-family: 'Cinzel', serif;
-    font-size: 0.62rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--hj-text-label);
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--hj-border);
-    margin-bottom: 0.2rem;
-  }
+}
+
+/* Nagłówek kolumny — tytuł + licznik/przyciski w jednym rzędzie nad linią */
+.screen-col-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--hj-border);
+  margin-bottom: 0.2rem;
+}
+.screen-col-header .col-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--hj-text-label);
+}
+.screen-col-header .col-actions {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
 }
 
 /* Karta postaci — aktualizacje dla szerszych breakpointów */

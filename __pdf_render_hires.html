@@ -1,0 +1,24 @@
+<!doctype html>
+<html><body>
+<div id="out"></div>
+<script type="module">
+import * as pdfjsLib from '/node_modules/pdfjs-dist/build/pdf.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/node_modules/pdfjs-dist/build/pdf.worker.mjs';
+
+const loadingTask = pdfjsLib.getDocument({ url: '/public/templates/karta-postaci-template.pdf', wasmUrl: '/node_modules/pdfjs-dist/wasm/' });
+const pdf = await loadingTask.promise;
+const out = document.getElementById('out');
+for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+  const page = await pdf.getPage(pageNum);
+  const viewport = page.getViewport({ scale: 3.0 });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  canvas.id = 'page-' + pageNum;
+  out.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  await page.render({ canvasContext: ctx, viewport }).promise;
+}
+window.RENDER_DONE = true;
+</script>
+</body></html>
