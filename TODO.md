@@ -56,12 +56,22 @@ to osobne, przyszłe polecenia.**
    dolna nawigacja, z lokalnym stanem `openGroup`), `src/hooks/
    useTextareaAutoResize.js` (oba efekty auto-resize textarea), `src/hooks/
    useCloudSaveQueue.js` (kolejka debounce + licznik błędów + `syncFailed`).
-5. **Drag&drop reorder nie działa na ekranach dotykowych** — `EquippedCard.jsx:93-115`
-   (Przedmioty/Zdolności/Czary) używa natywnego HTML5 DnD (`draggable`,
+5. [x] **Drag&drop reorder nie działa na ekranach dotykowych** — `EquippedCard.jsx:93-115`
+   (Przedmioty/Zdolności/Czary) używał wyłącznie natywnego HTML5 DnD (`draggable`,
    `onDragStart/onDragOver/onDrop`) — to wzorzec myszy desktopowej; na telefonie/PWA/
-   Google Play (czyli docelowej platformie) użytkownik **nie może** zmienić
-   kolejności wyposażenia. Zamienić na touch-friendly wzorzec (long-press +
-   pointer events, albo prościej: przyciski ↑/↓).
+   Google Play (czyli docelowej platformie) użytkownik **nie mógł** zmienić
+   kolejności wyposażenia.
+   ✅ **UKOŃCZONE (2026-06-08)**: Dodano `src/hooks/useDragReorder.js` — hybrydowy
+   hook obsługujący zarówno HTML5 DnD (mysz/desktop, `bindRow`) jak i dotyk
+   (`bindHandle` na uchwycie ⠿: `onTouchStart` + globalne `touchmove/touchend`
+   z `elementFromPoint` do wykrycia elementu pod palcem, `e.preventDefault()`
+   na `touchmove` żeby nie scrollować listy podczas przeciągania). Podświetlenie
+   celu (`overId`) dodaje wizualny feedback podczas dragu. CSS: `touch-action: none`
+   + powiększony obszar dotykowy na `.equipped-drag-handle` (`global.css:1092`).
+   Zastąpiono trzy zduplikowane bloki dragowe (Przedmioty/Zdolności/Czary) jednym
+   wzorcem `{...xDrag.bindRow(id)}` / `{...xDrag.bindHandle(id)}`. Zweryfikowano
+   build (`npx vite build` ✓) i testy (37 pass / 6 pre-existing fail — bez regresji).
+   Pliki: `src/hooks/useDragReorder.js` (nowy), `EquippedCard.jsx`, `global.css`.
 6. [x] **Martwe podwójne systemy i18n** — `react-i18next`/`i18next` +
    `src/i18n/locales/{pl,en}.json` są zainicjalizowane (`i18n.js`, importy w
    `App.jsx`/`HeroJournal.jsx:3,79`), ale `useTranslation()` nigdzie nie jest
