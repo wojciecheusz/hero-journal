@@ -1,5 +1,5 @@
 
-export const PALETTES = ["wschod", "forest", "meadow", "oath", "astral", "shore", "feywild", "eldritch", "dungeon", "wrath", "shadowfell"];
+export const PALETTES = ["wschod", "forest", "oath", "astral", "shore", "feywild", "eldritch", "dungeon", "wrath", "shadowfell"];
 
 export const THEMES = {
 
@@ -24,26 +24,6 @@ export const THEMES = {
   },
 
   /* ════════════════ MOTYWY JASNE (LIGHT) ════════════════ */
-
-  /* ── MEADOW (Łąka) – słoneczne, kwieciste pola ────────────── */
-  meadow: {
-    bg: "#346024",        bgCard: "#468432",      bgInput: "#3a6e2a",     bgNav: "#2c5420",
-    border: "#9AD872",    borderSub: "#7cc056",   borderInput: "#9AD872",
-    text: "#f0f8e4",      textMuted: "#c8e8a8",   textDim: "#9cc880",     textLabel: "#FFEF91",
-    accent: "#FFA02E",    accentBorder: "#d97e18",
-    headerBg: "linear-gradient(180deg,#468432 0%,#3a6e2a 100%)",
-    navBg:    "linear-gradient(0deg,#2c5420 0%,#468432 100%)",
-    scrollTrack: "#244418",   scrollThumb: "#7cc056",
-    noise: "0.030", shadowBot: "rgba(10,30,5,0.45)", shadowCard: "#1c3814",
-    innerDivBg: "#468432", hpBg: "#244418", addForm: "#3e7a2e",
-    modalBg: "#468432", emptyColor: "#9cc880",
-    sessEntry: "#3e7a2e",  combatBox: "#3a6e2a",
-    spellSlotBox: "#3a6e2a", spellSlotBorder: "#FFEF91",
-    packItem: "#3e7a2e",   packItemBorder: "#2c5420", packFieldInput: "#2c5420",
-    spellAccent: "#FFEF91", spellBorder: "#9AD872", spellMuted: "#c8e8a8",
-    spellDim: "#7cc056",    spellText: "#f4ffe0",   spellBg: "rgba(255,239,145,0.10)",
-    questReward: "#FFA02E", selectedBg: "rgba(255,160,46,0.20)",
-  },
 
   /* ── OATH (Przysięga) – świętość, boska sprawiedliwość ──── */
   oath: {
@@ -211,19 +191,19 @@ export const THEMES = {
 
   /* ── SHADOWFELL – mroczna, wyssana z barw kraina cieni ────── */
   shadowfell: {
-    bg: "#090040",        bgCard: "#150a52",      bgInput: "#0e0648",     bgNav: "#070036",
-    border: "#471396",    borderSub: "#2e0c70",   borderInput: "#B13BFF",
-    text: "#ece4fc",      textMuted: "#a888d8",   textDim: "#7858a8",     textLabel: "#FFCC00",
+    bg: "#2a2638",        bgCard: "#363248",      bgInput: "#302c40",     bgNav: "#252132",
+    border: "#5c5478",    borderSub: "#454058",   borderInput: "#7a6ea0",
+    text: "#ece4fc",      textMuted: "#a898c0",   textDim: "#807898",     textLabel: "#FFCC00",
     accent: "#B13BFF",    accentBorder: "#8420d0",
-    headerBg: "linear-gradient(180deg,#150a52 0%,#0e0648 100%)",
-    navBg:    "linear-gradient(0deg,#070036 0%,#150a52 100%)",
-    scrollTrack: "#06002c",   scrollThumb: "#471396",
-    noise: "0.050", shadowBot: "rgba(0,0,0,0.90)", shadowCard: "#050028",
-    innerDivBg: "#150a52", hpBg: "#06002c", addForm: "#1c0f5e",
-    modalBg: "#150a52", emptyColor: "#7858a8",
-    sessEntry: "#1c0f5e",  combatBox: "#0e0648",
-    spellSlotBox: "#0e0648", spellSlotBorder: "#FFCC00",
-    packItem: "#1c0f5e",   packItemBorder: "#2e0c70", packFieldInput: "#070036",
+    headerBg: "linear-gradient(180deg,#363248 0%,#302c40 100%)",
+    navBg:    "linear-gradient(0deg,#252132 0%,#363248 100%)",
+    scrollTrack: "#1e1a2a",   scrollThumb: "#5c5478",
+    noise: "0.040", shadowBot: "rgba(20,16,32,0.55)", shadowCard: "#1c1828",
+    innerDivBg: "#363248", hpBg: "#1e1a2a", addForm: "#3e3a52",
+    modalBg: "#363248", emptyColor: "#807898",
+    sessEntry: "#3e3a52",  combatBox: "#302c40",
+    spellSlotBox: "#302c40", spellSlotBorder: "#FFCC00",
+    packItem: "#3e3a52",   packItemBorder: "#454058", packFieldInput: "#252132",
     spellAccent: "#B13BFF", spellBorder: "#471396", spellMuted: "#9858d0",
     spellDim: "#471396",    spellText: "#f0e4ff",   spellBg: "rgba(177,59,255,0.10)",
     questReward: "#FFCC00", selectedBg: "rgba(177,59,255,0.18)",

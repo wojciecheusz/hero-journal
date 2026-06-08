@@ -17,7 +17,7 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   pl: {
     PALETTE_LABELS: {
-      wschod:"🌅 Wschód", forest:"🌲 Puszcza", meadow:"🌼 Łąka",
+      wschod:"🌅 Wschód", forest:"🌲 Puszcza",
       oath:"🕊️ Przysięga", astral:"🌌 Astral", shore:"🌊 Wybrzeże",
       feywild:"🍄 Feywild", eldritch:"🌀 Wieczny", dungeon:"🗝️ Loch",
       wrath:"🔥 Gniew", shadowfell:"🌑 Shadowfell",
@@ -407,7 +407,7 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   en: {
     PALETTE_LABELS: {
-      wschod:"🌅 Dawn", forest:"🌲 Forest", meadow:"🌼 Meadow",
+      wschod:"🌅 Dawn", forest:"🌲 Forest",
       oath:"🕊️ Oath", astral:"🌌 Astral", shore:"🌊 Shore",
       feywild:"🍄 Feywild", eldritch:"🌀 Eldritch", dungeon:"🗝️ Dungeon",
       wrath:"🔥 Wrath", shadowfell:"🌑 Shadowfell",
