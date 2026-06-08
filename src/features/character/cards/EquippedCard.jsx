@@ -104,6 +104,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
                 <span className="equipped-name">{item.name}</span>
                 <span className="equipped-type-badge">{displayItemType(item.type)}</span>
                 {item.qty && item.qty!=="1" && <span className="equipped-type-badge">×{item.qty}</span>}
+                {(item.tags||[]).map(tag => <span key={tag} className="tag tag-default" style={{ fontSize:"0.46rem", padding:"0.1rem 0.4rem" }}>{tag}</span>)}
               </div>
               {item.damage && <div className="equipped-stat">⚔ {item.damage}{item.damageType?` (${item.damageType})`:""}{item.modifier?` · +${parseInt(item.modifier)||0}`:""}</div>}
               {item.charges && <div className="equipped-stat">{C.charges} {item.charges}</div>}
@@ -130,6 +131,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
               <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                 <span className="equipped-name">{sk.name}</span>
                 <span className="equipped-skill-badge">{displaySkillCat(sk.category)}</span>
+                {(sk.tags||[]).map(tag => <span key={tag} className="tag tag-default" style={{ fontSize:"0.46rem", padding:"0.1rem 0.4rem" }}>{tag}</span>)}
               </div>
               {sk.description && <div className="equipped-stat">{sk.description}</div>}
             </div>
@@ -157,6 +159,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
                       <span className="equipped-name" style={{ color:"var(--hj-spell-text)" }}>{sp.name}</span>
                       <span className="equipped-spell-badge">{displaySpellLevel(sp.level)}</span>
                       {sp.school && <span className="equipped-spell-badge">{displaySpellSchool(sp.school)}</span>}
+                      {(sp.tags||[]).map(tag => <span key={tag} className="tag tag-default" style={{ fontSize:"0.46rem", padding:"0.1rem 0.4rem" }}>{tag}</span>)}
                     </div>
                     {sp.description && <div className="equipped-stat">{sp.description}</div>}
                   </div>

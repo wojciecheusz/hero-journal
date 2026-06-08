@@ -1,7 +1,7 @@
 import { useState, memo } from 'react';
 import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
-import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget } from '../../shared/ui';
+import { TagsEditor, PrzypnijBtn, Toggle, SpellSlotsWidget, FilterBar } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 
 const numMod = v => v >= 0 ? `+${v}` : String(v);
@@ -18,13 +18,16 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
   const [activeSchool, setActiveSchool] = useState(null);
   const [sortMode, setSortMode] = useState("level"); // 'level' | 'school'
   const [showSlots, setShowSlots] = useState(false);
+  const [activeTag, setActiveTag] = useState(null);
 
   const pb = char.profBonus || 2;
   const spMod = Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2;
   const inUseCount = spells.filter(s => s.inUse).length;
-  const filtered = sortMode === "school"
+  const allTags = [...new Set(spells.flatMap(s => s.tags || []))].sort();
+  const filtered = (sortMode === "school"
     ? (activeSchool ? spells.filter(s => s.school===activeSchool) : spells)
-    : (activeLevel ? spells.filter(s => s.level===activeLevel) : spells);
+    : (activeLevel ? spells.filter(s => s.level===activeLevel) : spells))
+    .filter(s => !activeTag || (s.tags || []).includes(activeTag));
   const visible = [...filtered].sort((a, b) => {
     const pinDiff = (b.pinned?1:0) - (a.pinned?1:0);
     if (pinDiff) return pinDiff;
@@ -117,6 +120,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
           </>
         )}
       </div>
+      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
 
       {spells.length===0 && <div className="card empty-state">{SP.empty}</div>}
 

@@ -3,6 +3,27 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P17 — Filtrowanie po tagach (Plecak/Czary) + tagi w karcie "Aktywne i Wyposażone" — UKOŃCZONE
+Dwa powiązane polecenia użytkownika:
+- [x] **P17.1** — W kolumnach Plecak i Czary dodano filtrowanie po ręcznie dodanych
+  tagach (np. "magic", "healing", "combat") — analogicznie do sekcji Zdolności,
+  przez `<FilterBar allTags={...} activeTag={...} onSelect={...}/>` ze `shared/ui.jsx`,
+  pod istniejącym paskiem filtrowania po typach/poziomach/szkołach (bez zmian w nim).
+  Dodano `allTags`/`activeTag` i filtr w `visible`/`filtered` w `InventoryScreen.jsx`
+  i `SpellsScreen.jsx`.
+- [x] **P17.2** — W karcie "Aktywne i Wyposażone" (`EquippedCard.jsx`) dodano
+  wyświetlanie tagów przypisanych do wpisów (Przedmioty/Zdolności/Czary) — te same
+  tagi, które użytkownik dodaje przez `TagsEditor` w zakładkach Wyposażenie/Świat —
+  jako małe odznaki `.tag.tag-default` obok plakietek typu/kategorii/szkoły
+  w wierszach `equipped-item`.
+
+Zweryfikowano wizualnie w Playwright na przykładowej postaci: pasek "Filtr: ..."
+z tagami (np. magic/medicine/order/scouting w Plecaku, combat/control/damage/
+enchantment/healing/protection w Czarach) renderuje się pod paskiem typu/poziomu/
+szkoły; karta "Aktywne i Wyposażone" pokazuje tagi (magic, order, combat,
+bonus-action, healing, paladin, damage, protection itd.) przy każdym wpisie
+we wszystkich trzech zakładkach (Przedmioty/Zdolności/Czary).
+
 ### ✅ P15 — Pakiet poprawek: czary, wpisy Świata jak w Wyposażeniu, etykiety pól edycji — UKOŃCZONE
 Sześć powiązanych poleceń użytkownika:
 - [x] **P15.1** — W kolumnie Czary zmieniono tekst przycisku "⚙ Zarządzaj komórkami"

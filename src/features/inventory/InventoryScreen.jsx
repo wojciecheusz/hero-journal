@@ -1,7 +1,7 @@
 import { useState, memo } from 'react';
 import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
-import { Toggle, TagsEditor, PrzypnijBtn } from '../../shared/ui';
+import { Toggle, TagsEditor, PrzypnijBtn, FilterBar } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 
@@ -16,8 +16,11 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
   const [expanded, setExpanded] = useState({});
   const [editing,  setEditing]  = useState({});
   const [filterType, setFilterType] = useState(null);
+  const [activeTag, setActiveTag] = useState(null);
 
   useScrollToEntity(openEntity, inventory, setExpanded);
+
+  const allTags = [...new Set(inventory.flatMap(i => i.tags || []))].sort();
 
   const addItem = () => {
     const n = form.name.trim(); if (!n) return;
@@ -32,7 +35,9 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
   const stopEdit    = id => setEditing(e => ({ ...e, [id]: false }));
   const toggleEquip = id => setInventory(inv => inv.map(x => x.id === id ? { ...x, equipped: !x.equipped } : x));
 
-  const visible      = (filterType ? inventory.filter(i => i.type === filterType) : [...inventory])
+  const visible      = inventory
+    .filter(i => !filterType || i.type === filterType)
+    .filter(i => !activeTag || (i.tags || []).includes(activeTag))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
   const equippedCount = inventory.filter(i => i.equipped).length;
   const needsExtras  = t => [ITEM_TYPE.WEAPON, ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
@@ -99,6 +104,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
           return <button key={t} className={`filter-tag${filterType === t ? " active-filter" : ""}`} onClick={() => setFilterType(filterType === t ? null : t)}>{ITEM_ICONS[t]} {T.ITEM_TYPES[i] ?? t} ({c})</button>;
         })}
       </div>
+      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
 
       {inventory.length === 0 && <div className="card empty-state">{I.empty}</div>}
       {visible.map(item => {
