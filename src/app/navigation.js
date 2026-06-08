@@ -9,8 +9,8 @@ export function getNavGroups(lang) {
       tabs: [
         { id:"character", label: n.character, icon:"⚔️" },
         { id:"inventory", label: n.inventory, icon:"🎒" },
-        { id:"spells",    label: n.spells,    icon:"🔮" },
         { id:"skills",    label: n.skills,    icon:"✨" },
+        { id:"spells",    label: n.spells,    icon:"🔮" },
       ],
     },
     {
