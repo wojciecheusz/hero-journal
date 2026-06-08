@@ -5,7 +5,7 @@ import { THEMES } from '../theme/themes';
 export default function TutorialModal({ theme, onClose }) {
   const T   = useT();
   const TUT = T.TUTORIAL;
-  const t   = THEMES[theme] || THEMES.pergamin;
+  const t   = THEMES[theme] || THEMES.dungeon;
   const [slide, setSlide] = useState(0);
 
   const slides = TUT.slides;

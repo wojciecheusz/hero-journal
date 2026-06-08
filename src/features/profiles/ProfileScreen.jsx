@@ -5,7 +5,7 @@ import { THEMES } from '../../theme/themes';
 import { useT } from '../../i18n/translations';
 
 export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, onCreateSample, onRename, theme }) {
-  const t = THEMES[theme] || THEMES.pergamin;
+  const t = THEMES[theme] || THEMES.dungeon;
   const T = useT();
   const P = T.PROFILES;
 
@@ -82,7 +82,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 }
 
 export function HeroWizard({ onFinish, onCancel, theme }) {
-  const t = THEMES[theme] || THEMES.pergamin;
+  const t = THEMES[theme] || THEMES.dungeon;
   const T = useT();
   const P = T.PROFILES;
   const C = T.CHAR;

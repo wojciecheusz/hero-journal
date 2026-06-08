@@ -17,10 +17,10 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   pl: {
     PALETTE_LABELS: {
-      pergamin:"📜 Pergamin", wschod:"🌅 Wschód",
-      oath:"🕊️ Przysięga", astral:"🌌 Astralny", quill:"🪶 Pióro",
+      wschod:"🌅 Wschód", forest:"🌲 Puszcza", meadow:"🌼 Łąka",
+      oath:"🕊️ Przysięga", astral:"🌌 Astral", shore:"🌊 Wybrzeże",
       feywild:"🍄 Feywild", eldritch:"🌀 Wieczny", dungeon:"🗝️ Loch",
-      underdark:"🕸️ Podmrok", wrath:"🔥 Gniew",
+      wrath:"🔥 Gniew", shadowfell:"🌑 Shadowfell",
     },
     LABELS: {
       questStatus: { active:"Aktywne", completed:"Ukończone", failed:"Nieudane" },
@@ -407,10 +407,10 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   en: {
     PALETTE_LABELS: {
-      pergamin:"📜 Parchment", wschod:"🌅 Dawn",
-      oath:"🕊️ Oath", astral:"🌌 Astral", quill:"🪶 Quill",
+      wschod:"🌅 Dawn", forest:"🌲 Forest", meadow:"🌼 Meadow",
+      oath:"🕊️ Oath", astral:"🌌 Astral", shore:"🌊 Shore",
       feywild:"🍄 Feywild", eldritch:"🌀 Eldritch", dungeon:"🗝️ Dungeon",
-      underdark:"🕸️ Underdark", wrath:"🔥 Wrath",
+      wrath:"🔥 Wrath", shadowfell:"🌑 Shadowfell",
     },
     LABELS: {
       questStatus: { active:"Active", completed:"Completed", failed:"Failed" },
