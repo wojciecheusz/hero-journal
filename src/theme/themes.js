@@ -1,5 +1,5 @@
 
-export const PALETTES = ["pergamin", "wschod", "oath", "astral", "quill", "feywild", "eldritch", "dungeon", "underdark", "wrath", "forest", "meadow", "shore", "shadowfell"];
+export const PALETTES = ["pergamin", "wschod", "drewno", "bone", "feywild", "eldritch", "dungeon", "shadowfell", "wrath", "meadow"];
 
 export const THEMES = {
 
@@ -23,6 +23,46 @@ export const THEMES = {
     questReward: "#a0d858", selectedBg: "rgba(240,112,48,0.12)",
   },
 
+  /* ── DREWNO – ciepłe brązy ────────────────────────────────── */
+  drewno: {
+    bg: "#2c1e0c",        bgCard: "#3e2a14",      bgInput: "#342210",     bgNav: "#221608",
+    border: "#7a5830",    borderSub: "#684a28",   borderInput: "#745230",
+    text: "#f8ead0",      textMuted: "#d4a870",   textDim: "#a88060",     textLabel: "#e8c080",
+    accent: "#e09828",    accentBorder: "#b47218",
+    headerBg: "linear-gradient(180deg,#3e2a14 0%,#301e0c 100%)",
+    navBg:    "linear-gradient(0deg,#221608 0%,#342010 100%)",
+    scrollTrack: "#1e1408",   scrollThumb: "#745230",
+    noise: "0.038", shadowBot: "rgba(0,0,0,0.75)", shadowCard: "#1e1408",
+    innerDivBg: "#3e2a14", hpBg: "#1e1408", addForm: "#462e14",
+    modalBg: "#3e2a14", emptyColor: "#a88060",
+    sessEntry: "#462e14",  combatBox: "#342210",
+    spellSlotBox: "#342210", spellSlotBorder: "#2a5280",
+    packItem: "#462e14",   packItemBorder: "#684a28", packFieldInput: "#281a0c",
+    spellAccent: "#78aadc", spellBorder: "#2a5280", spellMuted: "#5888b0",
+    spellDim: "#1c4068",    spellText: "#d0e8f8",   spellBg: "rgba(100,160,210,0.08)",
+    questReward: "#88c050", selectedBg: "rgba(224,152,40,0.12)",
+  },
+
+  /* ── KOŚĆ – pożółkłe biele, popiel, czernie ──────────────── */
+  bone: {
+    bg: "#0c0b09",        bgCard: "#181510",      bgInput: "#141210",     bgNav: "#0a0908",
+    border: "#3c3020",    borderSub: "#2c2418",   borderInput: "#342a1c",
+    text: "#e8e0cc",      textMuted: "#a09070",   textDim: "#6a6050",     textLabel: "#c8baa4",
+    accent: "#c8a868",    accentBorder: "#9a7a48",
+    headerBg: "linear-gradient(180deg,#181510 0%,#110f0d 100%)",
+    navBg:    "linear-gradient(0deg,#0a0908 0%,#141210 100%)",
+    scrollTrack: "#080706",   scrollThumb: "#342a1c",
+    noise: "0.065", shadowBot: "rgba(0,0,0,0.98)", shadowCard: "#080706",
+    innerDivBg: "#181510", hpBg: "#080706", addForm: "#1e1a14",
+    modalBg: "#181510", emptyColor: "#706858",
+    sessEntry: "#1e1a14",  combatBox: "#141210",
+    spellSlotBox: "#141210", spellSlotBorder: "#3c3020",
+    packItem: "#1e1a14",   packItemBorder: "#2c2418", packFieldInput: "#0e0c0a",
+    spellAccent: "#a8c0d8", spellBorder: "#607888", spellMuted: "#8090a8",
+    spellDim: "#404e5c",    spellText: "#e0f0f8",   spellBg: "rgba(168,192,216,0.08)",
+    questReward: "#88a858", selectedBg: "rgba(200,168,104,0.12)",
+  },
+
   /* ── PERGAMIN – złociste żółcienie ────────────────────────── */
   pergamin: {
     bg: "#ede8d0",        bgCard: "#f8f2dc",      bgInput: "#e8e0c4",     bgNav: "#ddd6b8",
@@ -43,113 +83,11 @@ export const THEMES = {
     questReward: "#3a8a3a", selectedBg: "rgba(154,86,8,0.1)",
   },
 
-  /* ════════════════ MOTYWY JASNE (LIGHT) ════════════════ */
-
-  /* ── OATH (Przysięga) – świętość, boska sprawiedliwość ──── */
-  oath: {
-    bg: "#FFF9D2",        bgCard: "#f5f4eb",      bgInput: "#e9e6ce",     bgNav: "#e1dcbd",
-    border: "#d2c04b",    borderSub: "#dfd386",   borderInput: "#c6b22f",
-    text: "#383419",      textMuted: "#948b4c",   textDim: "#ada467",     textLabel: "#676032",
-    accent: "#8CC0EB",    accentBorder: "#3295e6",
-    headerBg: "linear-gradient(180deg,#e1dcbd 0%,#d9d3ab 100%)",
-    navBg:    "linear-gradient(0deg,#d9d3ab 0%,#e1dcbd 100%)",
-    scrollTrack: "#ded9b6",   scrollThumb: "#c6b22f",
-    noise: "0.016", shadowBot: "rgba(140,130,90,0.14)", shadowCard: "#8dbce2",
-    innerDivBg: "#f5f4eb", hpBg: "#ded9b6", addForm: "#f3f1e3",
-    modalBg: "#f5f4eb", emptyColor: "#ada467",
-    sessEntry: "#f3f1e3",  combatBox: "#e9e6ce",
-    spellSlotBox: "#e9e6ce", spellSlotBorder: "#a7cee7",
-    packItem: "#FFF9D2",   packItemBorder: "#d2c04b", packFieldInput: "#e6e2c7",
-    spellAccent: "#62acda", spellBorder: "#9dc7e2", spellMuted: "#87b6d4",
-    spellDim: "#b7d7eb",    spellText: "#1d577c",   spellBg: "rgba(98,172,218,0.08)",
-    questReward: "#5a9850", selectedBg: "rgba(140,192,235,0.12)",
-  },
-
-  /* ── ASTRAL – mistyczna, bezkresna przestrzeń ─────────────── */
-  astral: {
-    bg: "#6367FF",        bgCard: "#b6b7e2",      bgInput: "#9fa0db",     bgNav: "#898bd2",
-    border: "#4b4fd2",    borderSub: "#8688df",   borderInput: "#2f32c6",
-    text: "#191a38",      textMuted: "#4c4e94",   textDim: "#6768ad",     textLabel: "#323367",
-    accent: "#FFDBFD",    accentBorder: "#ff1af2",
-    headerBg: "linear-gradient(180deg,#898bd2 0%,#7275ca 100%)",
-    navBg:    "linear-gradient(0deg,#7275ca 0%,#898bd2 100%)",
-    scrollTrack: "#7a7ccd",   scrollThumb: "#2f32c6",
-    noise: "0.028", shadowBot: "rgba(30,30,110,0.30)", shadowCard: "#e28dde",
-    innerDivBg: "#b6b7e2", hpBg: "#7a7ccd", addForm: "#b5b6e3",
-    modalBg: "#b6b7e2", emptyColor: "#6768ad",
-    sessEntry: "#b5b6e3",  combatBox: "#9fa0db",
-    spellSlotBox: "#9fa0db", spellSlotBorder: "#afa2eb",
-    packItem: "#6367FF",   packItemBorder: "#4b4fd2", packFieldInput: "#9799d8",
-    spellAccent: "#715ae2", spellBorder: "#a496e8", spellMuted: "#8e7edd",
-    spellDim: "#beb5ee",    spellText: "#2d1d7c",   spellBg: "rgba(113,90,226,0.08)",
-    questReward: "#7adfa0", selectedBg: "rgba(255,219,253,0.12)",
-  },
-
-  /* ── FOREST (Puszcza) – światło i cień w gęstwinie drzew ──── */
-  forest: {
-    bg: "#9CB080",        bgCard: "#ced7c1",      bgInput: "#c0ceab",     bgNav: "#b1c496",
-    border: "#96b766",    borderSub: "#b7cd98",   borderInput: "#82a94c",
-    text: "#2a3021",      textMuted: "#74845c",   textDim: "#8d9f75",     textLabel: "#4f5a3f",
-    accent: "#273338",    accentBorder: "#275568",
-    headerBg: "linear-gradient(180deg,#b1c496 0%,#a3ba82 100%)",
-    navBg:    "linear-gradient(0deg,#a3ba82 0%,#b1c496 100%)",
-    scrollTrack: "#a7bc8a",   scrollThumb: "#82a94c",
-    noise: "0.030", shadowBot: "rgba(20,30,15,0.30)", shadowCard: "#a2c0cd",
-    innerDivBg: "#ced7c1", hpBg: "#a7bc8a", addForm: "#ced8c0",
-    modalBg: "#ced7c1", emptyColor: "#8d9f75",
-    sessEntry: "#ced8c0",  combatBox: "#c0ceab",
-    spellSlotBox: "#c0ceab", spellSlotBorder: "#b6d8b9",
-    packItem: "#9CB080",   packItemBorder: "#96b766", packFieldInput: "#bbcaa6",
-    spellAccent: "#3e9845", spellBorder: "#61b868", spellMuted: "#57a85d",
-    spellDim: "#84c889",    spellText: "#2e6b33",   spellBg: "rgba(62,152,69,0.08)",
-    questReward: "#c8a850", selectedBg: "rgba(39,51,56,0.12)",
-  },
-
-  /* ── SHORE (Wybrzeże) – turkusowa woda i piaszczysta plaża ─ */
-  shore: {
-    bg: "#6AECE1",        bgCard: "#bbddda",      bgInput: "#a5d4d0",     bgNav: "#91cac5",
-    border: "#4bd2c7",    borderSub: "#86dfd7",   borderInput: "#2fc6b9",
-    text: "#193836",      textMuted: "#4c948e",   textDim: "#67ada7",     textLabel: "#326763",
-    accent: "#FFB76C",    accentBorder: "#ff8f1a",
-    headerBg: "linear-gradient(180deg,#91cac5 0%,#7cc0ba 100%)",
-    navBg:    "linear-gradient(0deg,#7cc0ba 0%,#91cac5 100%)",
-    scrollTrack: "#83c3be",   scrollThumb: "#2fc6b9",
-    noise: "0.020", shadowBot: "rgba(20,120,120,0.20)", shadowCard: "#e2b88d",
-    innerDivBg: "#bbddda", hpBg: "#83c3be", addForm: "#badedb",
-    modalBg: "#bbddda", emptyColor: "#67ada7",
-    sessEntry: "#badedb",  combatBox: "#a5d4d0",
-    spellSlotBox: "#a5d4d0", spellSlotBorder: "#a3ebe6",
-    packItem: "#6AECE1",   packItemBorder: "#4bd2c7", packFieldInput: "#9fd1cc",
-    spellAccent: "#5ce1d9", spellBorder: "#47d2c9", spellMuted: "#3bc4bc",
-    spellDim: "#6eddd6",    spellText: "#1d7c76",   spellBg: "rgba(92,225,217,0.08)",
-    questReward: "#3a8a6a", selectedBg: "rgba(255,183,108,0.12)",
-  },
-
-  /* ── QUILL (Pióro) – stare księgi i biblioteki ────────────── */
-  quill: {
-    bg: "#ece0c4",        bgCard: "#f5ecd6",      bgInput: "#e4d8b8",     bgNav: "#ddd0ac",
-    border: "#a87850",    borderSub: "#c09868",   borderInput: "#986040",
-    text: "#3c2410",      textMuted: "#8a6038",   textDim: "#a8825c",     textLabel: "#704a20",
-    accent: "#a05030",    accentBorder: "#803818",
-    headerBg: "linear-gradient(180deg,#ddd0ac 0%,#d0c094 100%)",
-    navBg:    "linear-gradient(0deg,#d0c094 0%,#ddd0ac 100%)",
-    scrollTrack: "#d4c6a0",   scrollThumb: "#986040",
-    noise: "0.030", shadowBot: "rgba(80,50,20,0.22)", shadowCard: "#c0a878",
-    innerDivBg: "#f5ecd6", hpBg: "#d4c6a0", addForm: "#f2e8d0",
-    modalBg: "#f5ecd6", emptyColor: "#a8825c",
-    sessEntry: "#f2e8d0",  combatBox: "#e4d8b8",
-    spellSlotBox: "#e4d8b8", spellSlotBorder: "#a05030",
-    packItem: "#ece0c4",   packItemBorder: "#a87850", packFieldInput: "#e0d2ae",
-    spellAccent: "#984828", spellBorder: "#b87050", spellMuted: "#a05838",
-    spellDim: "#c89070",    spellText: "#3c2008",   spellBg: "rgba(152,72,40,0.08)",
-    questReward: "#4a8838", selectedBg: "rgba(160,80,48,0.12)",
-  },
-
   /* ════════════════ MOTYWY ŚREDNIE (MEDIUM) ════════════════ */
 
   /* ── FEYWILD – pastelowa, baśniowa kraina elfów ───────────── */
   feywild: {
-    bg: "#F9B2D7",        bgCard: "#e7d4de",      bgInput: "#d9b8c9",     bgNav: "#d0a8bd",
+    bg: "#c4ec9c",        bgCard: "#e7d4de",      bgInput: "#d9b8c9",     bgNav: "#d0a8bd",
     border: "#d24b92",    borderSub: "#df86b4",   borderInput: "#c62f7e",
     text: "#381929",      textMuted: "#944c72",   textDim: "#ad678b",     textLabel: "#67324e",
     accent: "#F6FFDC",    accentBorder: "#c4ff1a",
@@ -169,21 +107,21 @@ export const THEMES = {
 
   /* ── MEADOW (Łąka) – słoneczne pola i trawy ───────────────── */
   meadow: {
-    bg: "#468432",        bgCard: "#2f5822",      bgInput: "#274b1b",     bgNav: "#24411b",
-    border: "#31721d",    borderSub: "#245115",   borderInput: "#37861d",
-    text: "#e0f0db",      textMuted: "#7ebf69",   textDim: "#579245",     textLabel: "#afd7a2",
+    bg: "#5a9640",        bgCard: "#ced7c1",      bgInput: "#b4c8a0",     bgNav: "#82b860",
+    border: "#70a848",    borderSub: "#90c070",   borderInput: "#58902a",
+    text: "#1e3010",      textMuted: "#446a28",   textDim: "#658a40",     textLabel: "#2a4818",
     accent: "#FFA02E",    accentBorder: "#d17200",
-    headerBg: "linear-gradient(180deg,#2f5822 0%,#203a18 100%)",
-    navBg:    "linear-gradient(0deg,#203a18 0%,#2f5822 100%)",
-    scrollTrack: "#1e3d14",   scrollThumb: "#37861d",
-    noise: "0.030", shadowBot: "rgba(20,40,5,0.55)", shadowCard: "#1e3d14",
-    innerDivBg: "#2f5822", hpBg: "#1e3d14", addForm: "#336024",
-    modalBg: "#2f5822", emptyColor: "#66a253",
-    sessEntry: "#336024",  combatBox: "#274b1b",
-    spellSlotBox: "#274b1b", spellSlotBorder: "#9ad872",
-    packItem: "#336024",   packItemBorder: "#245115", packFieldInput: "#1a3611",
+    headerBg: "linear-gradient(180deg,#82b860 0%,#6ea848 100%)",
+    navBg:    "linear-gradient(0deg,#508838 0%,#70a850 100%)",
+    scrollTrack: "#4a7a2a",   scrollThumb: "#6aa040",
+    noise: "0.030", shadowBot: "rgba(20,40,5,0.30)", shadowCard: "#4a7a2a",
+    innerDivBg: "#ced7c1", hpBg: "#4a7a2a", addForm: "#d8e0cc",
+    modalBg: "#ced7c1", emptyColor: "#2a4818",
+    sessEntry: "#d8e0cc",  combatBox: "#b4c8a0",
+    spellSlotBox: "#b4c8a0", spellSlotBorder: "#9ad872",
+    packItem: "#d8e0cc",   packItemBorder: "#90c070", packFieldInput: "#aac898",
     spellAccent: "#9ad872", spellBorder: "#7bbc51", spellMuted: "#88bb67",
-    spellDim: "#4a8126",    spellText: "#e2f7d4",   spellBg: "rgba(154,216,114,0.08)",
+    spellDim: "#4a8126",    spellText: "#1e4010",   spellBg: "rgba(154,216,114,0.08)",
     questReward: "#5888c0", selectedBg: "rgba(255,160,46,0.12)",
   },
 
@@ -229,12 +167,12 @@ export const THEMES = {
 
   /* ════════════════ MOTYWY CIEMNE (DARK) ════════════════ */
 
-  /* ── UNDERDARK (Podmrok) – mroczne jaskinie Drowów ────────── */
-  underdark: {
+  /* ── SHADOWFELL (Cienista Otchłań) – fioletowe mroki i widmowe złoto ─ */
+  shadowfell: {
     bg: "#0a0810",        bgCard: "#120e1c",      bgInput: "#0e0b16",     bgNav: "#08060e",
     border: "#382850",    borderSub: "#2a1e3c",   borderInput: "#483064",
     text: "#e8d8f8",      textMuted: "#9070b0",   textDim: "#604880",     textLabel: "#c0a0e0",
-    accent: "#c030d0",    accentBorder: "#9020a0",
+    accent: "#FFCC00",    accentBorder: "#a38300",
     headerBg: "linear-gradient(180deg,#120e1c 0%,#0c0a16 100%)",
     navBg:    "linear-gradient(0deg,#08060e 0%,#120e1c 100%)",
     scrollTrack: "#06050a",   scrollThumb: "#382850",
@@ -246,7 +184,7 @@ export const THEMES = {
     packItem: "#1a1428",   packItemBorder: "#2a1e3c", packFieldInput: "#0a0814",
     spellAccent: "#e070f0", spellBorder: "#a040b8", spellMuted: "#b860c8",
     spellDim: "#682880",    spellText: "#fae0ff",   spellBg: "rgba(192,48,208,0.08)",
-    questReward: "#58c870", selectedBg: "rgba(192,48,208,0.12)",
+    questReward: "#58c870", selectedBg: "rgba(255,204,0,0.12)",
   },
 
   /* ── WRATH (Gniew) – smocza krew, węgiel drzewny i ogień ──── */
@@ -269,24 +207,5 @@ export const THEMES = {
     questReward: "#88c850", selectedBg: "rgba(230,80,27,0.12)",
   },
 
-  /* ── SHADOWFELL – pustka, mrok i widmowe złoto ────────────── */
-  shadowfell: {
-    bg: "#090040",        bgCard: "#1c1544",      bgInput: "#16113a",     bgNav: "#110d28",
-    border: "#291d72",    borderSub: "#1e1551",   borderInput: "#2c1d86",
-    text: "#dedbf0",      textMuted: "#7569bf",   textDim: "#4f4592",     textLabel: "#aaa2d7",
-    accent: "#FFCC00",    accentBorder: "#a38300",
-    headerBg: "linear-gradient(180deg,#1c1544 0%,#100c25 100%)",
-    navBg:    "linear-gradient(0deg,#100c25 0%,#1c1544 100%)",
-    scrollTrack: "#100b2b",   scrollThumb: "#2c1d86",
-    noise: "0.060", shadowBot: "rgba(0,0,0,0.92)", shadowCard: "#100b2b",
-    innerDivBg: "#1c1544", hpBg: "#100b2b", addForm: "#1f174c",
-    modalBg: "#1c1544", emptyColor: "#5e53a2",
-    sessEntry: "#1f174c",  combatBox: "#16113a",
-    spellSlotBox: "#16113a", spellSlotBorder: "#ae4af0",
-    packItem: "#1f174c",   packItemBorder: "#1e1551", packFieldInput: "#0e0a27",
-    spellAccent: "#ae4af0", spellBorder: "#9220dd", spellMuted: "#9938d9",
-    spellDim: "#580f88",    spellText: "#eacffc",   spellBg: "rgba(174,74,240,0.08)",
-    questReward: "#58c870", selectedBg: "rgba(255,204,0,0.12)",
-  },
 
 };
