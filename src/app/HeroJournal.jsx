@@ -283,4 +283,26 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
             {tab === "npcs"      && <NPCsScreen       title={T.NAV.npcs}      npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
             {tab === "locations" && <LocationsScreen  title={T.NAV.locations} locations={locations} setLocations={setLocations}  openEntity={openEntity}/>}
             {tab === "factions"  && <FactionsPanel    title={T.NAV.factions}  factions={factions}   setFactions={setFactions}    openEntity={openEntity}/>}
-            {tab === "world-all" 
+            {tab === "world-all" && <NPCsScreen       title={T.NAV.npcs}      npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
+          </div>
+        </>}
+
+        {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSessions={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
+        {tab === "quests"    && <QuestScreen       quests={quests}       setQuests={setQuests}       openEntity={openEntity}/>}
+      </Suspense>
+      </ErrorBoundary>
+      </main>
+
+      <MobileNav navGroups={navGroups} tab={tab} setTab={setTab}/>
+
+      {/* ── Rzutnik kości — FAB + panel ── */}
+      <button className={`dice-fab${showDice ? ' open' : ''}`}
+        onClick={() => setShowDice(s => !s)}
+        aria-label={T.DICE.title} title={T.DICE.title}>
+        🎲
+      </button>
+      {showDice && <DiceRoller onClose={() => setShowDice(false)}/>}
+    </div>
+    </LangContext.Provider>
+  );
+}
