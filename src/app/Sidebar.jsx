@@ -113,11 +113,14 @@ export default function Sidebar({
           ?
         </button>
 
-        {/* Wsparcie autora — placeholder, funkcja jeszcze nieaktywna */}
-        <button disabled aria-label={T.UI.buyBeer} title={`${T.UI.buyBeer} — ${T.UI.buyBeerSoon}`}
-          style={{ flexShrink:0, width:32, height:32, background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", opacity:0.5, fontSize:"1.05rem", lineHeight:1, cursor:"default", display:"flex", alignItems:"center", justifyContent:"center" }}>
+        {/* Wsparcie autora */}
+        <a href="https://ko-fi.com/herojournal" target="_blank" rel="noopener noreferrer"
+          aria-label={T.UI.buyBeer} title={T.UI.buyBeer}
+          style={{ flexShrink:0, width:32, height:32, background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontSize:"1.05rem", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", transition:"all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor="var(--hj-accent-border)"; e.currentTarget.style.color="var(--hj-accent)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor="var(--hj-border-input)"; e.currentTarget.style.color="var(--hj-text-muted)"; }}>
           🍺
-        </button>
+        </a>
 
         {/* Ustawienia — dropdown fixed, nie obcięty przez overflow sidebara */}
         <div style={{ flex:1, position:"relative" }}>
