@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.vercel.hero_journal.twa",
+    "sha256_cert_fingerprints": ["A0:DF:13:50:3C:85:67:15:CF:D8:D7:78:45:39:83:D6:D6:16:D0:1B:C3:DB:C8:68:F4:FF:E7:02:87:2F:F1:10"]
+  }
+}]
