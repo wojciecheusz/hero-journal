@@ -8,7 +8,8 @@
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display_override": ["standalone", "minimal-ui"],
+
   "orientation": "portrait",
   "background_color": "#0f0d0b",
   "theme_color": "#1c1810",
@@ -40,35 +41,35 @@
   "screenshots": [
     {
       "src": "/screenshots/pc-character.png",
-      "sizes": "1280x800",
+      "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Character sheet"
     },
     {
       "src": "/screenshots/pc-inventory.png",
-      "sizes": "1280x800",
+      "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Inventory & equipment"
     },
     {
       "src": "/screenshots/pc-spells.png",
-      "sizes": "1280x800",
+      "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Spell slots & grimoire"
     },
     {
       "src": "/screenshots/pc-world.png",
-      "sizes": "1280x800",
+      "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
       "label": "World — NPCs & locations"
     },
     {
       "src": "/screenshots/pc-sessions.png",
-      "sizes": "1280x800",
+      "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Session journal"

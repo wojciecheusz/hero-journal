@@ -116,18 +116,39 @@ async function click(page, text, timeout = 4000) {
   }
 }
 
-// Mobile: kliknij przycisk grupy w bottom nav, poczekaj na szufladę, kliknij subtab
+// Mobile: bezpośrednie querySelector w przeglądarce — bardziej niezawodne niż locatory
 async function mobileNav(page, groupLabel, tabLabel) {
-  // Kliknij grupę (np. "Hero", "World", "Journal") w dolnym pasku
-  await page.locator('.hj-nav-btn').filter({ hasText: groupLabel }).click({ timeout: 5000 });
-  await page.waitForTimeout(500);
-  if (tabLabel) {
-    // Poczekaj na otwarcie szuflady i kliknij właściwy subtab
-    await page.waitForSelector('.nav-drawer', { timeout: 3000 }).catch(() => {});
-    await page.waitForTimeout(300);
-    await page.locator('.nav-drawer-item').filter({ hasText: tabLabel }).click({ timeout: 3000 });
-    await page.waitForTimeout(400);
-  }
+  // Kliknij grupę (Hero / World / Journal)
+  const groupClicked = await page.evaluate((label) => {
+    for (const btn of document.querySelectorAll('.hj-nav-btn')) {
+      const lbl = btn.querySelector('.hj-nav-label');
+      if (lbl && lbl.textContent.trim() === label) { btn.click(); return true; }
+    }
+    return false;
+  }, groupLabel);
+  console.log(`    group "${groupLabel}": ${groupClicked ? 'clicked' : 'NOT FOUND'}`);
+  await page.waitForTimeout(600);
+
+  if (!tabLabel) return;
+
+  // Sprawdź czy szuflada jest otwarta
+  const drawerOpen = await page.evaluate(() => !!document.querySelector('.nav-drawer'));
+  console.log(`    drawer open: ${drawerOpen}`);
+  if (!drawerOpen) return;
+
+  // Kliknij subtab w szufladzie
+  const tabClicked = await page.evaluate((label) => {
+    for (const item of document.querySelectorAll('.nav-drawer-item')) {
+      const lbl = item.querySelector('.nav-drawer-label');
+      if (lbl && lbl.textContent.trim() === label) { item.click(); return true; }
+    }
+    // fallback: loguj co jest dostępne
+    const available = [...document.querySelectorAll('.nav-drawer-label')].map(l => l.textContent.trim());
+    console.warn('drawer labels:', available);
+    return false;
+  }, tabLabel);
+  console.log(`    tab "${tabLabel}": ${tabClicked ? 'clicked' : 'NOT FOUND'}`);
+  await page.waitForTimeout(400);
 }
 
 async function shot(page, name) {
@@ -203,7 +224,7 @@ async function main() {
 
   // -- Screenshot phase --
   for (const [vp, shots] of [
-    [{ width: 1280, height: 800 },  DESKTOP_SHOTS],
+    [{ width: 1920, height: 1080 }, DESKTOP_SHOTS],
     [{ width: 390,  height: 844  }, MOBILE_SHOTS ],
   ]) {
     console.log(`\n📸  ${vp.width}×${vp.height}`);
