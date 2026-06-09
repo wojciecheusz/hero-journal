@@ -121,7 +121,7 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
             )}
 
             <TagsEditor tags={sk.tags||[]} onChange={v => upd(sk.id,"tags",v)}
-              suggestions={T.UI.SUGGESTED_ACTION_TAGS}/>
+              suggestions={(sk.tags||[]).some(t => (T.UI.SUGGESTED_ACTION_TAGS||[]).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>

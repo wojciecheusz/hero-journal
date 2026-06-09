@@ -134,7 +134,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
             )}
 
             <TagsEditor tags={item.tags||[]} onChange={v => upd(item.id,"tags",v)}
-              suggestions={T.UI.SUGGESTED_ACTION_TAGS}/>
+              suggestions={(item.tags||[]).some(t => (T.UI.SUGGESTED_ACTION_TAGS||[]).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
 
             {/* Statystyki broni/czaru — zawsze widoczne gdy rozwinięty i nie w edycji */}
             {open && !isEditing && (item.damage || item.charges) && (
