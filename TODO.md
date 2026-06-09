@@ -3,7 +3,26 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
-### 📋 P20 — Plan: customowe profile niezależne od systemu D&D (PLAN — czeka na akceptację, nic nie wdrożono)
+### ✅ P20 — Faza 1: system Uniwersalny — UKOŃCZONE (2026-06-10)
+**Status wdrożenia fazy 1:**
+- `ProfileScreen.jsx` — dodano `SystemPicker` (wybór systemu przed kreatorem;
+  WFRP zablokowany z etykietą "wkrótce") oraz `UniversalWizard` (2-krokowy:
+  nazwa postaci → checkboxy funkcji z `DEFAULT_UNIVERSAL_SCHEMA`; wywołuje
+  `makeUniversalDefaultChar`; zapisuje `system:"universal"` + `schema` w profileMeta).
+- `src/features/universal/UniversalCharacterScreen.jsx` (nowy) — 3 typy kart:
+  Atrybuty (grid nazwanych pól liczbowych z `schema.statGroups`), Zasoby
+  (liczniki current/max z przyciskami ±, z `schema.resources`), Notatki
+  (pola textarea z `schema.textFields` + ogólne `char.notes`). Dane przez `char.custom[id]`.
+- `HeroJournal.jsx` — wykrywa `activeProfile.system === "universal"`, podmienia
+  nawigację na `buildUniversalNavGroups(activeProfile.schema)` (mobile + desktop),
+  renderuje `UniversalCharacterScreen` zamiast `CharacterScreen` dla taba "character".
+- Ekwipunek/Dziennik/Zadania — reuse istniejących ekranów (`InventoryScreen`,
+  `SessionsScreen`, `QuestScreen`) bez zmian — były już systemowo-neutralne.
+- Tłumaczenia: sekcja `UNIVERSAL` + klucze `PROFILES.systemPicker*` w PL i EN.
+- 55/55 testów przechodzi.
+- Fazy 2-3 (edytowalny układ, szablony startowe) — patrz plan poniżej.
+
+### 📋 P20 — Plan pełny: customowe profile niezależne od systemu D&D (FAZA 1 UKOŃCZONA)
 Polecenie: zaplanować prosty, ale użyteczny sposób tworzenia w aplikacji profili
 niezależnych od D&D 5e — użytkownik sam ustawia karty/zakładki/zasoby "po swojemu".
 Poniżej plan fazowy (bez implementacji).
@@ -145,17 +164,23 @@ to osobne, przyszłe polecenia.**
    import `i18n.js` w `App.jsx`, wywołanie `syncI18nLang` w `HeroJournal.jsx`,
    odinstalowano pakiety `i18next`/`react-i18next` (`npm uninstall`, -7 paczek,
    0 podatności).
-7. **Ryzyko wyścigu (race condition) przy synchronizacji z chmurą** —
+7. [x] **Ryzyko wyścigu (race condition) przy synchronizacji z chmurą** —
    `syncFromCloud` (`firestore.js:8-21`) nadpisuje `localStorage` całościowo przy
    logowaniu, bez znaczników czasu/scalania (`updatedAt`/last-write-wins);
-   edycja w trakcie synchronizacji może zostać ubita. Dodać sygnaturę czasową
-   per-klucz i logikę scalania, albo zablokować edycję do końca synchronizacji.
-8. **Zerowe pokrycie testami warstwy synchronizacji z Firestore** —
-   `firestore.js` (cloudSave/syncFromCloud — kod o najwyższym ryzyku utraty
-   danych), hooki `useCharacterData`/`useProfileManager` i logika CRUD w
-   ekranach nie są testowane (coverage ograniczone do `enums.js`/`storage.js`/
-   `math.js` w `vite.config.js:14`). Dodać testy integracyjne dla cloudSave/
-   syncFromCloud (mock Firestore) + smoke testy hooków.
+   edycja w trakcie synchronizacji może zostać ubita.
+   ✅ **UKOŃCZONE** — `syncFromCloud` używa teraz `updatedAt` (timestamp)
+   per-klucz i logiki last-write-wins: lokalny zapis wygrywa jeśli `hj_ts_{key}`
+   jest nowszy niż `doc.updatedAt`; pola z `value === undefined` są pomijane.
+   `cloudSave` dołącza `updatedAt: Date.now()` do każdego zapisu i zapisuje
+   znacznik czasu do `hj_ts_{key}` w localStorage. Pliki: `src/firebase/firestore.js`.
+8. [x] **Zerowe pokrycie testami warstwy synchronizacji z Firestore** —
+   ✅ **UKOŃCZONE** — dodano `src/__tests__/firestore.test.js` (12 testów):
+   cloudSave strippuje `undefined` (w tym zagnieżdżone), dołącza `updatedAt`
+   jako liczbę, zapisuje `hj_ts_*`; syncFromCloud — last-write-wins, brak
+   nadpisania gdy lokalny nowszy, brak nadpisania gdy legacy-doc (bez `updatedAt`),
+   pomija `value === undefined`, obsługuje wiele dokumentów niezależnie, łyka
+   błędy sieci. Mock pattern: `vi.mock('firebase/firestore', ...)` +
+   `vi.mock('../firebase/index.js', ...)`. Wszystkie 55 testów przechodzi.
 
 #### 🟡 Priorytet ŚREDNI
 9. [x] **Brak potwierdzenia usuwania pojedynczych wpisów** (przedmioty/czary/NPC/...) —
@@ -261,14 +286,10 @@ największe ryzyko — utrata danych usera / blokada publikacji), potem 6 i 15
 — duży nakład, ale odblokowuje szybsze wdrażanie kolejnych funkcji), na końcu
 pakiety 9-14 i 16-25 wg dostępnego czasu.
 
-**Status wdrożenia (2026-06-08):** Wykonano pozycje 1, 2, 3, 4, 6, 15 (pierwsza
-runda — najwyższy priorytet + najniższe ryzyko regresji), zgodnie z sugerowaną
-kolejnością. Każdy krok zweryfikowany przez `npx vite build` (sukces) i
-`npx vitest run` — stabilnie 37 zielonych / 6 czerwonych (te same 6 niepowiązanych
-awarii sprzed audytu: `ITEM_TYPES_ENUM toHaveLength(8)` i `LS.clear is not a
-function` w `storage.test.js`, potwierdzone via `git stash` jako pre-existing
-na `main`, nie regresje). Pozostałe pozycje (5, 7-14, 16-25) czekają na kolejne
-zadania/polecenia.
+**Status wdrożenia (2026-06-10):** Wykonano pozycje 1–9, 11, 13–16, 18
+(wszystkie 🔴 i większość 🟡). Testy: 55/55 zielonych (wszystkie pre-existing
+failures naprawione: `ITEM_TYPES_ENUM` → 9, środowisko `jsdom` dla storage tests).
+Pozostałe pozycje (10, 12, 17, 19–25) czekają na kolejne zadania/polecenia.
 
 ---
 
@@ -695,26 +716,4 @@ nagłówków na wąskich szerokościach (zgodne z istniejącym wzorcem, nie regr
 Utworzono `SkillsScreen.module.css` z klasami `.legend`, `.legendItem`, `.legendDot`, `.legendLabel`, `.countBar`.
 Zamieniono inline styles legendy i licznika na klasy z modułu CSS.
 
-### ✅ P4.2 — i18next: warstwa kompatybilności i konfiguracja
-- Zainstalowano `react-i18next` i `i18next`
-- Utworzono `src/i18n/locales/pl.json` i `src/i18n/locales/en.json` z tłumaczeniami NAV, UI, LABELS, SESSIONS, QUESTS, LOCATIONS
-- Utworzono `src/i18n/i18n.js` z konfiguracją (zapamiętany język, fallback EN)
-- Dodano inicjalizację i18n w `App.jsx` i synchronizację z `HeroJournal`
-- Istniejący `useT()` i `TRANSLATIONS` pozostają aktywne (migracja przyrostowa)
-
-### ↩️ P4.3 — i18next: migracja pierwszych 3 komponentów (cofnięta)
-Pierwotnie zmigrowano `QuestScreen.jsx`, `SessionsScreen.jsx`, `LocationsScreen.jsx`
-z `useT()` na `useTranslation()`/`t('QUESTS.*')` z react-i18next (commit 895ecd2).
-
-Cofnięto w ramach commitu `ed04a02` ("unifikacja i18n") — `locales/pl.json`/`en.json`
-pokrywają tylko ułamek tekstów (NAV, UI, LABELS, SESSIONS, QUESTS, LOCATIONS — 57 linii),
-podczas gdy `TRANSLATIONS` w `translations.js` obejmuje kompletnie wszystkie ekrany
-(784 linie: CHAR, INVENTORY, SKILLS, SPELLS, NPCS, FACTIONS, PROFILES…). Trzymanie
-dwóch równoległych systemów groziło rozjazdami kluczy, więc wrócono do jednego
-spójnego `useT()`. Pełne przejście na react-i18next pozostaje możliwe, ale wymagałoby
-osobnej, zaplanowanej migracji całego zbioru tłumaczeń — nie tylko trzech ekranów.
-
----
-*Plik zarządzany przez automatycznego agenta. Dodaj zadania w sekcjach "W trakcie" lub "Do zrobienia".*
-*Agent wykonuje jedno zadanie na raz, zaczynając od pierwszego w sekcji "Do zrobienia".*
-*Po ukończeniu zadania przenosi je do "Ukończone" i pushuje zmiany.*
+### ✅ P4.2 — i18next: warstwa kompatybilności i konfigur

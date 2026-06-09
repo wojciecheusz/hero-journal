@@ -41,7 +41,7 @@ export async function syncFromCloud(uid) {
  */
 export async function cloudSave(uid, key, value) {
   if (!db) return;
-  /* Firestore odrzuca pola o wartości `undefined` (np. initiativeBonus jako
+  /* Firestore odrzuca pola o wartości undefined (np. initiativeBonus jako
      sentinel "brak nadpisania") — JSON round-trip usuwa je rekurencyjnie,
      analogicznie do zapisu w localStorage. */
   const ts = Date.now();

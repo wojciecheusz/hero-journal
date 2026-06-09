@@ -1,8 +1,6 @@
 /* ── Cloud save callback — encapsulated w closure (nie module global) ── */
 const _hooks = {
-  /** @type {((key: string, val: unknown) => void) | null} */
   cloudSave: null,
-  /** @type {(() => void) | null} */
   quotaExceeded: null,
 };
 
@@ -25,7 +23,7 @@ export const save = (key, val) => {
     if (e?.name === 'QuotaExceededError' || e?.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
       _hooks.quotaExceeded?.();
     }
-    return; // nie wysyłaj do chmury gdy zapis lokalny się nie powiódł
+    return;
   }
   _hooks.cloudSave?.(key, val);
 };
@@ -44,7 +42,6 @@ export const saveProfiles  = p  => save("hj_profiles", p);
 export const loadActiveId  = () => load("hj_active_profile", null);
 export const saveActiveId  = id => save("hj_active_profile", id);
 
-/* ── Klucze specjalne chronione przed usunięciem ───────────── */
 const PROTECTED_KEYS = new Set([
   "hj_profiles",
   "hj_active_profile",
@@ -53,39 +50,24 @@ const PROTECTED_KEYS = new Set([
   "hj_lang",
 ]);
 
-/**
- * Usuwa klucze localStorage powiązane z profilami, które nie istnieją
- * w aktualnej liście `hj_profiles`. Bezpieczne do wywołania przy starcie.
- *
- * @returns {{ removed: number, kept: number }} statystyki operacji
- */
 export function pruneOrphanedData() {
   try {
     const knownIds = new Set(loadProfiles().map(p => p.id));
-    // Wzorzec klucza: hj_{slot}_{profileId}
     const slotSet = new Set(CHAR_SLOTS);
     let removed = 0;
     let kept = 0;
-
-    // Zbieramy klucze synchronicznie (localStorage jest synchroniczne)
     const allKeys = [];
     for (let i = 0; i < localStorage.length; i++) {
       allKeys.push(localStorage.key(i));
     }
-
     for (const key of allKeys) {
       if (!key.startsWith("hj_")) continue;
       if (PROTECTED_KEYS.has(key)) { kept++; continue; }
-
-      // Format: hj_{slot}_{profileId} — profileId może zawierać "_"
-      // Szukamy pierwszego segmentu pasującego do CHAR_SLOTS
-      const withoutPrefix = key.slice(3); // usuń "hj_"
+      const withoutPrefix = key.slice(3);
       const underscoreIdx = withoutPrefix.indexOf("_");
       if (underscoreIdx === -1) { kept++; continue; }
-
       const slot      = withoutPrefix.slice(0, underscoreIdx);
       const profileId = withoutPrefix.slice(underscoreIdx + 1);
-
       if (slotSet.has(slot) && !knownIds.has(profileId)) {
         localStorage.removeItem(key);
         removed++;
@@ -93,7 +75,6 @@ export function pruneOrphanedData() {
         kept++;
       }
     }
-
     if (removed > 0) {
       console.info(`[HeroJournal] pruneOrphanedData: usunięto ${removed} kluczy, zachowano ${kept}`);
     }
@@ -104,17 +85,9 @@ export function pruneOrphanedData() {
   }
 }
 
-/* ── Walidacja danych postaci ───────────────────────────────── */
-/**
- * Zapewnia, że załadowane dane mają poprawny kształt.
- * Chroni przed runtime crashem gdy localStorage zawiera niekompletne/uszkodzone dane.
- */
 export function validateCharData(data, defaults) {
   if (!data || typeof data !== 'object') return { ...defaults };
-
   const safe = { ...defaults, ...data };
-
-  // Zagwarantuj istnienie kluczowych obiektów zagnieżdżonych
   const ensureObj  = (key, def) => {
     safe[key] = (data[key] && typeof data[key] === 'object' && !Array.isArray(data[key]))
       ? { ...def, ...data[key] } : { ...def };
@@ -125,7 +98,6 @@ export function validateCharData(data, defaults) {
   const ensureNum  = (key, def) => {
     safe[key] = (typeof data[key] === 'number' && !isNaN(data[key])) ? data[key] : def;
   };
-
   ensureObj('stats',        defaults.stats);
   ensureObj('hp',           defaults.hp);
   ensureObj('coins',        defaults.coins);
@@ -135,28 +107,21 @@ export function validateCharData(data, defaults) {
   ensureObj('deathSaves',   defaults.deathSaves);
   ensureObj('conditions',   defaults.conditions);
   ensureArr('classes',      defaults.classes);
-  ensureArr('spellSlots',   defaults.spellSlots);  // SpellSlots is an object
+  ensureArr('spellSlots',   defaults.spellSlots);
   ensureNum('xp',           defaults.xp ?? 0);
   ensureNum('ac',           defaults.ac ?? 10);
   ensureNum('speed',        defaults.speed ?? 30);
   ensureNum('profBonus',    defaults.profBonus ?? 2);
-
-  // Zapewnij przynajmniej jedną klasę
   if (!safe.classes || safe.classes.length === 0) {
     safe.classes = defaults.classes;
   }
-
-  // spellSlots może być obiektem lub pustą tablicą (legacy) — normalizuj
   if (Array.isArray(safe.spellSlots)) safe.spellSlots = {};
-
   return safe;
 }
 
 export function validateArray(data, defaultVal = []) {
   return Array.isArray(data) ? data : defaultVal;
 }
-
-/* ── Eksport / import profilu ───────────────────────────────── */
 
 export function exportProfileData(id, profileMeta) {
   const slots = {};
@@ -184,7 +149,6 @@ export function importProfileData(json) {
   return { ...data.profile, id: newId, created: Date.now() };
 }
 
-/* ── Migracja legacy → single profile ────────────────────────── */
 export const migrateLegacy = () => {
   if (loadProfiles().length > 0) return;
   const legacyChar = load("hj_char", null);
@@ -204,7 +168,6 @@ export const migrateLegacy = () => {
   saveActiveId(id);
 };
 
-/* ── Migracja danych do language-neutral enumów ─────────────── */
 const MIGRATION_KEY = "hj_enum_migration_v1";
 
 const QUEST_STATUS_MAP = {

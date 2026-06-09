@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\mwoj\\\\hero-journal\" -Exclude node_modules)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(find /mnt/c/Users/mwoj/hero-journal -maxdepth 2 -not -path \"*/node_modules/*\" | head -80)"
+    ]
+  }
+}

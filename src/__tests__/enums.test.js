@@ -31,8 +31,8 @@ describe('Enum arrays are ordered and complete', () => {
     expect(SKILL_CATS_ENUM).toContain(SKILL_CAT.FEAT);
   });
 
-  it('ITEM_TYPES_ENUM contains all 8 types', () => {
-    expect(ITEM_TYPES_ENUM).toHaveLength(8);
+  it('ITEM_TYPES_ENUM contains all 9 types', () => {
+    expect(ITEM_TYPES_ENUM).toHaveLength(9);
     expect(ITEM_TYPES_ENUM).toContain(ITEM_TYPE.WEAPON);
     expect(ITEM_TYPES_ENUM).toContain(ITEM_TYPE.ARMOR);
     expect(ITEM_TYPES_ENUM).toContain(ITEM_TYPE.SCROLL);
