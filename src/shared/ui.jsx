@@ -40,11 +40,9 @@ export function TagsEditor({ tags, onChange, suggestions }) {
             <button className="tag-remove" onClick={() => setShowSugg(false)} aria-label={T.UI.hideSuggestions} title={T.UI.hideSuggestions}>✕</button>
           </div>
         ) : (
-          <div className="tags-row tags-suggestions">
-            <button className="tags-suggest-label" style={{ cursor:"pointer", background:"none", border:"none", color:"inherit", fontFamily:"inherit", fontSize:"inherit", padding:0, opacity:0.5 }} onClick={() => setShowSugg(true)}>
-              {T.UI.tagSuggestions} ▸
-            </button>
-          </div>
+          <button style={{ display:"inline-block", marginTop:"0.2rem", background:"none", border:"none", padding:0, cursor:"pointer", opacity:0.3, fontSize:"0.46rem", fontFamily:"Cinzel,serif", letterSpacing:"0.08em", textTransform:"uppercase", color:"inherit" }} onClick={() => setShowSugg(true)}>
+            {T.UI.tagSuggestions} ▸
+          </button>
         )
       )}
     </div>
