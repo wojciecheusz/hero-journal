@@ -2,10 +2,13 @@
 const _hooks = {
   /** @type {((key: string, val: unknown) => void) | null} */
   cloudSave: null,
+  /** @type {(() => void) | null} */
+  quotaExceeded: null,
 };
 
-export const setCloudSaveHook   = fn  => { _hooks.cloudSave = fn; };
-export const clearCloudSaveHook = ()  => { _hooks.cloudSave = null; };
+export const setCloudSaveHook      = fn  => { _hooks.cloudSave = fn; };
+export const clearCloudSaveHook    = ()  => { _hooks.cloudSave = null; };
+export const setQuotaExceededHook  = fn  => { _hooks.quotaExceeded = fn; };
 
 export const CHAR_SLOTS = ["char","inventory","npcs","locations","skills","spells","sessions","quests","factions"];
 
@@ -15,7 +18,15 @@ export const load = (key, fb) => {
 };
 
 export const save = (key, val) => {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+    localStorage.setItem(`hj_ts_${key}`, String(Date.now()));
+  } catch (e) {
+    if (e?.name === 'QuotaExceededError' || e?.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+      _hooks.quotaExceeded?.();
+    }
+    return; // nie wysyłaj do chmury gdy zapis lokalny się nie powiódł
+  }
   _hooks.cloudSave?.(key, val);
 };
 

@@ -20,6 +20,8 @@ import MobileNav     from './MobileNav';
 import { LangContext, TRANSLATIONS } from '../i18n/translations';
 import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
+import ErrorBoundary from './ErrorBoundary';
+import { setQuotaExceededHook } from '../utils/storage';
 
 /* ── Lazy imports — każdy tab ładowany na żądanie ─────────────── */
 const CharacterScreen  = lazy(() => import('../features/character/CharacterScreen'));
@@ -77,6 +79,10 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [showDice, setShowDice]         = useState(false);
   const [showTutorial, setShowTutorial] = useState(() => !load("hj_tutorial_seen", null));
   const [openEntity, setOpenEntity] = useState(null);
+  const [quotaWarning, setQuotaWarning] = useState(false);
+  useEffect(() => {
+    setQuotaExceededHook(() => setQuotaWarning(true));
+  }, []);
 
   /* ── Auto-resize textarea (input listener + po zmianie taba/profilu) ── */
   useTextareaAutoResize(tab, activeId);
@@ -227,7 +233,15 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport}/>
 
+      {quotaWarning && (
+        <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>
+          <span>Storage full — data not saved</span>
+          <button onClick={() => setQuotaWarning(false)} style={{ background:"none", border:"none", color:"inherit", cursor:"pointer", fontSize:"0.9rem", lineHeight:1, padding:0 }}>✕</button>
+        </div>
+      )}
+
       <main className="hj-content">
+      <ErrorBoundary>
       <Suspense fallback={<TabLoader/>}>
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} skills={skills} setSkills={setSkills} spells={spells} setSpells={setSpells}/>}
 
@@ -276,6 +290,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSessions={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
         {tab === "quests"    && <QuestScreen       quests={quests}       setQuests={setQuests}       openEntity={openEntity}/>}
       </Suspense>
+      </ErrorBoundary>
       </main>
 
       <MobileNav navGroups={navGroups} tab={tab} setTab={setTab}/>
