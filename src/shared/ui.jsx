@@ -5,6 +5,7 @@ export function TagsEditor({ tags, onChange, suggestions }) {
   const T = useT();
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
+  const [showSugg, setShowSugg] = useState(true);
   const commit = () => {
     const t = draft.trim().toLowerCase();
     if (t && !tags.includes(t)) onChange([...tags, t]);
@@ -28,14 +29,23 @@ export function TagsEditor({ tags, onChange, suggestions }) {
         }
       </div>
       {remaining.length > 0 && (
-        <div className="tags-row tags-suggestions">
-          <span className="tags-suggest-label">{T.UI.tagSuggestions}</span>
-          {remaining.map(tag => (
-            <button key={tag} className="tag tag-suggestion" onClick={() => onChange([...tags, tag])}>
-              + {tag}
+        showSugg ? (
+          <div className="tags-row tags-suggestions">
+            <span className="tags-suggest-label">{T.UI.tagSuggestions}</span>
+            {remaining.map(tag => (
+              <button key={tag} className="tag tag-suggestion" onClick={() => onChange([...tags, tag])}>
+                + {tag}
+              </button>
+            ))}
+            <button className="tag-remove" onClick={() => setShowSugg(false)} aria-label={T.UI.hideSuggestions} title={T.UI.hideSuggestions}>✕</button>
+          </div>
+        ) : (
+          <div className="tags-row tags-suggestions">
+            <button className="tags-suggest-label" style={{ cursor:"pointer", background:"none", border:"none", color:"inherit", fontFamily:"inherit", fontSize:"inherit", padding:0, opacity:0.5 }} onClick={() => setShowSugg(true)}>
+              {T.UI.tagSuggestions} ▸
             </button>
-          ))}
-        </div>
+          </div>
+        )
       )}
     </div>
   );

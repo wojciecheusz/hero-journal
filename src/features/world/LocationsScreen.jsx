@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { LOC_TYPES, SUGGESTED_LOCATION_TAGS, LOC_TYPE_ICONS } from '../../constants/gameConstants';
+import { LOC_TYPES, LOC_TYPE_ICONS } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -58,7 +58,7 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
               ))}
             </div>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
-              {SUGGESTED_LOCATION_TAGS.map((tag) => (
+              {(T.UI.SUGGESTED_LOCATION_TAGS||[]).map((tag) => (
                 <button key={tag} className="tag tag-suggestion" style={{ opacity: form.tags.includes(tag) ? 1 : 0.45 }}
                   onClick={() => setForm(f => ({ ...f, tags: f.tags.includes(tag) ? f.tags.filter(t => t !== tag) : [...f.tags, tag] }))}>
                   {form.tags.includes(tag) ? "✓ " : "+ "}{tag}

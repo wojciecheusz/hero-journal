@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 export function detectLang() {
   const stored = localStorage.getItem('hj_lang');
   if (stored === 'pl' || stored === 'en') return stored;
-  return navigator.language?.startsWith('pl') ? 'pl' : 'en';
+  return 'en';
 }
 
 export const LangContext = createContext('en');
@@ -77,7 +77,9 @@ export const TRANSLATIONS = {
       importProfile:"Wgraj profil z pliku",
       importError:"Nieprawidłowy plik — sprawdź czy to kopia z Hero Journal",
       downloadSheet:"Pobierz kartę postaci",
-      tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Sugerowane:",
+      tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Sugerowane:", hideSuggestions:"Ukryj",
+      SUGGESTED_ACTION_TAGS:["akcja", "bonus akcja", "reakcja", "pasywna"],
+      SUGGESTED_LOCATION_TAGS:["miasto", "stolica", "metropolia", "wioska", "twierdza", "świątynia"],
       filterLabel:"Filtr:", filterAll:"Wszystkie",
       noLevelSpells:"Brak zapisanych czarów poziomowych (innych niż sztuczki).",
       spellCount:(n) => `${n} czar${n !== 1 ? "y" : ""}`,
@@ -487,7 +489,9 @@ export const TRANSLATIONS = {
       importProfile:"Import profile from file",
       importError:"Invalid file — make sure it's a Hero Journal backup",
       downloadSheet:"Download character sheet",
-      tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Suggested:",
+      tagPlaceholder:"tag…", tagAdd:"+ tag", tagSuggestions:"Suggested:", hideSuggestions:"Hide",
+      SUGGESTED_ACTION_TAGS:["action", "bonus action", "reaction", "passive"],
+      SUGGESTED_LOCATION_TAGS:["city", "capital", "metropolis", "village", "fortress", "temple"],
       filterLabel:"Filter:", filterAll:"All",
       noLevelSpells:"No leveled spells saved (cantrips not counted).",
       spellCount:(n) => `${n} spell${n !== 1 ? "s" : ""}`,

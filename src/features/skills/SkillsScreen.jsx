@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { SKILL_CATS, SKILL_CAT_ICONS, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
+import { SKILL_CATS, SKILL_CAT_ICONS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, FilterBar, PrzypnijBtn, Toggle } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -121,7 +121,7 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
             )}
 
             <TagsEditor tags={sk.tags||[]} onChange={v => upd(sk.id,"tags",v)}
-              suggestions={(sk.tags||[]).some(t => SUGGESTED_ACTION_TAGS.includes(t)) ? [] : SUGGESTED_ACTION_TAGS}/>
+              suggestions={T.UI.SUGGESTED_ACTION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>

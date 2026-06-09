@@ -27,9 +27,6 @@ export const SPELL_LEVELS  = SPELL_LEVELS_ENUM;
 export const SPELL_SLOT_LABELS = SPELL_LEVELS_ENUM.filter(l => l !== "cantrip");
 export const DAMAGE_TYPES = DAMAGE_TYPES_ENUM;
 
-export const SUGGESTED_LOCATION_TAGS = ["miasto", "stolica", "metropolia", "wioska", "twierdza", "świątynia"];
-
-export const SUGGESTED_ACTION_TAGS = ["akcja", "bonus akcja", "pasywna"];
 
 export const SKILL_CAT_ICONS = {
   [SKILL_CAT.SKILL]:  "🎯",

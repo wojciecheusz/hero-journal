@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
+import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS } from '../../constants/gameConstants';
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
 import { TagsEditor, PrzypnijBtn, Toggle, FilterBar } from '../../shared/ui';
 import { SpellSlotsWidget } from '../character/widgets/SpellSlotsWidget';
@@ -157,7 +157,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
             )}
 
             <TagsEditor tags={sp.tags||[]} onChange={v => upd(sp.id,"tags",v)}
-              suggestions={(sp.tags||[]).some(t => SUGGESTED_ACTION_TAGS.includes(t)) ? [] : SUGGESTED_ACTION_TAGS}/>
+              suggestions={T.UI.SUGGESTED_ACTION_TAGS}/>
 
             {open && isEditing && (
               <div style={{ marginTop:"0.8rem" }}>

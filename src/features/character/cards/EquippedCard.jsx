@@ -133,6 +133,11 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
                       {(sp.tags||[]).map(tag => <span key={tag} className="tag tag-default" style={{ fontSize:"0.46rem", padding:"0.1rem 0.4rem" }}>{tag}</span>)}
                     </div>
                     {sp.description && <div className="equipped-stat">{sp.description}</div>}
+                    {(sp.castingTime || sp.zakres || sp.duration) && (
+                      <div className="equipped-stat" style={{ color:"var(--hj-spell-muted)" }}>
+                        {[sp.castingTime, sp.zakres && `${T.SPELLS.rangeLbl}: ${sp.zakres}`, sp.duration && `${T.SPELLS.durationLbl}: ${sp.duration}`].filter(Boolean).join(" · ")}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

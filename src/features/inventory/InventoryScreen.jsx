@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES, SUGGESTED_ACTION_TAGS } from '../../constants/gameConstants';
+import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
 import { Toggle, TagsEditor, PrzypnijBtn, FilterBar } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
@@ -134,7 +134,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
             )}
 
             <TagsEditor tags={item.tags||[]} onChange={v => upd(item.id,"tags",v)}
-              suggestions={(item.tags||[]).some(t => SUGGESTED_ACTION_TAGS.includes(t)) ? [] : SUGGESTED_ACTION_TAGS}/>
+              suggestions={T.UI.SUGGESTED_ACTION_TAGS}/>
 
             {/* Statystyki broni/czaru — zawsze widoczne gdy rozwinięty i nie w edycji */}
             {open && !isEditing && (item.damage || item.charges) && (
