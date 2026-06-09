@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useLocation } from 'wouter';
 import {
   CHAR_SLOTS, saveChar, saveProfiles, load, save,
+  exportProfileData, importProfileData,
 } from '../utils/storage';
 import { useTheme }         from '../hooks/useTheme';
 import { useLanguage }      from '../hooks/useLanguage';
@@ -129,6 +130,31 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     deleteProfile(id, activeId, switchProfile);
   }, [deleteProfile, activeId, switchProfile]);
 
+  const handleExport = useCallback(() => {
+    const profileMeta = profiles.find(p => p.id === activeId);
+    if (!profileMeta) return;
+    const json = exportProfileData(activeId, profileMeta);
+    const safeName = (profileMeta.name || 'hero').replace(/[^\wÀ-ž]/g, '_');
+    const date = new Date().toISOString().slice(0, 10);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+    a.download = `hj_backup_${safeName}_${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }, [activeId, profiles]);
+
+  const handleImport = useCallback((json) => {
+    const newProfile = importProfileData(json);
+    setProfiles(prev => {
+      const updated = [...prev, newProfile];
+      saveProfiles(updated);
+      return updated;
+    });
+    switchProfile(newProfile.id);
+  }, [switchProfile]);
+
   const handleReset = useCallback(() => {
     if (!activeId) return;
     CHAR_SLOTS.forEach(slot => saveChar(slot, activeId, EMPTY_DATA[slot]));
@@ -190,12 +216,14 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <Sidebar T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char}
         tab={tab} setTab={setTab} navGroupsDesktop={navGroupsDesktop}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
-        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}/>
+        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+        onExport={handleExport} onImport={handleImport}/>
 
       {/* ── Header (mobile only) ── */}
       <Header T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
-        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}/>
+        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+        onExport={handleExport} onImport={handleImport}/>
 
       <main className="hj-content">
       <Suspense fallback={<TabLoader/>}>

@@ -53,6 +53,7 @@ export default function Sidebar({
   T, theme, setTheme, toggleLanguage, char, tab, setTab, navGroupsDesktop,
   showHelp, setShowHelp, showSettings, setShowSettings,
   setScreen, setShowReset, user, onCloudRefresh, onLogout,
+  onExport, onImport,
 }) {
   return (
     <aside className="hj-sidebar">
@@ -129,6 +130,7 @@ export default function Sidebar({
             <SettingsMenu T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage}
               setScreen={setScreen} setShowReset={setShowReset} setShowSettings={setShowSettings}
               user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+              onExport={onExport} onImport={onImport}
               dropdownStyle={{ position:"fixed", bottom:"48px", left:"5px" }}/>
           </>}
         </div>

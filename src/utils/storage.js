@@ -145,6 +145,34 @@ export function validateArray(data, defaultVal = []) {
   return Array.isArray(data) ? data : defaultVal;
 }
 
+/* ── Eksport / import profilu ───────────────────────────────── */
+
+export function exportProfileData(id, profileMeta) {
+  const slots = {};
+  CHAR_SLOTS.forEach(slot => {
+    const val = loadChar(slot, id, null);
+    if (val !== null) slots[slot] = val;
+  });
+  return JSON.stringify({
+    hj_export_version: 1,
+    exported_at: new Date().toISOString(),
+    profile: profileMeta,
+    slots,
+  }, null, 2);
+}
+
+export function importProfileData(json) {
+  const data = JSON.parse(json);
+  if (!data || data.hj_export_version !== 1 || !data.profile || typeof data.slots !== 'object') {
+    throw new Error('invalid_format');
+  }
+  const newId = 'profile_' + Date.now();
+  CHAR_SLOTS.forEach(slot => {
+    if (slot in data.slots) saveChar(slot, newId, data.slots[slot]);
+  });
+  return { ...data.profile, id: newId, created: Date.now() };
+}
+
 /* ── Migracja legacy → single profile ────────────────────────── */
 export const migrateLegacy = () => {
   if (loadProfiles().length > 0) return;

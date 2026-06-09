@@ -5,6 +5,7 @@ export default function Header({
   T, theme, setTheme, toggleLanguage, char,
   showHelp, setShowHelp, showSettings, setShowSettings,
   setScreen, setShowReset, user, onCloudRefresh, onLogout,
+  onExport, onImport,
 }) {
   return (
     <header className="hj-header">
@@ -44,6 +45,7 @@ export default function Header({
             <SettingsMenu T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage}
               setScreen={setScreen} setShowReset={setShowReset} setShowSettings={setShowSettings}
               user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+              onExport={onExport} onImport={onImport}
               dropdownStyle={{ position:"absolute", top:"calc(100% + 8px)", right:0 }}/>
           </>}
         </div>{/* /settings */}
