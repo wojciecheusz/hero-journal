@@ -176,7 +176,14 @@ const MOBILE_SHOTS = [
 async function main() {
   fs.mkdirSync(OUT, { recursive: true });
 
-  const browser = await chromium.launch({ headless: false });
+  // Użyj zainstalowanego Chrome lub Edge zamiast pobierać osobne Chromium
+  const browser = await chromium.launch({
+    headless: false,
+    channel: 'chrome',
+  }).catch(() => chromium.launch({
+    headless: false,
+    channel: 'msedge',
+  })).catch(() => chromium.launch({ headless: false })); // fallback: Playwright Chromium
 
   // -- Login phase (one-time, visible browser) --
   const setupCtx  = await browser.newContext({ viewport: { width: 1280, height: 800 } });
