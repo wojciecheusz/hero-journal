@@ -1,0 +1,138 @@
+{
+  "id": "/",
+  "name": "Hero Journal",
+  "short_name": "Hero Journal",
+  "description": "D&D 5e character journal — track your hero, spells, inventory, quests, NPCs and world lore. Works offline.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait",
+  "background_color": "#0f0d0b",
+  "theme_color": "#1c1810",
+  "categories": ["games", "utilities"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/pc-character.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Character sheet"
+    },
+    {
+      "src": "/screenshots/pc-inventory.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Inventory & equipment"
+    },
+    {
+      "src": "/screenshots/pc-spells.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Spell slots & grimoire"
+    },
+    {
+      "src": "/screenshots/pc-world.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "World — NPCs & locations"
+    },
+    {
+      "src": "/screenshots/pc-sessions.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Session journal"
+    },
+    {
+      "src": "/screenshots/mobile-character.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Character sheet on mobile"
+    },
+    {
+      "src": "/screenshots/mobile-inventory.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Inventory on mobile"
+    },
+    {
+      "src": "/screenshots/mobile-spells.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Spells on mobile"
+    },
+    {
+      "src": "/screenshots/mobile-world.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "World on mobile"
+    },
+    {
+      "src": "/screenshots/mobile-sessions.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Session journal on mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Character",
+      "short_name": "Character",
+      "url": "/?source=pwa",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Inventory",
+      "short_name": "Inventory",
+      "url": "/?source=pwa&tab=inventory",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Spells",
+      "short_name": "Spells",
+      "url": "/?source=pwa&tab=spells",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Sessions",
+      "short_name": "Sessions",
+      "url": "/?source=pwa&tab=sessions",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}
