@@ -1,15 +1,14 @@
 {
-  "id": "/",
+  "id": "https://hero-journal.vercel.app/",
   "name": "Hero Journal",
   "short_name": "Hero Journal",
   "description": "D&D 5e character journal — track your hero, spells, inventory, quests, NPCs and world lore. Works offline.",
   "lang": "en",
   "dir": "ltr",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "start_url": "https://hero-journal.vercel.app/?source=pwa",
+  "scope": "https://hero-journal.vercel.app/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-
+  "launch_handler": { "client_mode": "focus-existing" },
   "orientation": "portrait",
   "background_color": "#0f0d0b",
   "theme_color": "#1c1810",
@@ -54,11 +53,11 @@
       "label": "Inventory & equipment"
     },
     {
-      "src": "/screenshots/pc-spells.png",
+      "src": "/screenshots/pc-quests.png",
       "sizes": "1920x1080",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Spell slots & grimoire"
+      "label": "Quest tracker"
     },
     {
       "src": "/screenshots/pc-world.png",

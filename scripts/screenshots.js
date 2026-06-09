@@ -90,6 +90,12 @@ const SAMPLE = {
     { id:3, name:'Thornwood',          type:'wilderness', notes:'Dense enchanted forest east of Silverdale. Home to the Circle of Ash druids.',       tags:[],          pinned:false },
     { id:4, name:'Circle of Ash Grove',type:'building',   notes:'Hidden druid sanctuary in Thornwood. Party is allied with them.',                    tags:[],          pinned:false },
   ],
+  [`hj_quests_${ID}`]: [
+    { id:1, name:'The Codex of Eternity',   status:'active',    reward:'Legendary tome, Velaryn\'s secrets', description:'Seek the three fragments of the Codex scattered across the realm. Fragment I retrieved from the Whispering Ruins.', steps:[ { id:1, text:'Find Fragment I — Whispering Ruins', done:true }, { id:2, text:'Find Fragment II — rumoured in the Sunken Library', done:false }, { id:3, text:'Find Fragment III — location unknown', done:false }, { id:4, text:'Reassemble the Codex', done:false } ], pinned:true  },
+    { id:2, name:'Silence the Shadow Conclave', status:'active', reward:'500 gp bounty + guild contacts',   description:'The Shadow Conclave ambushed the party in Silverdale. Eliminate their local cell before they strike again.', steps:[ { id:1, text:'Identify the Conclave contact in Silverdale', done:true }, { id:2, text:'Track the cell to their hideout', done:false }, { id:3, text:'Neutralise the threat', done:false } ], pinned:true  },
+    { id:3, name:'Baker\'s Reparations',    status:'active',    reward:'Good standing in Silverdale',        description:'Aelindra\'s Fireball destroyed the baker\'s stall. Pay 15 gp in reparations before the guards get involved.', steps:[ { id:1, text:'Pay 15 gp to Harwin the Baker', done:false } ], pinned:false },
+    { id:4, name:'The Ley Line Convergence',status:'active',    reward:'Circle of Ash alliance strengthened',description:'The druids shared a map of ley lines beneath Thornwood. Investigate the convergence point before the next solstice.', steps:[ { id:1, text:'Receive the ley line map', done:true }, { id:2, text:'Locate the convergence point', done:false }, { id:3, text:'Perform the ritual at the convergence', done:false } ], pinned:false },
+  ],
 };
 
 /* ── Helpers ──────────────────────────────────────────────────── */
@@ -108,11 +114,26 @@ async function seed(page) {
   }, SAMPLE);
 }
 
+// Desktop sidebar navigation — pewniejsze niż locator text=
+async function desktopNav(page, tabText) {
+  const clicked = await page.evaluate((text) => {
+    for (const btn of document.querySelectorAll('.hj-sidebar-item')) {
+      for (const span of btn.querySelectorAll('span')) {
+        if (span.textContent.trim() === text) { btn.click(); return true; }
+      }
+    }
+    return false;
+  }, tabText);
+  console.log(`    sidebar "${tabText}": ${clicked ? 'clicked' : 'NOT FOUND'}`);
+  await page.waitForTimeout(500);
+}
+
+// Klik ogólny (przyciski subtabów w treści)
 async function click(page, text, timeout = 4000) {
   try {
     await page.locator(`text="${text}"`).first().click({ timeout });
   } catch {
-    // silently ignore if nav item not found
+    // silently ignore
   }
 }
 
@@ -153,18 +174,22 @@ async function mobileNav(page, groupLabel, tabLabel) {
 
 // Rozwiń wszystkie wpisy na bieżącej stronie
 async function expandAll(page) {
+  // Czekaj aż elementy toggleable pojawią się w DOM (zamiast ślepego sleep)
+  await page.waitForSelector('.entity-toggle, .sess-header', { timeout: 6000 }).catch(() => {});
+  await page.waitForTimeout(400); // dodatkowy czas na pełny render
   const count = await page.evaluate(() => {
     let n = 0;
-    // Entity listy: NPCs, Lokacje, Frakcje, Plecak, Czary, Zdolności
+    // Entity listy: NPCs, Lokacje, Frakcje, Plecak, Czary, Zdolności, Zadania
     for (const btn of document.querySelectorAll('.entity-toggle')) {
       if (btn.textContent.trim() === '▼') { btn.click(); n++; }
     }
-    // Sesje — toggle na nagłówku, nie na przycisku
+    // Sesje — toggle na nagłówku
     for (const hdr of document.querySelectorAll('.sess-header')) {
       if (hdr.textContent.includes('▼')) { hdr.click(); n++; }
     }
     return n;
   });
+  console.log(`    expanded ${count} entries`);
   if (count > 0) await page.waitForTimeout(400);
 }
 
@@ -177,22 +202,30 @@ async function shot(page, name) {
 
 /* ── Desktop tabs (sidebar navigation) ───────────────────────── */
 const DESKTOP_SHOTS = [
-  async (page) => { await click(page, 'Character');  await shot(page, 'pc-character'); },
   async (page) => {
-    await click(page, 'Equipment');
-    await page.waitForTimeout(300);
-    // switch to inventory subtab
+    await desktopNav(page, 'Character');
+    await shot(page, 'pc-character');
+  },
+  async (page) => {
+    await desktopNav(page, 'Equipment');
     await click(page, 'Inventory', 3000);
     await shot(page, 'pc-inventory');
   },
   async (page) => {
-    await click(page, 'Equipment');
-    await page.waitForTimeout(300);
-    await click(page, 'Spells', 3000);
-    await shot(page, 'pc-spells');
+    await desktopNav(page, 'Quests');
+    await expandAll(page);
+    await shot(page, 'pc-quests');
   },
-  async (page) => { await click(page, 'World');     await expandAll(page); await shot(page, 'pc-world'); },
-  async (page) => { await click(page, 'Chronicle'); await expandAll(page); await shot(page, 'pc-sessions'); },
+  async (page) => {
+    await desktopNav(page, 'World');
+    await expandAll(page);
+    await shot(page, 'pc-world');
+  },
+  async (page) => {
+    await desktopNav(page, 'Chronicle');
+    await expandAll(page);
+    await shot(page, 'pc-sessions');
+  },
 ];
 
 /* ── Mobile tabs (bottom drawer navigation) ──────────────────── */
