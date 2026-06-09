@@ -60,7 +60,12 @@ export default function Sidebar({
 
       {/* Brand */}
       <button className="hj-sidebar-brand" onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
-        <div className="hj-logo" style={{ fontSize:"0.9rem", flexShrink:0 }}>⚔ HJ</div>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink:0 }} aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <line x1="9" y1="7" x2="15" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="9" y1="11" x2="13" y2="11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
         <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:"var(--hj-text-muted)", letterSpacing:"0.08em", textTransform:"uppercase", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", flex:1, minWidth:0 }}>
           {char.name?.trim() || T.UI.hero}
         </span>
