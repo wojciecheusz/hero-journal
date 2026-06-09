@@ -26,6 +26,7 @@ const SAMPLE = {
   hj_profiles:       [{ id: ID, name: 'Aelindra', class: 'Wizard', level: 5 }],
   hj_active_profile: ID,
   hj_lang:           'en',
+  hj_tutorial_seen:  '1',
   [`hj_char_${ID}`]: {
     name: 'Aelindra Moonweave', race: 'High Elf', background: 'Sage',
     alignment: 'Chaotic Good',
@@ -115,6 +116,20 @@ async function click(page, text, timeout = 4000) {
   }
 }
 
+// Mobile: kliknij przycisk grupy w bottom nav, poczekaj na szufladę, kliknij subtab
+async function mobileNav(page, groupLabel, tabLabel) {
+  // Kliknij grupę (np. "Hero", "World", "Journal") w dolnym pasku
+  await page.locator('.hj-nav-btn').filter({ hasText: groupLabel }).click({ timeout: 5000 });
+  await page.waitForTimeout(500);
+  if (tabLabel) {
+    // Poczekaj na otwarcie szuflady i kliknij właściwy subtab
+    await page.waitForSelector('.nav-drawer', { timeout: 3000 }).catch(() => {});
+    await page.waitForTimeout(300);
+    await page.locator('.nav-drawer-item').filter({ hasText: tabLabel }).click({ timeout: 3000 });
+    await page.waitForTimeout(400);
+  }
+}
+
 async function shot(page, name) {
   await page.waitForTimeout(600);
   const file = path.join(OUT, `${name}.png`);
@@ -144,31 +159,11 @@ const DESKTOP_SHOTS = [
 
 /* ── Mobile tabs (bottom drawer navigation) ──────────────────── */
 const MOBILE_SHOTS = [
-  async (page) => {
-    await click(page, 'Hero');
-    await page.waitForTimeout(300);
-    await click(page, 'Character', 3000);
-    await shot(page, 'mobile-character');
-  },
-  async (page) => {
-    await click(page, 'Hero');
-    await page.waitForTimeout(300);
-    await click(page, 'Inventory', 3000);
-    await shot(page, 'mobile-inventory');
-  },
-  async (page) => {
-    await click(page, 'Hero');
-    await page.waitForTimeout(300);
-    await click(page, 'Spells', 3000);
-    await shot(page, 'mobile-spells');
-  },
-  async (page) => { await click(page, 'World');   await shot(page, 'mobile-world'); },
-  async (page) => {
-    await click(page, 'Journal');
-    await page.waitForTimeout(300);
-    await click(page, 'Chronicle', 3000);
-    await shot(page, 'mobile-sessions');
-  },
+  async (page) => { await mobileNav(page, 'Hero',    'Character'); await shot(page, 'mobile-character'); },
+  async (page) => { await mobileNav(page, 'Hero',    'Inventory'); await shot(page, 'mobile-inventory'); },
+  async (page) => { await mobileNav(page, 'Hero',    'Spells');    await shot(page, 'mobile-spells');    },
+  async (page) => { await mobileNav(page, 'World',   null);        await shot(page, 'mobile-world');     },
+  async (page) => { await mobileNav(page, 'Journal', 'Chronicle'); await shot(page, 'mobile-sessions');  },
 ];
 
 /* ── Main ─────────────────────────────────────────────────────── */
