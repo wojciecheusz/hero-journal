@@ -151,6 +151,23 @@ async function mobileNav(page, groupLabel, tabLabel) {
   await page.waitForTimeout(400);
 }
 
+// Rozwiń wszystkie wpisy na bieżącej stronie
+async function expandAll(page) {
+  const count = await page.evaluate(() => {
+    let n = 0;
+    // Entity listy: NPCs, Lokacje, Frakcje, Plecak, Czary, Zdolności
+    for (const btn of document.querySelectorAll('.entity-toggle')) {
+      if (btn.textContent.trim() === '▼') { btn.click(); n++; }
+    }
+    // Sesje — toggle na nagłówku, nie na przycisku
+    for (const hdr of document.querySelectorAll('.sess-header')) {
+      if (hdr.textContent.includes('▼')) { hdr.click(); n++; }
+    }
+    return n;
+  });
+  if (count > 0) await page.waitForTimeout(400);
+}
+
 async function shot(page, name) {
   await page.waitForTimeout(600);
   const file = path.join(OUT, `${name}.png`);
@@ -174,8 +191,8 @@ const DESKTOP_SHOTS = [
     await click(page, 'Spells', 3000);
     await shot(page, 'pc-spells');
   },
-  async (page) => { await click(page, 'World');     await shot(page, 'pc-world'); },
-  async (page) => { await click(page, 'Chronicle'); await shot(page, 'pc-sessions'); },
+  async (page) => { await click(page, 'World');     await expandAll(page); await shot(page, 'pc-world'); },
+  async (page) => { await click(page, 'Chronicle'); await expandAll(page); await shot(page, 'pc-sessions'); },
 ];
 
 /* ── Mobile tabs (bottom drawer navigation) ──────────────────── */
@@ -183,8 +200,8 @@ const MOBILE_SHOTS = [
   async (page) => { await mobileNav(page, 'Hero',    'Character'); await shot(page, 'mobile-character'); },
   async (page) => { await mobileNav(page, 'Hero',    'Inventory'); await shot(page, 'mobile-inventory'); },
   async (page) => { await mobileNav(page, 'Hero',    'Spells');    await shot(page, 'mobile-spells');    },
-  async (page) => { await mobileNav(page, 'World',   null);        await shot(page, 'mobile-world');     },
-  async (page) => { await mobileNav(page, 'Journal', 'Chronicle'); await shot(page, 'mobile-sessions');  },
+  async (page) => { await mobileNav(page, 'World', 'Characters'); await expandAll(page); await shot(page, 'mobile-world');    },
+  async (page) => { await mobileNav(page, 'Journal', 'Chronicle'); await expandAll(page); await shot(page, 'mobile-sessions'); },
 ];
 
 /* ── Main ─────────────────────────────────────────────────────── */
