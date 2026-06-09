@@ -1,8 +1,10 @@
 import { createContext, useContext } from 'react';
 
 export function detectLang() {
-  const stored = localStorage.getItem('hj_lang');
-  if (stored === 'pl' || stored === 'en') return stored;
+  try {
+    const stored = JSON.parse(localStorage.getItem('hj_lang'));
+    if (stored === 'pl' || stored === 'en') return stored;
+  } catch {}
   return 'en';
 }
 
