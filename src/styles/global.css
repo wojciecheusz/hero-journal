@@ -1323,4 +1323,50 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .wizard-stat-val   { font-family:'Cinzel',serif; font-size:1.1rem; font-weight:700; color:var(--hj-accent); }
 .wizard-step-dots  { display:flex; gap:0.4rem; justify-content:center; margin-bottom:1.5rem; }
 .wizard-dot        { width:7px; height:7px; border-radius:50%; background:var(--hj-border-input); transition:all 0.2s; }
+
+/* ── Rzutnik kości ────────────────────────────────────────────── */
+.dice-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(68px + env(safe-area-inset-bottom, 0px) + 0.55rem);
+  z-index: 110;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--hj-modal-bg);
+  border: 1px solid var(--hj-accent-border);
+  color: var(--hj-accent);
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 2px 16px var(--hj-shadow-bot);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.dice-fab:hover { background: rgba(226,185,78,0.12); box-shadow: 0 4px 24px var(--hj-shadow-bot); }
+.dice-fab.open  { background: rgba(226,185,78,0.14); border-color: var(--hj-accent); }
+
+.dice-panel {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  z-index: 109;
+  background: var(--hj-modal-bg);
+  border-top: 1px solid var(--hj-border);
+  box-shadow: 0 -4px 24px var(--hj-shadow-bot);
+  padding: 0.75rem 1rem 0.9rem;
+}
+
+@media (min-width: 1024px) {
+  .dice-fab {
+    bottom: 1rem;
+  }
+  .dice-panel {
+    left: auto;
+    right: 1rem;
+    bottom: calc(1rem + 44px + 0.5rem);
+    width: 320px;
+    border: 1px solid var(--hj-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 32px var(--hj-shadow-bot);
+  }
+}
 .wizard-dot.active { background:var(--hj-accent); }

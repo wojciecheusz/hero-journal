@@ -12,6 +12,7 @@ import { useTextareaAutoResize } from '../hooks/useTextareaAutoResize';
 import { useCloudSaveQueue } from '../hooks/useCloudSaveQueue';
 import { getNavGroups, getNavGroupsDesktop } from './navigation';
 import TutorialModal from './TutorialModal';
+import DiceRoller from '../features/dice/DiceRoller';
 import HelpPanel     from './HelpPanel';
 import Sidebar       from './Sidebar';
 import Header        from './Header';
@@ -73,6 +74,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [showReset, setShowReset]       = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelp, setShowHelp]         = useState(false);
+  const [showDice, setShowDice]         = useState(false);
   const [showTutorial, setShowTutorial] = useState(() => !load("hj_tutorial_seen", null));
   const [openEntity, setOpenEntity] = useState(null);
 
@@ -277,6 +279,14 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       </main>
 
       <MobileNav navGroups={navGroups} tab={tab} setTab={setTab}/>
+
+      {/* ── Rzutnik kości — FAB + panel ── */}
+      <button className={`dice-fab${showDice ? ' open' : ''}`}
+        onClick={() => setShowDice(s => !s)}
+        aria-label={T.DICE.title} title={T.DICE.title}>
+        🎲
+      </button>
+      {showDice && <DiceRoller onClose={() => setShowDice(false)}/>}
     </div>
     </LangContext.Provider>
   );

@@ -414,6 +414,13 @@ export const TRANSLATIONS = {
         ],
       },
     },
+    DICE: {
+      title: "Rzutnik kości",
+      roll: "Rzuć",
+      placeholder: "np. 2k6+3",
+      crit: "KRYTYK!",
+      fumble: "FUSZERKA!",
+    },
   },
 
   /* ══════════════════════════════════════════════════════════════
@@ -817,6 +824,13 @@ export const TRANSLATIONS = {
           ["REWARD","Edit reward","Visible and editable inside the expanded quest. Update it as the DM changes the offer."],
         ],
       },
+    },
+    DICE: {
+      title: "Dice Roller",
+      roll: "Roll",
+      placeholder: "e.g. 2d6+3",
+      crit: "CRITICAL!",
+      fumble: "FUMBLE!",
     },
   },
 };
