@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { PALETTES } from '../theme/themes';
+import Icon, { PALETTE_ICONS } from '../shared/icons';
 
 /**
  * Dropdown z paletą motywów i akcjami (język, zmiana bohatera, reset, sync, wyloguj).
@@ -50,18 +51,18 @@ export default function SettingsMenu({
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.22rem" }}>
           {PALETTES.map(p => (
             <button key={p} onClick={() => setTheme(p)}
-              style={{ background:theme===p?"rgba(226,185,78,0.12)":"transparent", border:`1px solid ${theme===p?"var(--hj-accent-border)":"var(--hj-border-sub)"}`, color:theme===p?"var(--hj-accent)":"var(--hj-text)", fontFamily:"Cinzel,serif", fontSize:"0.54rem", letterSpacing:"0.04em", padding:"0.27rem 0.35rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px" }}>
-              {T.PALETTE_LABELS[p]}
+              style={{ display:"flex", alignItems:"center", gap:"0.35rem", background:theme===p?"rgba(226,185,78,0.12)":"transparent", border:`1px solid ${theme===p?"var(--hj-accent-border)":"var(--hj-border-sub)"}`, color:theme===p?"var(--hj-accent)":"var(--hj-text)", fontFamily:"Cinzel,serif", fontSize:"0.54rem", letterSpacing:"0.04em", padding:"0.27rem 0.35rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px" }}>
+              <Icon name={PALETTE_ICONS[p]} size="0.95em"/> {T.PALETTE_LABELS[p]}
             </button>
           ))}
         </div>
       </div>
       <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.38rem 0.48rem", display:"flex", flexDirection:"column", gap:"0.18rem" }}>
-        <button style={btnStyle} onClick={close(toggleLanguage)}>
-          🌐 {T.UI.langToggle === "EN" ? "Switch to English" : "Przełącz na polski"}
+        <button style={{ ...btnStyle, display:"flex", alignItems:"center", gap:"0.4rem" }} onClick={close(toggleLanguage)}>
+          <Icon name="globe" size="0.9em"/> {T.UI.langToggle === "EN" ? "Switch to English" : "Przełącz na polski"}
         </button>
-        <button style={btnStyle} onClick={close(() => setScreen("profiles"))}>
-          👤 {T.UI.changeHero}
+        <button style={{ ...btnStyle, display:"flex", alignItems:"center", gap:"0.4rem" }} onClick={close(() => setScreen("profiles"))}>
+          <Icon name="user" size="0.9em"/> {T.UI.changeHero}
         </button>
         <button style={btnDanger} onClick={close(() => setShowReset(true))}>
           {T.UI.resetChar}
@@ -83,11 +84,11 @@ export default function SettingsMenu({
         <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", paddingBottom:"0.1rem" }}>
           {T.UI.backupSection}
         </div>
-        <button style={btnStyle} onClick={onExport}>
-          📥 {T.UI.exportProfile}
+        <button style={{ ...btnStyle, display:"flex", alignItems:"center", gap:"0.4rem" }} onClick={onExport}>
+          <Icon name="download" size="0.9em"/> {T.UI.exportProfile}
         </button>
-        <button style={btnStyle} onClick={() => fileInputRef.current?.click()}>
-          📤 {T.UI.importProfile}
+        <button style={{ ...btnStyle, display:"flex", alignItems:"center", gap:"0.4rem" }} onClick={() => fileInputRef.current?.click()}>
+          <Icon name="upload" size="0.9em"/> {T.UI.importProfile}
         </button>
         <input
           ref={fileInputRef}
@@ -97,8 +98,8 @@ export default function SettingsMenu({
           onChange={handleFileChange}
         />
         {importError && (
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"#c04040", paddingTop:"0.1rem" }}>
-            ⚠ {importError}
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"#c04040", paddingTop:"0.1rem", display:"flex", alignItems:"center", gap:"0.3rem" }}>
+            <Icon name="warning" size="0.9em"/> {importError}
           </span>
         )}
       </div>

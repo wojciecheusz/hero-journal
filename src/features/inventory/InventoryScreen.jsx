@@ -5,6 +5,7 @@ import { Toggle, TagsEditor, PrzypnijBtn, FilterBar } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
+import Icon from '../../shared/icons';
 
 function InventoryScreen({ title, inventory, setInventory, openEntity }) {
   const T = useT();
@@ -46,7 +47,9 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
           <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>
             {I.count(inventory.length, equippedCount)}
           </span>
-          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? I.cancel : I.add}</button>
+          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
+            {showForm ? <><Icon name="close" size="0.85em"/> {I.cancel}</> : <><Icon name="plus" size="0.85em"/> {I.add}</>}
+          </button>
         </span>
       </div>
 
@@ -62,7 +65,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
               {ITEM_TYPES.map((t, i) => (
                 <button key={t} className="filter-tag" style={{ opacity: form.type === t ? 1 : 0.5, borderColor: form.type === t ? "currentColor" : "" }}
-                  onClick={() => setForm(f => ({ ...f, type: t }))}>{ITEM_ICONS[t]} {T.ITEM_TYPES[i] ?? t}</button>
+                  onClick={() => setForm(f => ({ ...f, type: t }))}><Icon name={ITEM_ICONS[t]} size="0.85em"/> {T.ITEM_TYPES[i] ?? t}</button>
               ))}
             </div>
             {needsExtras(form.type) && (
@@ -88,7 +91,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
               </>
             )}
             <input className="g-input" placeholder={I.note} value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addItem}>{I.save}</button></div>
+            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addItem}><Icon name="plus" size="0.85em"/> {I.save}</button></div>
           </div>
         </div>
       )}
@@ -97,7 +100,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
         <button className={`filter-tag${!filterType ? " active-filter" : ""}`} onClick={() => setFilterType(null)}>{I.all}</button>
         {ITEM_TYPES.map((t, i) => {
           const c = inventory.filter(x => x.type === t).length; if (!c) return null;
-          return <button key={t} className={`filter-tag${filterType === t ? " active-filter" : ""}`} onClick={() => setFilterType(filterType === t ? null : t)}>{ITEM_ICONS[t]} {T.ITEM_TYPES[i] ?? t} ({c})</button>;
+          return <button key={t} className={`filter-tag${filterType === t ? " active-filter" : ""}`} onClick={() => setFilterType(filterType === t ? null : t)}><Icon name={ITEM_ICONS[t]} size="0.85em"/> {T.ITEM_TYPES[i] ?? t} ({c})</button>;
         })}
       </div>
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
@@ -112,7 +115,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
 
             {/* Nagłówek */}
             <div className="pack-item-header">
-              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{ITEM_ICONS[item.type] || "◈"}</span>
+              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={ITEM_ICONS[item.type] || "diamond"}/></span>
               <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", gap:"0.2rem" }}>
                 <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, width:"100%" }}
                   value={item.name} onChange={e => upd(item.id, "name", e.target.value)}/>
@@ -122,8 +125,8 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
                 </div>
               </div>
               <PrzypnijBtn pinned={item.pinned} onToggle={() => upd(item.id,"pinned",!item.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(item.id)} aria-label="Edit entry">✎</button>
-              <button className="entity-toggle" onClick={() => toggle(item.id)}>{open ? "▲" : "▼"}</button>
+              <button className="entity-toggle" onClick={() => startEdit(item.id)} aria-label="Edit entry"><Icon name="edit" size="0.85em"/></button>
+              <button className="entity-toggle" onClick={() => toggle(item.id)}><Icon name={open ? "chevron-up" : "chevron-down"}/></button>
             </div>
 
             {/* Podgląd — 2 linie gdy zwinięty, pełny gdy rozwinięty (ale nie w trybie edycji) */}
@@ -139,7 +142,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
             {/* Statystyki broni/czaru — zawsze widoczne gdy rozwinięty i nie w edycji */}
             {open && !isEditing && (item.damage || item.charges) && (
               <div style={{ display:"flex", flexWrap:"wrap", gap:"0.5rem", marginTop:"0.35rem" }}>
-                {item.damage && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-label)" }}>⚔ {item.damage}{item.damageType ? ` (${displayDamageType(item.damageType)})` : ""}{item.modifier ? ` +${parseInt(item.modifier)||0}` : ""}</span>}
+                {item.damage && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-label)", display:"inline-flex", alignItems:"center", gap:"0.25rem" }}><Icon name="sword" size="0.85em"/> {item.damage}{item.damageType ? ` (${displayDamageType(item.damageType)})` : ""}{item.modifier ? ` +${parseInt(item.modifier)||0}` : ""}</span>}
                 {item.charges && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-label)" }}>{I.charges} {item.charges}</span>}
                 {item.qty && item.qty !== "1" && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-dim)" }}>×{item.qty}</span>}
               </div>
@@ -151,7 +154,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
                 <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
                   {ITEM_TYPES.map((t, i) => (
                     <button key={t} className="filter-tag" style={{ opacity: item.type === t ? 1 : 0.45, borderColor: item.type === t ? "currentColor" : "" }}
-                      onClick={() => upd(item.id, "type", t)}>{ITEM_ICONS[t]} {T.ITEM_TYPES[i] ?? t}</button>
+                      onClick={() => upd(item.id, "type", t)}><Icon name={ITEM_ICONS[t]} size="0.85em"/> {T.ITEM_TYPES[i] ?? t}</button>
                   ))}
                 </div>
                 <div className="pack-item-row">
@@ -178,9 +181,9 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
                 <div className="pack-field"><span className="pack-field-label">{I.notes}</span><input className="pack-field-input" value={item.note || ""} onChange={e => upd(item.id, "note", e.target.value)}/></div>
                 <div className="row" style={{ justifyContent:"space-between", marginTop:"0.3rem" }}>
                   <button className="btn-ghost" onClick={() => del(item.id)}
-                    style={pendingDelete[item.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
-                    {pendingDelete[item.id] ? T.UI.confirmDelete : I.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(item.id)}>✓</button>
+                    style={pendingDelete[item.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)",display:"flex",alignItems:"center",gap:"0.3rem"}:{}}>
+                    {pendingDelete[item.id] ? <><Icon name="warning" size="0.8em"/> {T.UI.confirmDelete}</> : I.delete}</button>
+                  <button className="btn-ghost" onClick={() => stopEdit(item.id)}><Icon name="check" size="0.85em"/></button>
                 </div>
               </div>
             )}

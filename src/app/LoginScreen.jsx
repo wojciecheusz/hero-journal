@@ -1,6 +1,7 @@
 import { THEMES } from '../theme/themes';
 import { load } from '../utils/storage';
 import { detectLang, TRANSLATIONS } from '../i18n/translations';
+import Icon from '../shared/icons';
 
 export default function LoginScreen({ onLogin, loading }) {
   const savedTheme = load("hj_theme", "pergamin");
@@ -8,7 +9,7 @@ export default function LoginScreen({ onLogin, loading }) {
   const T = TRANSLATIONS[detectLang()];
   return (
     <div className="profile-screen">
-      <div className="profile-logo">⚔ Hero Journal</div>
+      <div className="profile-logo" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"0.4rem" }}><Icon name="sword" size="1em"/> Hero Journal</div>
       <div className="profile-tagline">{T.UI.loginTagline}</div>
       <button onClick={onLogin} disabled={loading}
         style={{ display:"flex", alignItems:"center", gap:"0.75rem", background:t.bgCard, border:`1px solid ${t.accentBorder}`, color:t.text, fontFamily:"Cinzel,serif", fontSize:"0.72rem", letterSpacing:"0.12em", textTransform:"uppercase", padding:"0.9rem 1.6rem", cursor:loading?"wait":"pointer", transition:"all 0.2s", opacity:loading?0.7:1, marginTop:"0.5rem" }}>

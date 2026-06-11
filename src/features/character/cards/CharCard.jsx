@@ -1,6 +1,7 @@
 import { clamp } from '../../../utils/math';
 import { XP_THRESHOLDS } from '../../../constants/gameConstants';
 import { CardHeader, LBL, LBL_SM } from './shared';
+import Icon from '../../../shared/icons';
 
 export default function CharCard({ char, setChar, C, open, onToggle }) {
   const upd = (f, v) => setChar(c => ({ ...c, [f]: v }));
@@ -39,8 +40,8 @@ export default function CharCard({ char, setChar, C, open, onToggle }) {
                   value={cls.level} min={1} max={20}
                   onChange={e => setChar(c => { const cl=[...c.classes]; cl[i]={...cl[i],level:clamp(parseInt(e.target.value)||1,1,20)}; return {...c,classes:cl}; })}/>
                 {i > 0 && (
-                  <button className="btn-ghost" style={{ padding:"0.1rem 0.35rem", fontSize:"0.65rem", flexShrink:0 }}
-                    onClick={() => setChar(c => ({...c, classes:c.classes.filter((_,j) => j!==i)}))} aria-label="Remove class">✕</button>
+                  <button className="btn-ghost" style={{ padding:"0.1rem 0.35rem", flexShrink:0, display:"flex", alignItems:"center" }}
+                    onClick={() => setChar(c => ({...c, classes:c.classes.filter((_,j) => j!==i)}))} aria-label="Remove class"><Icon name="close" size="0.8em"/></button>
                 )}
               </div>
             ))}

@@ -7,7 +7,7 @@ export const SYSTEMS = [
     id: "dnd5e",
     name: "D&D 5e",
     fullName: "Dungeons & Dragons 5th Edition",
-    icon: "⚔️",
+    icon: "sword",
     description: "Klasy, czary, umiejętności, atrybuty i cały ekwipunek D&D 5e.",
     color: "#c9943e",
   },
@@ -15,7 +15,7 @@ export const SYSTEMS = [
     id: "wfrp",
     name: "Warhammer",
     fullName: "Warhammer Fantasy Roleplay 4e",
-    icon: "💀",
+    icon: "skull",
     description: "10 cech, kariera, rany, talenty, kondycja i ekwipunek WFRP.",
     color: "#8a3a3a",
   },
@@ -23,7 +23,7 @@ export const SYSTEMS = [
     id: "universal",
     name: "Uniwersalny",
     fullName: "Własna karta postaci",
-    icon: "📝",
+    icon: "book",
     description: "Sam określasz atrybuty, zasoby i sekcje karty. Dla dowolnego systemu.",
     color: "#4a7aaa",
   },
@@ -32,37 +32,37 @@ export const SYSTEMS = [
 /* ═══ Nawigacja D&D 5e ═════════════════════════════ */
 export const DND_NAV_GROUPS = [
   {
-    id: "hero", label: "Bohater", icon: "⚔️", defaultTab: "character",
+    id: "hero", label: "Bohater", icon: "sword", defaultTab: "character",
     tabs: [
-      { id: "character", label: "Postać",    icon: "⚔️" },
-      { id: "inventory", label: "Plecak",    icon: "🎒" },
-      { id: "spells",    label: "Czary",     icon: "🔮" },
-      { id: "skills",    label: "Zdolności", icon: "✨" },
+      { id: "character", label: "Postać",    icon: "sword" },
+      { id: "inventory", label: "Plecak",    icon: "backpack" },
+      { id: "spells",    label: "Czary",     icon: "wand" },
+      { id: "skills",    label: "Zdolności", icon: "sparkles" },
     ],
   },
   {
-    id: "world", label: "Świat", icon: "🌍", defaultTab: "npcs",
+    id: "world", label: "Świat", icon: "globe", defaultTab: "npcs",
     tabs: [
-      { id: "npcs",      label: "Postacie", icon: "👥" },
-      { id: "locations", label: "Miejsca",  icon: "🗺️" },
-      { id: "factions",  label: "Frakcje",  icon: "⚜️" },
+      { id: "npcs",      label: "Postacie", icon: "users" },
+      { id: "locations", label: "Miejsca",  icon: "map" },
+      { id: "factions",  label: "Frakcje",  icon: "flag" },
     ],
   },
   {
-    id: "log", label: "Dziennik", icon: "📜", defaultTab: "sessions",
+    id: "log", label: "Dziennik", icon: "scroll", defaultTab: "sessions",
     tabs: [
-      { id: "sessions", label: "Kronika", icon: "📖" },
-      { id: "quests",   label: "Zadania", icon: "⚡" },
+      { id: "sessions", label: "Kronika", icon: "book-open" },
+      { id: "quests",   label: "Zadania", icon: "zap" },
     ],
   },
   {
-    id: "compendium", label: "Kompendium", icon: "📚", defaultTab: "compendium-spells",
+    id: "compendium", label: "Kompendium", icon: "book", defaultTab: "compendium-spells",
     tabs: [
-      { id: "compendium-races",     label: "Rasy",       icon: "🧝" },
-      { id: "compendium-classes",   label: "Klasy",      icon: "⚔️" },
-      { id: "compendium-spells",    label: "Czary",      icon: "✨" },
-      { id: "compendium-monsters",  label: "Potwory",    icon: "🐉" },
-      { id: "compendium-equipment", label: "Przedmioty", icon: "🎒" },
+      { id: "compendium-races",     label: "Rasy",       icon: "users" },
+      { id: "compendium-classes",   label: "Klasy",      icon: "sword" },
+      { id: "compendium-spells",    label: "Czary",      icon: "sparkles" },
+      { id: "compendium-monsters",  label: "Potwory",    icon: "skull" },
+      { id: "compendium-equipment", label: "Przedmioty", icon: "backpack" },
     ],
   },
 ];
@@ -70,54 +70,54 @@ export const DND_NAV_GROUPS = [
 /* ═══ Nawigacja Warhammer ══════════════════════════ */
 export const WFRP_NAV_GROUPS = [
   {
-    id: "hero", label: "Bohater", icon: "💀", defaultTab: "character",
+    id: "hero", label: "Bohater", icon: "skull", defaultTab: "character",
     tabs: [
-      { id: "character",      label: "Postać",     icon: "💀" },
-      { id: "wfrp-inventory", label: "Ekwipunek",  icon: "🎒" },
-      { id: "wfrp-skills",    label: "Umiejętności", icon: "🎯" },
+      { id: "character",      label: "Postać",     icon: "skull" },
+      { id: "wfrp-inventory", label: "Ekwipunek",  icon: "backpack" },
+      { id: "wfrp-skills",    label: "Umiejętności", icon: "target" },
     ],
   },
   {
-    id: "world", label: "Świat", icon: "🌍", defaultTab: "npcs",
+    id: "world", label: "Świat", icon: "globe", defaultTab: "npcs",
     tabs: [
-      { id: "npcs",      label: "Postacie", icon: "👥" },
-      { id: "locations", label: "Miejsca",  icon: "🗺️" },
-      { id: "factions",  label: "Frakcje",  icon: "⚜️" },
+      { id: "npcs",      label: "Postacie", icon: "users" },
+      { id: "locations", label: "Miejsca",  icon: "map" },
+      { id: "factions",  label: "Frakcje",  icon: "flag" },
     ],
   },
   {
-    id: "log", label: "Dziennik", icon: "📜", defaultTab: "sessions",
+    id: "log", label: "Dziennik", icon: "scroll", defaultTab: "sessions",
     tabs: [
-      { id: "sessions", label: "Kronika", icon: "📖" },
-      { id: "quests",   label: "Zadania", icon: "⚡" },
+      { id: "sessions", label: "Kronika", icon: "book-open" },
+      { id: "quests",   label: "Zadania", icon: "zap" },
     ],
   },
 ];
 
 /* ═══ Nawigacja Uniwersalna ════════════════════════ */
 export const buildUniversalNavGroups = (schema = {}) => {
-  const heroTabs = [{ id: "character", label: "Postać", icon: "📝" }];
-  if (schema.features?.inventory) heroTabs.push({ id: "universal-inventory", label: "Ekwipunek", icon: "🎒" });
+  const heroTabs = [{ id: "character", label: "Postać", icon: "book" }];
+  if (schema.features?.inventory) heroTabs.push({ id: "universal-inventory", label: "Ekwipunek", icon: "backpack" });
 
   const groups = [
-    { id: "hero", label: "Bohater", icon: "📝", defaultTab: "character", tabs: heroTabs },
+    { id: "hero", label: "Bohater", icon: "book", defaultTab: "character", tabs: heroTabs },
   ];
   if (schema.features?.world) {
     groups.push({
-      id: "world", label: "Świat", icon: "🌍", defaultTab: "npcs",
+      id: "world", label: "Świat", icon: "globe", defaultTab: "npcs",
       tabs: [
-        { id: "npcs",      label: "Postacie", icon: "👥" },
-        { id: "locations", label: "Miejsca",  icon: "🗺️" },
-        ...(schema.features?.factions ? [{ id: "factions", label: "Frakcje", icon: "⚜️" }] : []),
+        { id: "npcs",      label: "Postacie", icon: "users" },
+        { id: "locations", label: "Miejsca",  icon: "map" },
+        ...(schema.features?.factions ? [{ id: "factions", label: "Frakcje", icon: "flag" }] : []),
       ],
     });
   }
   if (schema.features?.journal) {
     groups.push({
-      id: "log", label: "Dziennik", icon: "📜", defaultTab: "sessions",
+      id: "log", label: "Dziennik", icon: "scroll", defaultTab: "sessions",
       tabs: [
-        { id: "sessions", label: "Kronika", icon: "📖" },
-        ...(schema.features?.quests ? [{ id: "quests", label: "Zadania", icon: "⚡" }] : []),
+        { id: "sessions", label: "Kronika", icon: "book-open" },
+        ...(schema.features?.quests ? [{ id: "quests", label: "Zadania", icon: "zap" }] : []),
       ],
     });
   }

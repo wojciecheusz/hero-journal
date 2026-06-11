@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useT } from '../i18n/translations';
+import Icon from './icons';
 
 export function TagsEditor({ tags, onChange, suggestions }) {
   const T = useT();
@@ -18,7 +19,7 @@ export function TagsEditor({ tags, onChange, suggestions }) {
         {tags.map(tag => (
           <span key={tag} className="tag tag-default">
             {tag}
-            <button className="tag-remove" onClick={() => onChange(tags.filter(x => x !== tag))} aria-label="Remove tag">✕</button>
+            <button className="tag-remove" onClick={() => onChange(tags.filter(x => x !== tag))} aria-label="Remove tag"><Icon name="close" size="0.85em"/></button>
           </span>
         ))}
         {adding
@@ -37,11 +38,11 @@ export function TagsEditor({ tags, onChange, suggestions }) {
                 + {tag}
               </button>
             ))}
-            <button className="tag-remove" onClick={() => setShowSugg(false)} aria-label={T.UI.hideSuggestions} title={T.UI.hideSuggestions}>✕</button>
+            <button className="tag-remove" onClick={() => setShowSugg(false)} aria-label={T.UI.hideSuggestions} title={T.UI.hideSuggestions}><Icon name="close" size="0.85em"/></button>
           </div>
         ) : (
-          <button style={{ display:"inline-block", marginTop:"0.2rem", background:"none", border:"none", padding:0, cursor:"pointer", opacity:0.3, fontSize:"0.46rem", fontFamily:"Cinzel,serif", letterSpacing:"0.08em", textTransform:"uppercase", color:"inherit" }} onClick={() => setShowSugg(true)}>
-            {T.UI.tagSuggestions} ▸
+          <button style={{ display:"inline-flex", alignItems:"center", gap:"0.2rem", marginTop:"0.2rem", background:"none", border:"none", padding:0, cursor:"pointer", opacity:0.3, fontSize:"0.46rem", fontFamily:"Cinzel,serif", letterSpacing:"0.08em", textTransform:"uppercase", color:"inherit" }} onClick={() => setShowSugg(true)}>
+            {T.UI.tagSuggestions} <Icon name="chevron-right" size="0.9em"/>
           </button>
         )
       )}
@@ -81,8 +82,8 @@ export function SearchBar({ value, onChange }) {
         <button
           onClick={clearSearch}
           aria-label="Wyczysc"
-          style={{ position:"absolute", right:"0.4rem", background:"none", border:"none", cursor:"pointer", fontSize:"0.8rem", opacity:0.5, color:"inherit" }}
-        >x</button>
+          style={{ position:"absolute", right:"0.4rem", display:"flex", background:"none", border:"none", cursor:"pointer", opacity:0.5, color:"inherit" }}
+        ><Icon name="close" size="0.85em"/></button>
       )}
     </div>
   );
@@ -91,7 +92,7 @@ export function SearchBar({ value, onChange }) {
 export function PrzypnijBtn({ pinned, onToggle }) {
   return (
     <button className={`pin-btn${pinned ? " pinned" : ""}`} onClick={onToggle} aria-label={pinned ? "Unpin" : "Pin"}>
-      {pinned ? "📌" : "📍"}
+      <Icon name="pin" fill={pinned ? "currentColor" : "none"} color={pinned ? "#e2b94e" : "currentColor"}/>
     </button>
   );
 }
@@ -162,7 +163,7 @@ export function ResetModal({ onConfirm, onCancel }) {
   return (
     <div className="modal-overlay" onClick={onCancel}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
-        <div className="modal-title">{T.UI.resetTitle}</div>
+        <div className="modal-title" style={{ display:"flex", alignItems:"center", gap:"0.4rem" }}><Icon name="warning" size="0.95em"/> {T.UI.resetTitle}</div>
         <p className="modal-text">{T.UI.resetText}</p>
         <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem" }}>
           <button className="btn-ghost" onClick={onCancel}>{T.UI.resetCancel}</button>

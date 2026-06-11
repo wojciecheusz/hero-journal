@@ -1,4 +1,5 @@
 import SettingsMenu from './SettingsMenu';
+import Icon from '../shared/icons';
 
 /* Treść kontekstowego panelu pomocy — zależna od aktywnej zakładki */
 function SidebarHelp({ tab, T, onClose }) {
@@ -14,11 +15,11 @@ function SidebarHelp({ tab, T, onClose }) {
     <div style={{ flex:1, overflowY:"auto", borderTop:"1px solid var(--hj-border-sub)", padding:"0.7rem 0.8rem 0.4rem", display:"flex", flexDirection:"column", gap:0 }}>
       {/* Nagłówek sekcji pomocy */}
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"0.5rem" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--hj-accent)" }}>
-          ? {hc.title}
+        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.2em", textTransform:"uppercase", color:"var(--hj-accent)", display:"flex", alignItems:"center", gap:"0.3rem" }}>
+          <Icon name="help-circle" size="0.9em" color="var(--hj-accent)"/> {hc.title}
         </span>
         <button onClick={onClose}
-          style={{ background:"transparent", border:"none", color:"var(--hj-text-dim)", fontSize:"0.75rem", cursor:"pointer", lineHeight:1, padding:"0.1rem 0.2rem" }}>✕</button>
+          style={{ background:"transparent", border:"none", color:"var(--hj-text-dim)", fontSize:"0.75rem", cursor:"pointer", lineHeight:1, padding:"0.1rem 0.2rem", display:"flex" }}><Icon name="close" size="0.85em"/></button>
       </div>
       {/* Intro */}
       {hc.intro && (
@@ -84,7 +85,7 @@ export default function Sidebar({
                 <button className={`hj-sidebar-item${isActive?" active":""}`}
                   style={{ paddingTop:"0.55rem", paddingBottom:"0.55rem" }}
                   onClick={() => setTab(t.id)}>
-                  <span style={{ fontSize:"0.95rem", lineHeight:1, flexShrink:0 }}>{g.icon}</span>
+                  <span style={{ fontSize:"0.95rem", lineHeight:1, flexShrink:0, display:"inline-flex" }}><Icon name={g.icon}/></span>
                   <span>{g.label}</span>
                 </button>
               </div>
@@ -98,7 +99,7 @@ export default function Sidebar({
                 const isActive = tab === t.id || isEquipActive;
                 return (
                   <button key={t.id} className={`hj-sidebar-item${isActive?" active":""}`} onClick={() => setTab(t.id)}>
-                    <span style={{ fontSize:"0.95rem", lineHeight:1, flexShrink:0 }}>{t.icon}</span>
+                    <span style={{ fontSize:"0.95rem", lineHeight:1, flexShrink:0, display:"inline-flex" }}><Icon name={t.icon}/></span>
                     <span>{t.label}</span>
                   </button>
                 );
@@ -115,7 +116,7 @@ export default function Sidebar({
       <div style={{ flexShrink:0, marginTop: showHelp ? 0 : "auto", padding:"0.5rem 0.6rem", borderTop:"1px solid var(--hj-border-sub)", display:"flex", gap:"0.4rem" }}>
         <button onClick={() => { setShowHelp(s => !s); setShowSettings(false); }} aria-label="Open help" title="Help"
           style={{ flex:1, background:showHelp?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
-          ?
+          <Icon name="help-circle" size="1em"/>
         </button>
 
         {/* Wsparcie autora */}
@@ -124,14 +125,14 @@ export default function Sidebar({
           style={{ flexShrink:0, width:32, height:32, background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)", fontSize:"1.05rem", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center", textDecoration:"none", transition:"all 0.15s" }}
           onMouseEnter={e => { e.currentTarget.style.borderColor="var(--hj-accent-border)"; e.currentTarget.style.color="var(--hj-accent)"; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor="var(--hj-border-input)"; e.currentTarget.style.color="var(--hj-text-muted)"; }}>
-          🍺
+          <Icon name="beer" size="1.1em"/>
         </a>
 
         {/* Ustawienia — dropdown fixed, nie obcięty przez overflow sidebara */}
         <div style={{ flex:1, position:"relative" }}>
           <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"
             style={{ width:"100%", height:32, background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
-            ⚙
+            <Icon name="settings" size="1.1em"/>
           </button>
           {showSettings && <>
             <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>

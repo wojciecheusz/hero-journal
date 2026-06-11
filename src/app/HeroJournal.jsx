@@ -22,6 +22,7 @@ import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
 import ErrorBoundary from './ErrorBoundary';
 import { setQuotaExceededHook } from '../utils/storage';
+import Icon from '../shared/icons';
 
 /* ── Lazy imports — każdy tab ładowany na żądanie ─────────────── */
 const CharacterScreen  = lazy(() => import('../features/character/CharacterScreen'));
@@ -205,15 +206,15 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
       {syncWarning && !syncFailed && (
-        <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"rgba(40,32,8,0.95)", border:"1px solid #8a7020", color:"#d4aa40", fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.35rem 0.8rem", display:"flex", gap:"0.6rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 2px 8px rgba(0,0,0,0.4)", pointerEvents:"none" }}>
-          ☁ Synchronizacja…
+        <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"rgba(40,32,8,0.95)", border:"1px solid #8a7020", color:"#d4aa40", fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.35rem 0.8rem", display:"flex", gap:"0.4rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 2px 8px rgba(0,0,0,0.4)", pointerEvents:"none" }}>
+          <Icon name="cloud" size="0.9em"/> Synchronizacja…
         </div>
       )}
       {syncFailed && (
         <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"#5a1a1a", border:"1px solid #8a3a3a", color:"#f0c0c0", fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.5rem 1rem", display:"flex", gap:"0.8rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 4px 16px rgba(0,0,0,0.5)" }}>
-          <span>☁ Błąd synchronizacji — dane zapisane lokalnie</span>
+          <span style={{ display:"flex", alignItems:"center", gap:"0.4rem" }}><Icon name="cloud" size="0.9em"/> Błąd synchronizacji — dane zapisane lokalnie</span>
           <button onClick={dismissSyncError}
-            style={{ background:"transparent", border:"none", color:"inherit", cursor:"pointer", fontSize:"0.9rem", lineHeight:1, padding:0, flexShrink:0 }}>✕</button>
+            style={{ background:"transparent", border:"none", color:"inherit", cursor:"pointer", lineHeight:1, padding:0, flexShrink:0, display:"flex" }}><Icon name="close" size="0.9em"/></button>
         </div>
       )}
       {showTutorial && <TutorialModal theme={theme} onClose={() => { setShowTutorial(false); save("hj_tutorial_seen","1"); }}/>}
@@ -236,7 +237,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>
           <span>Storage full — data not saved</span>
-          <button onClick={() => setQuotaWarning(false)} style={{ background:"none", border:"none", color:"inherit", cursor:"pointer", fontSize:"0.9rem", lineHeight:1, padding:0 }}>✕</button>
+          <button onClick={() => setQuotaWarning(false)} style={{ background:"none", border:"none", color:"inherit", cursor:"pointer", lineHeight:1, padding:0, display:"flex" }}><Icon name="close" size="0.9em"/></button>
         </div>
       )}
 
@@ -299,7 +300,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <button className={`dice-fab${showDice ? ' open' : ''}`}
         onClick={() => setShowDice(s => !s)}
         aria-label={T.DICE.title} title={T.DICE.title}>
-        🎲
+        <Icon name="dice" size="1.3rem"/>
       </button>
       {showDice && <DiceRoller onClose={() => setShowDice(false)}/>}
     </div>

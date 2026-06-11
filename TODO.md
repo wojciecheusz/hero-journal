@@ -3,6 +3,27 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P21 — Zamiana wszystkich ikon emoji na SVG (lucide-react) — UKOŃCZONE (2026-06-11)
+Cel: spójna grubość linii, kolorystyka per-kontekst (nie wszystko czarne/monochrom).
+- [x] `npm install lucide-react`
+- [x] `src/shared/icons.jsx` — komponent `Icon` (size="1em", strokeWidth=1.75,
+      currentColor domyślnie) + rejestr `ICONS`/`ICON_COLORS`
+- [x] `src/shared/ui.jsx` + `cards/shared.jsx` — ▲▼ (CardHeader), ✕ (tagi/search),
+      📌📍 (PrzypnijBtn), ▸ (sugestie tagów)
+- [x] `gameConstants.js`/`enums.js` — SKILL_CAT_ICONS, SPELL_SCHOOL_ICONS,
+      REL_ICONS, FACTION_RANK_ICONS, LOC_TYPE_ICONS, ITEM_ICONS, DND_CLASSES
+      → klucze semantyczne + mapy kolorów
+- [x] `navigation.js` + `constants/systems.js` — ikony nawigacji (⚔🎒✨🔮🌍👥🗺⚜📜📖⚡💀📝 itd.)
+- [x] App chrome: Header, Sidebar, MobileNav, SettingsMenu, LoginScreen,
+      ProfileScreen, ErrorBoundary, HelpPanel
+- [x] Karta postaci: CharCard, CombatCard, EquippedCard, RestModal, SpellSlotsWidget
+- [x] Ekrany encji: InventoryScreen, SkillsScreen, SpellsScreen, NPCsScreen,
+      LocationsScreen, FactionsPanel, SessionsScreen, QuestScreen (✎▲▼✓✕⊕⠿)
+- [x] DiceRoller (🎲)
+- [x] `translations.js` — usunięcie prefiksów emoji z etykiet (PL+EN), osobne
+      mapy ikon: PALETTE_ICONS (motywy), REST/TUTORIAL/DICE, HELP.*.items
+- [x] Build + szybki test wizualny (dev server)
+
 ### ✅ P20 — Faza 1: system Uniwersalny — UKOŃCZONE (2026-06-10)
 **Status wdrożenia fazy 1:**
 - `ProfileScreen.jsx` — dodano `SystemPicker` (wybór systemu przed kreatorem;

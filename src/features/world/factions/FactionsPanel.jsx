@@ -5,6 +5,7 @@ import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../../shared/u
 import { useT } from '../../../i18n/translations';
 import { useScrollToEntity } from '../../../hooks/useScrollToEntity';
 import { useEntityList } from '../../../hooks/useEntityList';
+import Icon from '../../../shared/icons';
 
 function FactionsPanel({ title, factions, setFactions, openEntity }) {
   const T = useT();
@@ -45,7 +46,9 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
         <span className="col-title">{title}</span>
         <span className="col-actions">
           <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{F.count(factions.length)}</span>
-          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? F.cancel : F.add}</button>
+          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
+            {showForm ? <><Icon name="close" size="0.85em"/> {F.cancel}</> : <><Icon name="plus" size="0.85em"/> {F.add}</>}
+          </button>
         </span>
       </div>
 
@@ -72,7 +75,7 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
               ))}
             </div>
             <textarea className="g-textarea" rows={3} placeholder={F.notesPh} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addFaction}>{F.addBtn}</button></div>
+            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addFaction}><Icon name="plus" size="0.85em"/> {F.addBtn}</button></div>
           </div>
         </div>
       )}
@@ -93,12 +96,12 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
         return (
           <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
-              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}</span>
+              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={fac.name} onChange={e => upd(fac.id,"name",e.target.value)} placeholder={F.editNamePh}/>
               <PrzypnijBtn pinned={fac.pinned} onToggle={() => upd(fac.id,"pinned",!fac.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(fac.id)} aria-label="Edit entry">✎</button>
-              <button className="entity-toggle" onClick={() => toggle(fac.id)} aria-label={open?"Collapse":"Expand"}>{open?"▲":"▼"}</button>
+              <button className="entity-toggle" onClick={() => startEdit(fac.id)} aria-label="Edit entry"><Icon name="edit" size="0.85em"/></button>
+              <button className="entity-toggle" onClick={() => toggle(fac.id)} aria-label={open?"Collapse":"Expand"}><Icon name={open?"chevron-up":"chevron-down"}/></button>
             </div>
             <TagsEditor tags={fac.tags||[]} onChange={v => upd(fac.id,"tags",v)}/>
 
@@ -126,14 +129,14 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
                 {isEditing && (
                   <div style={{ marginTop:"0.8rem" }}>
                     <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
-                      {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}>{FACTION_RANK_ICONS[r]} {displayFactionRank(r)}</button>)}
+                      {FACTION_RANKS.map(r => <button key={r} className="filter-tag" style={{ opacity: fac.rank===r?1:0.35, borderColor: fac.rank===r?rankColor(r)+"88":"", color: fac.rank===r?rankColor(r):"" }} onClick={() => upd(fac.id,"rank",r)}><Icon name={FACTION_RANK_ICONS[r]} size="0.85em" color={fac.rank===r?rankColor(r):undefined}/> {displayFactionRank(r)}</button>)}
                     </div>
                     <textarea className="g-textarea" rows={4} placeholder={F.editNotesPh} value={fac.notes||""} onChange={e => upd(fac.id,"notes",e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
                       <button className="btn-ghost" onClick={() => del(fac.id)}
-                        style={pendingDelete[fac.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
-                        {pendingDelete[fac.id] ? T.UI.confirmDelete : F.delete}</button>
-                      <button className="btn-ghost" onClick={() => stopEdit(fac.id)}>✓</button>
+                        style={pendingDelete[fac.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)",display:"flex",alignItems:"center",gap:"0.3rem"}:{}}>
+                        {pendingDelete[fac.id] ? <><Icon name="warning" size="0.8em"/> {T.UI.confirmDelete}</> : F.delete}</button>
+                      <button className="btn-ghost" onClick={() => stopEdit(fac.id)}><Icon name="check" size="0.85em"/></button>
                     </div>
                   </div>
                 )}

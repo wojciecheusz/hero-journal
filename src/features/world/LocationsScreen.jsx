@@ -5,6 +5,7 @@ import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
+import Icon from '../../shared/icons';
 
 function LocationsScreen({ title, locations, setLocations, openEntity }) {
   const T = useT();
@@ -42,7 +43,9 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
         <span className="col-title">{title}</span>
         <span className="col-actions">
           <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{T.LOCATIONS.count(locations.length)}</span>
-          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? T.LOCATIONS.cancel : T.LOCATIONS.add}</button>
+          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
+            {showForm ? <><Icon name="close" size="0.85em"/> {T.LOCATIONS.cancel}</> : <><Icon name="plus" size="0.85em"/> {T.LOCATIONS.add}</>}
+          </button>
         </span>
       </div>
 
@@ -54,19 +57,19 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
               {LOC_TYPES.map((type) => (
                 <button key={type} className="filter-tag" style={{ opacity: form.type===type?1:0.45, borderColor: form.type===type?"currentColor":"" }}
-                  onClick={() => setForm(f => ({ ...f, type }))}>{LOC_TYPE_ICONS[type]} {displayLocType(type)}</button>
+                  onClick={() => setForm(f => ({ ...f, type }))}><Icon name={LOC_TYPE_ICONS[type]} size="0.85em"/> {displayLocType(type)}</button>
               ))}
             </div>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
               {(T.UI.SUGGESTED_LOCATION_TAGS||[]).map((tag) => (
                 <button key={tag} className="tag tag-suggestion" style={{ opacity: form.tags.includes(tag) ? 1 : 0.45 }}
                   onClick={() => setForm(f => ({ ...f, tags: f.tags.includes(tag) ? f.tags.filter(t => t !== tag) : [...f.tags, tag] }))}>
-                  {form.tags.includes(tag) ? "✓ " : "+ "}{tag}
+                  <Icon name={form.tags.includes(tag) ? "check" : "plus"} size="0.85em"/> {tag}
                 </button>
               ))}
             </div>
             <textarea className="g-textarea" rows={3} placeholder={T.LOCATIONS.notesPh} value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addLoc}>{T.LOCATIONS.addBtn}</button></div>
+            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addLoc}><Icon name="plus" size="0.85em"/> {T.LOCATIONS.addBtn}</button></div>
           </div>
         </div>
       )}
@@ -79,7 +82,7 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
           if (!c) return null;
           return (
             <button key={type} className={`filter-tag${filterType===type?" active-filter":""}`} onClick={() => setFilterType(filterType===type?null:type)}>
-              <span className="badge-icon">{LOC_TYPE_ICONS[type]}</span> {displayLocType(type)} ({c})
+              <span className="badge-icon"><Icon name={LOC_TYPE_ICONS[type]} size="0.85em"/></span> {displayLocType(type)} ({c})
             </button>
           );
         })}
@@ -93,12 +96,12 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
         return (
           <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
-              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{LOC_TYPE_ICONS[loc.type]}</span>
+              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={LOC_TYPE_ICONS[loc.type]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={T.LOCATIONS.editNamePh}/>
               <PrzypnijBtn pinned={loc.pinned} onToggle={() => upd(loc.id, "pinned", !loc.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(loc.id)} aria-label="Edit location">✎</button>
-              <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}>{open ? "▲" : "▼"}</button>
+              <button className="entity-toggle" onClick={() => startEdit(loc.id)} aria-label="Edit location"><Icon name="edit" size="0.85em"/></button>
+              <button className="entity-toggle" onClick={() => toggle(loc.id)} aria-label={open ? "Collapse" : "Expand"}><Icon name={open ? "chevron-up" : "chevron-down"}/></button>
             </div>
             <TagsEditor tags={loc.tags || []} onChange={v => upd(loc.id, "tags", v)}/>
 
@@ -117,15 +120,15 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
                     <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.7rem" }}>
                       {LOC_TYPES.map((type) => (
                         <button key={type} className="filter-tag" style={{ opacity: loc.type===type?1:0.4, borderColor: loc.type===type?"currentColor":"" }}
-                          onClick={() => upd(loc.id, "type", type)}>{LOC_TYPE_ICONS[type]} {displayLocType(type)}</button>
+                          onClick={() => upd(loc.id, "type", type)}><Icon name={LOC_TYPE_ICONS[type]} size="0.85em"/> {displayLocType(type)}</button>
                       ))}
                     </div>
                     <textarea className="g-textarea" rows={4} placeholder={T.LOCATIONS.editNotesPh} value={loc.notes||""} onChange={e => upd(loc.id, "notes", e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
                       <button className="btn-ghost" onClick={() => del(loc.id)}
-                        style={pendingDelete[loc.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
-                        {pendingDelete[loc.id] ? T.UI.confirmDelete : T.LOCATIONS.delete}</button>
-                      <button className="btn-ghost" onClick={() => stopEdit(loc.id)}>✓</button>
+                        style={pendingDelete[loc.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)",display:"flex",alignItems:"center",gap:"0.3rem"}:{}}>
+                        {pendingDelete[loc.id] ? <><Icon name="warning" size="0.8em"/> {T.UI.confirmDelete}</> : T.LOCATIONS.delete}</button>
+                      <button className="btn-ghost" onClick={() => stopEdit(loc.id)}><Icon name="check" size="0.85em"/></button>
                     </div>
                   </div>
                 )}

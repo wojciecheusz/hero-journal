@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { clamp, numMod } from '../../../utils/math';
 import { CONDITIONS } from '../../../constants/gameConstants';
 import { LBL_SM } from './shared';
+import Icon from '../../../shared/icons';
 
 const hpNumColor = pct => pct > 70 ? "#3a9a3a" : pct > 35 ? "#c06010" : "#c03030";
 
@@ -55,7 +56,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
           </div>
 
           <div style={{ display:"grid", gridTemplateColumns:"36px 1fr 36px auto", gap:"0.3rem", alignItems:"stretch" }}>
-            <button className="btn-pm minus" aria-label="Decrease HP" onClick={() => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:clamp(h.current-1,0,h.max)}}; })}>−</button>
+            <button className="btn-pm minus" aria-label="Decrease HP" onClick={() => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:clamp(h.current-1,0,h.max)}}; })}><Icon name="minus" size="1em"/></button>
             <div className="combat-box" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0.2rem 0.5rem", gap:0 }}>
               <span className="combat-box-label">{C.hp}</span>
               <div style={{ display:"flex", alignItems:"baseline", gap:"0.15rem" }}>
@@ -72,7 +73,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                   onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
               </div>
             </div>
-            <button className="btn-pm plus" aria-label="Increase HP" onClick={() => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:clamp(h.current+1,0,h.max)}}; })}>+</button>
+            <button className="btn-pm plus" aria-label="Increase HP" onClick={() => setChar(c => { const h=c.hp||{current:0,max:1}; return {...c, hp:{...h, current:clamp(h.current+1,0,h.max)}}; })}><Icon name="plus" size="1em"/></button>
             <div className="combat-box" style={{ minWidth:72 }}>
               <span className="combat-box-label">{C.hpTemp}</span>
               <input className="combat-box-input" type="number" value={hp.temp||0}
@@ -103,12 +104,12 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
             </div>
             <button className="btn-rest short" aria-label="Short rest" onClick={() => onRestModal("short")}
               style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem" }}>
-              <span style={{ fontSize:"1rem", lineHeight:1 }}>☽</span>
+              <Icon name="moon" size="1.1em"/>
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.shortRest}</span>
             </button>
             <button className="btn-rest long" aria-label="Long rest" onClick={() => onRestModal("long")}
               style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.1rem", padding:"0.4rem 0.8rem" }}>
-              <span style={{ fontSize:"1rem", lineHeight:1 }}>☀</span>
+              <Icon name="sun" size="1.1em"/>
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.43rem", textTransform:"uppercase" }}>{C.longRest}</span>
             </button>
           </div>
@@ -162,7 +163,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
 
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.7rem", alignItems:"start" }}>
             <div style={{ padding:"0.5rem 0.6rem", border:"1px solid rgba(128,128,128,0.14)", background:"rgba(128,128,128,0.04)", borderRadius:"2px" }}>
-              <div style={{ ...LBL_SM, marginBottom:"0.5rem" }}>{C.deathSaves}</div>
+              <div style={{ ...LBL_SM, marginBottom:"0.5rem", display:"flex", alignItems:"center", gap:"0.3rem" }}><Icon name="skull" size="0.85em"/> {C.deathSaves}</div>
               {[["successes",C.deathSuccess,"#4a9a5a"],["failures",C.deathFailure,"#9a3a3a"]].map(([type,label,color]) => (
                 <div key={type} style={{ display:"flex", alignItems:"center", gap:"0.4rem", marginBottom:"0.35rem" }}>
                   <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", textTransform:"uppercase", color, flexShrink:0, minWidth:44 }}>{label}</span>
@@ -186,7 +187,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
                     <button key={level}
                       onClick={() => setChar(c => ({...c, conditions:{...(c.conditions||{}), exhaustion:level===cur?0:level}}))}
                       style={{ width:"2rem", height:"2rem", borderRadius:"4px", border:`1.5px solid ${filled?"#cc5020":level===0&&cur===0?"#4a9a5a":"var(--hj-pip-empty)"}`, background:filled?"rgba(200,80,32,0.25)":level===0&&cur===0?"rgba(74,154,90,0.15)":"transparent", cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.55rem", fontWeight:700, color:filled?"#ee7040":level===0&&cur===0?"#4a9a5a":"var(--hj-text-dim)", lineHeight:1, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                      {level===0?"✓":level}
+                      {level===0?<Icon name="check" size="0.9em"/>:level}
                     </button>
                   );
                 })}

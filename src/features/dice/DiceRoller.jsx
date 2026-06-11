@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useT } from '../../i18n/translations';
+import Icon from '../../shared/icons';
 
 const QUICK_DICE = [4, 6, 8, 10, 12, 20, 100];
 
@@ -63,12 +64,12 @@ export default function DiceRoller({ onClose }) {
     <div className="dice-panel">
       {/* Nagłówek */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.55rem' }}>
-        <span style={{ fontFamily:'Cinzel,serif', fontSize:'0.55rem', letterSpacing:'0.15em', textTransform:'uppercase', color:'var(--hj-accent)' }}>
-          🎲 {D.title}
+        <span style={{ fontFamily:'Cinzel,serif', fontSize:'0.55rem', letterSpacing:'0.15em', textTransform:'uppercase', color:'var(--hj-accent)', display:'flex', alignItems:'center', gap:'0.4rem' }}>
+          <Icon name="dice" size="1em"/> {D.title}
         </span>
         <button onClick={onClose}
-          style={{ background:'none', border:'none', color:'var(--hj-text-dim)', cursor:'pointer', fontSize:'0.9rem', padding:'0 0.2rem', lineHeight:1 }}>
-          ✕
+          style={{ background:'none', border:'none', color:'var(--hj-text-dim)', cursor:'pointer', padding:'0 0.2rem', lineHeight:1, display:'flex' }}>
+          <Icon name="close" size="0.9em"/>
         </button>
       </div>
 

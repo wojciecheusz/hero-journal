@@ -4,6 +4,7 @@ import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
+import Icon from '../../shared/icons';
 
 function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
   const T  = useT();
@@ -43,7 +44,9 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
         <span className="col-title">{title}</span>
         <span className="col-actions">
           <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{N.count(npcs.length)}</span>
-          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? N.cancel : N.add}</button>
+          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
+            {showForm ? <><Icon name="close" size="0.85em"/> {N.cancel}</> : <><Icon name="plus" size="0.85em"/> {N.add}</>}
+          </button>
         </span>
       </div>
 
@@ -65,7 +68,7 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
               ))}
             </div>
             <textarea className="g-textarea" rows={3} placeholder={N.notesPh} value={formState.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addNPC}>{N.addBtn}</button></div>
+            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addNPC}><Icon name="plus" size="0.85em"/> {N.addBtn}</button></div>
           </div>
         </div>
       )}
@@ -78,7 +81,7 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
           if (!c) return null;
           return (
             <button key={r} className={`filter-tag${filterRel===r?" active-filter":""}`} onClick={() => setFilterRel(filterRel===r?null:r)}>
-              <span className="badge-icon">{REL_ICONS[r]}</span> {RL[r]} ({c})
+              <span className="badge-icon"><Icon name={REL_ICONS[r]} size="0.85em"/></span> {RL[r]} ({c})
             </button>
           );
         })}
@@ -93,12 +96,12 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
         return (
           <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
-              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{REL_ICONS[rel]}</span>
+              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={REL_ICONS[rel]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={npc.name} onChange={e => upd(npc.id, "name", e.target.value)} placeholder={N.editNamePh}/>
               <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id,"pinned",!npc.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(npc.id)} aria-label="Edit entry">✎</button>
-              <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}>{open ? "▲" : "▼"}</button>
+              <button className="entity-toggle" onClick={() => startEdit(npc.id)} aria-label="Edit entry"><Icon name="edit" size="0.85em"/></button>
+              <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}><Icon name={open ? "chevron-up" : "chevron-down"}/></button>
             </div>
 
             <TagsEditor tags={npc.tags||[]} onChange={v => upd(npc.id,"tags",v)}/>
@@ -124,15 +127,15 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
                     <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
                       {["unknown","ally","neutral","hostile"].map(r => (
                         <button key={r} className="filter-tag" style={{ opacity: rel===r?1:0.4, borderColor: rel===r?"currentColor":"" }}
-                          onClick={() => upd(npc.id,"relation",r)}>{REL_ICONS[r]} {RL[r]}</button>
+                          onClick={() => upd(npc.id,"relation",r)}><Icon name={REL_ICONS[r]} size="0.85em"/> {RL[r]}</button>
                       ))}
                     </div>
                     <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
                       <button className="btn-ghost" onClick={() => del(npc.id)}
-                        style={pendingDelete[npc.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
-                        {pendingDelete[npc.id] ? T.UI.confirmDelete : N.delete}</button>
-                      <button className="btn-ghost" onClick={() => stopEdit(npc.id)}>✓</button>
+                        style={pendingDelete[npc.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)",display:"flex",alignItems:"center",gap:"0.3rem"}:{}}>
+                        {pendingDelete[npc.id] ? <><Icon name="warning" size="0.8em"/> {T.UI.confirmDelete}</> : N.delete}</button>
+                      <button className="btn-ghost" onClick={() => stopEdit(npc.id)}><Icon name="check" size="0.85em"/></button>
                     </div>
                   </div>
                 )}

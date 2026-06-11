@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Icon from '../shared/icons';
 
 /* Dolna nawigacja mobile + szuflada grup wielo-zakładkowych (Wyposażenie/Świat) */
 export default function MobileNav({ navGroups, tab, setTab }) {
@@ -15,7 +16,7 @@ export default function MobileNav({ navGroups, tab, setTab }) {
             {group.tabs.map(t => (
               <button key={t.id} className={`nav-drawer-item${tab === t.id ? " active" : ""}`}
                 onClick={() => { setTab(t.id); setOpenGroup(null); }}>
-                <span className="nav-drawer-icon">{t.icon}</span>
+                <span className="nav-drawer-icon"><Icon name={t.icon}/></span>
                 <span className="nav-drawer-label">{t.label}</span>
               </button>
             ))}
@@ -36,10 +37,10 @@ export default function MobileNav({ navGroups, tab, setTab }) {
                 else if (g.tabs.length === 1) { setTab(g.tabs[0].id); setOpenGroup(null); }
                 else setOpenGroup(g.id);
               }}>
-              <span className="hj-nav-icon">{activeTabInGroup ? activeTabInGroup.icon : g.icon}</span>
+              <span className="hj-nav-icon"><Icon name={activeTabInGroup ? activeTabInGroup.icon : g.icon}/></span>
               <span className="hj-nav-label">{g.label}</span>
               {!activeTabInGroup && (
-                <span className="hj-nav-sub">{g.tabs.map(t => t.icon).join(" ")}</span>
+                <span className="hj-nav-sub" style={{ display:"inline-flex", gap:"0.2rem" }}>{g.tabs.map(t => <Icon key={t.id} name={t.icon} size="0.8em"/>)}</span>
               )}
             </button>
           );

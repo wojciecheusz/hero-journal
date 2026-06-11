@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useT } from '../i18n/translations';
 import { THEMES } from '../theme/themes';
+import Icon from '../shared/icons';
 
 export default function TutorialModal({ theme, onClose }) {
   const T   = useT();
@@ -22,7 +23,7 @@ export default function TutorialModal({ theme, onClose }) {
         </div>
 
         {/* Icon */}
-        <div style={{ fontSize:"2.2rem", lineHeight:1, marginBottom:"0.65rem" }}>{cur.icon}</div>
+        <div style={{ display:"flex", marginBottom:"0.65rem", color:t.accent }}><Icon name={cur.icon} size="2.2rem"/></div>
 
         {/* Title */}
         <div style={{ fontFamily:"Cinzel Decorative,serif", fontSize:"1.05rem", color:t.accent, fontWeight:700, marginBottom:"0.9rem", letterSpacing:"0.04em", lineHeight:1.3 }}>
@@ -41,8 +42,8 @@ export default function TutorialModal({ theme, onClose }) {
           <div style={{ display:"flex", flexDirection:"column", gap:"0.45rem", marginBottom:"1rem" }}>
             {cur.actions.map(([icon, label]) => (
               <div key={icon} style={{ display:"flex", alignItems:"flex-start", gap:"0.75rem" }}>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.65rem", color:t.accent, minWidth:52, textAlign:"center", background:`${t.accent}14`, border:`1px solid ${t.accentBorder}`, padding:"0.2rem 0.35rem", borderRadius:"2px", flexShrink:0 }}>
-                  {icon}
+                <span style={{ display:"flex", alignItems:"center", justifyContent:"center", color:t.accent, minWidth:52, background:`${t.accent}14`, border:`1px solid ${t.accentBorder}`, padding:"0.2rem 0.35rem", borderRadius:"2px", flexShrink:0 }}>
+                  <Icon name={icon} size="1.1em"/>
                 </span>
                 <span style={{ fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.95rem", color:t.text, lineHeight:1.55 }}>
                   {label}
@@ -76,13 +77,13 @@ export default function TutorialModal({ theme, onClose }) {
           <div style={{ display:"flex", gap:"0.5rem" }}>
             {slide > 0 && (
               <button onClick={() => setSlide(s => s-1)}
-                style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, padding:"0.42rem 0.9rem", cursor:"pointer" }}>
-                {TUT.prev}
+                style={{ display:"flex", alignItems:"center", gap:"0.35rem", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, padding:"0.42rem 0.9rem", cursor:"pointer" }}>
+                <Icon name="arrow-left" size="0.9em"/> {TUT.prev}
               </button>
             )}
             <button onClick={() => isLast ? onClose() : setSlide(s => s+1)}
-              style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"rgba(226,185,78,0.1)", border:`1px solid ${t.accentBorder}`, color:t.accent, padding:"0.42rem 1.1rem", cursor:"pointer" }}>
-              {isLast ? TUT.start : TUT.next}
+              style={{ display:"flex", alignItems:"center", gap:"0.35rem", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"rgba(226,185,78,0.1)", border:`1px solid ${t.accentBorder}`, color:t.accent, padding:"0.42rem 1.1rem", cursor:"pointer" }}>
+              {isLast ? TUT.start : <>{TUT.next} <Icon name="arrow-right" size="0.9em"/></>}
             </button>
           </div>
         </div>

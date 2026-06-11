@@ -2,6 +2,7 @@ import { useState, memo } from 'react';
 import { LEGEND_ITEMS } from '../../constants/gameConstants';
 import { parseEntityLinksWithTooltips } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
+import Icon from '../../shared/icons';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -27,7 +28,7 @@ function SessionsScreen({ sessions, setSessions, npcs, locations, quests, invent
     <>
       <div className="row" style={{ justifyContent:"space-between" }}>
         <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{sessions.length} {sessions.length === 1 ? "session" : "sessions"}</span>
-        <button className="btn-ghost" onClick={addSesja}>{T.SESSIONS.add}</button>
+        <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addSesja}><Icon name="plus" size="0.85em"/> {T.SESSIONS.add}</button>
       </div>
 
       {hasAny && (
@@ -54,7 +55,7 @@ function SessionsScreen({ sessions, setSessions, npcs, locations, quests, invent
                 value={sess.title} onChange={e => { e.stopPropagation(); upd(sess.id, "title", e.target.value); }} onClick={e => e.stopPropagation()}/>
               <input type="date" style={{ background:"transparent", border:"none", color:"inherit", fontFamily:"inherit", fontSize:"0.75rem", outline:"none", flexShrink:0, opacity:0.6 }}
                 value={sess.date} onChange={e => { e.stopPropagation(); upd(sess.id, "date", e.target.value); }} onClick={e => e.stopPropagation()}/>
-              <span style={{ fontSize:"0.65rem", flexShrink:0, opacity:0.5 }}>{open ? "▲" : "▼"}</span>
+              <span style={{ flexShrink:0, opacity:0.5, display:"inline-flex" }}><Icon name={open ? "chevron-up" : "chevron-down"} size="0.85em"/></span>
             </div>
             {open && (
               <div className="sess-body">
@@ -65,7 +66,7 @@ function SessionsScreen({ sessions, setSessions, npcs, locations, quests, invent
                       value={sess.notes} onChange={e => upd(sess.id, "notes", e.target.value)}/>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
                       <button className="btn-ghost" onClick={() => del(sess.id)}>{T.SESSIONS.delete}</button>
-                      <button className="btn-ghost" onClick={() => setEditingId(null)}>{T.SESSIONS.done}</button>
+                      <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setEditingId(null)}><Icon name="check" size="0.85em"/> {T.SESSIONS.done}</button>
                     </div>
                   </>
                 ) : (
@@ -74,7 +75,7 @@ function SessionsScreen({ sessions, setSessions, npcs, locations, quests, invent
                       onClick={() => setEditingId(sess.id)}>{sess.notes ? parsed : null}</div>
                     <div className="row mt05" style={{ justifyContent:"space-between" }}>
                       <button className="btn-ghost" onClick={() => del(sess.id)}>{T.SESSIONS.delete}</button>
-                      <button className="btn-ghost" style={{ opacity:0.7 }} onClick={() => setEditingId(sess.id)}>{T.SESSIONS.edit}</button>
+                      <button className="btn-ghost" style={{ opacity:0.7, display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setEditingId(sess.id)}><Icon name="edit" size="0.85em"/> {T.SESSIONS.edit}</button>
                     </div>
                   </>
                 )}

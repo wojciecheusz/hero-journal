@@ -3,6 +3,7 @@ import { STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstan
 import { clamp, statMod } from '../../utils/math';
 import { THEMES } from '../../theme/themes';
 import { useT } from '../../i18n/translations';
+import Icon from '../../shared/icons';
 
 export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, onCreateSample, onRename, theme }) {
   const t = THEMES[theme] || THEMES.pergamin;
@@ -19,7 +20,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 
   return (
     <div className="profile-screen">
-      <div className="profile-logo">⚔ Hero Journal</div>
+      <div className="profile-logo" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"0.4rem" }}><Icon name="sword" size="1em"/> Hero Journal</div>
       <div className="profile-tagline">{P.tagline}</div>
 
       <div className="profile-list">
@@ -30,7 +31,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
             onClick={() => editingId !== p.id && onSelect(p.id)}>
 
             <span className="profile-card-icon">
-              {DND_CLASSES.find(c => c.name === p.class)?.icon || "⚔️"}
+              <Icon name={DND_CLASSES.find(c => c.name === p.class)?.icon || "sword"}/>
             </span>
 
             <div style={{ flex:1, minWidth:0 }}>
@@ -46,35 +47,35 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
                   <div className="profile-card-name">{p.name || P.unnamed}</div>
                   {onRename && (
                     <button onClick={e => startEdit(e, p)} title={P.renameTitle}
-                      style={{ background:"transparent", border:"none", cursor:"pointer", fontSize:"0.7rem", color:t.textDim, padding:"0", lineHeight:1, opacity:0.5, transition:"opacity 0.15s", flexShrink:0 }}
+                      style={{ background:"transparent", border:"none", cursor:"pointer", color:t.textDim, padding:"0", lineHeight:1, opacity:0.5, transition:"opacity 0.15s", flexShrink:0, display:"flex" }}
                       onMouseEnter={e => e.currentTarget.style.opacity="1"}
-                      onMouseLeave={e => e.currentTarget.style.opacity="0.5"}>✎</button>
+                      onMouseLeave={e => e.currentTarget.style.opacity="0.5"}><Icon name="edit" size="0.85em"/></button>
                   )}
                 </div>
               )}
               <div className="profile-card-sub">
                 {[p.class, p.level && `${P.levelLabel} ${p.level}`].filter(Boolean).join(" · ")}
                 {p.id === activeId && (
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase", color:t.accent, marginLeft:"0.6rem" }}>{P.active}</span>
+                  <span style={{ display:"inline-flex", alignItems:"center", gap:"0.2rem", fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.1em", textTransform:"uppercase", color:t.accent, marginLeft:"0.6rem" }}><Icon name="check" size="0.85em"/> {P.active}</span>
                 )}
               </div>
             </div>
 
             {profiles.length > 1 && editingId !== p.id && (
-              <button className="profile-card-del" onClick={e => { e.stopPropagation(); setConfirmDelete(p); }}>✕</button>
+              <button className="profile-card-del" onClick={e => { e.stopPropagation(); setConfirmDelete(p); }}><Icon name="close" size="0.85em"/></button>
             )}
           </button>
         ))}
       </div>
 
-      <button className="btn-new-profile" onClick={onCreate}>{P.createNew}</button>
+      <button className="btn-new-profile" onClick={onCreate}><Icon name="plus" size="0.95em"/> {P.createNew}</button>
 
       {onCreateSample && (
         <button onClick={onCreateSample}
-          style={{ width:"100%", maxWidth:"440px", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", color:t.textMuted, border:`1px dashed ${t.border}`, padding:"0.6rem 1.5rem", cursor:"pointer", marginTop:"0.6rem", transition:"all 0.2s" }}
+          style={{ width:"100%", maxWidth:"440px", display:"flex", alignItems:"center", justifyContent:"center", gap:"0.5rem", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", color:t.textMuted, border:`1px dashed ${t.border}`, padding:"0.6rem 1.5rem", cursor:"pointer", marginTop:"0.6rem", transition:"all 0.2s" }}
           onMouseEnter={e => { e.currentTarget.style.borderColor = t.accentBorder; e.currentTarget.style.color = t.textLabel; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = t.border; e.currentTarget.style.color = t.textMuted; }}>
-          {P.createSample}
+          <Icon name="sparkle" size="0.9em"/> {P.createSample}
         </button>
       )}
 
@@ -85,7 +86,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
       {confirmDelete && (
         <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <div className="modal-title">{P.deleteTitle}</div>
+            <div className="modal-title" style={{ display:"flex", alignItems:"center", gap:"0.4rem" }}><Icon name="warning" size="0.95em"/> {P.deleteTitle}</div>
             <p className="modal-text">{P.deleteText(confirmDelete.name || P.unnamed)}</p>
             <div className="row" style={{ justifyContent:"flex-end", gap:"0.6rem" }}>
               <button className="btn-ghost" onClick={() => setConfirmDelete(null)}>{P.deleteCancel}</button>
@@ -172,7 +173,7 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
             <div className="wizard-class-grid">
               {DND_CLASSES.map(c => (
                 <button key={c.name} className={`wizard-class-btn${cls?.name === c.name ? " selected" : ""}`} onClick={() => setCls(c)}>
-                  <span className="wizard-class-icon">{c.icon}</span>
+                  <span className="wizard-class-icon"><Icon name={c.icon} size="1.3em"/></span>
                   <span className="wizard-class-name">{c.name}</span>
                 </button>
               ))}
@@ -278,17 +279,17 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
 
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:"1.5rem", gap:"0.6rem" }}>
           <button onClick={step === 0 ? onCancel : () => setStep(s => s - 1)}
-            style={{ fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, padding:"0.5rem 1rem", cursor:"pointer", flex:"0 0 auto" }}>
-            {step === 0 ? P.cancel : P.back}
+            style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"0.35rem", fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${t.borderInput}`, color:t.textMuted, padding:"0.5rem 1rem", cursor:"pointer", flex:"0 0 auto" }}>
+            {step === 0 ? P.cancel : <><Icon name="arrow-left" size="0.9em"/> {P.back}</>}
           </button>
           {step < STEPS.length - 1
             ? <button disabled={!canNext} onClick={() => setStep(s => s + 1)}
-                style={{ fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:canNext?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${canNext?t.accent:t.borderInput}`, color:canNext?t.accent:t.textDim, padding:"0.5rem 1.5rem", cursor:canNext?"pointer":"default", flex:1 }}>
-                {P.next}
+                style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"0.35rem", fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:canNext?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${canNext?t.accent:t.borderInput}`, color:canNext?t.accent:t.textDim, padding:"0.5rem 1.5rem", cursor:canNext?"pointer":"default", flex:1 }}>
+                {P.next} <Icon name="arrow-right" size="0.9em"/>
               </button>
             : <button onClick={handleFinish}
-                style={{ fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"rgba(226,185,78,0.12)", border:`1px solid ${t.accent}`, color:t.accent, padding:"0.5rem 1.5rem", cursor:"pointer", flex:1 }}>
-                {P.start}
+                style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"0.35rem", fontFamily:"Cinzel,serif", fontSize:"0.68rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"rgba(226,185,78,0.12)", border:`1px solid ${t.accent}`, color:t.accent, padding:"0.5rem 1.5rem", cursor:"pointer", flex:1 }}>
+                <Icon name="sword" size="0.9em"/> {P.start}
               </button>
           }
         </div>

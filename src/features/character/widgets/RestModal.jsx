@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { clamp } from '../../../utils/math';
 import { useT } from '../../../i18n/translations';
+import Icon from '../../../shared/icons';
 
 export function RestModal({ type, char, setChar, onClose }) {
   const T  = useT();
@@ -48,7 +49,7 @@ export function RestModal({ type, char, setChar, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
-        <div className="modal-title">{isShort ? R.shortTitle : R.longTitle}</div>
+        <div className="modal-title" style={{ display:"flex", alignItems:"center", gap:"0.4rem" }}><Icon name={isShort ? "moon" : "sun"} size="0.95em"/> {isShort ? R.shortTitle : R.longTitle}</div>
         {isShort ? (
           <>
             <p className="modal-text">{R.availableDice(available, hd.max, hd.type)}</p>
@@ -66,11 +67,11 @@ export function RestModal({ type, char, setChar, onClose }) {
             <div className="modal-detail">
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.9 }}>{R.spend}</span>
-                <button onClick={() => setHdSpend(s => Math.max(0, s - 1))} aria-label="Decrease dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>−</button>
+                <button onClick={() => setHdSpend(s => Math.max(0, s - 1))} aria-label="Decrease dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", color: "inherit", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="minus" size="0.9em"/></button>
                 <input type="number" min={0} max={available} value={hdSpend}
                   onChange={e => setHdSpend(clamp(parseInt(e.target.value) || 0, 0, available))}
                   style={{ width: 36, fontFamily: "Cinzel,serif", fontSize: "1.1rem", fontWeight: 700, background: "transparent", border: "none", borderBottom: "1px solid currentColor", outline: "none", textAlign: "center", color: "inherit" }}/>
-                <button onClick={() => setHdSpend(s => Math.min(available, s + 1))} aria-label="Increase dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", fontFamily: "monospace", fontSize: "1rem", color: "inherit" }}>+</button>
+                <button onClick={() => setHdSpend(s => Math.min(available, s + 1))} aria-label="Increase dice" style={{ width: 26, height: 26, background: "transparent", border: "1px solid currentColor", cursor: "pointer", color: "inherit", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="plus" size="0.9em"/></button>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.72rem", opacity: 0.9 }}>{hd.type}</span>
               </div>
               {(() => {
@@ -89,20 +90,20 @@ export function RestModal({ type, char, setChar, onClose }) {
             </div>
             <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem", marginTop: "0.8rem" }}>
               <button className="btn-ghost" onClick={onClose}>{R.cancel}</button>
-              <button className="btn-ghost" onClick={doShortRest}>{R.doShortRest}</button>
+              <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={doShortRest}><Icon name="moon" size="0.85em"/> {R.doShortRest}</button>
             </div>
           </>
         ) : (
           <>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
               {[
-                ["❤️", R.restoreHp,    R.restoreHpDetail(char.hp.current, char.hp.max)],
-                ["💫", R.resetSlots,   R.resetSlotsDetail],
-                ["🎲", R.recoverDice,  (() => { const rec = Math.max(1, Math.floor((char.hitDice?.max || 1) / 2)); const cur = (char.hitDice?.max || 1) - (char.hitDice?.used || 0); return R.recoverDiceDetail(cur, Math.min(char.hitDice?.max || 1, cur + rec), rec); })()],
-                ["☠️", R.resetDeath,   R.resetDeathDetail],
+                ["heart", R.restoreHp,    R.restoreHpDetail(char.hp.current, char.hp.max)],
+                ["sparkles", R.resetSlots,   R.resetSlotsDetail],
+                ["dice", R.recoverDice,  (() => { const rec = Math.max(1, Math.floor((char.hitDice?.max || 1) / 2)); const cur = (char.hitDice?.max || 1) - (char.hitDice?.used || 0); return R.recoverDiceDetail(cur, Math.min(char.hitDice?.max || 1, cur + rec), rec); })()],
+                ["skull", R.resetDeath,   R.resetDeathDetail],
               ].map(([icon, label, detail]) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.35rem 0", borderBottom: "1px solid rgba(128,128,128,0.15)" }}>
-                  <span style={{ fontSize: "1rem", flexShrink: 0 }}>{icon}</span>
+                  <span style={{ flexShrink: 0, display: "flex" }}><Icon name={icon} size="1.1em"/></span>
                   <div>
                     <div style={{ fontFamily: "Cinzel,serif", fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>{label}</div>
                     <div style={{ fontFamily: "Crimson Text,Georgia,serif", fontSize: "0.88rem", opacity: 0.9, fontStyle: "italic" }}>{detail}</div>
@@ -112,7 +113,7 @@ export function RestModal({ type, char, setChar, onClose }) {
             </div>
             <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem" }}>
               <button className="btn-ghost" onClick={onClose}>{R.cancel}</button>
-              <button className="btn-ghost" onClick={doLongRest}>{R.doLongRest}</button>
+              <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={doLongRest}><Icon name="sun" size="0.85em"/> {R.doLongRest}</button>
             </div>
           </>
         )}

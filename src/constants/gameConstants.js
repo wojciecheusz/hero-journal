@@ -29,21 +29,21 @@ export const DAMAGE_TYPES = DAMAGE_TYPES_ENUM;
 
 
 export const SKILL_CAT_ICONS = {
-  [SKILL_CAT.SKILL]:  "🎯",
-  [SKILL_CAT.RACIAL]: "🧬",
-  [SKILL_CAT.FEAT]:   "⭐",
+  [SKILL_CAT.SKILL]:  "target",
+  [SKILL_CAT.RACIAL]: "dna",
+  [SKILL_CAT.FEAT]:   "star",
 };
 
 export const SPELL_SCHOOL_ICONS = {
-  [SPELL_SCHOOL.ABJURATION]:    "🛡️",
-  [SPELL_SCHOOL.CONJURATION]:   "🌀",
-  [SPELL_SCHOOL.DIVINATION]:    "👁️",
-  [SPELL_SCHOOL.ENCHANTMENT]:   "💫",
-  [SPELL_SCHOOL.EVOCATION]:     "🔥",
-  [SPELL_SCHOOL.ILLUSION]:      "🎭",
-  [SPELL_SCHOOL.NECROMANCY]:    "💀",
-  [SPELL_SCHOOL.TRANSMUTATION]: "🔄",
-  [SPELL_SCHOOL.OTHER]:         "✨",
+  [SPELL_SCHOOL.ABJURATION]:    "shield",
+  [SPELL_SCHOOL.CONJURATION]:   "rotate-cw",
+  [SPELL_SCHOOL.DIVINATION]:    "eye",
+  [SPELL_SCHOOL.ENCHANTMENT]:   "sparkles",
+  [SPELL_SCHOOL.EVOCATION]:     "flame",
+  [SPELL_SCHOOL.ILLUSION]:      "drama",
+  [SPELL_SCHOOL.NECROMANCY]:    "skull",
+  [SPELL_SCHOOL.TRANSMUTATION]: "orbit",
+  [SPELL_SCHOOL.OTHER]:         "sparkle",
 };
 
 export const FACTION_RANK_COLORS = {
@@ -57,53 +57,53 @@ export const FACTION_RANK_COLORS = {
 };
 
 export const REL_ICONS = {
-  ally:    "🤝",
-  neutral: "⚖️",
-  hostile: "⚔️",
-  unknown: "❓",
+  ally:    "handshake",
+  neutral: "scale",
+  hostile: "swords",
+  unknown: "help-circle",
 };
 
 export const FACTION_RANK_ICONS = {
-  [FACTION_RANK.UNKNOWN]: "❓",
-  [FACTION_RANK.ALLY]:    "🤝",
-  [FACTION_RANK.NEUTRAL]: "⚖️",
-  [FACTION_RANK.ENEMY]:   "⚔️",
-  [FACTION_RANK.MEMBER]:  "👤",
-  [FACTION_RANK.OFFICER]: "🎖️",
-  [FACTION_RANK.LEADER]:  "👑",
+  [FACTION_RANK.UNKNOWN]: "help-circle",
+  [FACTION_RANK.ALLY]:    "handshake",
+  [FACTION_RANK.NEUTRAL]: "scale",
+  [FACTION_RANK.ENEMY]:   "swords",
+  [FACTION_RANK.MEMBER]:  "user",
+  [FACTION_RANK.OFFICER]: "medal",
+  [FACTION_RANK.LEADER]:  "crown",
 };
 
 export const LOC_TYPE_ICONS = {
-  [LOC_TYPE.SETTLEMENT]: "🏘️",
-  [LOC_TYPE.DUNGEON]:    "🕳️",
-  [LOC_TYPE.WILDERNESS]: "🌲",
-  [LOC_TYPE.BUILDING]:   "🏛️",
-  [LOC_TYPE.RUINS]:      "🏚️",
-  [LOC_TYPE.LANDMARK]:   "🗿",
-  [LOC_TYPE.OTHER]:      "◈",
+  [LOC_TYPE.SETTLEMENT]: "home",
+  [LOC_TYPE.DUNGEON]:    "door-open",
+  [LOC_TYPE.WILDERNESS]: "trees",
+  [LOC_TYPE.BUILDING]:   "landmark",
+  [LOC_TYPE.RUINS]:      "castle",
+  [LOC_TYPE.LANDMARK]:   "gem",
+  [LOC_TYPE.OTHER]:      "diamond",
 };
 
 export const ITEM_ICONS = {
   // Enum keys (po migracji)
-  general:      "📦",
-  weapon:       "⚔️",
-  armor:        "🥋",
-  shield:       "🛡️",
-  spell_scroll: "📜",
-  wondrous:     "✨",
-  consumable:   "🧪",
-  tool:         "🔧",
-  other:        "◈",
+  general:      "package",
+  weapon:       "sword",
+  armor:        "shirt",
+  shield:       "shield",
+  spell_scroll: "scroll",
+  wondrous:     "sparkles",
+  consumable:   "flask",
+  tool:         "wrench",
+  other:        "diamond",
   // Legacy Polish keys (przed migracją — backward compatibility)
-  "Ogólny":          "📦",
-  "Broń":            "⚔️",
-  "Pancerz":         "🥋",
-  "Tarcza":          "🛡️",
-  "Zwój z czarem":   "📜",
-  "Cudowny przedmiot":"✨",
-  "Jednorazowy":     "🧪",
-  "Narzędzie":       "🔧",
-  "Inny":            "◈",
+  "Ogólny":          "package",
+  "Broń":            "sword",
+  "Pancerz":         "shirt",
+  "Tarcza":          "shield",
+  "Zwój z czarem":   "scroll",
+  "Cudowny przedmiot":"sparkles",
+  "Jednorazowy":     "flask",
+  "Narzędzie":       "wrench",
+  "Inny":            "diamond",
 };
 
 export const CONDITIONS = [
@@ -187,13 +187,13 @@ export const LEGEND_ITEMS = [
 ];
 
 export const DND_CLASSES = [
-  { name: "Barbarzyńca", icon: "🪓" }, { name: "Bard",      icon: "🎶" },
-  { name: "Kleryk",      icon: "✝️" }, { name: "Druid",     icon: "🌿" },
-  { name: "Wojownik",    icon: "⚔️" }, { name: "Mnich",     icon: "☯️" },
-  { name: "Paladyn",     icon: "🛡️" }, { name: "Łowca",     icon: "🏹" },
-  { name: "Łotrzyk",     icon: "🗡️" }, { name: "Czarownik", icon: "💫" },
-  { name: "Zaklinacz",   icon: "👁️" }, { name: "Mag",       icon: "📚" },
-  { name: "Inna",        icon: "⚡" },
+  { name: "Barbarzyńca", icon: "axe" },        { name: "Bard",      icon: "music" },
+  { name: "Kleryk",      icon: "cross" },      { name: "Druid",     icon: "leaf" },
+  { name: "Wojownik",    icon: "sword" },      { name: "Mnich",     icon: "hand" },
+  { name: "Paladyn",     icon: "shield" },     { name: "Łowca",     icon: "crosshair" },
+  { name: "Łotrzyk",     icon: "footprints" }, { name: "Czarownik", icon: "flame" },
+  { name: "Zaklinacz",   icon: "sparkles" },   { name: "Mag",       icon: "book" },
+  { name: "Inna",        icon: "circle-ellipsis" },
 ];
 
 export const STAT_ARRAYS = {

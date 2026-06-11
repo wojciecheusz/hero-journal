@@ -5,6 +5,7 @@ import { TagsEditor, PrzypnijBtn, Toggle, FilterBar } from '../../shared/ui';
 import { SpellSlotsWidget } from '../character/widgets/SpellSlotsWidget';
 import { useT } from '../../i18n/translations';
 import { useEntityList } from '../../hooks/useEntityList';
+import Icon from '../../shared/icons';
 
 const numMod = v => v >= 0 ? `+${v}` : String(v);
 
@@ -54,8 +55,12 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
         <span className="col-title">{title}</span>
         <span className="col-actions">
           <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em", color:"var(--hj-spell-muted)" }}>{SP.count(spells.length, inUseCount)}</span>
-          <button className="btn-shadow" style={{ borderColor:"var(--hj-spell-border)", color:"var(--hj-spell-accent)", background:"transparent", cursor:"pointer" }} onClick={() => setShowSlots(s => !s)}>{showSlots ? SP.hideSlots : SP.manageSlots}</button>
-          <button className="btn-ghost" onClick={() => setShowForm(s => !s)}>{showForm ? SP.cancel : SP.add}</button>
+          <button className="btn-shadow" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem", borderColor:"var(--hj-spell-border)", color:"var(--hj-spell-accent)", background:"transparent", cursor:"pointer" }} onClick={() => setShowSlots(s => !s)}>
+            {showSlots ? <><Icon name="close" size="0.85em"/> {SP.hideSlots}</> : <><Icon name="settings" size="0.85em"/> {SP.manageSlots}</>}
+          </button>
+          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
+            {showForm ? <><Icon name="close" size="0.85em"/> {SP.cancel}</> : <><Icon name="plus" size="0.85em"/> {SP.add}</>}
+          </button>
         </span>
       </div>
 
@@ -81,7 +86,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
               <input className="g-input" placeholder={SP.namePh} value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key==="Enter" && addSpell()}/>
               <select className="g-select" value={form.school} onChange={e => setForm(f => ({ ...f, school: e.target.value }))}>
-                {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{SPELL_SCHOOL_ICONS[s] || ""} {T.SPELL_SCHOOLS[i]??s}</option>)}
+                {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{T.SPELL_SCHOOLS[i]??s}</option>)}
               </select>
             </div>
             <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
@@ -97,7 +102,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
             </div>
             <input className="g-input" placeholder={SP.components} value={form.components} onChange={e => setForm(f => ({ ...f, components: e.target.value }))}/>
             <textarea className="g-textarea" rows={3} placeholder={SP.descPh} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" onClick={addSpell}>{SP.save}</button></div>
+            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addSpell}><Icon name="plus" size="0.85em"/> {SP.save}</button></div>
           </div>
         </div>
       )}
@@ -114,7 +119,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
         ) : (
           <>
             <button className={`filter-tag${!activeSchool?" active-filter":""}`} onClick={() => setActiveSchool(null)}>{SP.all}</button>
-            {SPELL_SCHOOLS.map((sc,i) => { const count=spells.filter(s=>s.school===sc).length; if(!count) return null; return <button key={sc} className={`filter-tag${activeSchool===sc?" active-filter":""}`} style={{ borderColor: activeSchool===sc?"var(--hj-spell-border)":"", color: activeSchool===sc?"var(--hj-spell-accent)":"" }} onClick={() => setActiveSchool(activeSchool===sc?null:sc)}>{SPELL_SCHOOL_ICONS[sc]||""} {T.SPELL_SCHOOLS[i]??sc} ({count})</button>; })}
+            {SPELL_SCHOOLS.map((sc,i) => { const count=spells.filter(s=>s.school===sc).length; if(!count) return null; return <button key={sc} className={`filter-tag${activeSchool===sc?" active-filter":""}`} style={{ borderColor: activeSchool===sc?"var(--hj-spell-border)":"", color: activeSchool===sc?"var(--hj-spell-accent)":"" }} onClick={() => setActiveSchool(activeSchool===sc?null:sc)}><Icon name={SPELL_SCHOOL_ICONS[sc]} size="0.85em"/> {T.SPELL_SCHOOLS[i]??sc} ({count})</button>; })}
           </>
         )}
       </div>
@@ -128,7 +133,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
         return (
           <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"var(--hj-spell-border)", borderLeftWidth:2 }}>
             <div className="entity-header">
-              <span style={{ fontSize:"1.1rem", flexShrink:0 }}>{SPELL_SCHOOL_ICONS[sp.school] || "◈"}</span>
+              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={SPELL_SCHOOL_ICONS[sp.school] || "diamond"}/></span>
               <div className="flex1">
                 <div style={{ display:"flex", flexDirection:"column", gap:"0.2rem", flex:1, minWidth:0 }}>
                   <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", color:"var(--hj-spell-text)", fontWeight:700, width:"100%" }}
@@ -144,8 +149,8 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
                 </div>
               </div>
               <PrzypnijBtn pinned={sp.pinned} onToggle={() => upd(sp.id,"pinned",!sp.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(sp.id)} aria-label="Edit entry">✎</button>
-              <button className="entity-toggle" onClick={() => toggle(sp.id)}>{open?"▲":"▼"}</button>
+              <button className="entity-toggle" onClick={() => startEdit(sp.id)} aria-label="Edit entry"><Icon name="edit" size="0.85em"/></button>
+              <button className="entity-toggle" onClick={() => toggle(sp.id)}><Icon name={open?"chevron-up":"chevron-down"}/></button>
             </div>
 
             {/* Podgląd opisu — 2 linie gdy zwinięty, pełny gdy rozwinięty */}
@@ -171,7 +176,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
                   <div>
                     <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.12em", color:"var(--hj-spell-muted)", textTransform:"uppercase", display:"block", marginBottom:"0.2rem" }}>{SP.school}</span>
                     <select className="g-select" style={{ fontSize:"0.82rem", padding:"0.25rem 0.5rem", borderColor:"var(--hj-spell-border)" }} value={sp.school} onChange={e => upd(sp.id,"school",e.target.value)}>
-                      {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{SPELL_SCHOOL_ICONS[s] || ""} {T.SPELL_SCHOOLS[i]??s}</option>)}
+                      {SPELL_SCHOOLS.map((s,i) => <option key={s} value={s}>{T.SPELL_SCHOOLS[i]??s}</option>)}
                     </select>
                   </div>
                 </div>
@@ -188,9 +193,9 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
                 </div>
                 <div className="row mt05" style={{ justifyContent:"space-between" }}>
                   <button className="btn-ghost" onClick={() => del(sp.id)}
-                    style={pendingDelete[sp.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)"}:{}}>
-                    {pendingDelete[sp.id] ? T.UI.confirmDelete : SP.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(sp.id)}>✓</button>
+                    style={pendingDelete[sp.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)",display:"flex",alignItems:"center",gap:"0.3rem"}:{}}>
+                    {pendingDelete[sp.id] ? <><Icon name="warning" size="0.8em"/> {T.UI.confirmDelete}</> : SP.delete}</button>
+                  <button className="btn-ghost" onClick={() => stopEdit(sp.id)}><Icon name="check" size="0.85em"/></button>
                 </div>
               </div>
             )}

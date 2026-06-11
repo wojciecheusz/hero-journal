@@ -1,6 +1,7 @@
 import React from 'react';
 import { remove } from '../utils/storage';
 import { detectLang, TRANSLATIONS } from '../i18n/translations';
+import Icon from '../shared/icons';
 
 /* ── Ekran błędu ────────────────────────────────────────────── */
 function CrashScreen({ error, onReload, onReset }) {
@@ -9,7 +10,7 @@ function CrashScreen({ error, onReload, onReset }) {
     <div style={{ position:"fixed", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"2rem", background:"var(--hj-bg,#080304)", color:"var(--hj-text,#f0d8d5)", fontFamily:"Crimson Text,Georgia,serif" }}>
       <div style={{ maxWidth:480, width:"100%", textAlign:"center" }}>
 
-        <div style={{ fontSize:"3rem", marginBottom:"1rem", opacity:0.6 }}>⚠</div>
+        <div style={{ display:"flex", justifyContent:"center", marginBottom:"1rem", opacity:0.6, color:"var(--hj-accent,#cc2233)" }}><Icon name="warning" size="3rem"/></div>
 
         <h1 style={{ fontFamily:"Cinzel Decorative,serif", fontSize:"1.1rem", color:"var(--hj-accent,#cc2233)", letterSpacing:"0.06em", marginBottom:"0.75rem" }}>
           {T.CRASH?.title ?? "Something went wrong"}
