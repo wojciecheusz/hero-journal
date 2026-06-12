@@ -148,7 +148,7 @@ export const ICON_COLORS = {
 
 /* <Icon name="sword" size="1em" color="#fff" /> — domyślnie dziedziczy
    kolor tekstu (currentColor) o ile dana ikona nie ma wpisu w ICON_COLORS. */
-export default function Icon({ name, size = "1em", color, strokeWidth = 1.75, fill, className, style }) {
+export default function Icon({ name, size = "1em", color, strokeWidth = 1.75, fill = "none", className, style }) {
   const Cmp = ICONS[name];
   if (!Cmp) return null;
   const resolvedColor = color || ICON_COLORS[name] || "currentColor";
