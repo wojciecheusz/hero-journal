@@ -23,6 +23,10 @@ Cel: spójna grubość linii, kolorystyka per-kontekst (nie wszystko czarne/mono
 - [x] `translations.js` — usunięcie prefiksów emoji z etykiet (PL+EN), osobne
       mapy ikon: PALETTE_ICONS (motywy), REST/TUTORIAL/DICE, HELP.*.items
 - [x] Build + szybki test wizualny (dev server)
+- [x] Poprawka: czarne/wypełnione tła pod ikonami (Shirt, Package, Shield,
+      Diamond, Sparkles itd.) — `Icon` przekazywał `fill={undefined}`, co
+      nadpisywało `fill="none"` z lucide-react i włączało domyślny czarny
+      fill SVG; naprawiono domyślną wartością `fill = "none"`.
 
 ### ✅ P20 — Faza 1: system Uniwersalny — UKOŃCZONE (2026-06-10)
 **Status wdrożenia fazy 1:**
