@@ -3,6 +3,22 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### 🔄 P22 — Nowa estetyka ekranu Postać (PODGLĄD na branchu dev, 2026-06-12)
+Polecenie: zaprojektować ekran Postać w stylu ciemnej, "appkowej" karty
+(zaokrąglone rogi, granat + złoto, serif Cinzel) wg dostarczonego mockupu —
+przygotowane jako podgląd na branchu `dev` (nie `main`) do oceny.
+- [x] `src/features/character/cards/HeroHeaderCard.jsx` (nowy) — karta nagłówkowa:
+      eyebrow "Hero Journal", imię, klasa/poziom, divider, PŻ + pasek + przyciski
+      ±, miniodznaki KP/Inicjatywa/Prędkość, siatka Atrybutów (6) z wyróżnieniem
+      cechy zarzucającej (spellcastingAbility), siatka Walki (KP/Inicj./Pręd./Biegł.)
+      z wyróżnieniem Biegłości. Własna paleta kolorów (`.hcv2-*` zmienne CSS),
+      niezależna od aktywnego motywu.
+- [x] `global.css` — nowe klasy `.hcv2*` (karta, divider, stat-grid, combat-grid)
+- [x] `translations.js` — `CHAR.abilitiesTitle`, `CHAR.statAbbr` (PL: SIL/ZRC/KON/INT/MDR/CHA)
+- [x] Wpięcie `<HeroHeaderCard/>` na górze `CharacterScreen.jsx` (nad istniejącymi kartami)
+- [x] Build + test wizualny (Playwright, mobile + desktop)
+- [ ] Decyzja: czy rozszerzyć estetykę na resztę ekranów / scalić z `main`
+
 ### ✅ P21 — Zamiana wszystkich ikon emoji na SVG (lucide-react) — UKOŃCZONE (2026-06-11)
 Cel: spójna grubość linii, kolorystyka per-kontekst (nie wszystko czarne/monochrom).
 - [x] `npm install lucide-react`

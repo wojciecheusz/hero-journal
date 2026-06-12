@@ -2,6 +2,7 @@ import { useState, memo } from 'react';
 import { RestModal } from './widgets/RestModal';
 import { useT } from '../../i18n/translations';
 
+import HeroHeaderCard  from './cards/HeroHeaderCard';
 import CharCard        from './cards/CharCard';
 import SavingThrowsCard from './cards/SavingThrowsCard';
 import SkillsCard      from './cards/SkillsCard';
@@ -40,6 +41,8 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
   return (
     <>
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
+
+      <HeroHeaderCard char={char} setChar={setChar} C={C} pb={pb}/>
 
       <div className="char-sheet-grid">
 
