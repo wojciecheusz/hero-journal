@@ -96,7 +96,7 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
         return (
           <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
-              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={REL_ICONS[rel]}/></span>
+              <span className="icon-badge icon-badge-circle"><Icon name={REL_ICONS[rel]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={npc.name} onChange={e => upd(npc.id, "name", e.target.value)} placeholder={N.editNamePh}/>
               <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id,"pinned",!npc.pinned)}/>

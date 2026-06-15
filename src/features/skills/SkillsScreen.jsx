@@ -104,12 +104,12 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
         return (
           <div key={sk.id} id={`entity-${sk.id}`} className={`card${sk.pinned?" pinned":""}${sk.inUse?" inuse-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor: cc+"55", borderLeftWidth:2 }}>
             <div className="entity-header">
-              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={SKILL_CAT_ICONS[sk.category] || "diamond"}/></span>
+              <span className="icon-badge"><Icon name={SKILL_CAT_ICONS[sk.category] || "diamond"}/></span>
               <div className="flex1" style={{ display:"flex", flexDirection:"column", gap:"0.2rem" }}>
                 <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", fontWeight:700, width:"100%" }}
                   value={sk.name} onChange={e => upd(sk.id,"name",e.target.value)} placeholder={SK.editNamePh}/>
                 <div style={{ display:"flex", gap:"0.4rem", alignItems:"center", flexWrap:"wrap" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.1rem 0.4rem", background:`${cc}0d`, flexShrink:0 }}>{displayCat}</span>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:cc, border:`1px solid ${cc}55`, padding:"0.1rem 0.45rem", background:`${cc}0d`, flexShrink:0, borderRadius:"var(--radius-pill)" }}>{displayCat}</span>
                   <Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse?SK.active:SK.inactive} color="purple"/>
                 </div>
               </div>

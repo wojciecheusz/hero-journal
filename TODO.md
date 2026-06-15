@@ -3,6 +3,69 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P23 — Overhaul wizualny: "Pergamin Zgaszony" + obłe formy (wg Hero Journal Mobile v4, 2026-06-15) — UKOŃCZONE
+Generalny overhaul wizualny wg dostarczonego prototypu (Claude Design,
+"Hero Journal Mobile v4.dc.html"): obłe formy wszędzie, karty z dywiderami,
+plakietki ikon, trwały pasek PŻ/Odpoczynek widoczny na każdym ekranie.
+Jedna paleta — "Pergamin Zgaszony" (zgaszony, mniej kontrastowy pergamin).
+Zachować 1:1 wszystkie interakcje (cycleSkill/cycleSavingThrow, rest modal,
+drag-reorder, filtry/tagi/pin/2-step-delete, status zadań, linki encji).
+Plan: `C:\Users\mwoj\.claude\plans\keen-dancing-badger.md`.
+
+- [x] **Faza 1 — Fundament**: nowa paleta `pergamin` (themes.js + `:root`),
+      tokeny `--radius-sm/md/lg/xl/pill`, restyl prymitywów (`.card`,
+      `.pack-item`/`.sess-entry`/`.quest-entry`/`.combat-box`, przyciski,
+      `.btn-pm` (okrągły), `.tag`/`.tag-suggestion`/`.badge` (pill),
+      `.g-input/.g-select/.g-textarea`, `.nav-drawer`/`.nav-drawer-item`,
+      `.modal-box`, `.toggle-track`), nowe `.sect-divider`/`.icon-badge`/
+      `.icon-badge-circle`. Build OK.
+- [x] **Faza 2 — Shell**: nowy `VitalsBar.jsx` (PŻ edytowalne current/max +
+      Temp + ☽/☀ Odpoczynek) wpięty globalnie (mobile: pierwszy element
+      `.hj-content`, desktop: sidebar pod brandem); `restModal` przeniesiony
+      do `HeroJournal.jsx`; `CombatCard` stracił HP/Temp/Rest (zostały
+      AC/Inicj./Prędkość/Bieg., Kości Wytrzymałości, Stany, Rzuty na Śmierć,
+      Wyczerpanie — zrestylowane na nowe tokeny); ukryta siatka 10 motywów w
+      `SettingsMenu` (kod `themes.js`/`useTheme`/`PALETTE_ICONS` zostaje,
+      nieużywany, odwracalny). Build OK.
+- [x] **Faza 3 — Karta Postać**: `HeroHeaderCard`/`.hcv2-*` przeniesiona na
+      wspólną paletę "Pergamin Zgaszony" (zmienne `--hcv2-*` usunięte, użyte
+      `--hj-*`/`--radius-*`), usunięta zduplikowana sekcja PŻ (już w
+      VitalsBar — zostaje imię/klasa/poziom, mini-odznaki AC/Inicj./Prędkość/
+      Bieg., siatka 6 atrybutów z podświetleniem cechy zarzucającej);
+      `.stat-box`/`.subtab-btn`/`.trait-ta`/`.spell-slot-box` → nowe tokeny
+      radius; `EquippedCard` — ikony pozycji jako `.icon-badge`, plakietki
+      typu/szkoły jako pill. `cycleSkill`/`cycleSavingThrow` niezmienione.
+      Build OK.
+- [x] **Faza 4 — Ekrany listowe**: Plecak/Zdolności/Czary/NPC/Miejsca/Frakcje —
+      ikony wpisów jako `.icon-badge` (Plecak/Zdolności/Czary) lub
+      `.icon-badge-circle` (NPC/Miejsca/Frakcje); plakietki typu/kategorii/
+      rangi jako pill (`.equipped-type-badge`, `.spell-level-badge`/
+      `.spell-school-badge`, `.rel-badge`, `.loc-type`, plakietka kategorii
+      zdolności i rangi frakcji); `.filter-tag`/`.tag-add-btn`/`.add-form`/
+      `.pack-field-input`/`.entity-link`/`.btn-shadow` → nowe tokeny radius
+      (część współdzielona ze wszystkimi ekranami). Po drodze doszlifowane
+      pominięte w Fazie 1 ostre narożniki: `.profile-card`, `.wizard-class-btn`/
+      `.wizard-stat-box`, `.dice-panel` (desktop). `useEntityList`
+      (pin/2-step-delete/edit/tagi/filtry) i pola specyficzne dla typu
+      niezmienione. Build OK.
+- [x] **Faza 5 — Dziennik**: `.sess-entry`/`.quest-entry` już 14px z Fazy 1;
+      doszlifowane pominięte ostre kąty: `.sess-rendered`/`.sess-legend` →
+      `--radius-md`, `.check-box` → `--radius-sm`, `.legend-dot` → okrąg.
+      `.badge` (status zadania, już pill z Fazy 1) i checklisty/cykl statusu/
+      linki encji niezmienione — brak osobnego paska postępu w UI (tylko
+      licznik `x/y`). Build OK.
+- [x] **Faza 6 — Weryfikacja końcowa**: finalny audyt `global.css` (grep
+      `border: 1px solid` bez `radius`) — doszlifowano `.entity-tooltip` i
+      `.modal-detail` → `--radius-md`. `npm run build` czysty (37 wpisów
+      precache, ~8923 KiB, brak błędów). System 10 motywów pozostaje w kodzie
+      (`themes.js`/`useTheme`/`PALETTE_ICONS`), nieużywany i odwracalny —
+      selektor ukryty w `SettingsMenu` (Faza 2), aplikacja zawsze stosuje
+      `pergamin` (zgaszony).
+      **Uwaga:** przegląd wizualny mobile+desktop (9 ekranów + Ustawienia +
+      modal odpoczynku) oraz test importu `.json` postaci wymagają manualnej
+      weryfikacji przez użytkownika — w tej sesji brak narzędzia przeglądarki/
+      Playwright do automatycznego podglądu.
+
 ### 🔄 P22 — Nowa estetyka ekranu Postać (PODGLĄD na branchu dev, 2026-06-12)
 Polecenie: zaprojektować ekran Postać w stylu ciemnej, "appkowej" karty
 (zaokrąglone rogi, granat + złoto, serif Cinzel) wg dostarczonego mockupu —

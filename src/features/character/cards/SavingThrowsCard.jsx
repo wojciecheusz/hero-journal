@@ -28,10 +28,10 @@ export default function SavingThrowsCard({ char, setChar, C, pb }) {
           const pipBorder = exp ? "2px solid var(--hj-pip-exp)" : prz ? "1.5px solid var(--hj-pip-prof)" : "1.5px solid var(--hj-pip-empty)";
           const pipClip   = exp ? "polygon(50% 0%,100% 50%,50% 100%,0% 50%)" : "none";
           return (
-            <div key={st.key} style={{ display:"flex", flexDirection:"column", gap:0 }}>
+            <div key={st.key} style={{ display:"flex", flexDirection:"column", gap:"0.3rem" }}>
               <StatBox label={st.attr} value={statVal}
                 onChange={v => setChar(c => ({ ...c, stats: { ...c.stats, [st.attr]: v } }))}/>
-              <div className="stat-box" style={{ position:"relative", borderTop:"none", textAlign:"center", padding:"0.25rem 0.1rem 0.2rem", display:"flex", flexDirection:"column", alignItems:"center", gap:0 }}>
+              <div className="stat-box" style={{ position:"relative", textAlign:"center", padding:"0.25rem 0.1rem 0.2rem", display:"flex", flexDirection:"column", alignItems:"center", gap:0 }}>
                 <button
                   title={C.proficiency ?? "Proficiency"}
                   aria-label={`${st.attr}: ${exp?"Expertise":prz?"Proficient":"Not proficient"}`}

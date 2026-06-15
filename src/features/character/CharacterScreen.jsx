@@ -1,5 +1,4 @@
 import { useState, memo } from 'react';
-import { RestModal } from './widgets/RestModal';
 import { useT } from '../../i18n/translations';
 
 import HeroHeaderCard  from './cards/HeroHeaderCard';
@@ -25,7 +24,6 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
   const [historyOpen,     setHistoryOpen]  = useState(true);
   const [notesOpen,       setNotesOpen]    = useState(true);
   const [profOpen,        setProfOpen]     = useState(true);
-  const [restModal,       setRestModal]    = useState(null);
 
   /* Wyliczenia współdzielone przez kilka kart */
   const pb       = char.profBonus || 2;
@@ -40,9 +38,7 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
 
   return (
     <>
-      {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
-
-      <HeroHeaderCard char={char} setChar={setChar} C={C} pb={pb}/>
+      <HeroHeaderCard char={char} C={C} pb={pb}/>
 
       <div className="char-sheet-grid">
 
@@ -57,8 +53,7 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
             GENERIC_SKILLS={GENERIC_SKILLS} pb={pb}/>
 
           <CombatCard char={char} setChar={setChar} C={C} T={T}
-            pb={pb} percBonus={percBonus} spellAbi={spellAbi} spellDC={spellDC}
-            onRestModal={setRestModal}/>
+            pb={pb} percBonus={percBonus} spellAbi={spellAbi} spellDC={spellDC}/>
         </div>
 
         {/* ══ PRAWA KOLUMNA: wyposażenie i osobowość ══ */}

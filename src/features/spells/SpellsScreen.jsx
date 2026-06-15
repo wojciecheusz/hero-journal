@@ -133,7 +133,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
         return (
           <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"var(--hj-spell-border)", borderLeftWidth:2 }}>
             <div className="entity-header">
-              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={SPELL_SCHOOL_ICONS[sp.school] || "diamond"}/></span>
+              <span className="icon-badge"><Icon name={SPELL_SCHOOL_ICONS[sp.school] || "diamond"}/></span>
               <div className="flex1">
                 <div style={{ display:"flex", flexDirection:"column", gap:"0.2rem", flex:1, minWidth:0 }}>
                   <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.98rem", color:"var(--hj-spell-text)", fontWeight:700, width:"100%" }}

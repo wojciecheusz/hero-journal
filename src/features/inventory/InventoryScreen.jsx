@@ -115,12 +115,12 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
 
             {/* Nagłówek */}
             <div className="pack-item-header">
-              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={ITEM_ICONS[item.type] || "diamond"}/></span>
+              <span className="icon-badge"><Icon name={ITEM_ICONS[item.type] || "diamond"}/></span>
               <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", gap:"0.2rem" }}>
                 <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, width:"100%" }}
                   value={item.name} onChange={e => upd(item.id, "name", e.target.value)}/>
                 <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexWrap:"wrap" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em", border:"1px solid currentColor", padding:"0.1rem 0.3rem", flexShrink:0, opacity:0.6 }}>{displayItemType(item.type)}</span>
+                  <span className="equipped-type-badge">{displayItemType(item.type)}</span>
                   <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>
                 </div>
               </div>

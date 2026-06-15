@@ -96,7 +96,7 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
         return (
           <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
-              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}/></span>
+              <span className="icon-badge icon-badge-circle"><Icon name={FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={fac.name} onChange={e => upd(fac.id,"name",e.target.value)} placeholder={F.editNamePh}/>
               <PrzypnijBtn pinned={fac.pinned} onToggle={() => upd(fac.id,"pinned",!fac.pinned)}/>
@@ -108,7 +108,7 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
             {open && (
               <>
                 <div style={{ margin:"0.4rem 0" }}>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12` }}>{displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}</span>
+                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.15rem 0.55rem", border:`1px solid ${rc}55`, color:rc, background:`${rc}12`, borderRadius:"var(--radius-pill)" }}>{displayFactionRank(fac.rank||FACTION_RANK.UNKNOWN)}</span>
                 </div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.2rem 0.6rem", marginBottom:"0.3rem" }}>
                   <div className="pack-field"><span className="pack-field-label">{F.type}</span>

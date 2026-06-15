@@ -78,7 +78,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
             {...itemsDrag.bindRow(item.id)}
             style={dragRowStyle(itemsDrag, item.id)}>
             <span className="equipped-drag-handle" title={C.dragToReorder} aria-label={C.dragToReorder} {...itemsDrag.bindHandle(item.id)}><Icon name="grip" size="0.9em"/></span>
-            <span className="equipped-icon"><Icon name={ITEM_ICONS[item.type]||"diamond"}/></span>
+            <span className="icon-badge"><Icon name={ITEM_ICONS[item.type]||"diamond"}/></span>
             <div className="flex1">
               <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                 <span className="equipped-name">{item.name}</span>
@@ -102,7 +102,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
             {...skillsDrag.bindRow(sk.id)}
             style={dragRowStyle(skillsDrag, sk.id)}>
             <span className="equipped-drag-handle" title={C.dragToReorder} aria-label={C.dragToReorder} {...skillsDrag.bindHandle(sk.id)}><Icon name="grip" size="0.9em"/></span>
-            <span className="equipped-icon"><Icon name={SKILL_CAT_ICONS[sk.category] || "sparkles"}/></span>
+            <span className="icon-badge"><Icon name={SKILL_CAT_ICONS[sk.category] || "sparkles"}/></span>
             <div className="flex1">
               <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                 <span className="equipped-name">{sk.name}</span>
@@ -125,7 +125,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
                   {...spellsDrag.bindRow(sp.id)}
                   style={dragRowStyle(spellsDrag, sp.id)}>
                   <span className="equipped-drag-handle" title={C.dragToReorder} aria-label={C.dragToReorder} {...spellsDrag.bindHandle(sp.id)}><Icon name="grip" size="0.9em"/></span>
-                  <span className="equipped-icon"><Icon name={SPELL_SCHOOL_ICONS[sp.school] || "wand"}/></span>
+                  <span className="icon-badge"><Icon name={SPELL_SCHOOL_ICONS[sp.school] || "wand"}/></span>
                   <div className="flex1">
                     <div className="row" style={{ gap:"0.4rem", marginBottom:"0.2rem", flexWrap:"wrap" }}>
                       <span className="equipped-name" style={{ color:"var(--hj-spell-text)" }}>{sp.name}</span>

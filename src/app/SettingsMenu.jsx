@@ -1,9 +1,8 @@
 import { useRef, useState } from 'react';
-import { PALETTES } from '../theme/themes';
-import Icon, { PALETTE_ICONS } from '../shared/icons';
+import Icon from '../shared/icons';
 
 /**
- * Dropdown z paletą motywów i akcjami (język, zmiana bohatera, reset, sync, wyloguj).
+ * Dropdown z akcjami (język, zmiana bohatera, reset, sync, wyloguj, eksport/import).
  * Renderowany przez sidebar desktop i header mobile — różnią się pozycjonowaniem (`dropdownStyle`).
  */
 export default function SettingsMenu({
@@ -19,7 +18,7 @@ export default function SettingsMenu({
   const btnStyle = {
     background:"transparent", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-muted)",
     fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.07em", textTransform:"uppercase",
-    padding:"0.32rem 0.55rem", cursor:"pointer", textAlign:"left", borderRadius:"2px", transition:"all 0.15s",
+    padding:"0.32rem 0.55rem", cursor:"pointer", textAlign:"left", borderRadius:"var(--radius-sm)", transition:"all 0.15s",
   };
   const btnDanger = { ...btnStyle, border:"1px solid #6a2a2a", color:"#c04040" };
 
@@ -43,21 +42,8 @@ export default function SettingsMenu({
   };
 
   return (
-    <div style={{ background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 8px 32px var(--hj-shadow-bot)", zIndex:200, width:260, borderRadius:"2px", ...dropdownStyle }}>
-      <div style={{ padding:"0.55rem 0.65rem 0.4rem" }}>
-        <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.49rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", marginBottom:"0.45rem" }}>
-          {T.UI.themeColor}
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.22rem" }}>
-          {PALETTES.map(p => (
-            <button key={p} onClick={() => setTheme(p)}
-              style={{ display:"flex", alignItems:"center", gap:"0.35rem", background:theme===p?"rgba(226,185,78,0.12)":"transparent", border:`1px solid ${theme===p?"var(--hj-accent-border)":"var(--hj-border-sub)"}`, color:theme===p?"var(--hj-accent)":"var(--hj-text)", fontFamily:"Cinzel,serif", fontSize:"0.54rem", letterSpacing:"0.04em", padding:"0.27rem 0.35rem", cursor:"pointer", textAlign:"left", transition:"all 0.12s", borderRadius:"2px" }}>
-              <Icon name={PALETTE_ICONS[p]} size="0.95em"/> {T.PALETTE_LABELS[p]}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.38rem 0.48rem", display:"flex", flexDirection:"column", gap:"0.18rem" }}>
+    <div style={{ background:"var(--hj-modal-bg)", border:"1px solid var(--hj-border)", boxShadow:"0 8px 32px var(--hj-shadow-bot)", zIndex:200, width:260, borderRadius:"var(--radius-md)", overflow:"hidden", ...dropdownStyle }}>
+      <div style={{ padding:"0.38rem 0.48rem", display:"flex", flexDirection:"column", gap:"0.18rem" }}>
         <button style={{ ...btnStyle, display:"flex", alignItems:"center", gap:"0.4rem" }} onClick={close(toggleLanguage)}>
           <Icon name="globe" size="0.9em"/> {T.UI.langToggle === "EN" ? "Switch to English" : "Przełącz na polski"}
         </button>

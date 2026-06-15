@@ -1,4 +1,5 @@
 import SettingsMenu from './SettingsMenu';
+import VitalsBar from './VitalsBar';
 import Icon from '../shared/icons';
 
 /* Treść kontekstowego panelu pomocy — zależna od aktywnej zakładki */
@@ -31,7 +32,7 @@ function SidebarHelp({ tab, T, onClose }) {
       {hc.items.map(([icon, label, desc]) => (
         <div key={label} style={{ paddingBottom:"0.5rem", marginBottom:"0.5rem", borderBottom:"1px solid var(--hj-border-sub)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", marginBottom: desc ? "0.2rem" : 0 }}>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", color:"var(--hj-accent)", background:`rgba(226,185,78,0.1)`, border:"1px solid var(--hj-accent-border)", padding:"0.12rem 0.3rem", borderRadius:"2px", flexShrink:0, whiteSpace:"nowrap" }}>
+            <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", color:"var(--hj-accent)", background:`rgba(168,120,48,0.1)`, border:"1px solid var(--hj-accent-border)", padding:"0.12rem 0.3rem", borderRadius:"2px", flexShrink:0, whiteSpace:"nowrap" }}>
               {icon}
             </span>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"var(--hj-text-label)", lineHeight:1.3 }}>
@@ -51,10 +52,10 @@ function SidebarHelp({ tab, T, onClose }) {
 
 /* Sidebar nawigacyjny widoczny na desktopie — marka, nawigacja, pomoc kontekstowa, stopka z ustawieniami */
 export default function Sidebar({
-  T, theme, setTheme, toggleLanguage, char, tab, setTab, navGroupsDesktop,
+  T, theme, setTheme, toggleLanguage, char, setChar, tab, setTab, navGroupsDesktop,
   showHelp, setShowHelp, showSettings, setShowSettings,
   setScreen, setShowReset, user, onCloudRefresh, onLogout,
-  onExport, onImport,
+  onExport, onImport, onRestModal,
 }) {
   return (
     <aside className="hj-sidebar">
@@ -72,6 +73,11 @@ export default function Sidebar({
         </span>
       </button>
       <div style={{ height:"1px", background:"var(--hj-border)", margin:"0 0.75rem 0.25rem", flexShrink:0 }}/>
+
+      {/* Pasek PŻ / Odpoczynek */}
+      <div style={{ flexShrink:0 }}>
+        <VitalsBar char={char} setChar={setChar} C={T.CHAR} onRestModal={onRestModal} variant="sidebar"/>
+      </div>
 
       {/* Nawigacja */}
       <div style={{ flexShrink:0 }}>
@@ -115,7 +121,7 @@ export default function Sidebar({
       {/* ── Stopka: ? i ⚙ ── */}
       <div style={{ flexShrink:0, marginTop: showHelp ? 0 : "auto", padding:"0.5rem 0.6rem", borderTop:"1px solid var(--hj-border-sub)", display:"flex", gap:"0.4rem" }}>
         <button onClick={() => { setShowHelp(s => !s); setShowSettings(false); }} aria-label="Open help" title="Help"
-          style={{ flex:1, background:showHelp?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
+          style={{ flex:1, background:showHelp?"rgba(168,120,48,0.1)":"transparent", border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)", fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, height:32, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
           <Icon name="help-circle" size="1em"/>
         </button>
 
@@ -131,7 +137,7 @@ export default function Sidebar({
         {/* Ustawienia — dropdown fixed, nie obcięty przez overflow sidebara */}
         <div style={{ flex:1, position:"relative" }}>
           <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"
-            style={{ width:"100%", height:32, background:showSettings?"rgba(226,185,78,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            style={{ width:"100%", height:32, background:showSettings?"rgba(168,120,48,0.1)":"transparent", border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`, color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)", fontSize:"1.1rem", cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
             <Icon name="settings" size="1.1em"/>
           </button>
           {showSettings && <>

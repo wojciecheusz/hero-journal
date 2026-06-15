@@ -96,7 +96,7 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
         return (
           <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
-              <span style={{ fontSize:"1.1rem", flexShrink:0, display:"inline-flex" }}><Icon name={LOC_TYPE_ICONS[loc.type]}/></span>
+              <span className="icon-badge icon-badge-circle"><Icon name={LOC_TYPE_ICONS[loc.type]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
                 value={loc.name} onChange={e => upd(loc.id, "name", e.target.value)} placeholder={T.LOCATIONS.editNamePh}/>
               <PrzypnijBtn pinned={loc.pinned} onToggle={() => upd(loc.id, "pinned", !loc.pinned)}/>

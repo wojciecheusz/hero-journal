@@ -17,6 +17,8 @@ import HelpPanel     from './HelpPanel';
 import Sidebar       from './Sidebar';
 import Header        from './Header';
 import MobileNav     from './MobileNav';
+import VitalsBar     from './VitalsBar';
+import { RestModal } from '../features/character/widgets/RestModal';
 import { LangContext, TRANSLATIONS } from '../i18n/translations';
 import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
@@ -81,6 +83,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [showTutorial, setShowTutorial] = useState(() => !load("hj_tutorial_seen", null));
   const [openEntity, setOpenEntity] = useState(null);
   const [quotaWarning, setQuotaWarning] = useState(false);
+  const [restModal, setRestModal] = useState(null);
   useEffect(() => {
     setQuotaExceededHook(() => setQuotaWarning(true));
   }, []);
@@ -205,6 +208,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     <LangContext.Provider value={lang}>
     <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
+      {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
       {syncWarning && !syncFailed && (
         <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"rgba(40,32,8,0.95)", border:"1px solid #8a7020", color:"#d4aa40", fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.35rem 0.8rem", display:"flex", gap:"0.4rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 2px 8px rgba(0,0,0,0.4)", pointerEvents:"none" }}>
           <Icon name="cloud" size="0.9em"/> Synchronizacja…
@@ -222,11 +226,11 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       {showHelp && <HelpPanel tab={tab} theme={theme} onClose={() => setShowHelp(false)}/>}
 
       {/* ── Sidebar (desktop only) ── */}
-      <Sidebar T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char}
+      <Sidebar T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} setChar={setChar}
         tab={tab} setTab={setTab} navGroupsDesktop={navGroupsDesktop}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
-        onExport={handleExport} onImport={handleImport}/>
+        onExport={handleExport} onImport={handleImport} onRestModal={setRestModal}/>
 
       {/* ── Header (mobile only) ── */}
       <Header T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char}
@@ -242,6 +246,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       )}
 
       <main className="hj-content">
+      <VitalsBar char={char} setChar={setChar} C={T.CHAR} onRestModal={setRestModal} variant="mobile"/>
       <ErrorBoundary>
       <Suspense fallback={<TabLoader/>}>
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} skills={skills} setSkills={setSkills} spells={spells} setSpells={setSpells}/>}
