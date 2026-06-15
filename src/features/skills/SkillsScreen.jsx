@@ -53,16 +53,19 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
     (!activeCat || s.category===activeCat || SKILL_CATS[CATS.indexOf(activeCat)]===s.category)
   ).sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
 
+  const RACIAL_VALUES = [SKILL_CAT.RACIAL, "Cecha rasowa", "Racial Feature"];
+  const FEAT_VALUES   = [SKILL_CAT.FEAT, "Atut", "Feat"];
+  const groupRacial = visible.filter(sk => RACIAL_VALUES.includes(sk.category));
+  const groupFeats  = visible.filter(sk => FEAT_VALUES.includes(sk.category));
+  const groupClass  = visible.filter(sk => !RACIAL_VALUES.includes(sk.category) && !FEAT_VALUES.includes(sk.category));
+
   return (
     <>
-      <div className="screen-col-header">
-        <span className="col-title">{title}</span>
-        <span className="col-actions">
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{SK.count(skills.length, inUseCount)}</span>
-          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
-            {showForm ? <><Icon name="close" size="0.85em"/> {SK.cancel}</> : <><Icon name="plus" size="0.85em"/> {SK.add}</>}
-          </button>
-        </span>
+      <div className="sect-divider sect-divider-actions">
+        <span>{title} · {SK.count(skills.length, inUseCount)}</span>
+        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
+          {showForm ? <><Icon name="close" size="0.85em"/> {SK.cancel}</> : <><Icon name="plus" size="0.85em"/> {SK.add}</>}
+        </button>
       </div>
 
       {showForm && (
@@ -95,7 +98,16 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
 
       {skills.length===0 && <div className="card empty-state">{SK.empty}</div>}
 
-      {visible.map(sk => {
+      {groupRacial.length > 0 && <div className="sect-divider">{SK.sectionRacial}</div>}
+      {groupRacial.map(renderSkill)}
+      {groupClass.length > 0 && <div className="sect-divider">{SK.sectionClass}</div>}
+      {groupClass.map(renderSkill)}
+      {groupFeats.length > 0 && <div className="sect-divider">{SK.sectionFeats}</div>}
+      {groupFeats.map(renderSkill)}
+    </>
+  );
+
+  function renderSkill(sk) {
         const open = !!expanded[sk.id];
         const isEditing = !!editing[sk.id];
         const cc = catColor(sk.category);
@@ -142,8 +154,6 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
             )}
           </div>
         );
-      })}
-    </>
-  );
+  }
 }
 export default memo(SkillsScreen);

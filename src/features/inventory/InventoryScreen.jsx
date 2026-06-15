@@ -39,18 +39,17 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
   const equippedCount = inventory.filter(i => i.equipped).length;
   const needsExtras  = t => [ITEM_TYPE.WEAPON, ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
 
+  const groupWeapons = visible.filter(i => i.type === ITEM_TYPE.WEAPON);
+  const groupArmor   = visible.filter(i => i.type === ITEM_TYPE.ARMOR || i.type === ITEM_TYPE.SHIELD);
+  const groupMisc    = visible.filter(i => i.type !== ITEM_TYPE.WEAPON && i.type !== ITEM_TYPE.ARMOR && i.type !== ITEM_TYPE.SHIELD);
+
   return (
     <>
-      <div className="screen-col-header">
-        <span className="col-title">{title}</span>
-        <span className="col-actions">
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>
-            {I.count(inventory.length, equippedCount)}
-          </span>
-          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
-            {showForm ? <><Icon name="close" size="0.85em"/> {I.cancel}</> : <><Icon name="plus" size="0.85em"/> {I.add}</>}
-          </button>
-        </span>
+      <div className="sect-divider sect-divider-actions">
+        <span>{title} · {I.count(inventory.length, equippedCount)}</span>
+        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
+          {showForm ? <><Icon name="close" size="0.85em"/> {I.cancel}</> : <><Icon name="plus" size="0.85em"/> {I.add}</>}
+        </button>
       </div>
 
       {showForm && (
@@ -106,7 +105,16 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
       <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
 
       {inventory.length === 0 && <div className="card empty-state">{I.empty}</div>}
-      {visible.map(item => {
+      {groupWeapons.length > 0 && <div className="sect-divider">{I.sectionWeapons}</div>}
+      {groupWeapons.map(renderItem)}
+      {groupArmor.length > 0 && <div className="sect-divider">{I.sectionArmor}</div>}
+      {groupArmor.map(renderItem)}
+      {groupMisc.length > 0 && <div className="sect-divider">{I.sectionMisc}</div>}
+      {groupMisc.map(renderItem)}
+    </>
+  );
+
+  function renderItem(item) {
         const open      = !!expanded[item.id];
         const isEditing = !!editing[item.id];
         const preview   = [item.effect, item.note].filter(Boolean).join(" · ");
@@ -189,8 +197,6 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
             )}
           </div>
         );
-      })}
-    </>
-  );
+  }
 }
 export default memo(InventoryScreen);

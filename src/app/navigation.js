@@ -31,6 +31,18 @@ export function getNavGroups(lang) {
   ];
 }
 
+/* Etykieta aktualnej zakładki — wyświetlana w trwałym nagłówku (Header/Sidebar) */
+export function getTabLabel(T, tab) {
+  const n = T.NAV;
+  const map = {
+    character: n.character, equipment: n.equipment, inventory: n.inventory,
+    skills: n.skills, spells: n.spells, "world-all": n.world,
+    npcs: n.npcs, locations: n.locations, factions: n.factions,
+    sessions: n.sessions, quests: n.quests,
+  };
+  return map[tab] || n.character;
+}
+
 /* Nawigacja desktopowa — uproszczona struktura dla sidebara:
    - Hero ma podzakładki Character i Equipment (virtual tab)
    - World to jeden przycisk pokazujący 3 kolumny

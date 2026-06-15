@@ -38,6 +38,9 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
     return (sortMode === "school" && !activeSchool) ? (a.school||"").localeCompare(b.school||"") : 0;
   });
 
+  const groupCantrips = visible.filter(sp => sp.level === SPELL_LEVEL.CANTRIP);
+  const groupActive   = visible.filter(sp => sp.level !== SPELL_LEVEL.CANTRIP);
+
   const displayLevel  = lv => T.LABELS.spellLevel[lv]  ?? lv;
   const displaySchool = sc => T.LABELS.spellSchool[sc] ?? sc;
 
@@ -51,22 +54,19 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
 
   return (
     <>
-      <div className="screen-col-header">
-        <span className="col-title">{title}</span>
-        <span className="col-actions">
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em", color:"var(--hj-spell-muted)" }}>{SP.count(spells.length, inUseCount)}</span>
-          <button className="btn-shadow" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem", borderColor:"var(--hj-spell-border)", color:"var(--hj-spell-accent)", background:"transparent", cursor:"pointer" }} onClick={() => setShowSlots(s => !s)}>
-            {showSlots ? <><Icon name="close" size="0.85em"/> {SP.hideSlots}</> : <><Icon name="settings" size="0.85em"/> {SP.manageSlots}</>}
-          </button>
-          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
-            {showForm ? <><Icon name="close" size="0.85em"/> {SP.cancel}</> : <><Icon name="plus" size="0.85em"/> {SP.add}</>}
-          </button>
-        </span>
+      <div className="sect-divider sect-divider-actions">
+        <span>{title} · {SP.count(spells.length, inUseCount)}</span>
+        <button className="sect-divider-btn" style={{ borderColor:"var(--hj-spell-border)", color:"var(--hj-spell-accent)" }} onClick={() => setShowSlots(s => !s)}>
+          {showSlots ? <><Icon name="close" size="0.85em"/> {SP.hideSlots}</> : <><Icon name="settings" size="0.85em"/> {SP.manageSlots}</>}
+        </button>
+        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
+          {showForm ? <><Icon name="close" size="0.85em"/> {SP.cancel}</> : <><Icon name="plus" size="0.85em"/> {SP.add}</>}
+        </button>
       </div>
 
       {showSlots && (
         <div className="card" style={{ borderColor:"var(--hj-spell-border)" }}>
-          <div className="sect-label" style={{ color:"var(--hj-spell-accent)" }}>{SP.slotsTitle}</div>
+          <div className="sect-divider">{SP.slotsSectionTitle}</div>
           <div style={{ display:"flex", alignItems:"center", gap:"0.6rem", marginBottom:"0.7rem", flexWrap:"wrap" }}>
             <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.54rem", letterSpacing:"0.14em", color:"var(--hj-spell-muted)", textTransform:"uppercase" }}>{SP.castingAbility}</span>
             <select className="g-select" style={{ width:"auto", fontSize:"0.82rem", padding:"0.25rem 0.5rem", borderColor:"#1a3a6a" }}
@@ -127,7 +127,14 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
 
       {spells.length===0 && <div className="card empty-state">{SP.empty}</div>}
 
-      {visible.map(sp => {
+      {groupCantrips.length > 0 && <div className="sect-divider">{SP.cantripsTitle}</div>}
+      {groupCantrips.map(renderSpell)}
+      {groupActive.length > 0 && <div className="sect-divider">{SP.activeSpellsTitle}</div>}
+      {groupActive.map(renderSpell)}
+    </>
+  );
+
+  function renderSpell(sp) {
         const open = !!expanded[sp.id];
         const isEditing = !!editing[sp.id];
         return (
@@ -201,8 +208,6 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
             )}
           </div>
         );
-      })}
-    </>
-  );
+  }
 }
 export default memo(SpellsScreen);

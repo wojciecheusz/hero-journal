@@ -1,16 +1,21 @@
 import SettingsMenu from './SettingsMenu';
 import Icon from '../shared/icons';
+import { getClassLevelLabel } from '../utils/character';
+import { getTabLabel } from './navigation';
 
-/* Górny pasek widoczny na mobile — marka, pomoc kontekstowa, ustawienia (sidebar przejmuje tę rolę na desktopie) */
+/* Górny pasek widoczny na mobile — marka, imię/klasa/poziom, etykieta zakładki, pomoc kontekstowa, ustawienia (sidebar przejmuje tę rolę na desktopie) */
 export default function Header({
-  T, theme, setTheme, toggleLanguage, char,
+  T, theme, setTheme, toggleLanguage, char, tab,
   showHelp, setShowHelp, showSettings, setShowSettings,
   setScreen, setShowReset, user, onCloudRefresh, onLogout,
   onExport, onImport,
 }) {
+  const { className, totalLevel } = getClassLevelLabel(char, T.CHAR);
+
   return (
     <header className="hj-header">
-      <div className="hj-header-inner" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.5rem" }}>
+      <div className="hj-header-inner">
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.5rem" }}>
 
         {/* Logo + imię bohatera — ukryte na desktop (sidebar przejmuje tę rolę) */}
         <button className="hj-header-brand" style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0, cursor:"pointer", background:"transparent", border:"none", padding:0, color:"inherit", textAlign:"left" }}
@@ -54,6 +59,17 @@ export default function Header({
           </>}
         </div>{/* /settings */}
         </div>{/* /right-side flex */}
+      </div>
+
+      {/* Tożsamość bohatera — imię, klasa/poziom, widoczne na każdym ekranie */}
+      <div className="hj-header-identity">
+        <div className="hcv2-eyebrow"><Icon name="sparkle" size="0.85em"/> Hero Journal</div>
+        <div className="hcv2-name">{char.name?.trim() || T.CHAR.heroName}</div>
+        <div className="hcv2-subtitle">{className} · {T.CHAR.level} {totalLevel}</div>
+      </div>
+
+      {/* Etykieta aktualnej zakładki */}
+      <div className="tab-label">{getTabLabel(T, tab)}</div>
       </div>
     </header>
   );

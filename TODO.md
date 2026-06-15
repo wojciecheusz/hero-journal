@@ -3,6 +3,57 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P24 — Struktura/estetyka wg "Hero Journal Mobile v4" 1:1, bez zmiany palety (2026-06-15) — UKOŃCZONE
+Polecenie: odwzorować 1:1 strukturę, kolejność kart w zakładkach, "miękką"
+warstwową/przezroczystą estetykę kart oraz wygląd nagłówka z referencyjnych
+zrzutów "Hero Journal Mobile v4" — **bez zmiany/dodawania nowych motywów
+kolorystycznych** (paleta zostaje "Pergamin Zgaszony" z P23), logika/„bebechy”
+1:1. Plan: `C:\Users\mwoj\.claude\plans\keen-dancing-badger.md`.
+
+- [x] **Faza 1 — Trwały nagłówek**: `Header.jsx`/`Sidebar.jsx` dostały
+      `.hj-header-identity`/`.hj-sidebar-identity` (eyebrow "✦ Hero Journal",
+      imię, klasa/podszkoła · poziom — `src/utils/character.js#getClassLevelLabel`)
+      + wyśrodkowaną etykietę aktualnej zakładki `.tab-label`
+      (`navigation.js#getTabLabel`), widoczne na każdym ekranie.
+      `HeroHeaderCard` zmniejszona do samej karty "Atrybuty" (6-stat grid).
+      Build OK.
+- [x] **Faza 2 — VitalsBar**: dodany `.vitals-mini-grid` (AC/Inicjatywa/
+      Biegłość, współdzielony stan z `CombatCard`) po prawej stronie paska PŻ;
+      przyciski odpoczynku (☽/☀) przeniesione z `.vitals-controls` do
+      osobnego pełnoszerokiego rzędu `.rest-row` pod paskiem (`.btn-rest`
+      przebudowany na styl pill). Build OK.
+- [x] **Faza 3 — Miększe cienie**: nowy token `--hj-shadow-soft`, zastosowany
+      w `.card`/`.vitals-bar`/`.hj-header`/`.nav-drawer`/`.modal-box` —
+      większy/miększy blur + warstwowanie cieni, bez zmiany kolorów. Build OK.
+- [x] **Faza 4 — Kolejność kart "Postać"**: `CharacterScreen.jsx`
+      przegrupowany: Atrybuty → Rzuty Obronne → Umiejętności → Walka →
+      Wyposażenie (lewa kolumna) → Biegłości i Języki → Osobowość → Dane
+      postaci → Notatki osobiste → Historia (prawa kolumna) — mobile w jednej
+      kolumnie daje kolejność zgodną z referencją, desktop 2-kolumnowy balans
+      4/5 bez zmian w logice grid. Build OK.
+- [x] **Faza 5 — Sekcje list**: `InventoryScreen` — grupy `.sect-divider`
+      "Broń i Skupienie"/"Zbroja i Ochrona"/"Bagaż" (po `item.type`,
+      pinned-first zachowane w obrębie grupy); `SkillsScreen` — grupy
+      "Cechy Rasowe"/"Zdolności Klasowe"/"Umiejętności i Atuty" (po
+      `category`, z obsługą legacy wartości PL/EN); `SpellsScreen` —
+      `.sect-divider` "Sloty Czarów" nad `SpellSlotsWidget`, grupy "Kantryki"
+      (poziom 0) / "Aktywne Czary" (poziom >0), sortowanie wg poziomu/szkoły
+      zachowane. Nowe klucze i18n (`sectionWeapons`/`sectionArmor`/
+      `sectionMisc`, `sectionRacial`/`sectionClass`/`sectionFeats`,
+      `slotsSectionTitle`/`cantripsTitle`/`activeSpellsTitle`) w PL+EN.
+      Build OK.
+- [x] **Faza 6 — Nagłówki list**: `.screen-col-header`/`.col-title`/
+      `.col-actions` (Plecak/Zdolności/Czary/NPC/Miejsca/Frakcje) zamienione na
+      wyśrodkowany `.sect-divider.sect-divider-actions` ("TYTUŁ · N WPISÓW")
+      z pill-przyciskami `.sect-divider-btn` ("+ Dodaj" i, dla Czarów,
+      "Komórki"); stare klasy `.screen-col-header`/`.col-title`/`.col-actions`
+      usunięte jako nieużywane. Build OK.
+- [x] **Faza 7 — Weryfikacja końcowa**: `npm run build` czysty (37 wpisów
+      precache, ~8927 KiB, brak błędów). Zero zmian kolorów/palety — wszystko
+      na istniejących `--hj-*`/"Pergamin Zgaszony". **Uwaga:** przegląd
+      wizualny mobile+desktop wszystkich ekranów wymaga manualnej weryfikacji
+      przez użytkownika — brak narzędzia przeglądarki w tej sesji.
+
 ### ✅ P23 — Overhaul wizualny: "Pergamin Zgaszony" + obłe formy (wg Hero Journal Mobile v4, 2026-06-15) — UKOŃCZONE
 Generalny overhaul wizualny wg dostarczonego prototypu (Claude Design,
 "Hero Journal Mobile v4.dc.html"): obłe formy wszędzie, karty z dywiderami,

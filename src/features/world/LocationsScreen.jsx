@@ -39,14 +39,11 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
 
   return (
     <>
-      <div className="screen-col-header">
-        <span className="col-title">{title}</span>
-        <span className="col-actions">
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{T.LOCATIONS.count(locations.length)}</span>
-          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
-            {showForm ? <><Icon name="close" size="0.85em"/> {T.LOCATIONS.cancel}</> : <><Icon name="plus" size="0.85em"/> {T.LOCATIONS.add}</>}
-          </button>
-        </span>
+      <div className="sect-divider sect-divider-actions">
+        <span>{title} · {T.LOCATIONS.count(locations.length)}</span>
+        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
+          {showForm ? <><Icon name="close" size="0.85em"/> {T.LOCATIONS.cancel}</> : <><Icon name="plus" size="0.85em"/> {T.LOCATIONS.add}</>}
+        </button>
       </div>
 
       {showForm && (

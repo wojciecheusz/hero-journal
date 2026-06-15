@@ -38,15 +38,12 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
 
   return (
     <>
-      <HeroHeaderCard char={char} C={C} pb={pb}/>
+      <HeroHeaderCard char={char} C={C}/>
 
       <div className="char-sheet-grid">
 
         {/* ══ LEWA KOLUMNA: mechanika ══ */}
         <div className="char-col">
-          <CharCard char={char} setChar={setChar} C={C}
-            open={charOpen} onToggle={() => setCharOpen(o => !o)}/>
-
           <SavingThrowsCard char={char} setChar={setChar} C={C} pb={pb}/>
 
           <SkillsCard char={char} setChar={setChar} C={C}
@@ -54,23 +51,14 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
 
           <CombatCard char={char} setChar={setChar} C={C} T={T}
             pb={pb} percBonus={percBonus} spellAbi={spellAbi} spellDC={spellDC}/>
-        </div>
 
-        {/* ══ PRAWA KOLUMNA: wyposażenie i osobowość ══ */}
-        <div className="char-col">
           <EquippedCard char={char} setChar={setChar} C={C}
             inventory={inventory} setInventory={setInventory}
             skills={skills} setSkills={setSkills} spells={spells} setSpells={setSpells}/>
+        </div>
 
-          {/* Notatki osobiste */}
-          <div className="card">
-            <CardHeader label={C.personalNotes} open={notesOpen} onToggle={() => setNotesOpen(o => !o)}/>
-            {notesOpen && (
-              <textarea className="g-textarea" rows={3} placeholder={C.personalNotesPh}
-                value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}/>
-            )}
-          </div>
-
+        {/* ══ PRAWA KOLUMNA: szczegóły postaci ══ */}
+        <div className="char-col">
           {/* Biegłości i Języki */}
           <div className="card">
             <CardHeader label={C.profTitle} open={profOpen} onToggle={() => setProfOpen(o => !o)}/>
@@ -112,6 +100,18 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+
+          <CharCard char={char} setChar={setChar} C={C}
+            open={charOpen} onToggle={() => setCharOpen(o => !o)}/>
+
+          {/* Notatki osobiste */}
+          <div className="card">
+            <CardHeader label={C.personalNotes} open={notesOpen} onToggle={() => setNotesOpen(o => !o)}/>
+            {notesOpen && (
+              <textarea className="g-textarea" rows={3} placeholder={C.personalNotesPh}
+                value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}/>
             )}
           </div>
 

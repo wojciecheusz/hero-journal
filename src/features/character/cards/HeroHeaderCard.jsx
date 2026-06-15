@@ -1,26 +1,14 @@
-import { statMod, numMod } from '../../../utils/math';
-import Icon from '../../../shared/icons';
+import { statMod } from '../../../utils/math';
 
 const STAT_KEYS = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
 
-/* Karta podsumowania bohatera — imię, klasa/poziom, odznaki walki, siatka atrybutów. */
-export default function HeroHeaderCard({ char, C, pb }) {
-  const initiative = char.initiativeBonus !== undefined
-    ? char.initiativeBonus
-    : Math.floor(((char.stats?.DEX ?? 10) - 10) / 2);
-  const totalLevel = Math.min(Math.max((char.classes || []).reduce((s, c) => s + (c.level || 1), 0), 1), 20);
-  const className = (char.classes || []).map(c => c.name?.trim()).filter(Boolean).join(" / ") || C.title;
+/* Karta Atrybutów — siatka 6 cech z podświetleniem cechy zarzucającej. Imię/klasa/poziom przeniesione do trwałego nagłówka (Header/Sidebar). */
+export default function HeroHeaderCard({ char, C }) {
   const spellAbility = char.spellcastingAbility || "INT";
   const statAbbr = C.statAbbr || {};
 
   return (
-    <div className="hcv2">
-      <div className="hcv2-eyebrow"><Icon name="sparkle" size="0.85em"/> Hero Journal</div>
-      <div className="hcv2-name">{char.name?.trim() || C.heroName}</div>
-      <div className="hcv2-subtitle">{className} · {C.level} {totalLevel}</div>
-
-      <div className="hcv2-divider"><Icon name="diamond" size="0.6em" className="glyph"/></div>
-
+    <div className="card">
       <div className="sect-divider">{C.abilitiesTitle}</div>
       <div className="hcv2-stat-grid">
         {STAT_KEYS.map(key => {
@@ -34,26 +22,6 @@ export default function HeroHeaderCard({ char, C, pb }) {
             </div>
           );
         })}
-      </div>
-
-      <div className="sect-divider">{C.combatTitle}</div>
-      <div className="hcv2-combat-grid">
-        <div className="hcv2-combat-box">
-          <div className="hcv2-combat-value">{char.ac || 0}</div>
-          <div className="hcv2-combat-label">{C.ac}</div>
-        </div>
-        <div className="hcv2-combat-box">
-          <div className="hcv2-combat-value">{numMod(initiative)}</div>
-          <div className="hcv2-combat-label">{C.initiative}</div>
-        </div>
-        <div className="hcv2-combat-box">
-          <div className="hcv2-combat-value">{char.speed || 30}</div>
-          <div className="hcv2-combat-label">{C.speed}</div>
-        </div>
-        <div className="hcv2-combat-box featured">
-          <div className="hcv2-combat-value">{numMod(pb)}</div>
-          <div className="hcv2-combat-label">{C.profBonus}</div>
-        </div>
       </div>
     </div>
   );

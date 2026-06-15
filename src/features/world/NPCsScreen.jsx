@@ -40,14 +40,11 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
 
   return (
     <>
-      <div className="screen-col-header">
-        <span className="col-title">{title}</span>
-        <span className="col-actions">
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{N.count(npcs.length)}</span>
-          <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={() => setShowForm(s => !s)}>
-            {showForm ? <><Icon name="close" size="0.85em"/> {N.cancel}</> : <><Icon name="plus" size="0.85em"/> {N.add}</>}
-          </button>
-        </span>
+      <div className="sect-divider sect-divider-actions">
+        <span>{title} · {N.count(npcs.length)}</span>
+        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
+          {showForm ? <><Icon name="close" size="0.85em"/> {N.cancel}</> : <><Icon name="plus" size="0.85em"/> {N.add}</>}
+        </button>
       </div>
 
       {showForm && (

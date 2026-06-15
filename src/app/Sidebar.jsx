@@ -1,6 +1,7 @@
 import SettingsMenu from './SettingsMenu';
 import VitalsBar from './VitalsBar';
 import Icon from '../shared/icons';
+import { getClassLevelLabel } from '../utils/character';
 
 /* Treść kontekstowego panelu pomocy — zależna od aktywnej zakładki */
 function SidebarHelp({ tab, T, onClose }) {
@@ -52,11 +53,13 @@ function SidebarHelp({ tab, T, onClose }) {
 
 /* Sidebar nawigacyjny widoczny na desktopie — marka, nawigacja, pomoc kontekstowa, stopka z ustawieniami */
 export default function Sidebar({
-  T, theme, setTheme, toggleLanguage, char, setChar, tab, setTab, navGroupsDesktop,
+  T, theme, setTheme, toggleLanguage, char, setChar, pb, tab, setTab, navGroupsDesktop,
   showHelp, setShowHelp, showSettings, setShowSettings,
   setScreen, setShowReset, user, onCloudRefresh, onLogout,
   onExport, onImport, onRestModal,
 }) {
+  const { className, totalLevel } = getClassLevelLabel(char, T.CHAR);
+
   return (
     <aside className="hj-sidebar">
 
@@ -69,14 +72,22 @@ export default function Sidebar({
           <line x1="9" y1="11" x2="13" y2="11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
         <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:"var(--hj-text-muted)", letterSpacing:"0.08em", textTransform:"uppercase", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", flex:1, minWidth:0 }}>
-          {char.name?.trim() || T.UI.hero}
+          HJ
         </span>
       </button>
+
+      {/* Tożsamość bohatera — imię, klasa/poziom, widoczne na każdym ekranie */}
+      <div className="hj-sidebar-identity">
+        <div className="hcv2-eyebrow"><Icon name="sparkle" size="0.85em"/> Hero Journal</div>
+        <div className="hcv2-name">{char.name?.trim() || T.CHAR.heroName}</div>
+        <div className="hcv2-subtitle">{className} · {T.CHAR.level} {totalLevel}</div>
+      </div>
+
       <div style={{ height:"1px", background:"var(--hj-border)", margin:"0 0.75rem 0.25rem", flexShrink:0 }}/>
 
       {/* Pasek PŻ / Odpoczynek */}
       <div style={{ flexShrink:0 }}>
-        <VitalsBar char={char} setChar={setChar} C={T.CHAR} onRestModal={onRestModal} variant="sidebar"/>
+        <VitalsBar char={char} setChar={setChar} C={T.CHAR} pb={pb} onRestModal={onRestModal} variant="sidebar"/>
       </div>
 
       {/* Nawigacja */}

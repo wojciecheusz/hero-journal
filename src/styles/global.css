@@ -23,6 +23,7 @@
   --hj-noise:            0.016;
   --hj-shadow-bot:       rgba(60,45,20,0.16);
   --hj-shadow-card:      rgba(60,45,20,0.10);
+  --hj-shadow-soft:      rgba(60,45,20,0.07);
   --hj-inner-div-bg:     #ece5d2;
   --hj-hp-bg:            #cfc7b0;
   --hj-add-form:         #e8e1cc;
@@ -104,7 +105,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   width: 100%;
   overflow-x: hidden;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 56px) !important;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 144px) !important;
   --pip-prof:     var(--hj-accent);
   --pip-exp:      var(--spell-accent);
   --pip-empty:    var(--hj-border-input);
@@ -131,9 +132,38 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   z-index: 50;
   background: var(--hj-header-bg);
   border-bottom: 1px solid var(--hj-border);
-  box-shadow: 0 4px 32px var(--hj-shadow-bot);
-  padding: calc(env(safe-area-inset-top,0px) + 0.75rem) 1.25rem 0.75rem;
+  box-shadow: 0 8px 40px var(--hj-shadow-bot);
+  padding: calc(env(safe-area-inset-top,0px) + 0.75rem) 1.25rem 0.6rem;
 }
+
+/* Tożsamość bohatera w nagłówku (mobile) — imię/klasa/poziom, widoczne na każdym ekranie */
+.hj-header-identity { padding-top: 0.5rem; }
+.hj-header-identity .hcv2-eyebrow,
+.hj-sidebar-identity .hcv2-eyebrow { font-size: 0.5rem; margin-bottom: 0.3rem; }
+.hj-header-identity .hcv2-name,
+.hj-sidebar-identity .hcv2-name {
+  font-size: 1.25rem; margin-bottom: 0.2rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hj-header-identity .hcv2-subtitle,
+.hj-sidebar-identity .hcv2-subtitle {
+  font-size: 0.7rem; margin-bottom: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Etykieta aktualnej zakładki — wyśrodkowany sect-divider pod tożsamością */
+.tab-label {
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  font-family: 'Cinzel', serif; font-size: 0.55rem; font-weight: 600;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--hj-text-label);
+  margin-top: 0.6rem;
+}
+.tab-label::before, .tab-label::after {
+  content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--hj-border);
+}
+
+/* Tożsamość bohatera w sidebarze (desktop) — pod brandem */
+.hj-sidebar-identity { padding: 0.4rem 1rem 0.9rem; text-align: center; }
 
 .hj-logo {
   font-family: 'Cinzel Decorative', serif;
@@ -253,7 +283,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   z-index: 99;
   background: var(--hj-nav-bg);
   border-top: 1px solid var(--hj-border);
-  box-shadow: 0 -8px 32px var(--hj-shadow-bot);
+  box-shadow: 0 -10px 40px var(--hj-shadow-bot);
   padding: 0.25rem 0.3rem calc(0.25rem + env(safe-area-inset-bottom,0px));
   display: flex;
   gap: 0.15rem;
@@ -482,31 +512,6 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   }
 }
 
-/* Nagłówek kolumny — tytuł + licznik/przyciski w jednym rzędzie nad linią */
-.screen-col-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--hj-border);
-  margin-bottom: 0.2rem;
-}
-.screen-col-header .col-title {
-  font-family: 'Cinzel', serif;
-  font-size: calc(0.62rem + 2px);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--hj-text-label);
-}
-.screen-col-header .col-actions {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  margin-left: auto;
-}
-
 /* Karta postaci — aktualizacje dla szerszych breakpointów */
 @media (min-width: 1440px) {
   .char-sheet-grid { gap: 1.4rem; }
@@ -586,7 +591,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .card {
   background: var(--hj-bg-card);
   border: 1px solid var(--hj-border);
-  box-shadow: 0 4px 16px var(--hj-shadow-card), inset 0 1px 0 rgba(168,120,48,0.05);
+  box-shadow: 0 10px 32px var(--hj-shadow-soft), 0 2px 8px var(--hj-shadow-card), inset 0 1px 0 rgba(168,120,48,0.06);
   padding: 1.25rem;
   position: relative;
   border-radius: var(--radius-lg);
@@ -694,6 +699,33 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   height: 1px;
   background: var(--hj-border);
 }
+
+/* ── Nagłówek listy w stylu sect-divider + akcje po prawej (P24) ─ */
+.sect-divider-actions {
+  margin: 0 0 0.85rem;
+}
+.sect-divider-actions > span:first-child {
+  white-space: nowrap;
+}
+.sect-divider-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--hj-border-input);
+  color: var(--hj-text-muted);
+  padding: 0.28rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.sect-divider-btn:hover { border-color: var(--hj-accent-border); color: var(--hj-accent); }
 
 /* ── Plakietki ikon — wpisy list (P23) ───────────────────────── */
 .icon-badge {
@@ -1093,7 +1125,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   border: 1px solid var(--hj-border);
   border-radius: var(--radius-lg);
   padding: 0.6rem 0.85rem;
-  box-shadow: 0 4px 16px var(--hj-shadow-card);
+  box-shadow: 0 10px 32px var(--hj-shadow-soft), 0 2px 8px var(--hj-shadow-card), inset 0 1px 0 rgba(168,120,48,0.06);
 }
 
 .vitals-hp { flex: 1; min-width: 0; }
@@ -1131,10 +1163,50 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 }
 
 .vitals-controls { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
-.vitals-controls .btn-rest { width: 52px; }
+
+/* ── Miniboksy AC/Inicj./Bieg. w VitalsBar (P24) ──────────────── */
+.vitals-mini-grid { display: flex; gap: 0.4rem; flex-shrink: 0; }
+.vitals-mini-box {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--hj-combat-box); border: 1px solid var(--hj-border-input);
+  border-radius: var(--radius-md); padding: 0.25rem 0.5rem; min-width: 2.6rem;
+}
+.vitals-mini-box.featured { border-color: rgba(168,120,48,0.3); background: var(--hj-selected-bg); }
+.vitals-mini-value {
+  background: transparent; border: none; outline: none; padding: 0;
+  font-family: 'Cinzel', serif; font-weight: 700; font-size: 1rem;
+  color: var(--hj-accent); text-align: center; width: 2.2em;
+}
+.vitals-mini-label {
+  font-family: 'Cinzel', serif; font-size: 0.42rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--hj-text-dim); margin-top: 0.1rem;
+  white-space: nowrap;
+}
+
+/* ── Rząd przycisków odpoczynku — pod VitalsBar (P24) ──────────── */
+.rest-row { display: flex; gap: 0.6rem; }
+.btn-rest {
+  flex: 1;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--hj-bg-card);
+  border: 1px solid var(--hj-border);
+  color: var(--hj-text-muted);
+  padding: 0.6rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  box-shadow: 0 10px 32px var(--hj-shadow-soft), 0 2px 8px var(--hj-shadow-card);
+}
 
 @media (min-width: 1024px) {
-  .vitals-bar-mobile { display: none; }
+  .vitals-bar-mobile, .rest-row.rest-row-mobile { display: none; }
 }
 
 .vitals-bar-sidebar {
@@ -1143,8 +1215,11 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   gap: 0.6rem;
   margin: 0.4rem 0.75rem 0.6rem;
 }
-.vitals-bar-sidebar .vitals-controls { justify-content: space-between; }
-.vitals-bar-sidebar .vitals-controls .btn-rest { flex: 1; width: auto; }
+.vitals-bar-sidebar .vitals-mini-grid { justify-content: space-between; }
+.vitals-bar-sidebar .vitals-mini-box { flex: 1; }
+.vitals-bar-sidebar .vitals-controls { justify-content: center; }
+
+.rest-row-sidebar { margin: 0 0.75rem 0.6rem; }
 
 /* ── Combat boxy ──────────────────────────────────────────────── */
 .combat-box        { background: var(--hj-combat-box); border: 1px solid var(--hj-border-input); text-align: center; padding: 0.5rem 0.3rem; border-radius: 14px; }
@@ -1374,7 +1449,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 
 /* ── Modalne ──────────────────────────────────────────────────── */
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
-.modal-box     { background:var(--hj-modal-bg); border:1px solid #6a2a2a; padding:1.5rem; max-width:380px; width:100%; border-radius:var(--radius-xl); }
+.modal-box     { background:var(--hj-modal-bg); border:1px solid #6a2a2a; padding:1.5rem; max-width:380px; width:100%; border-radius:var(--radius-xl); box-shadow: 0 16px 48px var(--hj-shadow-soft), 0 4px 16px var(--hj-shadow-bot); }
 .modal-title   { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
 .modal-text    { font-family:'Crimson Text',serif; font-size:1rem; color:var(--hj-text); line-height:1.6; margin-bottom:1.2rem; }
 .modal-detail  { font-family:'Crimson Text',serif; font-size:0.9rem; color:var(--hj-text); background:var(--hj-bg-input); border:1px solid var(--hj-border-input); padding:0.5rem 0.75rem; margin-bottom:1rem; line-height:1.6; border-radius:var(--radius-md); }

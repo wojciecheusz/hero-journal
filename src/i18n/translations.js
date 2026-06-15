@@ -157,6 +157,7 @@ export const TRANSLATIONS = {
       equipped:"Wyposażony", inBag:"W plecaku",
       damage:"Obrażenia", type:"Typ", attackBonus:"Premia rzutu", action:"Działanie", notes:"Notatki",
       delete:"Usuń",
+      sectionWeapons:"Broń i Skupienie", sectionArmor:"Zbroja i Ochrona", sectionMisc:"Bagaż",
     },
 
     SKILLS: {
@@ -167,6 +168,7 @@ export const TRANSLATIONS = {
       all:"Wszystkie", empty:"Brak zapisanych umiejętności, cech rasowych ani atutów.",
       editNamePh:"Nazwa…", active:"Aktywna", inactive:"Nieaktywna",
       mastery:"Mistrzostwo", editDescPh:"Opis efektu działania cechy…", delete:"Usuń",
+      sectionRacial:"Cechy Rasowe", sectionClass:"Zdolności Klasowe", sectionFeats:"Umiejętności i Atuty",
     },
 
     SPELLS: {
@@ -174,6 +176,7 @@ export const TRANSLATIONS = {
       cancel:"Anuluj", add:"Dodaj", save:"Zapisz czar",
       hideSlots:"Ukryj komórki", manageSlots:"Komórki",
       slotsTitle:"Komórki czarów i rzucanie magii",
+      slotsSectionTitle:"Sloty Czarów", cantripsTitle:"Kantryki", activeSpellsTitle:"Aktywne Czary",
       castingAbility:"Cecha rzucania",
       spellStats:(dc,atk) => `Trudność czarów (DC): ${dc} · Modyfikator ataku: ${atk}`,
       namePh:"Nazwa zaklęcia…", castingTime:"Czas rzucania", castingTimePh:"np. 1 akcja",
@@ -571,6 +574,7 @@ export const TRANSLATIONS = {
       equipped:"Equipped", inBag:"In bag",
       damage:"Damage", type:"Type", attackBonus:"Attack bonus", action:"Effect", notes:"Notes",
       delete:"Delete",
+      sectionWeapons:"Weapons & Focus", sectionArmor:"Armor & Protection", sectionMisc:"Backpack",
     },
 
     SKILLS: {
@@ -581,6 +585,7 @@ export const TRANSLATIONS = {
       all:"All", empty:"No saved skills, racial features, or feats.",
       editNamePh:"Name…", active:"Active", inactive:"Inactive",
       mastery:"Mastery", editDescPh:"Effect description…", delete:"Delete",
+      sectionRacial:"Racial Features", sectionClass:"Class Features", sectionFeats:"Skills & Feats",
     },
 
     SPELLS: {
@@ -588,6 +593,7 @@ export const TRANSLATIONS = {
       cancel:"Cancel", add:"Add", save:"Save spell",
       hideSlots:"Hide slots", manageSlots:"Manage slots",
       slotsTitle:"Spell Slots & Spellcasting",
+      slotsSectionTitle:"Spell Slots", cantripsTitle:"Cantrips", activeSpellsTitle:"Active Spells",
       castingAbility:"Spellcasting ability",
       spellStats:(dc,atk) => `Spell save DC: ${dc} · Spell attack: ${atk}`,
       namePh:"Spell name…", castingTime:"Casting time", castingTimePh:"e.g. 1 action",

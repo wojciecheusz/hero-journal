@@ -176,6 +176,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   /* ── Skróty do danych ────────────────────────────────────────── */
   const { char, inventory, npcs, locations, skills, spells, sessions, quests, factions } = data;
+  const pb = char.profBonus || 2;
 
   /* ── Zlokalizowane dane ───────────────────────────────────────── */
   const T                = TRANSLATIONS[lang];
@@ -226,14 +227,14 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       {showHelp && <HelpPanel tab={tab} theme={theme} onClose={() => setShowHelp(false)}/>}
 
       {/* ── Sidebar (desktop only) ── */}
-      <Sidebar T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} setChar={setChar}
+      <Sidebar T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} setChar={setChar} pb={pb}
         tab={tab} setTab={setTab} navGroupsDesktop={navGroupsDesktop}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport} onRestModal={setRestModal}/>
 
       {/* ── Header (mobile only) ── */}
-      <Header T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char}
+      <Header T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} tab={tab}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport}/>
@@ -246,7 +247,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       )}
 
       <main className="hj-content">
-      <VitalsBar char={char} setChar={setChar} C={T.CHAR} onRestModal={setRestModal} variant="mobile"/>
+      <VitalsBar char={char} setChar={setChar} C={T.CHAR} pb={pb} onRestModal={setRestModal} variant="mobile"/>
       <ErrorBoundary>
       <Suspense fallback={<TabLoader/>}>
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} skills={skills} setSkills={setSkills} spells={spells} setSpells={setSpells}/>}
