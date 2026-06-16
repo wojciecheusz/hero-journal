@@ -22,7 +22,7 @@ export default function CombatCard({ char, setChar, C, T, pb, percBonus, spellAb
 
   return (
     <div className="card">
-      <div className="sect-label">{C.combatTitle}</div>
+      <div className="sect-divider">{C.combatTitle}</div>
 
       <div className="combat-layout">
 

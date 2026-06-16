@@ -13,7 +13,7 @@ export default function SkillsCard({ char, setChar, C, GENERIC_SKILLS, pb }) {
 
   return (
     <div className="card">
-      <div className="sect-label">{C.skillsTitle}</div>
+      <div className="sect-divider">{C.skillsTitle}</div>
       <div className="hj-skills-grid" style={{ display:"grid", gap:"0.3rem" }}>
         {GENERIC_SKILLS.map(sk => {
           const prz = !!(char.skills||{})[sk.key];

@@ -35,7 +35,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
 
   return (
     <div className="card">
-      <div className="sect-label">{C.equippedTitle}</div>
+      <div className="sect-divider">{C.equippedTitle}</div>
 
       {/* Monety */}
       <div style={{ borderBottom:"1px solid rgba(128,128,128,0.15)", paddingBottom:"0.75rem", marginBottom:"0.75rem" }}>
