@@ -700,6 +700,8 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   background: var(--hj-border);
 }
 
+.card > .sect-divider:first-child { margin-top: 0; }
+
 /* ── Nagłówek listy w stylu sect-divider + akcje po prawej (P24) ─ */
 .sect-divider-actions {
   margin: 0 0 0.85rem;
