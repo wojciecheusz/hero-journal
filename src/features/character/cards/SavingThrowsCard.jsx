@@ -12,6 +12,14 @@ export default function SavingThrowsCard({ char, setChar, C, pb }) {
     return { ...c, savingThrows:s2, savingThrowExp:e2 };
   }), [setChar]);
 
+  const setOverride = useCallback((key, raw) => setChar(c => {
+    if (raw === "") {
+      const o = {...(c.savingThrowOverride||{})}; delete o[key];
+      return {...c, savingThrowOverride: o};
+    }
+    return {...c, savingThrowOverride: {...(c.savingThrowOverride||{}), [key]: parseInt(raw)}};
+  }), [setChar]);
+
   return (
     <div className="card">
       <div className="sect-divider">{C.savingThrowsTitle}</div>
@@ -23,7 +31,7 @@ export default function SavingThrowsCard({ char, setChar, C, pb }) {
           const exp     = !!(char.savingThrowExp||{})[st.key];
           const computed = exp ? base + pb*2 : prz ? base + pb : base;
           const over    = (char.savingThrowOverride||{})[st.key];
-          const stVal   = over !== undefined ? over : computed;
+          const display = over !== undefined ? (over >= 0 ? `+${over}` : `${over}`) : numMod(computed);
           const pipColor  = exp ? "var(--hj-pip-exp)"  : prz ? "var(--hj-pip-prof)" : "transparent";
           const pipBorder = exp ? "2px solid var(--hj-pip-exp)" : prz ? "1.5px solid var(--hj-pip-prof)" : "1.5px solid var(--hj-pip-empty)";
           const pipClip   = exp ? "polygon(50% 0%,100% 50%,50% 100%,0% 50%)" : "none";
@@ -35,9 +43,35 @@ export default function SavingThrowsCard({ char, setChar, C, pb }) {
                 aria-label={`${st.attr}: ${exp?"Expertise":prz?"Proficient":"Not proficient"}`}
                 aria-pressed={prz || exp}
                 onClick={() => cycleSavingThrow(st.key)}
-                style={{ width:10, height:10, padding:0, flexShrink:0, borderRadius:"50%", border:pipBorder, background:pipColor, clipPath:pipClip, boxShadow:exp?"0 0 4px var(--hj-pip-exp)":prz?"0 0 4px var(--hj-pip-prof)":"none", cursor:"pointer", transition:"all 0.15s" }}/>
-              <span style={{ flex:1, fontFamily:"Cinzel,serif", fontSize:"0.78rem", fontWeight:(prz||exp)?700:400, color:exp?"var(--hj-pip-exp)":prz?"var(--hj-pip-prof)":"inherit", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{st.label}</span>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700, color:valColor, minWidth:"1.6rem", textAlign:"right" }}>{numMod(stVal)}</span>
+                style={{ width:10, height:10, padding:0, flexShrink:0,
+                         borderRadius: exp ? "0" : "50%",
+                         border:pipBorder, background:pipColor, clipPath:pipClip,
+                         boxShadow:exp?"0 0 4px var(--hj-pip-exp)":prz?"0 0 4px var(--hj-pip-prof)":"none",
+                         cursor:"pointer", transition:"all 0.15s" }}/>
+              <span style={{ flex:1, fontFamily:"Cinzel,serif", fontSize:"0.78rem",
+                             fontWeight:(prz||exp)?700:400,
+                             color:exp?"var(--hj-pip-exp)":prz?"var(--hj-pip-prof)":"inherit",
+                             overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                {st.label}
+              </span>
+              <input
+                type="text" inputMode="numeric"
+                value={display}
+                title={C.overrideTip || "Wpisz by nadpisać, wyczyść by przywrócić"}
+                onFocus={e => e.target.select()}
+                onChange={e => {
+                  const r = e.target.value.replace(/[^-\d]/g, "");
+                  setOverride(st.key, r);
+                }}
+                onBlur={e => {
+                  const r = e.target.value.replace(/[^-\d]/g, "");
+                  if (!r || isNaN(parseInt(r))) setOverride(st.key, "");
+                }}
+                style={{ fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700,
+                         color:valColor, minWidth:"1.8rem", width:"1.8rem", textAlign:"right",
+                         background:"transparent", border:"none", outline:"none",
+                         borderBottom: over !== undefined ? "1px dashed var(--hj-pip-prof)" : "none",
+                         padding:0 }}/>
             </div>
           );
         })}

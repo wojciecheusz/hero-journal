@@ -144,7 +144,7 @@ export default function Header({
               {/* HP */}
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
-                  <span className="vitals-hp-label">{C.hp}</span>
+                  <span className="vitals-hp-label">PŻ</span>
                   <span className="vitals-hp-value">
                     <input type="number" className="vitals-hp-current" value={hp.current}
                       style={{ color: hpCol }}

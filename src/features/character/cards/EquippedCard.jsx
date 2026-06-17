@@ -37,7 +37,7 @@ function EquippedRow({ iconName, name, meta, badge, badgeColor, badgeBorder, nam
         <span style={{ width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:"var(--hj-text-label)" }}>
           <Icon name={iconName || "diamond"} size="1em"/>
         </span>
-        <span style={{ flex:1, fontFamily:"Cinzel,serif", fontSize:"0.9rem", color:nameColor||"var(--hj-text)", minWidth:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+        <span style={{ flex:1, fontFamily:"Cinzel,serif", fontSize:"0.72rem", color:nameColor||"var(--hj-text)", minWidth:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
           {name}
         </span>
         {badge && (
@@ -100,31 +100,20 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
     return item.effect || item.note || '';
   };
 
-  const itemExpand = item => {
-    const parts = [];
-    if (item.description) parts.push(<ExpandText key="d">{item.description}</ExpandText>);
-    if (item.note && item.note !== itemMeta(item)) parts.push(<ExpandText key="n" muted>{item.note}</ExpandText>);
-    if (item.charges) parts.push(<ExpandText key="c" muted>{C.charges} {item.charges}</ExpandText>);
-    if ((item.tags||[]).length) parts.push(
-      <div key="t" style={{ display:"flex", flexWrap:"wrap", gap:"0.25rem", marginTop:"0.2rem" }}>
-        {item.tags.map(t => <span key={t} style={{ fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.06em", textTransform:"uppercase", padding:"0.15rem 0.4rem", border:"1px solid var(--hj-border-input)", color:"var(--hj-text-dim)", borderRadius:"var(--radius-pill)" }}>{t}</span>)}
-      </div>
-    );
-    return parts.length ? <>{parts}</> : null;
-  };
+  const itemExpand = item => item.note
+    ? <ExpandText muted>{item.note}</ExpandText>
+    : null;
 
   const spellMeta = sp =>
     sp.castingTime || [displaySpellLevel(sp.level), sp.school && displaySpellSchool(sp.school)].filter(Boolean).join(' · ');
 
-  const spellExpand = sp => {
-    const parts = [];
-    if (sp.description) parts.push(<ExpandText key="d">{sp.description}</ExpandText>);
-    const meta2 = [sp.zakres && `${T.SPELLS?.rangeLbl||"Zasięg"}: ${sp.zakres}`, sp.duration && `${T.SPELLS?.durationLbl||"Czas trwania"}: ${sp.duration}`].filter(Boolean);
-    if (meta2.length) parts.push(<ExpandText key="m" muted>{meta2.join(' · ')}</ExpandText>);
-    return parts.length ? <>{parts}</> : null;
-  };
+  const spellExpand = sp => sp.note
+    ? <ExpandText muted>{sp.note}</ExpandText>
+    : null;
 
-  const skillExpand = sk => sk.description ? <ExpandText>{sk.description}</ExpandText> : null;
+  const skillExpand = sk => sk.note
+    ? <ExpandText muted>{sk.note}</ExpandText>
+    : null;
 
   const initiative = char.initiativeBonus !== undefined
     ? char.initiativeBonus

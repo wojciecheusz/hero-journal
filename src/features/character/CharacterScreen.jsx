@@ -79,7 +79,7 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
 
   return (
     <>
-      <HeroHeaderCard char={char} C={C}/>
+      <HeroHeaderCard char={char} setChar={setChar} C={C}/>
 
       <div className="char-sheet-grid">
 
