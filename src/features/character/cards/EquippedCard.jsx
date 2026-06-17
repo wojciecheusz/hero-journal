@@ -3,6 +3,7 @@ import { ITEM_ICONS, SKILL_CAT_ICONS, SPELL_SCHOOL_ICONS } from '../../../consta
 import { SpellSlotsWidget } from '../widgets/SpellSlotsWidget';
 import { useT } from '../../../i18n/translations';
 import Icon from '../../../shared/icons';
+import { numMod } from '../../../utils/math';
 
 /* ── Nagłówek pod-sekcji ── */
 function SubHeader({ iconName, label, color }) {
@@ -125,9 +126,72 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
 
   const skillExpand = sk => sk.description ? <ExpandText>{sk.description}</ExpandText> : null;
 
+  const initiative = char.initiativeBonus !== undefined
+    ? char.initiativeBonus
+    : Math.floor(((char.stats?.DEX ?? 10) - 10) / 2);
+
   return (
     <div className="card">
       <div className="sect-divider">{C.equippedTitle}</div>
+
+      {/* ── Sekcja bojowa ── */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"0.4rem", marginBottom:"0.5rem" }}>
+        {/* Prędkość */}
+        <div className="combat-box">
+          <span className="combat-box-label">{C.speed}</span>
+          <input className="combat-box-input" type="number" value={char.speed||30}
+            onFocus={e => e.target.select()}
+            onChange={e => setChar(c => ({...c, speed: parseInt(e.target.value)||30}))}/>
+        </div>
+        {/* KP */}
+        <div className="combat-box">
+          <span className="combat-box-label">{C.ac}</span>
+          <input className="combat-box-input" type="number" value={char.ac||0}
+            onFocus={e => e.target.select()}
+            onChange={e => setChar(c => ({...c, ac: e.target.value===""?0:parseInt(e.target.value)||0}))}/>
+        </div>
+        {/* Inicjatywa */}
+        <div className="combat-box">
+          <span className="combat-box-label">{C.initiative}</span>
+          <input className="combat-box-input" type="text" inputMode="numeric" value={numMod(initiative)}
+            onFocus={e => e.target.select()}
+            onChange={e => {
+              const raw = e.target.value.replace(/[^-\d]/g, "");
+              setChar(c => raw===""
+                ? (({ initiativeBonus:_, ...rest }) => rest)(c)
+                : {...c, initiativeBonus: parseInt(raw)});
+            }}
+            onBlur={e => {
+              if (e.target.value==="" || isNaN(parseInt(e.target.value.replace(/[^-\d]/g,""))))
+                setChar(c => { const o={...c}; delete o.initiativeBonus; return o; });
+            }}/>
+        </div>
+      </div>
+
+      {/* ── Kości wytrzymałości — konfiguracja (typ + max) ── */}
+      <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", marginBottom:"0.65rem",
+                    padding:"0.3rem 0.5rem", borderRadius:"var(--radius-sm)",
+                    background:"rgba(255,255,255,0.03)", border:"1px solid var(--hj-border-input)" }}>
+        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em",
+                       textTransform:"uppercase", color:"var(--hj-text-muted)", flexShrink:0 }}>
+          {C.hitDice}
+        </span>
+        <select style={{ background:"transparent", border:"none", outline:"none",
+                         fontFamily:"Cinzel,serif", fontSize:"0.75rem", color:"var(--hj-accent)",
+                         cursor:"pointer" }}
+          value={(char.hitDice||{type:"d8"}).type}
+          onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),type:e.target.value}}))}>
+          {["d4","d6","d8","d10","d12"].map(d => <option key={d} value={d}>{d}</option>)}
+        </select>
+        <span style={{ color:"var(--hj-text-muted)", fontSize:"0.6rem" }}>max</span>
+        <input type="number" min={1}
+          value={(char.hitDice||{max:1}).max||1}
+          onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),max:parseInt(e.target.value)||1}}))}
+          style={{ width:28, background:"transparent", border:"none",
+                   borderBottom:"1px dashed var(--hj-text-muted)", outline:"none",
+                   fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center",
+                   color:"var(--hj-text-muted)" }}/>
+      </div>
 
       <div className="subtab-bar">
         {[

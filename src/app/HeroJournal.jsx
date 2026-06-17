@@ -84,7 +84,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [quotaWarning, setQuotaWarning] = useState(false);
   const [restModal, setRestModal] = useState(null);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
-  const [stanyOpen, setStanyOpen] = useState(false);
+  const [stanyOpen,      setStanyOpen]      = useState(false);
+  const [deathOpen,      setDeathOpen]      = useState(false);
+  const [exhOpen,        setExhOpen]        = useState(false);
   useEffect(() => {
     setQuotaExceededHook(() => setQuotaWarning(true));
   }, []);
@@ -206,11 +208,11 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   );
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */
+  const contentTopBase = 316; // brand + identity + hp + 2 btn rows + spacing
+  const contentTopExtra = (stanyOpen ? 82 : 0) + (deathOpen ? 78 : 0) + (exhOpen ? 68 : 0);
   const contentTop = panelCollapsed
     ? "calc(env(safe-area-inset-top, 0px) + 62px)"
-    : stanyOpen
-      ? "calc(env(safe-area-inset-top, 0px) + 362px)"
-      : "calc(env(safe-area-inset-top, 0px) + 278px)";
+    : `calc(env(safe-area-inset-top, 0px) + ${contentTopBase + contentTopExtra}px)`;
 
   return (
     <LangContext.Provider value={lang}>
@@ -247,7 +249,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         onExport={handleExport} onImport={handleImport}
         setChar={setChar} pb={pb} onRestModal={setRestModal}
         panelCollapsed={panelCollapsed} setPanelCollapsed={setPanelCollapsed}
-        stanyOpen={stanyOpen} setStanyOpen={setStanyOpen}/>
+        stanyOpen={stanyOpen} setStanyOpen={setStanyOpen}
+        deathOpen={deathOpen} setDeathOpen={setDeathOpen}
+        exhOpen={exhOpen}     setExhOpen={setExhOpen}/>
 
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>

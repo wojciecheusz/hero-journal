@@ -5,7 +5,6 @@ import HeroHeaderCard  from './cards/HeroHeaderCard';
 import CharCard        from './cards/CharCard';
 import SavingThrowsCard from './cards/SavingThrowsCard';
 import SkillsCard      from './cards/SkillsCard';
-import CombatCard      from './cards/CombatCard';
 import EquippedCard    from './cards/EquippedCard';
 import { CardHeader, LBL } from './cards/shared';
 
@@ -90,8 +89,6 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
 
           <SkillsCard char={char} setChar={setChar} C={C}
             GENERIC_SKILLS={GENERIC_SKILLS} pb={pb}/>
-
-          <CombatCard char={char} setChar={setChar} C={C} T={T} pb={pb}/>
 
           <EquippedCard char={char} setChar={setChar} C={C}
             inventory={inventory} setInventory={setInventory}
