@@ -57,12 +57,11 @@ export default function Header({
   const spellDC   = 8 + pb + spellAbi;
   const spellAtk  = pb + spellAbi;
 
-  /* ── XP / poziomowanie ── */
+  /* ── XP / poziomowanie — postęp absolutny od 0 do progu następnego poziomu ── */
   const xp        = char.xp || 0;
-  const xpPrev    = XP_THRESHOLDS[totalLevel - 1] || 0;
   const xpNext    = totalLevel < 20 ? XP_THRESHOLDS[totalLevel] : null;
   const xpPct     = xpNext
-    ? Math.min(100, Math.max(0, ((xp - xpPrev) / (xpNext - xpPrev)) * 100))
+    ? Math.min(100, Math.max(0, (xp / xpNext) * 100))
     : 100;
 
   /* ── Kości wytrzymałości ── */
@@ -258,8 +257,11 @@ export default function Header({
                          width:56, textAlign:"center" }}/>
               {xpNext && (
                 <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em",
-                               color:"var(--hj-text-dim)", marginLeft:"auto", flexShrink:0 }}>
-                  {C.xpNext ? C.xpNext(totalLevel+1, xpNext.toLocaleString()) : `→ lvl ${totalLevel+1}: ${xpNext.toLocaleString()}`}
+                               color: xp >= xpNext ? "var(--hj-accent)" : "var(--hj-text-dim)",
+                               marginLeft:"auto", flexShrink:0 }}>
+                  {xp >= xpNext
+                    ? `✦ gotowy na lvl ${totalLevel + 1}`
+                    : `${(xpNext - xp).toLocaleString()} XP → lvl ${totalLevel + 1}`}
                 </span>
               )}
               {!xpNext && (
