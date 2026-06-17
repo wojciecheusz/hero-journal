@@ -1,5 +1,6 @@
 import { useState, memo } from 'react';
 import { useT } from '../../i18n/translations';
+import { CONDITIONS } from '../../constants/gameConstants';
 
 import HeroHeaderCard  from './cards/HeroHeaderCard';
 import CharCard        from './cards/CharCard';
@@ -24,6 +25,7 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
   const [historyOpen,     setHistoryOpen]  = useState(true);
   const [notesOpen,       setNotesOpen]    = useState(true);
   const [profOpen,        setProfOpen]     = useState(true);
+  const [stanyOpen,       setStanyOpen]    = useState(false);
 
   /* Wyliczenia współdzielone przez kilka kart */
   const pb       = char.profBonus || 2;
@@ -51,6 +53,35 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
 
           <CombatCard char={char} setChar={setChar} C={C} T={T}
             pb={pb} percBonus={percBonus} spellAbi={spellAbi} spellDC={spellDC}/>
+
+          {/* ── STANY ── */}
+          <div className="card">
+            <CardHeader label={C.stanyTitle || C.conditionsTitle} open={stanyOpen} onToggle={() => setStanyOpen(o => !o)}
+              hint={!stanyOpen ? (() => { const active = CONDITIONS.filter(c => !!(char.conditions||{})[c.key]); return active.length ? active.map(c => T.CONDITIONS?.[c.key] || c.label).join(", ") : ""; })() : ""}/>
+            {stanyOpen && (
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"0.3rem", marginTop:"0.5rem" }}>
+                {CONDITIONS.map(cond => {
+                  const active = !!(char.conditions||{})[cond.key];
+                  const label  = T.CONDITIONS?.[cond.key] || cond.label;
+                  return (
+                    <button key={cond.key} onClick={() => setChar(c => {
+                      const conds = { ...(c.conditions||{}) };
+                      if (conds[cond.key]) delete conds[cond.key]; else conds[cond.key] = true;
+                      return { ...c, conditions: conds };
+                    })}
+                    style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.06em",
+                             textTransform:"uppercase", padding:"0.22rem 0.45rem", cursor:"pointer",
+                             transition:"all 0.15s", borderRadius:"var(--radius-pill)",
+                             border:`1px solid ${active?"#cc3030":"var(--hj-pip-empty)"}`,
+                             background:active?"rgba(200,48,48,0.2)":"transparent",
+                             color:active?"#ee5050":"var(--hj-text-muted)" }}>
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           <EquippedCard char={char} setChar={setChar} C={C}
             inventory={inventory} setInventory={setInventory}
