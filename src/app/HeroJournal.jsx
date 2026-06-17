@@ -17,7 +17,6 @@ import HelpPanel     from './HelpPanel';
 import Sidebar       from './Sidebar';
 import Header        from './Header';
 import MobileNav     from './MobileNav';
-import RestStrip     from './RestStrip';
 import { RestModal } from '../features/character/widgets/RestModal';
 import { LangContext, TRANSLATIONS } from '../i18n/translations';
 import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
@@ -85,7 +84,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [quotaWarning, setQuotaWarning] = useState(false);
   const [restModal, setRestModal] = useState(null);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
-  const [stanyStripOpen, setStanyStripOpen] = useState(false);
+  const [stanyOpen, setStanyOpen] = useState(false);
   useEffect(() => {
     setQuotaExceededHook(() => setQuotaWarning(true));
   }, []);
@@ -209,8 +208,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   /* ── Główny widok aplikacji ───────────────────────────────────── */
   const contentTop = panelCollapsed
     ? "calc(env(safe-area-inset-top, 0px) + 62px)"
-    : stanyStripOpen
-      ? "calc(env(safe-area-inset-top, 0px) + 358px)"
+    : stanyOpen
+      ? "calc(env(safe-area-inset-top, 0px) + 362px)"
       : "calc(env(safe-area-inset-top, 0px) + 278px)";
 
   return (
@@ -247,14 +246,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport}
         setChar={setChar} pb={pb} onRestModal={setRestModal}
-        panelCollapsed={panelCollapsed} setPanelCollapsed={setPanelCollapsed}/>
-
-      {/* ── Pasek odpoczynku (mobile only) — stały pod nagłówkiem ── */}
-      {!panelCollapsed && (
-        <RestStrip C={T.CHAR} onRestModal={setRestModal}
-          char={char} setChar={setChar} T={T}
-          stanyOpen={stanyStripOpen} setStanyOpen={setStanyStripOpen}/>
-      )}
+        panelCollapsed={panelCollapsed} setPanelCollapsed={setPanelCollapsed}
+        stanyOpen={stanyOpen} setStanyOpen={setStanyOpen}/>
 
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>

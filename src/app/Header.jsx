@@ -1,10 +1,9 @@
+import { CONDITIONS } from '../constants/gameConstants';
 import SettingsMenu from './SettingsMenu';
 import Icon from '../shared/icons';
 import { clamp } from '../utils/math';
 import { getClassLevelLabel } from '../utils/character';
-import { getTabLabel } from './navigation';
 
-/* Górny pasek widoczny na mobile — marka, tożsamość, pasek HP, etykieta zakładki, ustawienia */
 export default function Header({
   T, theme, setTheme, toggleLanguage, char, tab,
   showHelp, setShowHelp, showSettings, setShowSettings,
@@ -12,6 +11,7 @@ export default function Header({
   onExport, onImport,
   setChar, pb, onRestModal,
   panelCollapsed, setPanelCollapsed,
+  stanyOpen, setStanyOpen,
 }) {
   const { className, totalLevel } = getClassLevelLabel(char, T.CHAR);
   const C = T.CHAR;
@@ -24,10 +24,6 @@ export default function Header({
     const h = c.hp || { current: 0, max: 1, temp: 0 };
     return { ...c, hp: { ...h, current: clamp(h.current + delta, 0, h.max) } };
   });
-
-  const initiative = char.initiativeBonus !== undefined
-    ? char.initiativeBonus
-    : Math.floor(((char.stats?.DEX ?? 10) - 10) / 2);
 
   return (
     <header className="hj-header">
@@ -63,7 +59,6 @@ export default function Header({
                        display:"flex", alignItems:"center", justifyContent:"center" }}>
               <Icon name="help-circle" size="1em"/>
             </button>
-
             <a href="https://ko-fi.com/herojournal" target="_blank" rel="noopener noreferrer"
               aria-label={T.UI.buyBeer} title={T.UI.buyBeer}
               style={{ background:"transparent", border:"1px solid var(--hj-border-input)",
@@ -74,7 +69,6 @@ export default function Header({
               onMouseLeave={e => { e.currentTarget.style.borderColor="var(--hj-border-input)"; e.currentTarget.style.color="var(--hj-text-muted)"; }}>
               <Icon name="beer" size="1.1em"/>
             </a>
-
             <div style={{ position:"relative" }}>
               <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"
                 style={{ background:showSettings?"rgba(226,185,78,0.1)":"transparent",
@@ -103,94 +97,103 @@ export default function Header({
             <div className="hcv2-subtitle">{className} · {C.level} {totalLevel}</div>
           </div>
 
-          {/* Etykieta aktualnej zakładki */}
-          <div className="tab-label">{getTabLabel(T, tab)}</div>
-
-          {/* ── Pasek HP + mini-statsy (AC / Init / PB) ── */}
+          {/* ── Pasek HP ── */}
           <div style={{ margin:"6px 0 0", background:"rgba(255,255,255,.04)", borderRadius:"10px",
                         padding:"8px 10px", border:"1px solid var(--hj-border)" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
-
-              {/* Kolumna HP */}
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
-                  <span className="vitals-hp-label">{C.hp}</span>
-                  <span className="vitals-hp-value">
-                    <input type="number" className="vitals-hp-current" value={hp.current}
-                      style={{ color: hpCol }}
-                      onFocus={e => e.target.select()}
-                      onChange={e => setChar(c => {
-                        const h = c.hp||{current:0,max:1,temp:0};
-                        return {...c, hp:{...h, current: e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}};
-                      })}
-                      onBlur={e => setChar(c => {
-                        const h = c.hp||{current:0,max:1,temp:0};
-                        return {...c, hp:{...h, current: clamp(parseInt(e.target.value)||0,0,h.max)}};
-                      })}/>
-                    <span className="vitals-hp-sep">/</span>
-                    <input type="number" min={1} className="vitals-hp-max" value={hp.max}
-                      onFocus={e => e.target.select()}
-                      onChange={e => setChar(c => {
-                        const h = c.hp||{current:0,max:1,temp:0};
-                        return {...c, hp:{...h, max: e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}};
-                      })}
-                      onBlur={e => setChar(c => {
-                        const h = c.hp||{current:0,max:1,temp:0};
-                        return {...c, hp:{...h, max: Math.max(1,parseInt(e.target.value)||1)}};
-                      })}/>
-                  </span>
-                </div>
-                <div className="hp-bar-bg" style={{ marginBottom:"5px" }}>
-                  <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
-                </div>
-                <div style={{ display:"flex", gap:"5px" }}>
-                  <button className="btn-pm minus" aria-label="HP −"
-                    style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
-                    onClick={() => adjustHP(-1)}>
-                    <Icon name="minus" size="1em"/>
-                  </button>
-                  <button className="btn-pm plus" aria-label="HP +"
-                    style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
-                    onClick={() => adjustHP(1)}>
-                    <Icon name="plus" size="1em"/>
-                  </button>
-                </div>
-              </div>
-
-              {/* Separator pionowy */}
-              <div style={{ width:"1px", height:"54px", background:"var(--hj-border)", flexShrink:0 }}/>
-
-              {/* Mini-statsy: AC / Init / PB */}
-              <div style={{ display:"flex", flexShrink:0, borderRadius:"8px", overflow:"hidden",
-                            border:"1px solid var(--hj-border)" }}>
-                <div style={{ padding:"4px 8px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
-                  <input className="vitals-mini-value" type="number" value={char.ac||0}
-                    onFocus={e => e.target.select()}
-                    onChange={e => setChar(c => ({...c, ac: e.target.value===""?0:parseInt(e.target.value)||0}))}
-                    style={{ width:"2em", display:"block", margin:"0 auto" }}/>
-                  <span className="vitals-mini-label">{C.ac}</span>
-                </div>
-                <div style={{ width:"1px", background:"var(--hj-border)" }}/>
-                <div style={{ padding:"4px 8px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
-                  <input className="vitals-mini-value" type="number" value={initiative}
-                    onFocus={e => e.target.select()}
-                    onChange={e => setChar(c => ({...c, initiativeBonus: e.target.value===""?undefined:parseInt(e.target.value)}))}
-                    onBlur={e => { if (e.target.value==="") setChar(c => { const o={...c}; delete o.initiativeBonus; return o; }); }}
-                    style={{ width:"2em", display:"block", margin:"0 auto" }}/>
-                  <span className="vitals-mini-label">{C.initiative}</span>
-                </div>
-                <div style={{ width:"1px", background:"var(--hj-border)" }}/>
-                <div style={{ padding:"4px 8px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
-                  <input className="vitals-mini-value" type="number" value={pb}
-                    onFocus={e => e.target.select()}
-                    onChange={e => setChar(c => ({...c, profBonus: parseInt(e.target.value)||2}))}
-                    style={{ width:"2em", display:"block", margin:"0 auto" }}/>
-                  <span className="vitals-mini-label">{C.profBonus}</span>
-                </div>
-              </div>
-
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
+              <span className="vitals-hp-label">{C.hp}</span>
+              <span className="vitals-hp-value">
+                <input type="number" className="vitals-hp-current" value={hp.current}
+                  style={{ color: hpCol }}
+                  onFocus={e => e.target.select()}
+                  onChange={e => setChar(c => {
+                    const h = c.hp||{current:0,max:1,temp:0};
+                    return {...c, hp:{...h, current: e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}};
+                  })}
+                  onBlur={e => setChar(c => {
+                    const h = c.hp||{current:0,max:1,temp:0};
+                    return {...c, hp:{...h, current: clamp(parseInt(e.target.value)||0,0,h.max)}};
+                  })}/>
+                <span className="vitals-hp-sep">/</span>
+                <input type="number" min={1} className="vitals-hp-max" value={hp.max}
+                  onFocus={e => e.target.select()}
+                  onChange={e => setChar(c => {
+                    const h = c.hp||{current:0,max:1,temp:0};
+                    return {...c, hp:{...h, max: e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}};
+                  })}
+                  onBlur={e => setChar(c => {
+                    const h = c.hp||{current:0,max:1,temp:0};
+                    return {...c, hp:{...h, max: Math.max(1,parseInt(e.target.value)||1)}};
+                  })}/>
+              </span>
+            </div>
+            <div className="hp-bar-bg" style={{ marginBottom:"5px" }}>
+              <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
+            </div>
+            <div style={{ display:"flex", gap:"5px" }}>
+              <button className="btn-pm minus" aria-label="HP −"
+                style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
+                onClick={() => adjustHP(-1)}>
+                <Icon name="minus" size="1em"/>
+              </button>
+              <button className="btn-pm plus" aria-label="HP +"
+                style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
+                onClick={() => adjustHP(1)}>
+                <Icon name="plus" size="1em"/>
+              </button>
             </div>
           </div>
+
+          {/* ── Odpoczynek + Stany ── */}
+          <div style={{ display:"flex", gap:"7px", marginTop:"6px" }}>
+            <button className="btn-rest short" aria-label="Short rest" onClick={() => onRestModal("short")}>
+              <Icon name="moon" size="1.1em"/>
+              <span>{C.shortRest}</span>
+            </button>
+            <button className="btn-rest long" aria-label="Long rest" onClick={() => onRestModal("long")}>
+              <Icon name="sun" size="1.1em"/>
+              <span>{C.longRest}</span>
+            </button>
+            <button onClick={() => setStanyOpen?.(s => !s)}
+              aria-expanded={!!stanyOpen}
+              style={{ display:"flex", alignItems:"center", gap:"0.3rem", padding:"0 0.6rem",
+                       background:stanyOpen?"rgba(200,48,48,0.12)":"transparent",
+                       border:`1px solid ${stanyOpen?"rgba(204,48,48,0.5)":"var(--hj-border-input)"}`,
+                       color:stanyOpen?"#ee5050":"var(--hj-text-muted)",
+                       borderRadius:"var(--radius-sm)", cursor:"pointer", flexShrink:0,
+                       fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.08em",
+                       textTransform:"uppercase", transition:"all 0.15s", whiteSpace:"nowrap" }}>
+              <Icon name="skull" size="0.9em"/>
+              {C.stanyTitle || "Stany"}
+              <Icon name={stanyOpen ? "chevron-up" : "chevron-down"} size="0.75em"/>
+            </button>
+          </div>
+
+          {stanyOpen && (
+            <div style={{ display:"flex", flexWrap:"wrap", gap:"0.3rem", paddingTop:"0.5rem",
+                          borderTop:"1px solid var(--hj-border-sub)", marginTop:"0.4rem" }}>
+              {CONDITIONS.map(cond => {
+                const active = !!(char.conditions||{})[cond.key];
+                const label  = T?.CONDITIONS?.[cond.key] || cond.label;
+                return (
+                  <button key={cond.key}
+                    onClick={() => setChar(c => {
+                      const conds = { ...(c.conditions||{}) };
+                      if (conds[cond.key]) delete conds[cond.key]; else conds[cond.key] = true;
+                      return { ...c, conditions: conds };
+                    })}
+                    style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.06em",
+                             textTransform:"uppercase", padding:"0.2rem 0.4rem", cursor:"pointer",
+                             transition:"all 0.15s", borderRadius:"var(--radius-pill)",
+                             border:`1px solid ${active?"#cc3030":"var(--hj-pip-empty)"}`,
+                             background:active?"rgba(200,48,48,0.2)":"transparent",
+                             color:active?"#ee5050":"var(--hj-text-muted)" }}>
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </>)}
 
       </div>
