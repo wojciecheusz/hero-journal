@@ -52,14 +52,14 @@ export const TRANSLATIONS = {
     ],
     GENERIC_SKILLS: [
       {key:"acrobatics",label:"Akrobatyka",attr:"DEX"},{key:"athletics",label:"Atletyka",attr:"STR"},
-      {key:"arcana",label:"Wiedza tajemna",attr:"INT"},{key:"deception",label:"Oszustwo",attr:"CHA"},
+      {key:"arcana",label:"W. Tajemna",attr:"INT"},{key:"deception",label:"Oszustwo",attr:"CHA"},
       {key:"history",label:"Historia",attr:"INT"},{key:"insight",label:"Intuicja",attr:"WIS"},
-      {key:"intimidation",label:"Zastraszanie",attr:"CHA"},{key:"investigation",label:"Śledztwo",attr:"INT"},
+      {key:"intimidation",label:"Zastrasz.",attr:"CHA"},{key:"investigation",label:"Śledztwo",attr:"INT"},
       {key:"medicine",label:"Medycyna",attr:"WIS"},{key:"nature",label:"Przyroda",attr:"INT"},
       {key:"perception",label:"Percepcja",attr:"WIS"},{key:"performance",label:"Występy",attr:"CHA"},
       {key:"persuasion",label:"Perswazja",attr:"CHA"},{key:"religion",label:"Religia",attr:"INT"},
-      {key:"sleightzhand",label:"Zwinne dłonie",attr:"DEX"},{key:"stealth",label:"Skradanie",attr:"DEX"},
-      {key:"survival",label:"Sztuka przetrwania",attr:"WIS"},{key:"animalhandling",label:"Opieka nad zwierzętami",attr:"WIS"},
+      {key:"sleightzhand",label:"Zw. Dłonie",attr:"DEX"},{key:"stealth",label:"Skradanie",attr:"DEX"},
+      {key:"survival",label:"Szt. Przetrw.",attr:"WIS"},{key:"animalhandling",label:"Opieka n. Zw.",attr:"WIS"},
     ],
     NAV: {
       hero:"Bohater", character:"Postać", inventory:"Plecak", spells:"Czary", skills:"Zdolności",

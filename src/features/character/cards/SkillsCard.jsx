@@ -31,7 +31,7 @@ export default function SkillsCard({ char, setChar, C, GENERIC_SKILLS, pb }) {
               onClick={() => cycleSkill(sk.key)}
               onKeyDown={e => (e.key==="Enter"||e.key===" ") && cycleSkill(sk.key)}
               style={{ display:"flex", alignItems:"center", gap:"0.3rem", padding:"0.22rem 0.1rem",
-                       cursor:"pointer", userSelect:"none" }}>
+                       cursor:"pointer", userSelect:"none", minWidth:0 }}>
               <span style={{ width:8, height:8, flexShrink:0, borderRadius:"50%",
                              border:pipBorder, background:pipColor, display:"inline-block",
                              boxShadow:exp?"0 0 4px var(--hj-pip-exp)":prz?"0 0 4px var(--hj-pip-prof)":"none",
