@@ -17,7 +17,7 @@ import HelpPanel     from './HelpPanel';
 import Sidebar       from './Sidebar';
 import Header        from './Header';
 import MobileNav     from './MobileNav';
-import VitalsBar     from './VitalsBar';
+import RestStrip     from './RestStrip';
 import { RestModal } from '../features/character/widgets/RestModal';
 import { LangContext, TRANSLATIONS } from '../i18n/translations';
 import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
@@ -233,11 +233,15 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport} onRestModal={setRestModal}/>
 
-      {/* ── Header (mobile only) ── */}
+      {/* ── Header (mobile only) — zawiera pasek HP + mini-statsy ── */}
       <Header T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} tab={tab}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
-        onExport={handleExport} onImport={handleImport}/>
+        onExport={handleExport} onImport={handleImport}
+        setChar={setChar} pb={pb} onRestModal={setRestModal}/>
+
+      {/* ── Pasek odpoczynku (mobile only) — stały pod nagłówkiem ── */}
+      <RestStrip C={T.CHAR} onRestModal={setRestModal}/>
 
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>
@@ -247,7 +251,6 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       )}
 
       <main className="hj-content">
-      <VitalsBar char={char} setChar={setChar} C={T.CHAR} pb={pb} onRestModal={setRestModal} variant="mobile"/>
       <ErrorBoundary>
       <Suspense fallback={<TabLoader/>}>
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} skills={skills} setSkills={setSkills} spells={spells} setSpells={setSpells}/>}

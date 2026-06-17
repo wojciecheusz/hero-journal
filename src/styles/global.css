@@ -105,7 +105,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   width: 100%;
   overflow-x: hidden;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 144px) !important;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 268px) !important;
   --pip-prof:     var(--hj-accent);
   --pip-exp:      var(--spell-accent);
   --pip-empty:    var(--hj-border-input);
@@ -186,6 +186,23 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 180px;
+}
+
+/* ── Stały pasek odpoczynku — mobile, pod nagłówkiem ─────────── */
+.rest-strip-mobile {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 218px);
+  left: 0; right: 0;
+  z-index: 48;
+  display: flex;
+  gap: 7px;
+  background: var(--hj-bg);
+  border-bottom: 1px solid var(--hj-border-sub);
+  padding: 7px 12px;
+}
+
+@media (min-width: 1024px) {
+  .rest-strip-mobile { display: none !important; }
 }
 
 /* ── Nawigacja dolna ──────────────────────────────────────────── */
@@ -1620,7 +1637,8 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 }
 .hcv2-divider .glyph { color: var(--hj-accent); flex-shrink: 0; }
 
-.hcv2-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+.hcv2-stat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.35rem; }
+@media (max-width: 360px) { .hcv2-stat-grid { grid-template-columns: repeat(3, 1fr); gap: 0.4rem; } }
 .hcv2-stat-box {
   background: var(--hj-combat-box); border: 1px solid var(--hj-border-input);
   border-radius: var(--radius-md); padding: 0.85rem 0.4rem; text-align: center;

@@ -22,6 +22,7 @@ export function applyThemeVars(t) {
   set('--hj-noise',            t.noise);
   set('--hj-shadow-bot',       t.shadowBot);
   set('--hj-shadow-card',      t.shadowCard);
+  if (t.shadowSoft) set('--hj-shadow-soft', t.shadowSoft);
   set('--hj-inner-div-bg',     t.innerDivBg);
   set('--hj-hp-bg',            t.hpBg);
   set('--hj-add-form',         t.addForm);

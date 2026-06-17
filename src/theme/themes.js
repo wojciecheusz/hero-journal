@@ -1,7 +1,28 @@
 
-export const PALETTES = ["pergamin", "wschod", "drewno", "bone", "feywild", "eldritch", "dungeon", "shadowfell", "wrath", "meadow"];
+export const PALETTES = ["arcane", "pergamin", "wschod", "drewno", "bone", "feywild", "eldritch", "dungeon", "shadowfell", "wrath", "meadow"];
 
 export const THEMES = {
+
+  /* ── ARCANE – głęboki granat i złoto (Hero Journal v4) ────── */
+  arcane: {
+    bg: "#0b0d1e",        bgCard: "#101426",      bgInput: "#0a0b1e",     bgNav: "#070810",
+    border: "#251e44",    borderSub: "#1a1434",   borderInput: "#342858",
+    text: "#c8b9f0",      textMuted: "#7868a8",   textDim: "#4e4072",     textLabel: "#a894d8",
+    accent: "#d4a840",    accentBorder: "#9a7820",
+    headerBg: "linear-gradient(180deg,#151830 0%,#0f1228 60%,#0b0d1e 100%)",
+    navBg:    "linear-gradient(0deg,#070810 0%,#0c0e20 100%)",
+    scrollTrack: "#060608",   scrollThumb: "#342858",
+    noise: "0.028", shadowBot: "rgba(0,0,0,0.85)", shadowCard: "rgba(0,0,0,0.40)",
+    shadowSoft: "rgba(0,0,0,0.30)",
+    innerDivBg: "#101426", hpBg: "#080a18", addForm: "#141830",
+    modalBg: "#101426", emptyColor: "#4e4072",
+    sessEntry: "#0a0b1e",  combatBox: "#0a0b1e",
+    spellSlotBox: "#0a0b1e", spellSlotBorder: "#2a50a0",
+    packItem: "#141830",   packItemBorder: "#251e44", packFieldInput: "#080a18",
+    spellAccent: "#70a8f0", spellBorder: "#3060c0", spellMuted: "#5080d0",
+    spellDim: "#1a3880",    spellText: "#d8ecff",   spellBg: "rgba(112,168,240,0.08)",
+    questReward: "#50c068", selectedBg: "rgba(212,168,64,0.12)",
+  },
 
   /* ── WSCHÓD – pomarańcze i granaty ───────────────────────── */
   wschod: {
