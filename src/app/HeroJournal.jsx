@@ -84,6 +84,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [openEntity, setOpenEntity] = useState(null);
   const [quotaWarning, setQuotaWarning] = useState(false);
   const [restModal, setRestModal] = useState(null);
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const [stanyStripOpen, setStanyStripOpen] = useState(false);
   useEffect(() => {
     setQuotaExceededHook(() => setQuotaWarning(true));
   }, []);
@@ -205,9 +207,15 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   );
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */
+  const contentTop = panelCollapsed
+    ? "calc(env(safe-area-inset-top, 0px) + 62px)"
+    : stanyStripOpen
+      ? "calc(env(safe-area-inset-top, 0px) + 358px)"
+      : "calc(env(safe-area-inset-top, 0px) + 278px)";
+
   return (
     <LangContext.Provider value={lang}>
-    <div className="hj-root">
+    <div className="hj-root" style={{ "--hj-content-top": contentTop }}>
       {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
       {syncWarning && !syncFailed && (
@@ -238,10 +246,15 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
         setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport}
-        setChar={setChar} pb={pb} onRestModal={setRestModal}/>
+        setChar={setChar} pb={pb} onRestModal={setRestModal}
+        panelCollapsed={panelCollapsed} setPanelCollapsed={setPanelCollapsed}/>
 
       {/* ── Pasek odpoczynku (mobile only) — stały pod nagłówkiem ── */}
-      <RestStrip C={T.CHAR} onRestModal={setRestModal}/>
+      {!panelCollapsed && (
+        <RestStrip C={T.CHAR} onRestModal={setRestModal}
+          char={char} setChar={setChar} T={T}
+          stanyOpen={stanyStripOpen} setStanyOpen={setStanyStripOpen}/>
+      )}
 
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>

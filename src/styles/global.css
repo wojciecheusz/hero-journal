@@ -105,7 +105,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   width: 100%;
   overflow-x: hidden;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 268px) !important;
+  padding-top: var(--hj-content-top, calc(env(safe-area-inset-top, 0px) + 278px));
   --pip-prof:     var(--hj-accent);
   --pip-exp:      var(--spell-accent);
   --pip-empty:    var(--hj-border-input);
@@ -191,7 +191,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 /* ── Stały pasek odpoczynku — mobile, pod nagłówkiem ─────────── */
 .rest-strip-mobile {
   position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + 218px);
+  top: calc(env(safe-area-inset-top, 0px) + 228px);
   left: 0; right: 0;
   z-index: 48;
   display: flex;
