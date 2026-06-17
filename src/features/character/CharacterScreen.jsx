@@ -63,13 +63,7 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
   const [notesOpen,       setNotesOpen]    = useState(true);
   const [profOpen,        setProfOpen]     = useState(true);
 
-  const pb       = char.profBonus || 2;
-  const wisBonus = Math.floor((char.stats.WIS - 10) / 2);
-  const percProf = !!(char.skills || {}).perception;
-  const percExp  = !!(char.skillExp || {}).perception;
-  const percBonus = percExp ? wisBonus + pb*2 : percProf ? wisBonus + pb : wisBonus;
-  const spellAbi  = Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2;
-  const spellDC   = 8 + pb + spellAbi;
+  const pb = char.profBonus || 2;
 
   const upd = (f, v) => setChar(c => ({ ...c, [f]: v }));
 

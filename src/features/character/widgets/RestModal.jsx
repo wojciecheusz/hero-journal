@@ -13,7 +13,7 @@ export function RestModal({ type, char, setChar, onClose }) {
   const doShortRest = () => {
     const spend = clamp(hdSpend, 0, available);
     const dieMax = parseInt(hd.type.replace("d", "")) || 8;
-    const conMod = Math.floor((char.stats.CON - 10) / 2);
+    const conMod = Math.floor(((char.stats?.CON ?? 10) - 10) / 2);
     const healed = spend > 0 ? spend * Math.ceil(dieMax / 2) + spend * conMod : 0;
     setChar(c => ({
       ...c,
@@ -77,7 +77,7 @@ export function RestModal({ type, char, setChar, onClose }) {
               {(() => {
                 const spend = clamp(hdSpend, 0, available);
                 const dieMax = parseInt(hd.type.replace("d", "")) || 8;
-                const conMod = Math.floor((char.stats.CON - 10) / 2);
+                const conMod = Math.floor(((char.stats?.CON ?? 10) - 10) / 2);
                 const avg = spend * Math.ceil(dieMax / 2) + spend * conMod;
                 const min = spend * 1 + spend * conMod;
                 const max = spend * dieMax + spend * conMod;

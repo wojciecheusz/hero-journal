@@ -1,14 +1,13 @@
 import { useCallback } from 'react';
-import { CONDITIONS } from '../constants/gameConstants';
+import { CONDITIONS, XP_THRESHOLDS } from '../constants/gameConstants';
 import SettingsMenu from './SettingsMenu';
 import Icon from '../shared/icons';
 import { clamp, numMod } from '../utils/math';
 import { getClassLevelLabel } from '../utils/character';
 
-/* ── Wspólny styl przycisku toggle ── */
 const mkToggleStyle = (open, color) => ({
   display:"flex", alignItems:"center", gap:"0.3rem",
-  padding:"0.28rem 0.55rem",
+  padding:"0.22rem 0.5rem",
   background: open ? `${color}1e` : "transparent",
   border: `1px solid ${open ? color + "90" : "var(--hj-border-input)"}`,
   color: open ? color : "var(--hj-text-muted)",
@@ -18,6 +17,18 @@ const mkToggleStyle = (open, color) => ({
   transition:"all 0.15s", flex:"1 1 0", justifyContent:"center",
   whiteSpace:"nowrap", overflow:"hidden",
 });
+
+const LBL = {
+  fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+  textTransform:"uppercase", color:"var(--hj-text-muted)",
+  marginBottom:"0.15rem", display:"block",
+};
+
+const ieditStyle = {
+  fontFamily:"Cinzel,serif", fontSize:"0.72rem", background:"transparent",
+  border:"none", borderBottom:"1px dashed var(--hj-border-input)",
+  outline:"none", color:"inherit", width:"100%", padding:"0.1rem 0",
+};
 
 export default function Header({
   T, theme, setTheme, toggleLanguage, char, tab,
@@ -29,6 +40,7 @@ export default function Header({
   stanyOpen, setStanyOpen,
   deathOpen, setDeathOpen,
   exhOpen,   setExhOpen,
+  moreOpen,  setMoreOpen,
 }) {
   const { className, totalLevel } = getClassLevelLabel(char, T.CHAR);
   const C = T.CHAR;
@@ -45,11 +57,19 @@ export default function Header({
   const spellDC   = 8 + pb + spellAbi;
   const spellAtk  = pb + spellAbi;
 
-  const hd         = char.hitDice || { type:"d8", max:1, used:0 };
-  const hdAvail    = Math.max(0, (hd.max||1) - (hd.used||0));
-  const hdPipCount = Math.min(hd.max||1, 12);
+  /* ── XP / poziomowanie ── */
+  const xp        = char.xp || 0;
+  const xpPrev    = XP_THRESHOLDS[totalLevel - 1] || 0;
+  const xpNext    = totalLevel < 20 ? XP_THRESHOLDS[totalLevel] : null;
+  const xpPct     = xpNext
+    ? Math.min(100, Math.max(0, ((xp - xpPrev) / (xpNext - xpPrev)) * 100))
+    : 100;
 
-  const ds = char.deathSaves || { successes: 0, failures: 0 };
+  /* ── Kości wytrzymałości ── */
+  const hd         = char.hitDice || { type:"d8", max:1, used:0 };
+  const hdPipCount = Math.min(hd.max || 1, 12);
+
+  const ds        = char.deathSaves || { successes: 0, failures: 0 };
   const exhaustion = (char.conditions||{}).exhaustion || 0;
 
   const adjustHP = delta => setChar(c => {
@@ -63,17 +83,20 @@ export default function Header({
     return { ...c, deathSaves: { ...(c.deathSaves||{}), [type]: Math.min(3, Math.max(0, next)) } };
   }), [setChar]);
 
+  const updAppearance = (key, val) =>
+    setChar(c => ({ ...c, appearance: { ...(c.appearance||{}), [key]: val } }));
+
   return (
     <header className="hj-header">
       <div className="hj-header-inner">
 
-        {/* ── Rząd: logo + imię + ikony ── */}
+        {/* ── Rząd: logo + imię bohatera + ikony ── */}
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.5rem" }}>
           <button className="hj-header-brand"
             style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0,
                      cursor:"pointer", background:"transparent", border:"none", padding:0,
                      color:"inherit", textAlign:"left" }}
-            onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
+            onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero}>
             <div className="hj-logo" style={{ display:"flex", alignItems:"center", gap:"0.3rem" }}>
               <Icon name="sword" size="1em"/> HJ
             </div>
@@ -82,39 +105,38 @@ export default function Header({
 
           <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexShrink:0 }}>
             <button onClick={() => setPanelCollapsed?.(s => !s)}
-              title={panelCollapsed ? "Rozwiń panel" : "Zwiń panel"}
+              title={panelCollapsed ? "Rozwiń" : "Zwiń"}
               style={{ background:"transparent", border:"1px solid var(--hj-border-input)",
-                       color:"var(--hj-text-muted)", width:32, height:32, cursor:"pointer",
+                       color:"var(--hj-text-muted)", width:28, height:28, cursor:"pointer",
                        transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center" }}>
               <Icon name={panelCollapsed ? "chevron-down" : "chevron-up"} size="1em"/>
             </button>
             <button onClick={() => { setShowHelp(s => !s); setShowSettings(false); }}
-              title="Help"
               style={{ background:showHelp?"rgba(226,185,78,0.1)":"transparent",
                        border:`1px solid ${showHelp?"var(--hj-accent-border)":"var(--hj-border-input)"}`,
                        color:showHelp?"var(--hj-accent)":"var(--hj-text-muted)",
-                       width:32, height:32, cursor:"pointer", transition:"all 0.2s",
+                       width:28, height:28, cursor:"pointer", transition:"all 0.2s",
                        display:"flex", alignItems:"center", justifyContent:"center" }}>
               <Icon name="help-circle" size="1em"/>
             </button>
             <a href="https://ko-fi.com/herojournal" target="_blank" rel="noopener noreferrer"
-              aria-label={T.UI.buyBeer} title={T.UI.buyBeer}
+              aria-label={T.UI.buyBeer}
               style={{ background:"transparent", border:"1px solid var(--hj-border-input)",
-                       color:"var(--hj-text-muted)", lineHeight:1, width:32, height:32,
+                       color:"var(--hj-text-muted)", width:28, height:28,
                        display:"flex", alignItems:"center", justifyContent:"center",
                        textDecoration:"none", transition:"all 0.15s" }}
               onMouseEnter={e => { e.currentTarget.style.borderColor="var(--hj-accent-border)"; e.currentTarget.style.color="var(--hj-accent)"; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor="var(--hj-border-input)"; e.currentTarget.style.color="var(--hj-text-muted)"; }}>
-              <Icon name="beer" size="1.1em"/>
+              <Icon name="beer" size="1em"/>
             </a>
             <div style={{ position:"relative" }}>
-              <button onClick={() => setShowSettings(s => !s)} aria-label="Settings" title="Ustawienia"
+              <button onClick={() => setShowSettings(s => !s)}
                 style={{ background:showSettings?"rgba(226,185,78,0.1)":"transparent",
                          border:`1px solid ${showSettings?"var(--hj-accent-border)":"var(--hj-border-input)"}`,
                          color:showSettings?"var(--hj-accent)":"var(--hj-text-muted)",
-                         lineHeight:1, width:32, height:32, cursor:"pointer", transition:"all 0.2s",
+                         width:28, height:28, cursor:"pointer", transition:"all 0.2s",
                          display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <Icon name="settings" size="1.1em"/>
+                <Icon name="settings" size="1em"/>
               </button>
               {showSettings && <>
                 <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
@@ -130,108 +152,180 @@ export default function Header({
 
         {!panelCollapsed && (<>
 
-          {/* ── Tożsamość bohatera ── */}
-          <div className="hj-header-identity">
+          {/* ── Tożsamość + przycisk Więcej ── */}
+          <div className="hj-header-identity" style={{ marginBottom:"2px" }}>
             <div className="hcv2-name">{char.name?.trim() || C.heroName}</div>
-            <div className="hcv2-subtitle">{className} · {C.level} {totalLevel}</div>
-          </div>
-
-          {/* ── HP + 4 mini-statsy ── */}
-          <div style={{ margin:"6px 0 0", background:"rgba(255,255,255,.04)", borderRadius:"10px",
-                        padding:"8px 10px", border:"1px solid var(--hj-border)" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
-
-              {/* HP */}
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
-                  <span className="vitals-hp-label">PŻ</span>
-                  <span className="vitals-hp-value">
-                    <input type="number" className="vitals-hp-current" value={hp.current}
-                      style={{ color: hpCol }}
-                      onFocus={e => e.target.select()}
-                      onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
-                      onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
-                    <span className="vitals-hp-sep">/</span>
-                    <input type="number" min={1} className="vitals-hp-max" value={hp.max}
-                      onFocus={e => e.target.select()}
-                      onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
-                      onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
-                  </span>
-                </div>
-                <div className="hp-bar-bg" style={{ marginBottom:"5px" }}>
-                  <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
-                </div>
-                <div style={{ display:"flex", gap:"5px" }}>
-                  <button className="btn-pm minus" aria-label="HP −" style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }} onClick={() => adjustHP(-1)}>
-                    <Icon name="minus" size="1em"/>
-                  </button>
-                  <button className="btn-pm plus" aria-label="HP +" style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }} onClick={() => adjustHP(1)}>
-                    <Icon name="plus" size="1em"/>
-                  </button>
-                </div>
-              </div>
-
-              {/* Separator */}
-              <div style={{ width:"1px", height:"54px", background:"var(--hj-border)", flexShrink:0 }}/>
-
-              {/* 4 mini-statsy: Perc. P. | Biegłość | DC | Atk */}
-              <div style={{ display:"flex", flexShrink:0, borderRadius:"8px", overflow:"hidden", border:"1px solid var(--hj-border)" }}>
-                {/* Percepcja Pasywna */}
-                <div style={{ padding:"4px 6px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
-                  <input className="vitals-mini-value" type="text" inputMode="numeric"
-                    value={char.passivePerceptionOverride ?? (10 + percBonus)} title={C.overrideTip}
-                    style={{ width:"1.8em", display:"block", margin:"0 auto", color:char.passivePerceptionOverride !== undefined?"var(--hj-pip-prof)":undefined }}
-                    onFocus={e => e.target.select()}
-                    onChange={e => { const r=e.target.value.replace(/[^-\d]/g,""); setChar(c=>r===""?(({passivePerceptionOverride:_,...x})=>x)(c):{...c,passivePerceptionOverride:parseInt(r)}); }}
-                    onBlur={e => { if(!e.target.value.trim()||isNaN(parseInt(e.target.value))) setChar(c=>{const o={...c};delete o.passivePerceptionOverride;return o;}); }}/>
-                  <span className="vitals-mini-label">{C.passivePerc}</span>
-                </div>
-                <div style={{ width:"1px", background:"var(--hj-border)" }}/>
-                {/* Biegłość */}
-                <div style={{ padding:"4px 6px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
-                  <input className="vitals-mini-value" type="number" value={pb} title={C.profBonusTip}
-                    style={{ width:"1.8em", display:"block", margin:"0 auto" }}
-                    onFocus={e => e.target.select()}
-                    onChange={e => setChar(c=>({...c,profBonus:parseInt(e.target.value)||2}))}/>
-                  <span className="vitals-mini-label">{C.profBonus}</span>
-                </div>
-                <div style={{ width:"1px", background:"var(--hj-border)" }}/>
-                {/* DC Czarów */}
-                <div style={{ padding:"4px 6px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
-                  <input className="vitals-mini-value" type="text" inputMode="numeric"
-                    value={char.skillDCOverride ?? spellDC} title={C.overrideTip}
-                    style={{ width:"1.8em", display:"block", margin:"0 auto", color:char.skillDCOverride!==undefined?"var(--hj-pip-prof)":"var(--hj-spell-accent)" }}
-                    onFocus={e => e.target.select()}
-                    onChange={e => { const r=e.target.value.replace(/[^-\d]/g,""); setChar(c=>r===""?(({skillDCOverride:_,...x})=>x)(c):{...c,skillDCOverride:parseInt(r)}); }}
-                    onBlur={e => { if(!e.target.value.trim()||isNaN(parseInt(e.target.value))) setChar(c=>{const o={...c};delete o.skillDCOverride;return o;}); }}/>
-                  <span className="vitals-mini-label">{C.spellDC}</span>
-                </div>
-                <div style={{ width:"1px", background:"var(--hj-border)" }}/>
-                {/* Atak Czarami */}
-                <div style={{ padding:"4px 6px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
-                  <input className="vitals-mini-value" type="text" inputMode="numeric"
-                    value={numMod(char.spellAttackOverride ?? spellAtk)} title={C.overrideTip}
-                    style={{ width:"1.8em", display:"block", margin:"0 auto", color:char.spellAttackOverride!==undefined?"var(--hj-pip-prof)":"var(--hj-spell-accent)" }}
-                    onFocus={e => e.target.select()}
-                    onChange={e => { const r=e.target.value.replace(/[^-\d]/g,""); setChar(c=>r===""?(({spellAttackOverride:_,...x})=>x)(c):{...c,spellAttackOverride:parseInt(r)}); }}
-                    onBlur={e => { if(!e.target.value.trim()||isNaN(parseInt(e.target.value))) setChar(c=>{const o={...c};delete o.spellAttackOverride;return o;}); }}/>
-                  <span className="vitals-mini-label">{C.spellAtk}</span>
-                </div>
-              </div>
-
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.4rem" }}>
+              <div className="hcv2-subtitle" style={{ minWidth:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{className} · {C.level} {totalLevel}</div>
+              <button
+                onClick={() => setMoreOpen?.(s => !s)}
+                aria-expanded={!!moreOpen}
+                style={{ display:"flex", alignItems:"center", gap:"0.2rem", flexShrink:0,
+                         fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.1em",
+                         textTransform:"uppercase", padding:"0.18rem 0.5rem",
+                         background:moreOpen?"rgba(226,185,78,0.08)":"transparent",
+                         border:`1px solid ${moreOpen?"var(--hj-accent-border)":"var(--hj-border-input)"}`,
+                         color:moreOpen?"var(--hj-accent)":"var(--hj-text-muted)",
+                         borderRadius:"var(--radius-sm)", cursor:"pointer", transition:"all 0.15s" }}>
+                {moreOpen ? (C.less||"Mniej") : (C.more||"Więcej")}
+                <Icon name={moreOpen?"chevron-up":"chevron-down"} size="0.75em"/>
+              </button>
             </div>
           </div>
 
+          {/* ── Panel Więcej: rasa, przeszłość, charakter, wygląd ── */}
+          {moreOpen && (
+            <div style={{ marginTop:"0.3rem", padding:"0.55rem 0.65rem",
+                          border:"1px solid var(--hj-border-input)",
+                          background:"rgba(255,255,255,0.03)", borderRadius:"var(--radius-md)" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.35rem 0.8rem", marginBottom:"0.4rem" }}>
+                {[["race",C.race,C.racePh],["background",C.background,C.backgroundPh]].map(([key,label,ph]) => (
+                  <div key={key}>
+                    <span style={LBL}>{label}</span>
+                    <input style={ieditStyle} value={char[key]||""} placeholder={ph}
+                      onChange={e => setChar(c => ({...c,[key]:e.target.value}))}/>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginBottom:"0.4rem" }}>
+                <span style={LBL}>{C.alignment}</span>
+                <input style={{...ieditStyle, maxWidth:100}} value={char.alignment||""} placeholder={C.alignmentPh||"CN, LG…"}
+                  onChange={e => setChar(c => ({...c,alignment:e.target.value}))}/>
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.3rem 0.6rem" }}>
+                {[["age",C.age,C.agePh],["height",C.height,C.heightPh],["weight",C.weight,C.weightPh],
+                  ["eyes",C.eyes,C.eyesPh],["skin",C.skin,C.skinPh],["hair",C.hair,C.hairPh]
+                ].map(([key,label,ph]) => (
+                  <div key={key}>
+                    <span style={LBL}>{label}</span>
+                    <input style={ieditStyle} value={(char.appearance||{})[key]||""} placeholder={ph||""}
+                      onChange={e => updAppearance(key, e.target.value)}/>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Pasek PŻ (pełna szerokość) ── */}
+          <div style={{ margin:"6px 0 0", background:"rgba(255,255,255,.04)", borderRadius:"var(--radius-md)",
+                        padding:"8px 10px", border:"1px solid var(--hj-border)" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
+              <span className="vitals-hp-label">PŻ</span>
+              <span className="vitals-hp-value">
+                <input type="number" className="vitals-hp-current" value={hp.current}
+                  style={{ color: hpCol }}
+                  onFocus={e => e.target.select()}
+                  onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
+                  onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
+                <span className="vitals-hp-sep">/</span>
+                <input type="number" min={1} className="vitals-hp-max" value={hp.max}
+                  onFocus={e => e.target.select()}
+                  onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
+                  onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
+              </span>
+            </div>
+            <div className="hp-bar-bg" style={{ marginBottom:"6px" }}>
+              <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
+            </div>
+            <div style={{ display:"flex", gap:"6px" }}>
+              <button className="btn-pm minus" aria-label="HP −"
+                style={{ flex:1, width:"auto", height:"24px", borderRadius:"var(--radius-sm)" }}
+                onClick={() => adjustHP(-1)}>
+                <Icon name="minus" size="1em"/>
+              </button>
+              <button className="btn-pm plus" aria-label="HP +"
+                style={{ flex:1, width:"auto", height:"24px", borderRadius:"var(--radius-sm)" }}
+                onClick={() => adjustHP(1)}>
+                <Icon name="plus" size="1em"/>
+              </button>
+            </div>
+          </div>
+
+          {/* ── Pasek XP ── */}
+          <div style={{ margin:"5px 0 0", padding:"5px 10px 6px",
+                        background:"rgba(255,255,255,.03)", borderRadius:"var(--radius-sm)",
+                        border:"1px solid var(--hj-border-input)" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"6px", marginBottom:"4px" }}>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+                             textTransform:"uppercase", color:"var(--hj-text-muted)", flexShrink:0 }}>XP</span>
+              <input type="number" min={0}
+                value={xp}
+                onFocus={e => e.target.select()}
+                onChange={e => setChar(c => ({...c, xp: Math.max(0, parseInt(e.target.value)||0)}))}
+                style={{ fontFamily:"Cinzel,serif", fontSize:"0.75rem", fontWeight:700,
+                         color:"var(--hj-accent)", background:"transparent", border:"none",
+                         borderBottom:"1px dashed var(--hj-accent-border)", outline:"none",
+                         width:56, textAlign:"center" }}/>
+              {xpNext && (
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em",
+                               color:"var(--hj-text-dim)", marginLeft:"auto", flexShrink:0 }}>
+                  {C.xpNext ? C.xpNext(totalLevel+1, xpNext.toLocaleString()) : `→ lvl ${totalLevel+1}: ${xpNext.toLocaleString()}`}
+                </span>
+              )}
+              {!xpNext && (
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", color:"var(--hj-accent)", marginLeft:"auto" }}>
+                  {C.xpMax || "MAX"}
+                </span>
+              )}
+            </div>
+            <div style={{ height:4, borderRadius:2, background:"var(--hj-border-input)", overflow:"hidden" }}>
+              <div style={{ height:"100%", width:`${xpPct}%`, background:"var(--hj-accent)",
+                            borderRadius:2, transition:"width 0.3s ease" }}/>
+            </div>
+          </div>
+
+          {/* ── Rząd mini-statów (pełna szerokość) ── */}
+          <div style={{ display:"flex", margin:"5px 0 0", borderRadius:"var(--radius-sm)",
+                        overflow:"hidden", border:"1px solid var(--hj-border)" }}>
+            {[
+              { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: undefined },
+              { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: undefined, direct: true },
+              { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC,      color: "var(--hj-spell-accent)" },
+              { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-spell-accent)", signed: true },
+            ].map(({ label, key, computed, color, direct, signed }, idx, arr) => {
+              const over = direct ? undefined : char[key];
+              const displayVal = signed
+                ? numMod(over ?? computed)
+                : String(over ?? computed);
+              const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
+              return (
+                <div key={key} style={{ flex:1, padding:"4px 4px", textAlign:"center",
+                                         background:"rgba(255,255,255,.03)",
+                                         borderRight: idx < arr.length-1 ? "1px solid var(--hj-border)" : "none" }}>
+                  <input className="vitals-mini-value" type="text" inputMode="numeric"
+                    value={displayVal}
+                    title={C.overrideTip || "Wpisz by nadpisać"}
+                    style={{ width:"100%", display:"block", textAlign:"center",
+                             color: overrideColor }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => {
+                      const r = e.target.value.replace(/[^-\d]/g, "");
+                      if (direct) {
+                        setChar(c => ({...c, [key]: parseInt(r)||2}));
+                      } else {
+                        setChar(c => r===""
+                          ? (o => { const n={...o}; delete n[key]; return n; })(c)
+                          : {...c, [key]: parseInt(r)});
+                      }
+                    }}
+                    onBlur={e => {
+                      if (!direct && (!e.target.value.trim() || isNaN(parseInt(e.target.value))))
+                        setChar(c => { const n={...c}; delete n[key]; return n; });
+                    }}/>
+                  <span className="vitals-mini-label">{label}</span>
+                </div>
+              );
+            })}
+          </div>
+
           {/* ── Wiersz 1: Odpoczynek (z pipsami kości) ── */}
-          <div style={{ display:"flex", gap:"6px", marginTop:"6px" }}>
-            {/* Krótki odpoczynek + pipsy kości wytrzymałości */}
+          <div style={{ display:"flex", gap:"6px", marginTop:"5px" }}>
             <button className="btn-rest short" style={{ flex:"1 1 0" }}
               aria-label="Short rest" onClick={() => onRestModal("short")}>
               <span style={{ display:"flex", alignItems:"center", gap:"0.25rem" }}>
                 <Icon name="moon" size="1em"/>
                 {C.shortRest}
               </span>
-              {/* Pipsy kości wytrzymałości */}
               <div style={{ display:"flex", flexWrap:"wrap", gap:2, justifyContent:"center", marginTop:1 }}>
                 {Array.from({ length: hdPipCount }, (_, i) => {
                   const used = i < (hd.used||0);
@@ -246,7 +340,6 @@ export default function Header({
                 })}
               </div>
             </button>
-            {/* Długi odpoczynek */}
             <button className="btn-rest long" style={{ flex:"1 1 0" }}
               aria-label="Long rest" onClick={() => onRestModal("long")}>
               <Icon name="sun" size="1em"/>
@@ -255,7 +348,7 @@ export default function Header({
           </div>
 
           {/* ── Wiersz 2: Stany / Rzuty / Wyczerpanie ── */}
-          <div style={{ display:"flex", gap:"6px", marginTop:"6px" }}>
+          <div style={{ display:"flex", gap:"6px", marginTop:"5px" }}>
             <button style={mkToggleStyle(!!stanyOpen, "#aa4444")}
               onClick={() => setStanyOpen?.(s => !s)} aria-expanded={!!stanyOpen}>
               <Icon name="skull" size="0.9em"/>
@@ -305,7 +398,7 @@ export default function Header({
           )}
 
           {deathOpen && (
-            <div style={{ marginTop:"0.4rem", padding:"0.5rem 0.65rem",
+            <div style={{ marginTop:"0.4rem", padding:"0.45rem 0.6rem",
                           border:"1px solid rgba(154,58,58,0.3)", background:"rgba(154,58,58,0.05)",
                           borderRadius:"var(--radius-md)" }}>
               {[["successes",C.deathSuccess,"#4a9a5a"],["failures",C.deathFailure,"#9a3a3a"]].map(([type,label,color]) => (
@@ -326,7 +419,7 @@ export default function Header({
           )}
 
           {exhOpen && (
-            <div style={{ marginTop:"0.4rem", padding:"0.5rem 0.65rem",
+            <div style={{ marginTop:"0.4rem", padding:"0.45rem 0.6rem",
                           border:"1px solid rgba(176,96,32,0.3)", background:"rgba(176,96,32,0.05)",
                           borderRadius:"var(--radius-md)" }}>
               <div style={{ display:"flex", flexWrap:"wrap", gap:"0.3rem" }}>

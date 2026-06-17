@@ -101,6 +101,7 @@ export const TRANSLATIONS = {
     CHAR: {
       title:"Postać", heroName:"Imię bohatera…", level:"Poz.", xpMax:"— MAX —",
       xpNext:(lvl,xp) => `→ lvl ${lvl}: ${xp} XP`,
+      more:"Więcej", less:"Mniej",
       race:"Rasa", racePh:"np. Elf, Krasnolud…",
       background:"Przeszłość", backgroundPh:"Przeszłość…",
       alignment:"Charakter", alignmentPh:"np. CN, LG…",
@@ -519,6 +520,7 @@ export const TRANSLATIONS = {
     CHAR: {
       title:"Character", heroName:"Hero's name…", level:"Lvl.", xpMax:"— MAX —",
       xpNext:(lvl,xp) => `→ lv${lvl}: ${xp} XP`,
+      more:"More", less:"Less",
       race:"Race", racePh:"e.g. Elf, Dwarf…",
       background:"Background", backgroundPh:"Background…",
       alignment:"Alignment", alignmentPh:"e.g. CN, LG…",

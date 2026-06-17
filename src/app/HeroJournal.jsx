@@ -87,6 +87,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [stanyOpen,      setStanyOpen]      = useState(false);
   const [deathOpen,      setDeathOpen]      = useState(false);
   const [exhOpen,        setExhOpen]        = useState(false);
+  const [moreOpen,       setMoreOpen]       = useState(false);
   useEffect(() => {
     setQuotaExceededHook(() => setQuotaWarning(true));
   }, []);
@@ -208,8 +209,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   );
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */
-  const contentTopBase = 316; // brand + identity + hp + 2 btn rows + spacing
-  const contentTopExtra = (stanyOpen ? 82 : 0) + (deathOpen ? 78 : 0) + (exhOpen ? 68 : 0);
+  const contentTopBase = 358; // brand + identity + hp + xp + mini-stats + 2 btn rows + spacing
+  const contentTopExtra =
+    (moreOpen  ? 170 : 0) +
+    (stanyOpen ?  82 : 0) +
+    (deathOpen ?  78 : 0) +
+    (exhOpen   ?  68 : 0);
   const contentTop = panelCollapsed
     ? "calc(env(safe-area-inset-top, 0px) + 62px)"
     : `calc(env(safe-area-inset-top, 0px) + ${contentTopBase + contentTopExtra}px)`;
@@ -251,7 +256,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         panelCollapsed={panelCollapsed} setPanelCollapsed={setPanelCollapsed}
         stanyOpen={stanyOpen} setStanyOpen={setStanyOpen}
         deathOpen={deathOpen} setDeathOpen={setDeathOpen}
-        exhOpen={exhOpen}     setExhOpen={setExhOpen}/>
+        exhOpen={exhOpen}     setExhOpen={setExhOpen}
+        moreOpen={moreOpen}   setMoreOpen={setMoreOpen}/>
 
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>

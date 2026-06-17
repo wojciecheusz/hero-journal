@@ -175,6 +175,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
         <span style={{ color:"var(--hj-text-muted)", fontSize:"0.6rem" }}>max</span>
         <input type="number" min={1}
           value={(char.hitDice||{max:1}).max||1}
+          onFocus={e => e.target.select()}
           onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),max:parseInt(e.target.value)||1}}))}
           style={{ width:28, background:"transparent", border:"none",
                    borderBottom:"1px dashed var(--hj-text-muted)", outline:"none",
