@@ -91,8 +91,7 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
           <SkillsCard char={char} setChar={setChar} C={C}
             GENERIC_SKILLS={GENERIC_SKILLS} pb={pb}/>
 
-          <CombatCard char={char} setChar={setChar} C={C} T={T}
-            pb={pb} spellAbi={spellAbi}/>
+          <CombatCard char={char} setChar={setChar} C={C} T={T} pb={pb}/>
 
           <EquippedCard char={char} setChar={setChar} C={C}
             inventory={inventory} setInventory={setInventory}

@@ -1165,7 +1165,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   font-family: 'Cinzel', serif; font-weight: 700; text-align: right;
   transition: color 0.5s;
 }
-.vitals-hp-value .vitals-hp-current { width: 2.2em; font-size: 1.05rem; }
+.vitals-hp-value .vitals-hp-current { width: 2.2em; font-size: 0.8rem; }
 .vitals-hp-value .vitals-hp-sep { font-size: 0.85rem; color: var(--hj-text-muted); opacity: 0.5; }
 .vitals-hp-value .vitals-hp-max { width: 1.8em; font-size: 0.8rem; color: var(--hj-text-muted); opacity: 0.85; text-align: left; }
 

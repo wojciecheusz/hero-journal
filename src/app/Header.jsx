@@ -1,7 +1,7 @@
 import { CONDITIONS } from '../constants/gameConstants';
 import SettingsMenu from './SettingsMenu';
 import Icon from '../shared/icons';
-import { clamp } from '../utils/math';
+import { clamp, numMod } from '../utils/math';
 import { getClassLevelLabel } from '../utils/character';
 
 export default function Header({
@@ -19,6 +19,14 @@ export default function Header({
   const hp    = char.hp || { current: 0, max: 1, temp: 0 };
   const hpPct = Math.round(clamp((hp.current / (hp.max || 1)) * 100, 0, 100));
   const hpCol = hpPct > 70 ? "#3a9a3a" : hpPct > 35 ? "#c06010" : "#c03030";
+
+  const wisBonus  = Math.floor(((char.stats?.WIS ?? 10) - 10) / 2);
+  const percProf  = !!(char.skills?.perception);
+  const percExp   = !!(char.skillExp?.perception);
+  const percBonus = percExp ? wisBonus + pb*2 : percProf ? wisBonus + pb : wisBonus;
+  const spellAbi  = Math.floor(((char.stats??{})[char.spellcastingAbility||"INT"]||10)-10)/2;
+  const spellDC   = 8 + pb + spellAbi;
+  const spellAtk  = pb + spellAbi;
 
   const adjustHP = delta => setChar(c => {
     const h = c.hp || { current: 0, max: 1, temp: 0 };
@@ -97,50 +105,121 @@ export default function Header({
             <div className="hcv2-subtitle">{className} · {C.level} {totalLevel}</div>
           </div>
 
-          {/* ── Pasek HP ── */}
+          {/* ── Pasek HP + mini-statsy ── */}
           <div style={{ margin:"6px 0 0", background:"rgba(255,255,255,.04)", borderRadius:"10px",
                         padding:"8px 10px", border:"1px solid var(--hj-border)" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
-              <span className="vitals-hp-label">{C.hp}</span>
-              <span className="vitals-hp-value">
-                <input type="number" className="vitals-hp-current" value={hp.current}
-                  style={{ color: hpCol }}
-                  onFocus={e => e.target.select()}
-                  onChange={e => setChar(c => {
-                    const h = c.hp||{current:0,max:1,temp:0};
-                    return {...c, hp:{...h, current: e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}};
-                  })}
-                  onBlur={e => setChar(c => {
-                    const h = c.hp||{current:0,max:1,temp:0};
-                    return {...c, hp:{...h, current: clamp(parseInt(e.target.value)||0,0,h.max)}};
-                  })}/>
-                <span className="vitals-hp-sep">/</span>
-                <input type="number" min={1} className="vitals-hp-max" value={hp.max}
-                  onFocus={e => e.target.select()}
-                  onChange={e => setChar(c => {
-                    const h = c.hp||{current:0,max:1,temp:0};
-                    return {...c, hp:{...h, max: e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}};
-                  })}
-                  onBlur={e => setChar(c => {
-                    const h = c.hp||{current:0,max:1,temp:0};
-                    return {...c, hp:{...h, max: Math.max(1,parseInt(e.target.value)||1)}};
-                  })}/>
-              </span>
-            </div>
-            <div className="hp-bar-bg" style={{ marginBottom:"5px" }}>
-              <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
-            </div>
-            <div style={{ display:"flex", gap:"5px" }}>
-              <button className="btn-pm minus" aria-label="HP −"
-                style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
-                onClick={() => adjustHP(-1)}>
-                <Icon name="minus" size="1em"/>
-              </button>
-              <button className="btn-pm plus" aria-label="HP +"
-                style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
-                onClick={() => adjustHP(1)}>
-                <Icon name="plus" size="1em"/>
-              </button>
+            <div style={{ display:"flex", alignItems:"center", gap:"10px" }}>
+
+              {/* Kolumna HP */}
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
+                  <span className="vitals-hp-label">{C.hp}</span>
+                  <span className="vitals-hp-value">
+                    <input type="number" className="vitals-hp-current" value={hp.current}
+                      style={{ color: hpCol }}
+                      onFocus={e => e.target.select()}
+                      onChange={e => setChar(c => {
+                        const h = c.hp||{current:0,max:1,temp:0};
+                        return {...c, hp:{...h, current: e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}};
+                      })}
+                      onBlur={e => setChar(c => {
+                        const h = c.hp||{current:0,max:1,temp:0};
+                        return {...c, hp:{...h, current: clamp(parseInt(e.target.value)||0,0,h.max)}};
+                      })}/>
+                    <span className="vitals-hp-sep">/</span>
+                    <input type="number" min={1} className="vitals-hp-max" value={hp.max}
+                      onFocus={e => e.target.select()}
+                      onChange={e => setChar(c => {
+                        const h = c.hp||{current:0,max:1,temp:0};
+                        return {...c, hp:{...h, max: e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}};
+                      })}
+                      onBlur={e => setChar(c => {
+                        const h = c.hp||{current:0,max:1,temp:0};
+                        return {...c, hp:{...h, max: Math.max(1,parseInt(e.target.value)||1)}};
+                      })}/>
+                  </span>
+                </div>
+                <div className="hp-bar-bg" style={{ marginBottom:"5px" }}>
+                  <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
+                </div>
+                <div style={{ display:"flex", gap:"5px" }}>
+                  <button className="btn-pm minus" aria-label="HP −"
+                    style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
+                    onClick={() => adjustHP(-1)}>
+                    <Icon name="minus" size="1em"/>
+                  </button>
+                  <button className="btn-pm plus" aria-label="HP +"
+                    style={{ flex:1, width:"auto", height:"26px", borderRadius:"6px" }}
+                    onClick={() => adjustHP(1)}>
+                    <Icon name="plus" size="1em"/>
+                  </button>
+                </div>
+              </div>
+
+              {/* Separator */}
+              <div style={{ width:"1px", height:"54px", background:"var(--hj-border)", flexShrink:0 }}/>
+
+              {/* Mini-statsy: Perc. P. | DC | Atk ✦ */}
+              <div style={{ display:"flex", flexShrink:0, borderRadius:"8px", overflow:"hidden",
+                            border:"1px solid var(--hj-border)" }}>
+                {/* Percepcja Pasywna */}
+                <div style={{ padding:"4px 8px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
+                  <input className="vitals-mini-value" type="text" inputMode="numeric"
+                    value={char.passivePerceptionOverride ?? (10 + percBonus)}
+                    title={C.overrideTip}
+                    style={{ width:"2em", display:"block", margin:"0 auto",
+                             color: char.passivePerceptionOverride !== undefined ? "var(--hj-pip-prof)" : undefined }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => {
+                      const raw = e.target.value.replace(/[^-\d]/g, "");
+                      setChar(c => raw==="" ? (({passivePerceptionOverride:_,...r})=>r)(c) : {...c, passivePerceptionOverride:parseInt(raw)});
+                    }}
+                    onBlur={e => {
+                      if (!e.target.value.trim() || isNaN(parseInt(e.target.value)))
+                        setChar(c => { const o={...c}; delete o.passivePerceptionOverride; return o; });
+                    }}/>
+                  <span className="vitals-mini-label">{C.passivePerc}</span>
+                </div>
+                <div style={{ width:"1px", background:"var(--hj-border)" }}/>
+                {/* DC Czarów */}
+                <div style={{ padding:"4px 8px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
+                  <input className="vitals-mini-value" type="text" inputMode="numeric"
+                    value={char.skillDCOverride ?? spellDC}
+                    title={C.overrideTip}
+                    style={{ width:"2em", display:"block", margin:"0 auto",
+                             color: char.skillDCOverride !== undefined ? "var(--hj-pip-prof)" : "var(--hj-spell-accent)" }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => {
+                      const raw = e.target.value.replace(/[^-\d]/g, "");
+                      setChar(c => raw==="" ? (({skillDCOverride:_,...r})=>r)(c) : {...c, skillDCOverride:parseInt(raw)});
+                    }}
+                    onBlur={e => {
+                      if (!e.target.value.trim() || isNaN(parseInt(e.target.value)))
+                        setChar(c => { const o={...c}; delete o.skillDCOverride; return o; });
+                    }}/>
+                  <span className="vitals-mini-label">{C.spellDC}</span>
+                </div>
+                <div style={{ width:"1px", background:"var(--hj-border)" }}/>
+                {/* Atak czarami */}
+                <div style={{ padding:"4px 8px", textAlign:"center", background:"rgba(255,255,255,.03)" }}>
+                  <input className="vitals-mini-value" type="text" inputMode="numeric"
+                    value={numMod(char.spellAttackOverride ?? spellAtk)}
+                    title={C.overrideTip}
+                    style={{ width:"2em", display:"block", margin:"0 auto",
+                             color: char.spellAttackOverride !== undefined ? "var(--hj-pip-prof)" : "var(--hj-spell-accent)" }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => {
+                      const raw = e.target.value.replace(/[^-\d]/g, "");
+                      setChar(c => raw==="" ? (({spellAttackOverride:_,...r})=>r)(c) : {...c, spellAttackOverride:parseInt(raw)});
+                    }}
+                    onBlur={e => {
+                      if (!e.target.value.trim() || isNaN(parseInt(e.target.value)))
+                        setChar(c => { const o={...c}; delete o.spellAttackOverride; return o; });
+                    }}/>
+                  <span className="vitals-mini-label">{C.spellAtk}</span>
+                </div>
+              </div>
+
             </div>
           </div>
 
