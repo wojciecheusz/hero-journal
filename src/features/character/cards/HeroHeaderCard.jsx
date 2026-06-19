@@ -1,6 +1,8 @@
-import { statMod } from '../../../utils/math';
+import { statMod, clamp } from '../../../utils/math';
 
 const STAT_KEYS = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
+const STAT_MIN = 1;
+const STAT_MAX = 30;
 
 export default function HeroHeaderCard({ char, setChar, C }) {
   const statAbbr = C.statAbbr || {};
@@ -14,17 +16,20 @@ export default function HeroHeaderCard({ char, setChar, C }) {
           return (
             <div key={key} className="hcv2-stat-box">
               <input
-                type="number" min={1} max={30}
+                type="number" min={STAT_MIN} max={STAT_MAX}
                 className="hcv2-stat-score"
                 value={val}
                 onFocus={e => e.target.select()}
-                onChange={e => setChar(c => ({
-                  ...c,
-                  stats: { ...(c.stats||{}), [key]: parseInt(e.target.value)||10 },
-                }))}
+                onChange={e => {
+                  const raw = parseInt(e.target.value);
+                  setChar(c => ({
+                    ...c,
+                    stats: { ...(c.stats||{}), [key]: isNaN(raw) ? raw : clamp(raw, STAT_MIN, STAT_MAX) },
+                  }));
+                }}
                 onBlur={e => {
                   const v = parseInt(e.target.value);
-                  if (isNaN(v)) setChar(c => ({...c, stats:{...(c.stats||{}),[key]:10}}));
+                  setChar(c => ({...c, stats:{...(c.stats||{}), [key]: isNaN(v) ? 10 : clamp(v, STAT_MIN, STAT_MAX)}}));
                 }}
                 style={{ width:"100%", textAlign:"center", background:"transparent",
                          border:"none", outline:"none",
