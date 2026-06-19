@@ -5,11 +5,12 @@ import { numMod } from '../../../utils/math';
 export default function SavingThrowsCard({ char, setChar, C, pb }) {
   const cycleSavingThrow = useCallback(key => setChar(c => {
     const wasP = !!(c.savingThrows||{})[key]; const wasE = !!(c.savingThrowExp||{})[key];
-    if (!wasP && !wasE) return { ...c, savingThrows:{...(c.savingThrows||{}),[key]:true}, savingThrowExp:{...(c.savingThrowExp||{}),[key]:false} };
-    if ( wasP && !wasE) return { ...c, savingThrows:{...(c.savingThrows||{}),[key]:true}, savingThrowExp:{...(c.savingThrowExp||{}),[key]:true} };
+    const ov = {...(c.savingThrowOverride||{})}; delete ov[key]; // klik pipsa = wróć do liczonej wartości
+    if (!wasP && !wasE) return { ...c, savingThrows:{...(c.savingThrows||{}),[key]:true}, savingThrowExp:{...(c.savingThrowExp||{}),[key]:false}, savingThrowOverride:ov };
+    if ( wasP && !wasE) return { ...c, savingThrows:{...(c.savingThrows||{}),[key]:true}, savingThrowExp:{...(c.savingThrowExp||{}),[key]:true}, savingThrowOverride:ov };
     const s2={...(c.savingThrows||{})}; delete s2[key];
     const e2={...(c.savingThrowExp||{})}; delete e2[key];
-    return { ...c, savingThrows:s2, savingThrowExp:e2 };
+    return { ...c, savingThrows:s2, savingThrowExp:e2, savingThrowOverride:ov };
   }), [setChar]);
 
   const setOverride = useCallback((key, raw) => setChar(c => {

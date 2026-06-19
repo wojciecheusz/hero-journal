@@ -4,11 +4,12 @@ import { numMod } from '../../../utils/math';
 export default function SkillsCard({ char, setChar, C, GENERIC_SKILLS, pb }) {
   const cycleSkill = useCallback(key => setChar(c => {
     const wasP = !!(c.skills||{})[key]; const wasE = !!(c.skillExp||{})[key];
-    if (!wasP && !wasE) return { ...c, skills:{...(c.skills||{}),[key]:true}, skillExp:{...(c.skillExp||{}),[key]:false} };
-    if ( wasP && !wasE) return { ...c, skills:{...(c.skills||{}),[key]:true}, skillExp:{...(c.skillExp||{}),[key]:true} };
+    const ov = {...(c.skillOverride||{})}; delete ov[key]; // klik pipsa = wróć do liczonej wartości
+    if (!wasP && !wasE) return { ...c, skills:{...(c.skills||{}),[key]:true}, skillExp:{...(c.skillExp||{}),[key]:false}, skillOverride:ov };
+    if ( wasP && !wasE) return { ...c, skills:{...(c.skills||{}),[key]:true}, skillExp:{...(c.skillExp||{}),[key]:true}, skillOverride:ov };
     const s2={...(c.skills||{})}; delete s2[key];
     const e2={...(c.skillExp||{})}; delete e2[key];
-    return { ...c, skills:s2, skillExp:e2 };
+    return { ...c, skills:s2, skillExp:e2, skillOverride:ov };
   }), [setChar]);
 
   const setOverride = useCallback((key, raw) => setChar(c => {
