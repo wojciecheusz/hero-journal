@@ -1,5 +1,5 @@
 
-export const PALETTES = ["arcane", "pergamin", "wschod", "drewno", "bone", "feywild", "eldritch", "dungeon", "shadowfell", "wrath", "meadow"];
+export const PALETTES = ["arcane", "pergamin", "dawn", "wschod", "drewno", "bone", "feywild", "eldritch", "dungeon", "shadowfell", "wrath", "meadow"];
 
 export const THEMES = {
 
@@ -102,6 +102,28 @@ export const THEMES = {
     spellAccent: "#5870a0", spellBorder: "#7888ac", spellMuted: "#6878a0",
     spellDim: "#8898bc",    spellText: "#3a4868",   spellBg: "rgba(88,112,160,0.08)",
     questReward: "#5a8a4a", selectedBg: "rgba(168,120,48,0.10)",
+  },
+
+  /* ── DAWN (Świt) – uproszczona, jasna odmiana Shadowfell: złoty świt
+     przebijający się przez fioletowe niebo nocy ──────────────────── */
+  dawn: {
+    bg: "#f6eef5",        bgCard: "#fdf9fc",      bgInput: "#ecdfee",     bgNav: "#e6d6e8",
+    border: "#c9aed4",    borderSub: "#ddc8e2",   borderInput: "#b894c4",
+    text: "#3a2a44",      textMuted: "#8a6c98",   textDim: "#b69cc0",     textLabel: "#6a4c78",
+    accent: "#c08a28",    accentBorder: "#8a6418",
+    headerBg: "linear-gradient(180deg,#f8ecdc 0%,#f2e2ee 100%)",
+    navBg:    "linear-gradient(0deg,#e6d6e8 0%,#f6e8da 100%)",
+    scrollTrack: "#e6d6e8",   scrollThumb: "#b894c4",
+    noise: "0.014", shadowBot: "rgba(120,80,140,0.14)", shadowCard: "rgba(120,80,140,0.08)",
+    shadowSoft: "rgba(120,80,140,0.05)",
+    innerDivBg: "#fdf9fc", hpBg: "#e6d6e8", addForm: "#faf2f7",
+    modalBg: "#fdf9fc", emptyColor: "#b69cc0",
+    sessEntry: "#faf2f7",  combatBox: "#ecdfee",
+    spellSlotBox: "#ecdfee", spellSlotBorder: "#8898c8",
+    packItem: "#faf2f7",   packItemBorder: "#ddc8e2", packFieldInput: "#e4d4e8",
+    spellAccent: "#6a78b8", spellBorder: "#8898c8", spellMuted: "#7888b0",
+    spellDim: "#c0c8e4",    spellText: "#36406c",   spellBg: "rgba(106,120,184,0.08)",
+    questReward: "#5a8a4a", selectedBg: "rgba(192,138,40,0.10)",
   },
 
   /* ════════════════ MOTYWY ŚREDNIE (MEDIUM) ════════════════ */

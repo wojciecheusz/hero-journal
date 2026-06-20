@@ -19,7 +19,7 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   pl: {
     PALETTE_LABELS: {
-      pergamin:"Pergamin", wschod:"Wschód",
+      pergamin:"Pergamin", dawn:"Świt", wschod:"Wschód",
       drewno:"Drewno", bone:"Kość",
       feywild:"Feywild", eldritch:"Wieczny", dungeon:"Loch",
       shadowfell:"Cienista Otchłań", wrath:"Gniew", meadow:"Łąka",
@@ -441,7 +441,7 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   en: {
     PALETTE_LABELS: {
-      pergamin:"Parchment", wschod:"Dawn",
+      pergamin:"Parchment", dawn:"Dawn", wschod:"Sunrise",
       drewno:"Wood", bone:"Bone",
       feywild:"Feywild", eldritch:"Eldritch", dungeon:"Dungeon",
       shadowfell:"Shadowfell", wrath:"Wrath", meadow:"Meadow",

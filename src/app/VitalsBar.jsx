@@ -63,9 +63,6 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
   }), [setChar]);
 
   const upd = (f, v) => setChar(c => ({ ...c, [f]: v }));
-  const initiative = char.initiativeBonus !== undefined
-    ? char.initiativeBonus
-    : Math.floor(((char.stats?.DEX ?? 10) - 10) / 2);
 
   return (
     <>
@@ -128,21 +125,9 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
         </div>
       )}
 
+      {/* ── Mini-staty: Bieg. / Pas. Percepcja / DC Czarów / Atak Czarami —
+           AC i Inicjatywa nie powtarzają się tutaj, są w karcie Walka/Ekwipunek ── */}
       <div className="vitals-mini-grid" style={{ marginTop:"6px" }}>
-        <div className="vitals-mini-box" title={C.ac}>
-          <input className="vitals-mini-value" type="number" value={char.ac ?? 0}
-            onFocus={e => e.target.select()}
-            onChange={e => { const v=parseInt(e.target.value); upd("ac", v); }}
-            onBlur={e => { const v=parseInt(e.target.value); upd("ac", isNaN(v)?0:v); }}/>
-          <span className="vitals-mini-label">{C.ac}</span>
-        </div>
-        <div className="vitals-mini-box" title={C.initiativeTip}>
-          <input className="vitals-mini-value" type="number" value={initiative}
-            onFocus={e => e.target.select()}
-            onChange={e => upd("initiativeBonus", e.target.value==="" ? undefined : parseInt(e.target.value))}
-            onBlur={e => { if (e.target.value==="") setChar(c => { const o={...c}; delete o.initiativeBonus; return o; }); }}/>
-          <span className="vitals-mini-label">{C.initiative}</span>
-        </div>
         <div className="vitals-mini-box" title={C.profBonusTip}>
           <input className="vitals-mini-value" type="number" value={pbDraft ?? pb}
             onFocus={e => { e.target.select(); setPbDraft(String(pb)); }}
@@ -158,10 +143,6 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
             }}/>
           <span className="vitals-mini-label">{C.profBonus}</span>
         </div>
-      </div>
-
-      {/* ── Drugi rząd mini-statów: Pas. Percepcja / DC Czarów / Atak Czarami ── */}
-      <div className="vitals-mini-grid" style={{ marginTop:"6px" }}>
         {[
           { label: C.passivePerc, key:"passivePerceptionOverride", computed: 10+percBonus },
           { label: C.spellDC,     key:"skillDCOverride",           computed: spellDC },
