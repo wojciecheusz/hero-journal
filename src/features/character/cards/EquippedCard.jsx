@@ -90,7 +90,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
   const activeSpells  = (spells    || []).filter(s => s.inUse);
 
   const updCoins = useCallback((type, val) => setChar(c => ({
-    ...c, coins: { ...(c.coins||{gold:0,silver:0,copper:0}), [type]: Math.max(0, parseInt(val)||0) }
+    ...c, coins: { ...(c.coins||{gold:0,silver:0,copper:0}), [type]: val }
   })), [setChar]);
 
   const itemMeta = item => {
@@ -137,9 +137,16 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
         {/* Prędkość */}
         <div className="combat-box">
           <span className="combat-box-label">{C.speed}</span>
-          <input className="combat-box-input" type="number" value={char.speed||30}
+          <input className="combat-box-input" type="number" value={char.speed ?? 30}
             onFocus={e => e.target.select()}
-            onChange={e => setChar(c => ({...c, speed: parseInt(e.target.value)||30}))}/>
+            onChange={e => {
+              const v = parseInt(e.target.value);
+              setChar(c => ({...c, speed: v}));
+            }}
+            onBlur={e => {
+              const v = parseInt(e.target.value);
+              setChar(c => ({...c, speed: isNaN(v) ? 30 : v}));
+            }}/>
         </div>
         {/* KP */}
         <div className="combat-box">
@@ -185,12 +192,13 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
         <>
           <div style={{ display:"flex", gap:"1rem", justifyContent:"flex-end", marginBottom:"0.65rem", paddingBottom:"0.5rem", borderBottom:"1px solid rgba(128,128,128,0.1)" }}>
             {[["gold",C.gold,"#c8a820"],["silver",C.silver,"#8898a8"],["copper",C.copper,"#b07040"]].map(([type,label,color]) => {
-              const val = (char.coins||{})[type] || 0;
+              const val = (char.coins||{})[type] ?? 0;
               return (
                 <div key={type} style={{ display:"flex", alignItems:"center", gap:"0.3rem" }}>
                   <Icon name="coins" size="0.85em" color={color}/>
                   <input type="number" min={0} value={val}
-                    onChange={e => updCoins(type, parseInt(e.target.value)||0)}
+                    onChange={e => updCoins(type, parseInt(e.target.value))}
+                    onBlur={e => { const v=parseInt(e.target.value); updCoins(type, Math.max(0, isNaN(v)?0:v)); }}
                     onFocus={e => e.target.select()}
                     style={{ width:40, fontFamily:"Cinzel,serif", fontSize:"0.82rem", fontWeight:700, textAlign:"center", background:"transparent", border:"none", borderBottom:`1px dashed ${color}`, outline:"none", color:"inherit" }}/>
                   <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em", textTransform:"uppercase", color, opacity:0.8 }}>{label}</span>

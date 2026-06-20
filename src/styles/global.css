@@ -835,6 +835,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   appearance: none;
   cursor: pointer;
   border-radius: var(--radius-sm);
+  color-scheme: dark;
 }
 
 .g-select:focus { border-color: var(--hj-accent-border); box-shadow: 0 0 0 1px var(--hj-accent-border); }

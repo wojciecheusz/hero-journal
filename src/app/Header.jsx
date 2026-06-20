@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { CONDITIONS, XP_THRESHOLDS } from '../constants/gameConstants';
 import SettingsMenu from './SettingsMenu';
 import Icon from '../shared/icons';
@@ -62,10 +62,11 @@ export default function Header({
   const spellAtk  = pb + spellAbi;
 
   /* ── XP / poziomowanie — postęp absolutny od 0 do progu następnego poziomu ── */
-  const xp        = char.xp || 0;
+  const xp        = char.xp ?? 0;
+  const xpSafe    = isNaN(xp) ? 0 : xp;
   const xpNext    = totalLevel < 20 ? XP_THRESHOLDS[totalLevel] : null;
   const xpPct     = xpNext
-    ? Math.min(100, Math.max(0, (xp / xpNext) * 100))
+    ? Math.min(100, Math.max(0, (xpSafe / xpNext) * 100))
     : 100;
 
   /* ── Kości wytrzymałości ── */
@@ -74,6 +75,10 @@ export default function Header({
 
   const ds        = char.deathSaves || { successes: 0, failures: 0 };
   const exhaustion = (char.conditions||{}).exhaustion || 0;
+
+  /* Draft tekstowy dla Biegłości — odsprzęgnięty od char.profBonus podczas
+     edycji, bo profBonus wpływa na inne wyświetlane staty (DC, Atak Czarami) */
+  const [pbDraft, setPbDraft] = useState(null);
 
   const adjustHP = delta => setChar(c => {
     const h = c.hp || { current: 0, max: 1, temp: 0 };
@@ -261,7 +266,14 @@ export default function Header({
             <input type="number" min={0}
               value={xp}
               onFocus={e => e.target.select()}
-              onChange={e => setChar(c => ({...c, xp: Math.max(0, parseInt(e.target.value)||0)}))}
+              onChange={e => {
+                const raw = parseInt(e.target.value);
+                setChar(c => ({...c, xp: isNaN(raw) ? raw : Math.max(0, raw)}));
+              }}
+              onBlur={e => {
+                const v = parseInt(e.target.value);
+                setChar(c => ({...c, xp: isNaN(v) ? 0 : Math.max(0, v)}));
+              }}
               style={{ fontFamily:"Cinzel,serif", fontSize:"0.78rem", fontWeight:700,
                        color:"var(--hj-accent)", background:"transparent", border:"none",
                        outline:"none", width:48, textAlign:"left", flexShrink:0, padding:0 }}/>
@@ -273,11 +285,11 @@ export default function Header({
             {xpNext ? (
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.04em",
                              fontWeight:600,
-                             color: xp >= xpNext ? "var(--hj-accent)" : "var(--hj-text-muted)",
+                             color: xpSafe >= xpNext ? "var(--hj-accent)" : "var(--hj-text-muted)",
                              flexShrink:0, whiteSpace:"nowrap" }}>
-                {xp >= xpNext
+                {xpSafe >= xpNext
                   ? `✦ ${C.level} ${totalLevel + 1}`
-                  : `${(xpNext - xp).toLocaleString()} XP → ${C.level} ${totalLevel + 1}`}
+                  : `${(xpNext - xpSafe).toLocaleString()} XP → ${C.level} ${totalLevel + 1}`}
               </span>
             ) : (
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"var(--hj-accent)", flexShrink:0 }}>
@@ -295,9 +307,9 @@ export default function Header({
               { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-accent)", signed: true },
             ].map(({ label, key, computed, color, direct, signed }) => {
               const over = direct ? undefined : char[key];
-              const displayVal = signed
-                ? numMod(over ?? computed)
-                : String(over ?? computed);
+              const displayVal = direct && pbDraft !== null
+                ? pbDraft
+                : signed ? numMod(over ?? computed) : String(over ?? computed);
               const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
               return (
                 <div key={key} style={{ flex:1, padding:"6px 4px", textAlign:"center" }}>
@@ -306,11 +318,13 @@ export default function Header({
                     title={C.overrideTip || "Wpisz by nadpisać"}
                     style={{ width:"100%", display:"block", textAlign:"center",
                              fontSize:"1.05rem", color: overrideColor }}
-                    onFocus={e => e.target.select()}
+                    onFocus={e => { e.target.select(); if (direct) setPbDraft(String(computed)); }}
                     onChange={e => {
                       const r = e.target.value.replace(/[^-\d]/g, "");
                       if (direct) {
-                        setChar(c => ({...c, [key]: parseInt(r)||2}));
+                        setPbDraft(r);
+                        const v = parseInt(r);
+                        if (!isNaN(v) && v > 0) setChar(c => ({...c, profBonus: v}));
                       } else {
                         setChar(c => r===""
                           ? (o => { const n={...o}; delete n[key]; return n; })(c)
@@ -318,8 +332,13 @@ export default function Header({
                       }
                     }}
                     onBlur={e => {
-                      if (!direct && (!e.target.value.trim() || isNaN(parseInt(e.target.value))))
+                      if (direct) {
+                        const v = parseInt(pbDraft ?? "");
+                        setChar(c => ({...c, profBonus: (!isNaN(v) && v > 0) ? v : 2}));
+                        setPbDraft(null);
+                      } else if (!e.target.value.trim() || isNaN(parseInt(e.target.value))) {
                         setChar(c => { const n={...c}; delete n[key]; return n; });
+                      }
                     }}/>
                   <span className="vitals-mini-label">{label}</span>
                 </div>

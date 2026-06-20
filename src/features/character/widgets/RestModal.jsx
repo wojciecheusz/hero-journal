@@ -14,12 +14,59 @@ const roundBtnStyle = {
   display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
 };
 
+const DICE_TYPES = ["d4", "d6", "d8", "d10", "d12"];
+
+/* ── Własny dropdown typu kości — natywny <select> renderuje popup w
+   kolorach systemowych (jasny), nawet z color-scheme:dark na elemencie ── */
+function DiceTypeDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ position: "relative" }}>
+      <button onClick={() => setOpen(o => !o)} aria-expanded={open}
+        style={{ background: "transparent", border: "none", outline: "none", cursor: "pointer",
+                 display: "flex", alignItems: "center", gap: "0.25rem", padding: 0,
+                 fontFamily: "Cinzel,serif", fontSize: "0.85rem", color: "var(--hj-accent)" }}>
+        {value}
+        <Icon name={open ? "chevron-up" : "chevron-down"} size="0.65em"/>
+      </button>
+      {open && (
+        <>
+          <div style={{ position: "fixed", inset: 0, zIndex: 10 }} onClick={() => setOpen(false)}/>
+          <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, zIndex: 11,
+                        background: "var(--hj-modal-bg)", border: "1px solid var(--hj-accent-border)",
+                        borderRadius: "var(--radius-md)", overflow: "hidden", minWidth: 56,
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.45)" }}>
+            {DICE_TYPES.map(d => (
+              <button key={d} onClick={() => { onChange(d); setOpen(false); }}
+                style={{ display: "block", width: "100%", textAlign: "center", padding: "0.4rem 0.8rem",
+                         background: d === value ? "rgba(226,185,78,0.12)" : "transparent",
+                         border: "none", cursor: "pointer",
+                         fontFamily: "Cinzel,serif", fontSize: "0.8rem",
+                         color: d === value ? "var(--hj-accent)" : "var(--hj-text)" }}>
+                {d}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function RestModal({ type, char, setChar, onClose }) {
   const T  = useT();
   const R  = T.REST;
   const hd = char.hitDice || { type: "d8", max: 1, used: 0 };
   const available = Math.max(0, hd.max - hd.used);
   const [hdSpend, setHdSpend] = useState(1);
+  const [maxDraft, setMaxDraft] = useState(null);
+  const [spendDraft, setSpendDraft] = useState(null);
+
+  const adjustSpend = delta => setHdSpend(s => {
+    const next = clamp(s + delta, 0, available);
+    setSpendDraft(null);
+    return next;
+  });
 
   const doShortRest = () => {
     const spend = clamp(hdSpend, 0, available);
@@ -61,28 +108,47 @@ export function RestModal({ type, char, setChar, onClose }) {
             <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.7rem", flexWrap: "wrap" }}>
               <div style={fieldBoxStyle}>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase", color:"var(--hj-text-muted)" }}>{R.diceType}</span>
-                <select className="g-select" style={{ width: "auto", fontSize: "0.85rem", padding: "0.1rem 0.3rem", background:"transparent", border:"none" }}
-                  value={hd.type} onChange={e => setChar(c => ({ ...c, hitDice: { ...hd, type: e.target.value } }))}>
-                  {["d4", "d6", "d8", "d10", "d12"].map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
+                <DiceTypeDropdown value={hd.type}
+                  onChange={d => setChar(c => ({ ...c, hitDice: { ...hd, type: d } }))}/>
               </div>
               <div style={fieldBoxStyle}>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase", color:"var(--hj-text-muted)" }}>{R.maxLabel}</span>
-                <input type="number" min={1} value={hd.max}
-                  onFocus={e => e.target.select()}
-                  onChange={e => setChar(c => ({ ...c, hitDice: { ...hd, max: parseInt(e.target.value) || 1 } }))}
+                <input type="number" min={1} value={maxDraft ?? hd.max}
+                  onFocus={e => { e.target.select(); setMaxDraft(String(hd.max)); }}
+                  onChange={e => {
+                    const raw = e.target.value;
+                    setMaxDraft(raw);
+                    const v = parseInt(raw);
+                    if (!isNaN(v) && v >= 1) setChar(c => ({ ...c, hitDice: { ...hd, max: v } }));
+                  }}
+                  onBlur={e => {
+                    const v = parseInt(e.target.value);
+                    const final = (!isNaN(v) && v >= 1) ? v : 1;
+                    setChar(c => ({ ...c, hitDice: { ...hd, max: final } }));
+                    setMaxDraft(null);
+                  }}
                   style={{ width: 36, fontFamily: "Cinzel,serif", fontSize: "0.85rem", background: "transparent", border: "none", outline: "none", textAlign: "center", color: "var(--hj-accent)" }}/>
               </div>
             </div>
             <div className="modal-detail" style={{ borderColor:"var(--hj-border-input)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color:"var(--hj-text-muted)" }}>{R.spend}</span>
-                <button onClick={() => setHdSpend(s => Math.max(0, s - 1))} aria-label="Decrease dice" style={roundBtnStyle}><Icon name="minus" size="0.9em"/></button>
-                <input type="number" min={0} max={available} value={hdSpend}
-                  onFocus={e => e.target.select()}
-                  onChange={e => setHdSpend(clamp(parseInt(e.target.value) || 0, 0, available))}
+                <button onClick={() => adjustSpend(-1)} aria-label="Decrease dice" style={roundBtnStyle}><Icon name="minus" size="0.9em"/></button>
+                <input type="number" min={0} max={available} value={spendDraft ?? hdSpend}
+                  onFocus={e => { e.target.select(); setSpendDraft(String(hdSpend)); }}
+                  onChange={e => {
+                    const raw = e.target.value;
+                    setSpendDraft(raw);
+                    const v = parseInt(raw);
+                    if (!isNaN(v)) setHdSpend(clamp(v, 0, available));
+                  }}
+                  onBlur={e => {
+                    const v = parseInt(e.target.value);
+                    setHdSpend(clamp(isNaN(v) ? 0 : v, 0, available));
+                    setSpendDraft(null);
+                  }}
                   style={{ width: 36, fontFamily: "Cinzel,serif", fontSize: "1.1rem", fontWeight: 700, background: "transparent", border: "none", borderBottom: "1px solid var(--hj-accent-border)", outline: "none", textAlign: "center", color: "var(--hj-accent)" }}/>
-                <button onClick={() => setHdSpend(s => Math.min(available, s + 1))} aria-label="Increase dice" style={roundBtnStyle}><Icon name="plus" size="0.9em"/></button>
+                <button onClick={() => adjustSpend(1)} aria-label="Increase dice" style={roundBtnStyle}><Icon name="plus" size="0.9em"/></button>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.72rem", color:"var(--hj-text-muted)" }}>{hd.type}</span>
               </div>
               {(() => {
