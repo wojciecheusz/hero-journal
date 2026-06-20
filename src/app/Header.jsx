@@ -95,8 +95,10 @@ export default function Header({
   const classIcon = DND_CLASSES.find(c => c.name === char.classes?.[0]?.name)?.icon || "sword";
   const charIcon  = char.icon || classIcon;
 
-  const hp    = char.hp || { current: 0, max: 1, temp: 0 };
-  const hpPct = Math.round(clamp((hp.current / (hp.max || 1)) * 100, 0, 100));
+  const hp         = char.hp || { current: 0, max: 1, temp: 0 };
+  const hpCurSafe  = isNaN(hp.current) ? 0 : hp.current;
+  const hpMaxSafe  = isNaN(hp.max) ? 1 : (hp.max || 1);
+  const hpPct = Math.round(clamp((hpCurSafe / hpMaxSafe) * 100, 0, 100));
   const hpCol = hpPct > 70 ? "#3a9a3a" : hpPct > 35 ? "#c06010" : "#c03030";
 
   const wisBonus  = Math.floor(((char.stats?.WIS ?? 10) - 10) / 2);
@@ -332,23 +334,23 @@ export default function Header({
               <span style={{ display:"flex", alignItems:"baseline", gap:"0.4rem" }}>
                 <span className="vitals-hp-temp" title={C.hpTemp}>
                   <Icon name="shield" size="0.8em"/>
-                  <input type="number" min={0} value={hp.temp||0}
+                  <input type="number" min={0} value={hp.temp ?? 0}
                     onFocus={e => e.target.select()}
-                    onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,temp:e.target.value===""?0:Math.max(0,parseInt(e.target.value)||0)}}; })}
-                    onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,temp:Math.max(0,parseInt(e.target.value)||0)}}; })}/>
+                    onChange={e => { const v=parseInt(e.target.value); setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,temp:v}}; }); }}
+                    onBlur={e => { const v=parseInt(e.target.value); setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,temp:(!isNaN(v))?Math.max(0,v):0}}; }); }}/>
                 </span>
                 <span className="vitals-hp-value">
                   <input type="number" className="vitals-hp-current" value={hp.current}
                     style={{ color: hpCol, fontSize:SIZE_HERO, width:"2.2em" }}
                     onFocus={e => e.target.select()}
-                    onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
-                    onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
+                    onChange={e => { const v=parseInt(e.target.value); setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:isNaN(v)?v:clamp(v,0,h.max)}}; }); }}
+                    onBlur={e => { const v=parseInt(e.target.value); setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(isNaN(v)?0:v,0,h.max)}}; }); }}/>
                   <span className="vitals-hp-sep" style={{ fontSize:SIZE_STAT }}>/</span>
                   <input type="number" min={1} className="vitals-hp-max" value={hp.max}
                     style={{ fontSize:SIZE_STAT, color:hpCol, opacity:0.6 }}
                     onFocus={e => e.target.select()}
-                    onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
-                    onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
+                    onChange={e => { const v=parseInt(e.target.value); setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:isNaN(v)?v:Math.max(1,v)}}; }); }}
+                    onBlur={e => { const v=parseInt(e.target.value); setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,isNaN(v)?1:v)}}; }); }}/>
                 </span>
               </span>
             </div>

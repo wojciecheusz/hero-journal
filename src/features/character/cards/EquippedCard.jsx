@@ -134,9 +134,10 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
         {/* KP */}
         <div className="combat-box">
           <span className="combat-box-label">{C.ac}</span>
-          <input className="combat-box-input" type="number" value={char.ac||0}
+          <input className="combat-box-input" type="number" value={char.ac ?? 0}
             onFocus={e => e.target.select()}
-            onChange={e => setChar(c => ({...c, ac: e.target.value===""?0:parseInt(e.target.value)||0}))}/>
+            onChange={e => { const v=parseInt(e.target.value); setChar(c => ({...c, ac: v})); }}
+            onBlur={e => { const v=parseInt(e.target.value); setChar(c => ({...c, ac: isNaN(v)?0:v})); }}/>
         </div>
         {/* Inicjatywa */}
         <div className="combat-box">
