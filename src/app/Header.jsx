@@ -225,23 +225,23 @@ export default function Header({
                   onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
               </span>
             </div>
-            <div className="hp-bar-bg" style={{ marginBottom:"8px" }}>
-              <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
-            </div>
-            <div style={{ display:"flex", gap:"8px" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"6px" }}>
               <button aria-label="HP −" onClick={() => adjustHP(-1)}
-                style={{ flex:1, height:"34px", borderRadius:"var(--radius-md)",
-                         background:"transparent", border:"1px solid var(--hj-accent-border)",
+                style={{ width:"18px", height:"18px", flexShrink:0, borderRadius:"50%",
+                         background:"transparent", border:"none",
                          color:"var(--hj-accent)", cursor:"pointer", display:"flex",
-                         alignItems:"center", justifyContent:"center", transition:"all 0.15s" }}>
-                <Icon name="minus" size="1.1em"/>
+                         alignItems:"center", justifyContent:"center", padding:0, transition:"opacity 0.15s" }}>
+                <Icon name="minus" size="0.85em"/>
               </button>
+              <div className="hp-bar-bg" style={{ flex:1, margin:0 }}>
+                <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
+              </div>
               <button aria-label="HP +" onClick={() => adjustHP(1)}
-                style={{ flex:1, height:"34px", borderRadius:"var(--radius-md)",
-                         background:"transparent", border:"1px solid var(--hj-accent-border)",
+                style={{ width:"18px", height:"18px", flexShrink:0, borderRadius:"50%",
+                         background:"transparent", border:"none",
                          color:"var(--hj-accent)", cursor:"pointer", display:"flex",
-                         alignItems:"center", justifyContent:"center", transition:"all 0.15s" }}>
-                <Icon name="plus" size="1.1em"/>
+                         alignItems:"center", justifyContent:"center", padding:0, transition:"opacity 0.15s" }}>
+                <Icon name="plus" size="0.85em"/>
               </button>
             </div>
           </div>
