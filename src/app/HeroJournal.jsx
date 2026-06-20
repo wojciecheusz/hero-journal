@@ -212,9 +212,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const contentTopBase = 345; // brand + identity + hp (z wbudowanymi +/-) + xp + mini-stats + 2 btn rows + spacing
   const contentTopExtra =
     (moreOpen  ? 195 : 0) +
-    (stanyOpen ?  82 : 0) +
-    (deathOpen ?  78 : 0) +
-    (exhOpen   ?  68 : 0);
+    (stanyOpen ?  96 : 0) +
+    (deathOpen ?  94 : 0) +
+    (exhOpen   ?  82 : 0);
   const contentTop = panelCollapsed
     ? "calc(env(safe-area-inset-top, 0px) + 62px)"
     : `calc(env(safe-area-inset-top, 0px) + ${contentTopBase + contentTopExtra}px)`;

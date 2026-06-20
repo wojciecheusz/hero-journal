@@ -376,44 +376,62 @@ export default function Header({
 
           {/* ── Rozwinięte panele ── */}
           {stanyOpen && (
-            <div style={{ display:"flex", flexWrap:"wrap", gap:"0.3rem", paddingTop:"0.5rem",
-                          borderTop:"1px solid var(--hj-border-sub)", marginTop:"0.4rem" }}>
-              {CONDITIONS.map(cond => {
-                const active = !!(char.conditions||{})[cond.key];
-                const label  = T?.CONDITIONS?.[cond.key] || cond.label;
-                return (
-                  <button key={cond.key}
-                    onClick={() => setChar(c => {
-                      const conds={...(c.conditions||{})};
-                      if(conds[cond.key]) delete conds[cond.key]; else conds[cond.key]=true;
-                      return {...c,conditions:conds};
-                    })}
-                    style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.06em",
-                             textTransform:"uppercase", padding:"0.2rem 0.4rem", cursor:"pointer",
-                             transition:"all 0.15s", borderRadius:"var(--radius-pill)",
-                             border:`1px solid ${active?"#cc3030":"var(--hj-pip-empty)"}`,
-                             background:active?"rgba(200,48,48,0.2)":"transparent",
-                             color:active?"#ee5050":"var(--hj-text-muted)" }}>
-                    {label}
-                  </button>
-                );
-              })}
+            <div style={{ marginTop:"0.4rem", padding:"0.5rem 0.6rem",
+                          border:"1px solid rgba(170,68,68,0.3)", background:"rgba(170,68,68,0.05)",
+                          borderRadius:"var(--radius-md)" }}>
+              <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.45rem" }}>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+                               textTransform:"uppercase", color:"#cc7070" }}>
+                  {C.stanyTitle || "Stany"}
+                </span>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.4rem", color:"var(--hj-text-dim)" }}>
+                  {Object.keys(char.conditions||{}).filter(k => k!=="exhaustion" && char.conditions[k]).length} / {CONDITIONS.length}
+                </span>
+              </div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"0.35rem" }}>
+                {CONDITIONS.map(cond => {
+                  const active = !!(char.conditions||{})[cond.key];
+                  const label  = T?.CONDITIONS?.[cond.key] || cond.label;
+                  return (
+                    <button key={cond.key}
+                      onClick={() => setChar(c => {
+                        const conds={...(c.conditions||{})};
+                        if(conds[cond.key]) delete conds[cond.key]; else conds[cond.key]=true;
+                        return {...c,conditions:conds};
+                      })}
+                      style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.06em",
+                               textTransform:"uppercase", padding:"0.22rem 0.5rem", cursor:"pointer",
+                               transition:"all 0.15s", borderRadius:"var(--radius-pill)",
+                               border:`1px solid ${active?"#cc3030":"var(--hj-pip-empty)"}`,
+                               background:active?"rgba(200,48,48,0.2)":"transparent",
+                               color:active?"#ee5050":"var(--hj-text-muted)" }}>
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
           {deathOpen && (
-            <div style={{ marginTop:"0.4rem", padding:"0.45rem 0.6rem",
+            <div style={{ marginTop:"0.4rem", padding:"0.5rem 0.6rem",
                           border:"1px solid rgba(154,58,58,0.3)", background:"rgba(154,58,58,0.05)",
                           borderRadius:"var(--radius-md)" }}>
-              {[["successes",C.deathSuccess,"#4a9a5a"],["failures",C.deathFailure,"#9a3a3a"]].map(([type,label,color]) => (
-                <div key={type} style={{ display:"flex", alignItems:"center", gap:"0.4rem", marginBottom:"0.3rem" }}>
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+                            textTransform:"uppercase", color:"#cc8080", marginBottom:"0.5rem" }}>
+                {C.deathSaves}
+              </div>
+              {[["successes",C.deathSuccess,"#4a9a5a"],["failures",C.deathFailure,"#9a3a3a"]].map(([type,label,color], i) => (
+                <div key={type} style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+                                          padding:"0.3rem 0",
+                                          borderTop: i>0 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
                   <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.08em",
-                                 textTransform:"uppercase", color, flexShrink:0, minWidth:50 }}>{label}</span>
-                  <div style={{ display:"flex", gap:"0.3rem" }}>
-                    {[0,1,2].map(i => (
-                      <button key={i} onClick={() => toggleDeath(type, i)}
+                                 textTransform:"uppercase", color }}>{label}</span>
+                  <div style={{ display:"flex", gap:"0.4rem" }}>
+                    {[0,1,2].map(i2 => (
+                      <button key={i2} onClick={() => toggleDeath(type, i2)}
                         style={{ width:20, height:20, borderRadius:"50%", border:`2px solid ${color}`,
-                                 background:i<(ds[type]||0)?color:"transparent",
+                                 background:i2<(ds[type]||0)?color:"transparent",
                                  cursor:"pointer", transition:"background 0.15s", flexShrink:0, padding:0 }}/>
                     ))}
                   </div>
@@ -423,17 +441,26 @@ export default function Header({
           )}
 
           {exhOpen && (
-            <div style={{ marginTop:"0.4rem", padding:"0.45rem 0.6rem",
+            <div style={{ marginTop:"0.4rem", padding:"0.5rem 0.6rem",
                           border:"1px solid rgba(176,96,32,0.3)", background:"rgba(176,96,32,0.05)",
                           borderRadius:"var(--radius-md)" }}>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:"0.3rem" }}>
+              <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.5rem" }}>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+                               textTransform:"uppercase", color:"#d4a060" }}>
+                  {C.exhaustion}
+                </span>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.4rem", color:"var(--hj-text-dim)" }}>
+                  {exhaustion} / 6
+                </span>
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(7, 1fr)", gap:"0.3rem" }}>
                 {[0,1,2,3,4,5,6].map(level => {
                   const cur    = exhaustion;
                   const filled = level > 0 && level <= cur;
                   return (
                     <button key={level}
                       onClick={() => setChar(c => ({...c,conditions:{...(c.conditions||{}),exhaustion:level===cur?0:level}}))}
-                      style={{ width:"2rem", height:"2rem", borderRadius:"var(--radius-sm)",
+                      style={{ width:"100%", aspectRatio:"1", borderRadius:"var(--radius-sm)",
                                border:`1.5px solid ${filled?"#cc5020":level===0&&cur===0?"#4a9a5a":"var(--hj-pip-empty)"}`,
                                background:filled?"rgba(200,80,32,0.25)":level===0&&cur===0?"rgba(74,154,90,0.15)":"transparent",
                                cursor:"pointer", fontFamily:"Cinzel,serif", fontSize:"0.55rem", fontWeight:700,
