@@ -31,11 +31,6 @@ const LBL = {
   marginBottom:"0.15rem", display:"block",
 };
 
-const fieldBoxStyle = {
-  border:"1px solid var(--hj-border-input)",
-  borderRadius:"var(--radius-md)", padding:"0.45rem 0.6rem",
-};
-
 const ieditStyle = {
   fontFamily:"Cinzel,serif", fontSize:"0.8rem", background:"transparent",
   border:"none", outline:"none", color:"var(--hj-text)", width:"100%", padding:0,
@@ -187,83 +182,41 @@ export default function Header({
             </div>
           </div>
 
-          {/* ── Panel Więcej: rasa, przeszłość, charakter, wygląd + mini-staty ── */}
-          {moreOpen && (
-            <div style={{ marginTop:"0.3rem" }}>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.4rem", marginBottom:"0.4rem" }}>
-                {[["race",C.race,C.racePh],["background",C.background,C.backgroundPh]].map(([key,label,ph]) => (
-                  <div key={key} style={fieldBoxStyle}>
-                    <span style={LBL}>{label}</span>
-                    <input style={ieditStyle} value={char[key]||""} placeholder={ph}
-                      onChange={e => setChar(c => ({...c,[key]:e.target.value}))}/>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.4rem", marginBottom:"0.4rem" }}>
-                {[["alignment",C.alignment,C.alignmentPh||"CN, LG…",null],
-                  ["age",C.age,C.agePh,"appearance"],["height",C.height,C.heightPh,"appearance"],
-                  ["weight",C.weight,C.weightPh,"appearance"],["eyes",C.eyes,C.eyesPh,"appearance"],
-                  ["skin",C.skin,C.skinPh,"appearance"],["hair",C.hair,C.hairPh,"appearance"],
-                ].map(([key,label,ph,group]) => (
-                  <div key={key} style={fieldBoxStyle}>
-                    <span style={LBL}>{label}</span>
-                    <input style={ieditStyle}
-                      value={group ? (char.appearance||{})[key]||"" : char[key]||""}
-                      placeholder={ph||""}
-                      onChange={e => group ? updAppearance(key, e.target.value) : setChar(c => ({...c,[key]:e.target.value}))}/>
-                  </div>
-                ))}
-              </div>
-
-              {/* ── Mini-staty referencyjne (Pas. Percepcja / Biegłość / DC / Atak Czarami) ── */}
-              <div style={{ display:"flex", gap:"6px" }}>
-                {[
-                  { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: "var(--hj-accent)" },
-                  { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: "var(--hj-text)", direct: true },
-                  { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC,      color: "var(--hj-spell-accent)" },
-                  { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-accent)", signed: true },
-                ].map(({ label, key, computed, color, direct, signed }) => {
-                  const over = direct ? undefined : char[key];
-                  const displayVal = direct && pbDraft !== null
-                    ? pbDraft
-                    : signed ? numMod(over ?? computed) : String(over ?? computed);
-                  const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
+          {/* ── Panel Więcej: rasa, przeszłość, charakter, wygląd (styl Cech Osobowości — 2 kol., bez ramek) ── */}
+          {moreOpen && (() => {
+            const moreFields = [
+              ["race",       C.race,       C.racePh,                  null],
+              ["background", C.background, C.backgroundPh,            null],
+              ["alignment",  C.alignment,  C.alignmentPh||"CN, LG…",  null],
+              ["age",        C.age,        C.agePh,        "appearance"],
+              ["height",     C.height,     C.heightPh,     "appearance"],
+              ["weight",     C.weight,     C.weightPh,     "appearance"],
+              ["eyes",       C.eyes,       C.eyesPh,       "appearance"],
+              ["skin",       C.skin,       C.skinPh,       "appearance"],
+              ["hair",       C.hair,       C.hairPh,       "appearance"],
+            ];
+            const totalRows = Math.ceil(moreFields.length / 2);
+            return (
+              <div style={{ marginTop:"0.3rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 0.8rem" }}>
+                {moreFields.map(([key,label,ph,group], i) => {
+                  const row = Math.floor(i / 2);
                   return (
-                    <div key={key} style={{ ...fieldBoxStyle, flex:1, textAlign:"center" }}>
-                      <input className="vitals-mini-value" type="text" inputMode="numeric"
-                        value={displayVal}
-                        title={C.overrideTip || "Wpisz by nadpisać"}
-                        style={{ width:"100%", display:"block", textAlign:"center",
-                                 fontSize:SIZE_STAT, color: overrideColor }}
-                        onFocus={e => { e.target.select(); if (direct) setPbDraft(String(computed)); }}
-                        onChange={e => {
-                          const r = e.target.value.replace(/[^-\d]/g, "");
-                          if (direct) {
-                            setPbDraft(r);
-                            const v = parseInt(r);
-                            if (!isNaN(v) && v > 0) setChar(c => ({...c, profBonus: v}));
-                          } else {
-                            setChar(c => r===""
-                              ? (o => { const n={...o}; delete n[key]; return n; })(c)
-                              : {...c, [key]: parseInt(r)});
-                          }
-                        }}
-                        onBlur={e => {
-                          if (direct) {
-                            const v = parseInt(pbDraft ?? "");
-                            setChar(c => ({...c, profBonus: (!isNaN(v) && v > 0) ? v : 2}));
-                            setPbDraft(null);
-                          } else if (!e.target.value.trim() || isNaN(parseInt(e.target.value))) {
-                            setChar(c => { const n={...c}; delete n[key]; return n; });
-                          }
-                        }}/>
-                      <span style={{ ...LBL, marginBottom:0, fontSize:SIZE_LABEL }}>{label}</span>
+                    <div key={key} style={{
+                      paddingTop: row===0 ? 0 : "0.5rem",
+                      paddingBottom: "0.5rem",
+                      borderBottom: row < totalRows-1 ? "1px solid var(--hj-border-sub)" : "none",
+                    }}>
+                      <span style={LBL}>{label}</span>
+                      <input style={ieditStyle}
+                        value={group ? (char.appearance||{})[key]||"" : char[key]||""}
+                        placeholder={ph||""}
+                        onChange={e => group ? updAppearance(key, e.target.value) : setChar(c => ({...c,[key]:e.target.value}))}/>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ════ STREFA „VITALS" — PŻ + XP, dane zmieniające się co rundę ════ */}
           <div style={{ margin:"8px 0 0", padding:"9px 10px", borderRadius:"var(--radius-md)",
@@ -357,6 +310,54 @@ export default function Header({
 
           {/* ── Cienki separator między strefą Vitals i Stats & Actions ── */}
           <div style={{ height:1, background:"var(--hj-border-sub)", opacity:0.5, margin:"9px 0 0" }}/>
+
+          {/* ── Rząd mini-statów — widoczny domyślnie w strefie Stats & Actions ── */}
+          <div style={{ display:"flex", gap:"6px", margin:"9px 0 0" }}>
+            {[
+              { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: "var(--hj-accent)" },
+              { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: "var(--hj-text)", direct: true },
+              { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC,      color: "var(--hj-spell-accent)" },
+              { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-accent)", signed: true },
+            ].map(({ label, key, computed, color, direct, signed }) => {
+              const over = direct ? undefined : char[key];
+              const displayVal = direct && pbDraft !== null
+                ? pbDraft
+                : signed ? numMod(over ?? computed) : String(over ?? computed);
+              const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
+              return (
+                <div key={key} style={{ flex:1, padding:"6px 4px", textAlign:"center" }}>
+                  <input className="vitals-mini-value" type="text" inputMode="numeric"
+                    value={displayVal}
+                    title={C.overrideTip || "Wpisz by nadpisać"}
+                    style={{ width:"100%", display:"block", textAlign:"center",
+                             fontSize:SIZE_STAT, color: overrideColor }}
+                    onFocus={e => { e.target.select(); if (direct) setPbDraft(String(computed)); }}
+                    onChange={e => {
+                      const r = e.target.value.replace(/[^-\d]/g, "");
+                      if (direct) {
+                        setPbDraft(r);
+                        const v = parseInt(r);
+                        if (!isNaN(v) && v > 0) setChar(c => ({...c, profBonus: v}));
+                      } else {
+                        setChar(c => r===""
+                          ? (o => { const n={...o}; delete n[key]; return n; })(c)
+                          : {...c, [key]: parseInt(r)});
+                      }
+                    }}
+                    onBlur={e => {
+                      if (direct) {
+                        const v = parseInt(pbDraft ?? "");
+                        setChar(c => ({...c, profBonus: (!isNaN(v) && v > 0) ? v : 2}));
+                        setPbDraft(null);
+                      } else if (!e.target.value.trim() || isNaN(parseInt(e.target.value))) {
+                        setChar(c => { const n={...c}; delete n[key]; return n; });
+                      }
+                    }}/>
+                  <span className="vitals-mini-label" style={{ fontSize:SIZE_LABEL }}>{label}</span>
+                </div>
+              );
+            })}
+          </div>
 
           {/* ── Wiersz 1: Odpoczynek (z pipsami kości) ── */}
           <div style={{ display:"flex", gap:"7px", marginTop:"7px" }}>

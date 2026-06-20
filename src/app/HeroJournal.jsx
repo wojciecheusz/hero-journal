@@ -212,9 +212,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   );
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */
-  const contentTopBase = 304; // brand + identity + strefa Vitals (PŻ+XP) + separator + 2 btn rows + spacing
+  const contentTopBase = 363; // brand + identity + strefa Vitals (PŻ+XP) + separator + mini-staty + 2 btn rows + spacing
   const contentTopExtra =
-    (moreOpen  ? 241 : 0) + // teraz zawiera tez mini-staty (Pas.Percepcja/Bieglosc/DC/Atak)
+    (moreOpen  ? 195 : 0) + // rasa/przeszlosc/charakter/wyglad (bez mini-statow -- wrocily do widoku domyslnego)
     (stanyOpen ?  96 : 0) +
     (deathOpen ?  94 : 0) +
     (exhOpen   ?  82 : 0);
