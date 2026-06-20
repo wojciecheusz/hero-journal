@@ -266,7 +266,9 @@ export default function Header({
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em",
                              color: xp >= xpNext ? "var(--hj-accent)" : "var(--hj-text-dim)",
                              flexShrink:0, whiteSpace:"nowrap" }}>
-                {xp >= xpNext ? `✦ ${C.level} ${totalLevel + 1}` : `→ ${C.level} ${totalLevel + 1}`}
+                {xp >= xpNext
+                  ? `✦ ${C.level} ${totalLevel + 1}`
+                  : `→ ${C.level} ${totalLevel + 1} · ${(xpNext - xp).toLocaleString()} XP`}
               </span>
             ) : (
               <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", color:"var(--hj-accent)", flexShrink:0 }}>
