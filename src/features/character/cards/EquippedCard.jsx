@@ -94,13 +94,16 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
   })), [setChar]);
 
   const itemMeta = item => {
+    const parts = [];
     if (item.damage) {
       let s = item.damage;
       if (item.damageType) s += ' ' + item.damageType;
       if (item.modifier) s += ` · +${parseInt(item.modifier)||0} traf.`;
-      return s;
+      parts.push(s);
     }
-    return item.effect || item.note || '';
+    if (item.effect) parts.push(item.effect);
+    if (!parts.length && item.note) parts.push(item.note);
+    return parts.join(' · ');
   };
 
   const itemExpand = item => item.note

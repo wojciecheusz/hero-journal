@@ -95,7 +95,7 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
             <CardHeader label={C.profTitle} open={profOpen} onToggle={() => setProfOpen(o => !o)}/>
             {profOpen && (
               <>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.55rem 1rem", marginBottom:"0.7rem" }}>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.55rem 1rem" }}>
                   {[
                     ["weapons", C.weapons, C.weaponsPh],
                     ["armor",   C.armor,   C.armorPh],
@@ -109,13 +109,13 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
                         style={taStyle}/>
                     </div>
                   ))}
-                </div>
-                <div>
-                  <div style={LBL}>{C.languages}</div>
-                  <PillInput
-                    value={(char.proficiencies||{}).languages||""}
-                    onChange={v => setChar(c => ({...c, proficiencies:{...(c.proficiencies||{}), languages:v}}))}
-                    placeholder={C.languagesPh}/>
+                  <div>
+                    <div style={LBL}>{C.languages}</div>
+                    <PillInput
+                      value={(char.proficiencies||{}).languages||""}
+                      onChange={v => setChar(c => ({...c, proficiencies:{...(c.proficiencies||{}), languages:v}}))}
+                      placeholder={C.languagesPh}/>
+                  </div>
                 </div>
               </>
             )}
