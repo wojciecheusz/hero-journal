@@ -1255,10 +1255,16 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   margin: 0.4rem 0.75rem 0.6rem;
 }
 .vitals-bar-sidebar .vitals-mini-grid { justify-content: space-between; }
-.vitals-bar-sidebar .vitals-mini-box { flex: 1; }
+.vitals-bar-sidebar .vitals-mini-box { flex: 1; min-width: 0; padding: 0.25rem 0.3rem; }
+.vitals-bar-sidebar .vitals-mini-value { width: 100%; font-size: 0.85rem; }
+.vitals-bar-sidebar .vitals-mini-label {
+  white-space: normal; overflow-wrap: break-word; word-break: break-word;
+  font-size: 0.38rem; line-height: 1.15; text-align: center;
+}
 .vitals-bar-sidebar .vitals-controls { justify-content: center; }
 
 .rest-row-sidebar { margin: 0 0.75rem 0.6rem; }
+.rest-row-sidebar .btn-rest { border-radius: var(--radius-md); }
 
 /* ── Combat boxy ──────────────────────────────────────────────── */
 .combat-box        { background: var(--hj-combat-box); border: 1px solid var(--hj-border-input); text-align: center; padding: 0.5rem 0.3rem; border-radius: 14px; }

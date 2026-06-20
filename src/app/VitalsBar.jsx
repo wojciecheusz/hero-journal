@@ -8,16 +8,15 @@ const hpColor = pct => pct > 70 ? "#3a9a3a" : pct > 35 ? "#c06010" : "#c03030";
 const SIZE_LABEL = "0.46rem";
 
 const mkToggleStyleSide = (open, color) => ({
-  display:"flex", flexDirection:"column", alignItems:"center", gap:"0.15rem", justifyContent:"center",
-  padding:"0.3rem 0.2rem", flex:"1 1 0", minWidth:0,
+  display:"flex", alignItems:"center", justifyContent:"center", gap:"0.3rem",
+  padding:"0.3rem 0.55rem", width:"100%",
   background: open ? `${color}1e` : "transparent",
   border: `1px solid ${open ? color + "90" : "var(--hj-border-input)"}`,
   color: open ? color : "var(--hj-text-muted)",
-  borderRadius: "var(--radius-md)", cursor:"pointer",
-  fontFamily:"Cinzel,serif", fontSize:"0.42rem",
-  letterSpacing:"0.02em", textTransform:"uppercase",
-  transition:"all 0.15s", lineHeight:1.2, textAlign:"center",
-  overflowWrap:"break-word", wordBreak:"break-word", hyphens:"auto", width:"100%",
+  borderRadius: "var(--radius-pill)", cursor:"pointer",
+  fontFamily:"Cinzel,serif", fontSize:"0.46rem",
+  letterSpacing:"0.06em", textTransform:"uppercase",
+  transition:"all 0.15s", whiteSpace:"nowrap", overflow:"hidden",
 });
 
 export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, variant = "mobile" }) {
@@ -144,7 +143,7 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
             onBlur={e => { if (e.target.value==="") setChar(c => { const o={...c}; delete o.initiativeBonus; return o; }); }}/>
           <span className="vitals-mini-label">{C.initiative}</span>
         </div>
-        <div className="vitals-mini-box featured" title={C.profBonusTip}>
+        <div className="vitals-mini-box" title={C.profBonusTip}>
           <input className="vitals-mini-value" type="number" value={pbDraft ?? pb}
             onFocus={e => { e.target.select(); setPbDraft(String(pb)); }}
             onChange={e => {
@@ -198,24 +197,25 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
       </div>
 
       {/* ── Stany / Rzuty vs Śmierć / Wyczerpanie ── */}
-      <div style={{ display:"flex", gap:"4px", marginTop:"8px" }}>
+      <div style={{ display:"flex", flexDirection:"column", gap:"4px", marginTop:"8px" }}>
         <button style={mkToggleStyleSide(stanyOpen, "#aa4444")}
           onClick={() => setStanyOpen(s => !s)} aria-expanded={stanyOpen}>
           <Icon name="skull" size="0.8em"/>
           {C.stanyTitle||"Stany"}
+          <Icon name={stanyOpen?"chevron-up":"chevron-down"} size="0.65em"/>
         </button>
         <button style={mkToggleStyleSide(deathOpen, "#9a3a3a")}
           onClick={() => setDeathOpen(s => !s)} aria-expanded={deathOpen}>
           <Icon name="heart" size="0.8em"/>
           {C.deathSaves}
+          <Icon name={deathOpen?"chevron-up":"chevron-down"} size="0.65em"/>
         </button>
         <button style={mkToggleStyleSide(exhOpen, "#b06020")}
           onClick={() => setExhOpen(s => !s)} aria-expanded={exhOpen}>
-          <span style={{ display:"flex", alignItems:"center", gap:"0.2rem" }}>
-            <Icon name="activity" size="0.8em"/>
-            {exhaustion > 0 && <span style={{ fontWeight:700 }}>{exhaustion}</span>}
-          </span>
+          <Icon name="activity" size="0.8em"/>
+          {exhaustion > 0 && <span style={{ fontWeight:700 }}>{exhaustion}</span>}
           {C.exhaustion}
+          <Icon name={exhOpen?"chevron-up":"chevron-down"} size="0.65em"/>
         </button>
       </div>
 
