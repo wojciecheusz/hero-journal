@@ -581,6 +581,10 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
    4K / ULTRAWIDE  ≥ 2560px
 ══════════════════════════════════════════════════════════════ */
 @media (min-width: 2560px) {
+  /* Bazowy font HD Ready (1024px+) to 20px. Powyzej QHD bez skalowania
+     systemowego (np. surowe 2560/3840px viewport) tekst fizycznie sie
+     zmniejsza wzgledem przecietnego DPI monitora -- delikatnie skaluj. */
+  html { font-size: 22px; }
   .hj-sidebar      { width: 280px; }
   .hj-root         { padding-left: 280px; }
   .hj-header       { left: 280px; }
@@ -590,6 +594,21 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   .card            { padding: 2rem; }
   .hj-sidebar-item { font-size: 0.65rem; padding: 0.5rem 1.25rem 0.5rem calc(1.25rem - 2px); }
   .hj-sidebar-group-label { font-size: 0.5rem; padding: 0.65rem 1.25rem 0.2rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRAWDZIWE 4K (≥ 3440px) -- np. 3840px bez skalowania systemowego.
+   Wieksza czcionka + szerszy sidebar, zeby tekst nie wygladal fizycznie
+   drobniej niz na Full HD/QHD.
+══════════════════════════════════════════════════════════════ */
+@media (min-width: 3440px) {
+  html { font-size: 25px; }
+  .hj-sidebar      { width: 320px; }
+  .hj-root         { padding-left: 320px; }
+  .hj-header       { left: 320px; }
+  .hj-header-inner { max-width: min(2900px, calc(100vw - 320px - 5rem)); }
+  .hj-content      { max-width: min(2900px, calc(100vw - 320px - 5rem)); padding: 3.5rem 4.5rem 5.5rem; gap: 1.8rem; }
+  .card            { padding: 2.25rem; }
 }
 
 /* ── Podgląd opisu wpisu — jednolity styl we wszystkich ekranach ── */
