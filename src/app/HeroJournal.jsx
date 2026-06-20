@@ -107,11 +107,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         name:  data.char.name?.trim() || p.name,
         class: (data.char.classes || [])[0]?.name  || p.class,
         level: (data.char.classes || [])[0]?.level || p.level,
+        icon:  data.char.icon || p.icon,
       });
       saveProfiles(updated);
       return updated;
     });
-  }, [data.char.name, data.char.classes, activeId]);
+  }, [data.char.name, data.char.classes, data.char.icon, activeId]);
 
   /* ── Cloud save (debounced 1.5 s per klucz) ─────────────────── */
   const { syncWarning, syncFailed, dismissSyncError } = useCloudSaveQueue(user);

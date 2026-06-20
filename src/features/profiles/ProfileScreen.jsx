@@ -31,7 +31,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
             onClick={() => editingId !== p.id && onSelect(p.id)}>
 
             <span className="profile-card-icon">
-              <Icon name={DND_CLASSES.find(c => c.name === p.class)?.icon || "sword"}/>
+              <Icon name={p.icon || DND_CLASSES.find(c => c.name === p.class)?.icon || "sword"}/>
             </span>
 
             <div style={{ flex:1, minWidth:0 }}>
