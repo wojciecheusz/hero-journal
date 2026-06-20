@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import Icon from '../shared/icons';
+import Icon, { PALETTE_ICONS } from '../shared/icons';
+import { PALETTES, THEMES } from '../theme/themes';
 
 /**
  * Dropdown z akcjami (język, zmiana bohatera, reset, sync, wyloguj, eksport/import).
@@ -63,6 +64,38 @@ export default function SettingsMenu({
             {T.UI.logout} ({(user.displayName || user.email || "").split(/[\s@]/)[0]})
           </button>
         )}
+      </div>
+
+      {/* ── Motyw kolorystyczny ── */}
+      <div style={{ borderTop:"1px solid var(--hj-border-sub)", padding:"0.38rem 0.48rem" }}>
+        <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.14em", textTransform:"uppercase", color:"var(--hj-text-muted)", paddingBottom:"0.3rem" }}>
+          {T.UI.themeColor}
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:"0.3rem" }}>
+          {PALETTES.map(name => {
+            const t = THEMES[name];
+            const active = theme === name;
+            const label = T.PALETTE_LABELS?.[name] || name;
+            return (
+              <button key={name} onClick={() => setTheme(name)} title={label}
+                style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"0.2rem",
+                         background: active ? "rgba(168,120,48,0.1)" : "transparent",
+                         border:`1px solid ${active ? "var(--hj-accent-border)" : "var(--hj-border-input)"}`,
+                         borderRadius:"var(--radius-sm)", padding:"0.3rem 0.15rem", cursor:"pointer", transition:"all 0.15s" }}>
+                <span style={{ width:16, height:16, borderRadius:"50%", flexShrink:0,
+                               background:t.bg, border:`2px solid ${t.accent}`,
+                               display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <Icon name={PALETTE_ICONS[name] || "sparkle"} size="0.55em" color={t.accent}/>
+                </span>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.4rem", letterSpacing:"0.03em",
+                               textTransform:"uppercase", color: active ? "var(--hj-accent)" : "var(--hj-text-muted)",
+                               textAlign:"center", lineHeight:1.15 }}>
+                  {label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ── Kopia zapasowa ── */}

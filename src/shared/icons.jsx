@@ -67,7 +67,7 @@ export const ICONS = {
 
 /* Mapa motyw → ikona (dla SettingsMenu) */
 export const PALETTE_ICONS = {
-  pergamin: "scroll", dawn: "sun", wschod: "sunrise",
+  arcane: "sparkle", pergamin: "scroll", dawn: "sun", wschod: "sunrise",
   drewno: "tree-deciduous", bone: "bone",
   feywild: "sprout", eldritch: "orbit", dungeon: "key-round",
   shadowfell: "moon-star", wrath: "flame", meadow: "flower",
