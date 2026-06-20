@@ -5,23 +5,6 @@ import { useT } from '../../../i18n/translations';
 import Icon from '../../../shared/icons';
 import { numMod } from '../../../utils/math';
 
-/* ── Nagłówek pod-sekcji ── */
-function SubHeader({ iconName, label, color }) {
-  return (
-    <div style={{
-      padding: "0.45rem 0.75rem 0.4rem",
-      borderBottom: "1px solid var(--hj-border-input)",
-      display: "flex", alignItems: "center", gap: "0.3rem",
-      fontFamily: "Cinzel,serif", fontSize: "0.52rem",
-      letterSpacing: "0.12em", textTransform: "uppercase",
-      color: color || "var(--hj-text-label)",
-    }}>
-      <Icon name={iconName || "sparkle"} size="0.8em"/>
-      {label}
-    </div>
-  );
-}
-
 /* ── Rozwijany wiersz pozycji ── */
 function EquippedRow({ iconName, name, meta, badge, badgeColor, badgeBorder, nameColor, isLast, expandContent }) {
   const [open, setOpen] = useState(false);
@@ -210,7 +193,6 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
             ? <div className="empty-state">{C.emptyItems}</div>
             : (
               <div style={{ background:"var(--hj-inner-div-bg)", borderRadius:"var(--radius-md)", border:"1px solid var(--hj-border-input)", borderLeft:"2px solid var(--hj-accent-border)", overflow:"hidden" }}>
-                <SubHeader iconName="sword" label={C.subItems||C.tabItems}/>
                 {equippedItems.map((item, i) => (
                   <EquippedRow key={item.id}
                     iconName={ITEM_ICONS[item.type]||"diamond"}
@@ -230,7 +212,6 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
           ? <div className="empty-state">{C.emptyAbilities}</div>
           : (
             <div style={{ background:"var(--hj-inner-div-bg)", borderRadius:"var(--radius-md)", border:"1px solid var(--hj-border-input)", borderLeft:"2px solid var(--hj-accent-border)", overflow:"hidden" }}>
-              <SubHeader iconName="sparkle" label={C.subAbilities||C.tabAbilities}/>
               {activeSkills.map((sk, i) => (
                 <EquippedRow key={sk.id}
                   iconName={SKILL_CAT_ICONS[sk.category]||"sparkles"}
@@ -251,7 +232,6 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
             ? <div className="empty-state">{C.emptySpells}</div>
             : (
               <div style={{ background:"var(--hj-inner-div-bg)", borderRadius:"var(--radius-md)", border:"1px solid var(--hj-border-input)", borderLeft:"2px solid var(--hj-spell-border)", overflow:"hidden", marginTop:"0.6rem" }}>
-                <SubHeader iconName="wand" label={C.subSpells||C.tabSpells} color="var(--hj-spell-muted)"/>
                 {activeSpells.map((sp, i) => (
                   <EquippedRow key={sp.id}
                     iconName={SPELL_SCHOOL_ICONS[sp.school]||"wand"}
