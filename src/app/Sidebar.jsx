@@ -1,7 +1,24 @@
+import { useState } from 'react';
 import SettingsMenu from './SettingsMenu';
 import VitalsBar from './VitalsBar';
+import CharIconPicker, { getCharIcon } from './CharIconPicker';
 import Icon from '../shared/icons';
+import { clamp } from '../utils/math';
 import { getClassLevelLabel } from '../utils/character';
+
+const LBL_SIDE = {
+  fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em",
+  textTransform:"uppercase", color:"var(--hj-text-muted)",
+  marginBottom:"0.15rem", display:"block",
+};
+const ieditSideStyle = {
+  fontFamily:"Cinzel,serif", fontSize:"0.8rem", background:"transparent",
+  border:"none", outline:"none", color:"var(--hj-text)", width:"100%", padding:0,
+};
+const fieldBoxSide = {
+  border:"1px solid var(--hj-border-input)",
+  borderRadius:"var(--radius-md)", padding:"0.4rem 0.5rem",
+};
 
 /* Treść kontekstowego panelu pomocy — zależna od aktywnej zakładki */
 function SidebarHelp({ tab, T, onClose }) {
@@ -59,35 +76,137 @@ export default function Sidebar({
   onExport, onImport, onRestModal,
 }) {
   const { className, totalLevel } = getClassLevelLabel(char, T.CHAR);
+  const C = T.CHAR;
+  const charIcon = getCharIcon(char);
+  const [moreOpen, setMoreOpen] = useState(false);
+
+  const updAppearance = (key, val) =>
+    setChar(c => ({ ...c, appearance: { ...(c.appearance||{}), [key]: val } }));
 
   return (
     <aside className="hj-sidebar">
 
       {/* Brand */}
-      <button className="hj-sidebar-brand" onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink:0 }} aria-hidden="true">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <line x1="9" y1="7" x2="15" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <line x1="9" y1="11" x2="13" y2="11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:"var(--hj-text-muted)", letterSpacing:"0.08em", textTransform:"uppercase", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", flex:1, minWidth:0 }}>
-          HJ
-        </span>
-      </button>
+      <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", padding:"0.6rem 0.75rem 0.3rem", flexShrink:0 }}>
+        <CharIconPicker value={charIcon} onChange={icon => setChar(c => ({...c, icon}))} size={24}/>
+        <button className="hj-sidebar-brand" style={{ flex:1, minWidth:0, padding:0 }}
+          onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
+          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", color:"var(--hj-text-muted)", letterSpacing:"0.08em", textTransform:"uppercase", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", flex:1, minWidth:0 }}>
+            HJ
+          </span>
+        </button>
+      </div>
 
       {/* Tożsamość bohatera — imię, klasa/poziom, widoczne na każdym ekranie */}
       <div className="hj-sidebar-identity">
         <div className="hcv2-eyebrow"><Icon name="sparkle" size="0.85em"/> Hero Journal</div>
         <div className="hcv2-name">{char.name?.trim() || T.CHAR.heroName}</div>
-        <div className="hcv2-subtitle">{className} · {T.CHAR.level} {totalLevel}</div>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.3rem" }}>
+          <div className="hcv2-subtitle" style={{ minWidth:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{className} · {T.CHAR.level} {totalLevel}</div>
+          <button onClick={() => setMoreOpen(s => !s)} aria-expanded={moreOpen}
+            style={{ display:"flex", alignItems:"center", gap:"0.2rem", flexShrink:0,
+                     fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.1em",
+                     textTransform:"uppercase", padding:"0.2rem 0.5rem",
+                     background:moreOpen?"rgba(226,185,78,0.08)":"transparent",
+                     border:`1px solid ${moreOpen?"var(--hj-accent-border)":"var(--hj-border-input)"}`,
+                     color:moreOpen?"var(--hj-accent)":"var(--hj-text-muted)",
+                     borderRadius:"var(--radius-pill)", cursor:"pointer", transition:"all 0.15s" }}>
+            {moreOpen ? (C.less||"Mniej") : (C.more||"Więcej")}
+            <Icon name={moreOpen?"chevron-up":"chevron-down"} size="0.7em"/>
+          </button>
+        </div>
       </div>
+
+      {/* ── Panel Więcej: klasy (multiclass), rasa, przeszłość, charakter, wygląd ── */}
+      {moreOpen && (() => {
+        const moreFields = [
+          ["race",       C.race,       C.racePh,                  null],
+          ["background", C.background, C.backgroundPh,            null],
+          ["alignment",  C.alignment,  C.alignmentPh||"CN, LG…",  null],
+          ["age",        C.age,        C.agePh,        "appearance"],
+          ["height",     C.height,     C.heightPh,     "appearance"],
+          ["weight",     C.weight,     C.weightPh,     "appearance"],
+          ["eyes",       C.eyes,       C.eyesPh,       "appearance"],
+          ["skin",       C.skin,       C.skinPh,       "appearance"],
+          ["hair",       C.hair,       C.hairPh,       "appearance"],
+        ];
+        const classes = char.classes?.length ? char.classes : [{ name:"", level:1 }];
+        return (
+          <div style={{ padding:"0 0.75rem 0.5rem" }}>
+
+            {/* Klasy / multiclassing */}
+            <div style={{ paddingBottom:"0.45rem", borderBottom:"1px solid var(--hj-border-sub)", marginBottom:"0.45rem" }}>
+              <span style={LBL_SIDE}>{C.classLabel}</span>
+              {classes.map((cls, i) => (
+                <div key={i} style={{ display:"flex", alignItems:"center", gap:"0.35rem",
+                                       marginTop: i>0 ? "0.3rem" : 0 }}>
+                  <input style={{ ...ieditSideStyle, flex:1 }} value={cls.name||""}
+                    placeholder={i===0 ? C.classPh : `${C.classPh} (${i+1})`}
+                    onChange={e => setChar(c => {
+                      const cl = c.classes?.length ? [...c.classes] : [{ name:"", level:1 }];
+                      cl[i] = { ...cl[i], name:e.target.value };
+                      return { ...c, classes: cl };
+                    })}/>
+                  <span style={{ ...LBL_SIDE, marginBottom:0, flexShrink:0 }}>{C.level}</span>
+                  <input type="number" min={1} max={20} value={cls.level||1}
+                    style={{ ...ieditSideStyle, width:28, textAlign:"center", flexShrink:0 }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => {
+                      const v = parseInt(e.target.value);
+                      setChar(c => {
+                        const cl = c.classes?.length ? [...c.classes] : [{ name:"", level:1 }];
+                        cl[i] = { ...cl[i], level: isNaN(v) ? v : clamp(v,1,20) };
+                        return { ...c, classes: cl };
+                      });
+                    }}
+                    onBlur={e => {
+                      const v = parseInt(e.target.value);
+                      setChar(c => {
+                        const cl = c.classes?.length ? [...c.classes] : [{ name:"", level:1 }];
+                        cl[i] = { ...cl[i], level: (!isNaN(v)) ? clamp(v,1,20) : 1 };
+                        return { ...c, classes: cl };
+                      });
+                    }}/>
+                  {i > 0 && (
+                    <button onClick={() => setChar(c => ({...c, classes:(c.classes||[]).filter((_,j) => j!==i)}))}
+                      aria-label="Usuń klasę"
+                      style={{ background:"transparent", border:"none", color:"var(--hj-text-dim)",
+                               cursor:"pointer", flexShrink:0, display:"flex", padding:0 }}>
+                      <Icon name="close" size="0.7em"/>
+                    </button>
+                  )}
+                </div>
+              ))}
+              {classes.length < 4 && (
+                <button
+                  onClick={() => setChar(c => ({...c, classes:[...(c.classes?.length ? c.classes : [{name:"",level:1}]), {name:"",level:1}]}))}
+                  style={{ marginTop:"0.35rem", display:"flex", alignItems:"center", gap:"0.25rem",
+                           background:"transparent", border:"none", color:"var(--hj-accent)", cursor:"pointer",
+                           fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.08em",
+                           textTransform:"uppercase", padding:0 }}>
+                  <Icon name="plus" size="0.65em"/> {C.addClass}
+                </button>
+              )}
+            </div>
+
+            {moreFields.map(([key,label,ph,group]) => (
+              <div key={key} style={{ ...fieldBoxSide, marginBottom:"0.35rem" }}>
+                <span style={LBL_SIDE}>{label}</span>
+                <input style={ieditSideStyle}
+                  value={group ? (char.appearance||{})[key]||"" : char[key]||""}
+                  placeholder={ph||""}
+                  onChange={e => group ? updAppearance(key, e.target.value) : setChar(c => ({...c,[key]:e.target.value}))}/>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
       <div style={{ height:"1px", background:"var(--hj-border)", margin:"0 0.75rem 0.25rem", flexShrink:0 }}/>
 
       {/* Pasek PŻ / Odpoczynek */}
       <div style={{ flexShrink:0 }}>
-        <VitalsBar char={char} setChar={setChar} C={T.CHAR} pb={pb} onRestModal={onRestModal} variant="sidebar"/>
+        <VitalsBar char={char} setChar={setChar} C={T.CHAR} T={T} pb={pb} onRestModal={onRestModal} variant="sidebar"/>
       </div>
 
       {/* Nawigacja */}
