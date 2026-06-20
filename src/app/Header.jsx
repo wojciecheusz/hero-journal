@@ -207,7 +207,7 @@ export default function Header({
 
           {/* ── Pasek PŻ (pełna szerokość) ── */}
           <div style={{ margin:"6px 0 0", borderRadius:"var(--radius-md)",
-                        padding:"8px 10px", border:"1px solid var(--hj-border)" }}>
+                        padding:"8px 10px" }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
               <span className="vitals-hp-label">PŻ</span>
               <span style={{ display:"flex", alignItems:"baseline", gap:"0.4rem" }}>
@@ -236,20 +236,20 @@ export default function Header({
             <div style={{ display:"flex", alignItems:"center", gap:"6px" }}>
               <button aria-label="HP −" onClick={() => adjustHP(-1)}
                 style={{ width:"18px", height:"18px", flexShrink:0, borderRadius:"50%",
-                         background:"transparent", border:"none",
+                         background:"transparent", border:"1px solid var(--hj-accent-border)",
                          color:"var(--hj-accent)", cursor:"pointer", display:"flex",
                          alignItems:"center", justifyContent:"center", padding:0, transition:"opacity 0.15s" }}>
-                <Icon name="minus" size="0.85em"/>
+                <Icon name="minus" size="0.7em"/>
               </button>
               <div className="hp-bar-bg" style={{ flex:1, margin:0 }}>
                 <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
               </div>
               <button aria-label="HP +" onClick={() => adjustHP(1)}
                 style={{ width:"18px", height:"18px", flexShrink:0, borderRadius:"50%",
-                         background:"transparent", border:"none",
+                         background:"transparent", border:"1px solid var(--hj-accent-border)",
                          color:"var(--hj-accent)", cursor:"pointer", display:"flex",
                          alignItems:"center", justifyContent:"center", padding:0, transition:"opacity 0.15s" }}>
-                <Icon name="plus" size="0.85em"/>
+                <Icon name="plus" size="0.7em"/>
               </button>
             </div>
           </div>
@@ -271,15 +271,16 @@ export default function Header({
                             borderRadius:"var(--radius-pill)", transition:"width 0.3s ease" }}/>
             </div>
             {xpNext ? (
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em",
-                             color: xp >= xpNext ? "var(--hj-accent)" : "var(--hj-text-dim)",
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.04em",
+                             fontWeight:600,
+                             color: xp >= xpNext ? "var(--hj-accent)" : "var(--hj-text-muted)",
                              flexShrink:0, whiteSpace:"nowrap" }}>
                 {xp >= xpNext
                   ? `✦ ${C.level} ${totalLevel + 1}`
-                  : `→ ${C.level} ${totalLevel + 1} · ${(xpNext - xp).toLocaleString()} XP`}
+                  : `${(xpNext - xp).toLocaleString()} XP → ${C.level} ${totalLevel + 1}`}
               </span>
             ) : (
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", color:"var(--hj-accent)", flexShrink:0 }}>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"var(--hj-accent)", flexShrink:0 }}>
                 {C.xpMax || "MAX"}
               </span>
             )}
@@ -299,9 +300,7 @@ export default function Header({
                 : String(over ?? computed);
               const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
               return (
-                <div key={key} style={{ flex:1, padding:"6px 4px", textAlign:"center",
-                                         border:"1px solid var(--hj-border)",
-                                         borderRadius:"var(--radius-md)" }}>
+                <div key={key} style={{ flex:1, padding:"6px 4px", textAlign:"center" }}>
                   <input className="vitals-mini-value" type="text" inputMode="numeric"
                     value={displayVal}
                     title={C.overrideTip || "Wpisz by nadpisać"}
