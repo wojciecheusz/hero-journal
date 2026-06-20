@@ -8,15 +8,16 @@ const hpColor = pct => pct > 70 ? "#3a9a3a" : pct > 35 ? "#c06010" : "#c03030";
 const SIZE_LABEL = "0.46rem";
 
 const mkToggleStyleSide = (open, color) => ({
-  display:"flex", alignItems:"center", gap:"0.25rem", justifyContent:"center",
-  padding:"0.3rem 0.4rem", flex:"1 1 0",
+  display:"flex", flexDirection:"column", alignItems:"center", gap:"0.15rem", justifyContent:"center",
+  padding:"0.3rem 0.2rem", flex:"1 1 0", minWidth:0,
   background: open ? `${color}1e` : "transparent",
   border: `1px solid ${open ? color + "90" : "var(--hj-border-input)"}`,
   color: open ? color : "var(--hj-text-muted)",
-  borderRadius: "var(--radius-pill)", cursor:"pointer",
+  borderRadius: "var(--radius-md)", cursor:"pointer",
   fontFamily:"Cinzel,serif", fontSize:"0.42rem",
-  letterSpacing:"0.06em", textTransform:"uppercase",
-  transition:"all 0.15s", whiteSpace:"nowrap", overflow:"hidden",
+  letterSpacing:"0.02em", textTransform:"uppercase",
+  transition:"all 0.15s", lineHeight:1.2, textAlign:"center",
+  overflowWrap:"break-word", wordBreak:"break-word", hyphens:"auto", width:"100%",
 });
 
 export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, variant = "mobile" }) {
@@ -210,8 +211,10 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
         </button>
         <button style={mkToggleStyleSide(exhOpen, "#b06020")}
           onClick={() => setExhOpen(s => !s)} aria-expanded={exhOpen}>
-          <Icon name="activity" size="0.8em"/>
-          {exhaustion > 0 && <span style={{ fontWeight:700 }}>{exhaustion}</span>}
+          <span style={{ display:"flex", alignItems:"center", gap:"0.2rem" }}>
+            <Icon name="activity" size="0.8em"/>
+            {exhaustion > 0 && <span style={{ fontWeight:700 }}>{exhaustion}</span>}
+          </span>
           {C.exhaustion}
         </button>
       </div>
