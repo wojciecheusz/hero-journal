@@ -209,9 +209,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   );
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */
-  const contentTopBase = 358; // brand + identity + hp + xp + mini-stats + 2 btn rows + spacing
+  const contentTopBase = 379; // brand + identity + hp + xp + mini-stats + 2 btn rows + spacing
   const contentTopExtra =
-    (moreOpen  ? 170 : 0) +
+    (moreOpen  ? 195 : 0) +
     (stanyOpen ?  82 : 0) +
     (deathOpen ?  78 : 0) +
     (exhOpen   ?  68 : 0);

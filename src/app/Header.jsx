@@ -7,11 +7,11 @@ import { getClassLevelLabel } from '../utils/character';
 
 const mkToggleStyle = (open, color) => ({
   display:"flex", alignItems:"center", gap:"0.3rem",
-  padding:"0.22rem 0.5rem",
+  padding:"0.3rem 0.55rem",
   background: open ? `${color}1e` : "transparent",
   border: `1px solid ${open ? color + "90" : "var(--hj-border-input)"}`,
   color: open ? color : "var(--hj-text-muted)",
-  borderRadius: "var(--radius-sm)", cursor:"pointer",
+  borderRadius: "var(--radius-pill)", cursor:"pointer",
   fontFamily:"Cinzel,serif", fontSize:"0.47rem",
   letterSpacing:"0.08em", textTransform:"uppercase",
   transition:"all 0.15s", flex:"1 1 0", justifyContent:"center",
@@ -24,10 +24,14 @@ const LBL = {
   marginBottom:"0.15rem", display:"block",
 };
 
+const fieldBoxStyle = {
+  border:"1px solid var(--hj-border-input)",
+  borderRadius:"var(--radius-md)", padding:"0.45rem 0.6rem",
+};
+
 const ieditStyle = {
-  fontFamily:"Cinzel,serif", fontSize:"0.72rem", background:"transparent",
-  border:"none", borderBottom:"1px dashed var(--hj-border-input)",
-  outline:"none", color:"inherit", width:"100%", padding:"0.1rem 0",
+  fontFamily:"Cinzel,serif", fontSize:"0.8rem", background:"transparent",
+  border:"none", outline:"none", color:"var(--hj-text)", width:"100%", padding:0,
 };
 
 export default function Header({
@@ -159,13 +163,13 @@ export default function Header({
               <button
                 onClick={() => setMoreOpen?.(s => !s)}
                 aria-expanded={!!moreOpen}
-                style={{ display:"flex", alignItems:"center", gap:"0.2rem", flexShrink:0,
+                style={{ display:"flex", alignItems:"center", gap:"0.25rem", flexShrink:0,
                          fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.1em",
-                         textTransform:"uppercase", padding:"0.18rem 0.5rem",
+                         textTransform:"uppercase", padding:"0.3rem 0.75rem",
                          background:moreOpen?"rgba(226,185,78,0.08)":"transparent",
                          border:`1px solid ${moreOpen?"var(--hj-accent-border)":"var(--hj-border-input)"}`,
                          color:moreOpen?"var(--hj-accent)":"var(--hj-text-muted)",
-                         borderRadius:"var(--radius-sm)", cursor:"pointer", transition:"all 0.15s" }}>
+                         borderRadius:"var(--radius-pill)", cursor:"pointer", transition:"all 0.15s" }}>
                 {moreOpen ? (C.less||"Mniej") : (C.more||"Więcej")}
                 <Icon name={moreOpen?"chevron-up":"chevron-down"} size="0.75em"/>
               </button>
@@ -174,31 +178,28 @@ export default function Header({
 
           {/* ── Panel Więcej: rasa, przeszłość, charakter, wygląd ── */}
           {moreOpen && (
-            <div style={{ marginTop:"0.3rem", padding:"0.55rem 0.65rem",
-                          border:"1px solid var(--hj-border-input)",
-                          background:"rgba(255,255,255,0.03)", borderRadius:"var(--radius-md)" }}>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.35rem 0.8rem", marginBottom:"0.4rem" }}>
+            <div style={{ marginTop:"0.3rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.4rem", marginBottom:"0.4rem" }}>
                 {[["race",C.race,C.racePh],["background",C.background,C.backgroundPh]].map(([key,label,ph]) => (
-                  <div key={key}>
+                  <div key={key} style={fieldBoxStyle}>
                     <span style={LBL}>{label}</span>
                     <input style={ieditStyle} value={char[key]||""} placeholder={ph}
                       onChange={e => setChar(c => ({...c,[key]:e.target.value}))}/>
                   </div>
                 ))}
               </div>
-              <div style={{ marginBottom:"0.4rem" }}>
-                <span style={LBL}>{C.alignment}</span>
-                <input style={{...ieditStyle, maxWidth:100}} value={char.alignment||""} placeholder={C.alignmentPh||"CN, LG…"}
-                  onChange={e => setChar(c => ({...c,alignment:e.target.value}))}/>
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.3rem 0.6rem" }}>
-                {[["age",C.age,C.agePh],["height",C.height,C.heightPh],["weight",C.weight,C.weightPh],
-                  ["eyes",C.eyes,C.eyesPh],["skin",C.skin,C.skinPh],["hair",C.hair,C.hairPh]
-                ].map(([key,label,ph]) => (
-                  <div key={key}>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.4rem" }}>
+                {[["alignment",C.alignment,C.alignmentPh||"CN, LG…",null],
+                  ["age",C.age,C.agePh,"appearance"],["height",C.height,C.heightPh,"appearance"],
+                  ["weight",C.weight,C.weightPh,"appearance"],["eyes",C.eyes,C.eyesPh,"appearance"],
+                  ["skin",C.skin,C.skinPh,"appearance"],["hair",C.hair,C.hairPh,"appearance"],
+                ].map(([key,label,ph,group]) => (
+                  <div key={key} style={fieldBoxStyle}>
                     <span style={LBL}>{label}</span>
-                    <input style={ieditStyle} value={(char.appearance||{})[key]||""} placeholder={ph||""}
-                      onChange={e => updAppearance(key, e.target.value)}/>
+                    <input style={ieditStyle}
+                      value={group ? (char.appearance||{})[key]||"" : char[key]||""}
+                      placeholder={ph||""}
+                      onChange={e => group ? updAppearance(key, e.target.value) : setChar(c => ({...c,[key]:e.target.value}))}/>
                   </div>
                 ))}
               </div>
@@ -206,99 +207,96 @@ export default function Header({
           )}
 
           {/* ── Pasek PŻ (pełna szerokość) ── */}
-          <div style={{ margin:"6px 0 0", background:"rgba(255,255,255,.04)", borderRadius:"var(--radius-md)",
+          <div style={{ margin:"6px 0 0", borderRadius:"var(--radius-md)",
                         padding:"8px 10px", border:"1px solid var(--hj-border)" }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
               <span className="vitals-hp-label">PŻ</span>
               <span className="vitals-hp-value">
                 <input type="number" className="vitals-hp-current" value={hp.current}
-                  style={{ color: hpCol }}
+                  style={{ color: hpCol, fontSize:"1.3rem", width:"2.2em" }}
                   onFocus={e => e.target.select()}
                   onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
                   onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
-                <span className="vitals-hp-sep">/</span>
+                <span className="vitals-hp-sep" style={{ fontSize:"1.1rem" }}>/</span>
                 <input type="number" min={1} className="vitals-hp-max" value={hp.max}
+                  style={{ fontSize:"1.1rem", color:hpCol, opacity:0.6 }}
                   onFocus={e => e.target.select()}
                   onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
                   onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
               </span>
             </div>
-            <div className="hp-bar-bg" style={{ marginBottom:"6px" }}>
+            <div className="hp-bar-bg" style={{ marginBottom:"8px" }}>
               <div className="hp-bar-fill" style={{ width:`${hpPct}%`, background:hpCol }}/>
             </div>
-            <div style={{ display:"flex", gap:"6px" }}>
-              <button className="btn-pm minus" aria-label="HP −"
-                style={{ flex:1, width:"auto", height:"24px", borderRadius:"var(--radius-sm)" }}
-                onClick={() => adjustHP(-1)}>
-                <Icon name="minus" size="1em"/>
+            <div style={{ display:"flex", gap:"8px" }}>
+              <button aria-label="HP −" onClick={() => adjustHP(-1)}
+                style={{ flex:1, height:"34px", borderRadius:"var(--radius-md)",
+                         background:"transparent", border:"1px solid var(--hj-accent-border)",
+                         color:"var(--hj-accent)", cursor:"pointer", display:"flex",
+                         alignItems:"center", justifyContent:"center", transition:"all 0.15s" }}>
+                <Icon name="minus" size="1.1em"/>
               </button>
-              <button className="btn-pm plus" aria-label="HP +"
-                style={{ flex:1, width:"auto", height:"24px", borderRadius:"var(--radius-sm)" }}
-                onClick={() => adjustHP(1)}>
-                <Icon name="plus" size="1em"/>
+              <button aria-label="HP +" onClick={() => adjustHP(1)}
+                style={{ flex:1, height:"34px", borderRadius:"var(--radius-md)",
+                         background:"transparent", border:"1px solid var(--hj-accent-border)",
+                         color:"var(--hj-accent)", cursor:"pointer", display:"flex",
+                         alignItems:"center", justifyContent:"center", transition:"all 0.15s" }}>
+                <Icon name="plus" size="1.1em"/>
               </button>
             </div>
           </div>
 
-          {/* ── Pasek XP ── */}
-          <div style={{ margin:"5px 0 0", padding:"5px 10px 6px",
-                        background:"rgba(255,255,255,.03)", borderRadius:"var(--radius-sm)",
-                        border:"1px solid var(--hj-border-input)" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:"6px", marginBottom:"4px" }}>
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
-                             textTransform:"uppercase", color:"var(--hj-text-muted)", flexShrink:0 }}>XP</span>
-              <input type="number" min={0}
-                value={xp}
-                onFocus={e => e.target.select()}
-                onChange={e => setChar(c => ({...c, xp: Math.max(0, parseInt(e.target.value)||0)}))}
-                style={{ fontFamily:"Cinzel,serif", fontSize:"0.75rem", fontWeight:700,
-                         color:"var(--hj-accent)", background:"transparent", border:"none",
-                         borderBottom:"1px dashed var(--hj-accent-border)", outline:"none",
-                         width:56, textAlign:"center" }}/>
-              {xpNext && (
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em",
-                               color: xp >= xpNext ? "var(--hj-accent)" : "var(--hj-text-dim)",
-                               marginLeft:"auto", flexShrink:0 }}>
-                  {xp >= xpNext
-                    ? `✦ gotowy na lvl ${totalLevel + 1}`
-                    : `${(xpNext - xp).toLocaleString()} XP → lvl ${totalLevel + 1}`}
-                </span>
-              )}
-              {!xpNext && (
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", color:"var(--hj-accent)", marginLeft:"auto" }}>
-                  {C.xpMax || "MAX"}
-                </span>
-              )}
-            </div>
-            <div style={{ height:4, borderRadius:2, background:"var(--hj-border-input)", overflow:"hidden" }}>
+          {/* ── Pasek XP (jeden wiersz: label + wartość + bar + cel) ── */}
+          <div style={{ margin:"6px 0 0", display:"flex", alignItems:"center", gap:"7px" }}>
+            <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+                           textTransform:"uppercase", color:"var(--hj-text-muted)", flexShrink:0 }}>XP</span>
+            <input type="number" min={0}
+              value={xp}
+              onFocus={e => e.target.select()}
+              onChange={e => setChar(c => ({...c, xp: Math.max(0, parseInt(e.target.value)||0)}))}
+              style={{ fontFamily:"Cinzel,serif", fontSize:"0.78rem", fontWeight:700,
+                       color:"var(--hj-accent)", background:"transparent", border:"none",
+                       outline:"none", width:48, textAlign:"left", flexShrink:0, padding:0 }}/>
+            <div style={{ flex:1, height:6, borderRadius:"var(--radius-pill)",
+                          background:"var(--hj-border-input)", overflow:"hidden" }}>
               <div style={{ height:"100%", width:`${xpPct}%`, background:"var(--hj-accent)",
-                            borderRadius:2, transition:"width 0.3s ease" }}/>
+                            borderRadius:"var(--radius-pill)", transition:"width 0.3s ease" }}/>
             </div>
+            {xpNext ? (
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em",
+                             color: xp >= xpNext ? "var(--hj-accent)" : "var(--hj-text-dim)",
+                             flexShrink:0, whiteSpace:"nowrap" }}>
+                {xp >= xpNext ? `✦ ${C.level} ${totalLevel + 1}` : `→ ${C.level} ${totalLevel + 1}`}
+              </span>
+            ) : (
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", color:"var(--hj-accent)", flexShrink:0 }}>
+                {C.xpMax || "MAX"}
+              </span>
+            )}
           </div>
 
-          {/* ── Rząd mini-statów (pełna szerokość) ── */}
-          <div style={{ display:"flex", margin:"5px 0 0", borderRadius:"var(--radius-sm)",
-                        overflow:"hidden", border:"1px solid var(--hj-border)" }}>
+          {/* ── Rząd mini-statów — osobne boxy ── */}
+          <div style={{ display:"flex", gap:"6px", margin:"7px 0 0" }}>
             {[
-              { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: undefined },
-              { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: undefined, direct: true },
+              { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: "var(--hj-accent)" },
+              { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: "var(--hj-text)", direct: true },
               { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC,      color: "var(--hj-spell-accent)" },
-              { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-spell-accent)", signed: true },
-            ].map(({ label, key, computed, color, direct, signed }, idx, arr) => {
+              { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-accent)", signed: true },
+            ].map(({ label, key, computed, color, direct, signed }) => {
               const over = direct ? undefined : char[key];
               const displayVal = signed
                 ? numMod(over ?? computed)
                 : String(over ?? computed);
               const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
               return (
-                <div key={key} style={{ flex:1, padding:"4px 4px", textAlign:"center",
-                                         background:"rgba(255,255,255,.03)",
-                                         borderRight: idx < arr.length-1 ? "1px solid var(--hj-border)" : "none" }}>
+                <div key={key} style={{ flex:1, padding:"6px 4px", textAlign:"center",
+                                         border:"1px solid var(--hj-border)",
+                                         borderRadius:"var(--radius-md)" }}>
                   <input className="vitals-mini-value" type="text" inputMode="numeric"
                     value={displayVal}
                     title={C.overrideTip || "Wpisz by nadpisać"}
                     style={{ width:"100%", display:"block", textAlign:"center",
-                             color: overrideColor }}
+                             fontSize:"1.05rem", color: overrideColor }}
                     onFocus={e => e.target.select()}
                     onChange={e => {
                       const r = e.target.value.replace(/[^-\d]/g, "");
@@ -321,8 +319,9 @@ export default function Header({
           </div>
 
           {/* ── Wiersz 1: Odpoczynek (z pipsami kości) ── */}
-          <div style={{ display:"flex", gap:"6px", marginTop:"5px" }}>
-            <button className="btn-rest short" style={{ flex:"1 1 0" }}
+          <div style={{ display:"flex", gap:"7px", marginTop:"7px" }}>
+            <button className="btn-rest short"
+              style={{ flex:"1 1 0", padding:"0.5rem 0.5rem", borderRadius:"var(--radius-md)" }}
               aria-label="Short rest" onClick={() => onRestModal("short")}>
               <span style={{ display:"flex", alignItems:"center", gap:"0.25rem" }}>
                 <Icon name="moon" size="1em"/>
@@ -342,7 +341,8 @@ export default function Header({
                 })}
               </div>
             </button>
-            <button className="btn-rest long" style={{ flex:"1 1 0" }}
+            <button className="btn-rest long"
+              style={{ flex:"1 1 0", padding:"0.5rem 0.5rem", borderRadius:"var(--radius-md)" }}
               aria-label="Long rest" onClick={() => onRestModal("long")}>
               <Icon name="sun" size="1em"/>
               <span>{C.longRest}</span>

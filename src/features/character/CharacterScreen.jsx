@@ -2,7 +2,6 @@ import { useState, memo } from 'react';
 import { useT } from '../../i18n/translations';
 
 import HeroHeaderCard  from './cards/HeroHeaderCard';
-import CharCard        from './cards/CharCard';
 import SavingThrowsCard from './cards/SavingThrowsCard';
 import SkillsCard      from './cards/SkillsCard';
 import EquippedCard    from './cards/EquippedCard';
@@ -57,7 +56,6 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
   const C  = T.CHAR;
   const GENERIC_SKILLS = T.GENERIC_SKILLS;
 
-  const [charOpen,        setCharOpen]     = useState(true);
   const [personalityOpen, setPersonality]  = useState(true);
   const [historyOpen,     setHistoryOpen]  = useState(true);
   const [notesOpen,       setNotesOpen]    = useState(true);
@@ -149,9 +147,6 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
               </div>
             )}
           </div>
-
-          <CharCard char={char} setChar={setChar} C={C}
-            open={charOpen} onToggle={() => setCharOpen(o => !o)}/>
 
           {/* Notatki osobiste */}
           <div className="card">
