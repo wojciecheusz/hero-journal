@@ -127,8 +127,8 @@ export const TRANSLATIONS = {
       deathSaves:"Rzuty vs śmierć", deathSuccess:"Sukces", deathFailure:"Porażka",
       exhaustion:"Wyczerpanie",
       equippedTitle:"Walka i Wyposażenie",
-      tabItems:"Wyposażenie", tabAbilities:"Aktywne Zdolności", tabSpells:"Przygotowane Czary",
-      subItems:"Wyposażenie", subAbilities:"Aktywne Zdolności", subSpells:"Przygotowane Czary",
+      tabItems:"Przedmioty", tabAbilities:"Zdolności", tabSpells:"Czary",
+      subItems:"Przedmioty", subAbilities:"Zdolności", subSpells:"Czary",
       emptyItems:"Brak wyposażonych przedmiotów. Wyposaż je w zakładce Plecak.",
       dragToReorder:"Przeciągnij, aby zmienić kolejność",
       emptyAbilities:"Zaznacz zdolności jako aktywne w zakładce Zdolności.",
@@ -285,6 +285,8 @@ export const TRANSLATIONS = {
       recoverDiceDetail:(cur,next,rec) => `${cur} → ${next} (odzyskano ${rec})`,
       resetDeath:"Wyczyść rzuty obronne przeciw śmierci",
       resetDeathDetail:"Sukcesy i porażki zostały zresetowane",
+      resetConditions:"Usuń wszystkie stany",
+      resetConditionsDetail:"Wszystkie aktywne stany (w tym Wyczerpanie) zostają zniesione",
     },
 
     CRASH: {
@@ -546,8 +548,8 @@ export const TRANSLATIONS = {
       deathSaves:"Death Saves", deathSuccess:"Success", deathFailure:"Failure",
       exhaustion:"Exhaustion",
       equippedTitle:"Combat & Equipment",
-      tabItems:"Equipment", tabAbilities:"Active Abilities", tabSpells:"Prepared Spells",
-      subItems:"Equipment", subAbilities:"Active Abilities", subSpells:"Prepared Spells",
+      tabItems:"Items", tabAbilities:"Abilities", tabSpells:"Spells",
+      subItems:"Items", subAbilities:"Abilities", subSpells:"Spells",
       emptyItems:"No equipped items. Equip them in the Inventory tab.",
       dragToReorder:"Drag to reorder",
       emptyAbilities:"Mark abilities as active in the Abilities tab.",
@@ -704,6 +706,8 @@ export const TRANSLATIONS = {
       recoverDiceDetail:(cur,next,rec) => `${cur} → ${next} (recovered ${rec})`,
       resetDeath:"Clear death saving throws",
       resetDeathDetail:"Successes and failures have been reset",
+      resetConditions:"Remove all conditions",
+      resetConditionsDetail:"All active conditions (including Exhaustion) are cleared",
     },
 
     CRASH: {

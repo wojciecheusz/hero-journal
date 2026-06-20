@@ -153,7 +153,8 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
             <CardHeader label={C.personalNotes} open={notesOpen} onToggle={() => setNotesOpen(o => !o)}/>
             {notesOpen && (
               <textarea className="g-textarea" rows={3} placeholder={C.personalNotesPh}
-                value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}/>
+                value={char.personalNotes||""} onChange={e => upd("personalNotes", e.target.value)}
+                style={{ ...taStyle, fontSize:"0.92rem" }}/>
             )}
           </div>
 
@@ -162,7 +163,8 @@ function CharacterScreen({ char, setChar, inventory, setInventory, skills, setSk
             <CardHeader label={C.backstory} open={historyOpen} onToggle={() => setHistoryOpen(o => !o)}/>
             {historyOpen && (
               <textarea className="g-textarea" rows={5} placeholder={C.backstoryPh}
-                value={char.backstory||""} onChange={e => upd("backstory", e.target.value)}/>
+                value={char.backstory||""} onChange={e => upd("backstory", e.target.value)}
+                style={{ ...taStyle, fontSize:"0.92rem" }}/>
             )}
           </div>
 

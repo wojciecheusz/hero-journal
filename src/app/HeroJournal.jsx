@@ -36,6 +36,9 @@ const FactionsPanel    = lazy(() => import('../features/world/factions/FactionsP
 const SessionsScreen   = lazy(() => import('../features/sessions/SessionsScreen'));
 const QuestScreen      = lazy(() => import('../features/quests/QuestScreen'));
 
+/* Przycisk rzutnika kości schowany na razie -- ustaw true, aby przywrócić */
+const DICE_FAB_ENABLED = false;
+
 /* Loader wyświetlany podczas ładowania chunka */
 function TabLoader() {
   return (
@@ -321,13 +324,15 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
       <MobileNav navGroups={navGroups} tab={tab} setTab={setTab}/>
 
-      {/* ── Rzutnik kości — FAB + panel ── */}
-      <button className={`dice-fab${showDice ? ' open' : ''}`}
-        onClick={() => setShowDice(s => !s)}
-        aria-label={T.DICE.title} title={T.DICE.title}>
-        <Icon name="dice" size="1.3rem"/>
-      </button>
-      {showDice && <DiceRoller onClose={() => setShowDice(false)}/>}
+      {/* ── Rzutnik kości — FAB + panel (ukryty na razie, DICE_FAB_ENABLED) ── */}
+      {DICE_FAB_ENABLED && (
+        <button className={`dice-fab${showDice ? ' open' : ''}`}
+          onClick={() => setShowDice(s => !s)}
+          aria-label={T.DICE.title} title={T.DICE.title}>
+          <Icon name="dice" size="1.3rem"/>
+        </button>
+      )}
+      {DICE_FAB_ENABLED && showDice && <DiceRoller onClose={() => setShowDice(false)}/>}
     </div>
     </LangContext.Provider>
   );

@@ -29,11 +29,16 @@ function EquippedRow({ iconName, name, meta, badge, badgeColor, badgeBorder, nam
 
   return (
     <div>
-      <div style={{
-        display: "flex", alignItems: "center", gap: "0.6rem",
-        padding: "0.55rem 0.75rem",
-        borderBottom: (!isLast || open) ? "1px solid rgba(128,128,128,0.06)" : "none",
-      }}>
+      <div
+        onClick={() => canExpand && setOpen(o => !o)}
+        role={canExpand ? "button" : undefined}
+        aria-expanded={canExpand ? open : undefined}
+        style={{
+          display: "flex", alignItems: "center", gap: "0.6rem",
+          padding: "0.55rem 0.75rem",
+          cursor: canExpand ? "pointer" : "default",
+          borderBottom: (!isLast || open) ? "1px solid rgba(128,128,128,0.06)" : "none",
+        }}>
         <span style={{ width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:"var(--hj-text-label)" }}>
           <Icon name={iconName || "diamond"} size="1em"/>
         </span>
@@ -51,11 +56,9 @@ function EquippedRow({ iconName, name, meta, badge, badgeColor, badgeBorder, nam
           </span>
         )}
         {canExpand && (
-          <button onClick={() => setOpen(o => !o)}
-            style={{ background:"transparent", border:"none", color:"var(--hj-text-dim)", cursor:"pointer", padding:"0 0.1rem", display:"flex", alignItems:"center", flexShrink:0, transition:"color 0.15s" }}
-            aria-expanded={open}>
+          <span style={{ color:"var(--hj-text-dim)", display:"flex", alignItems:"center", flexShrink:0 }}>
             <Icon name={open ? "chevron-up" : "chevron-down"} size="0.75em"/>
-          </button>
+          </span>
         )}
       </div>
       {open && (
@@ -155,32 +158,6 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
                 setChar(c => { const o={...c}; delete o.initiativeBonus; return o; });
             }}/>
         </div>
-      </div>
-
-      {/* ── Kości wytrzymałości — konfiguracja (typ + max) ── */}
-      <div style={{ display:"flex", alignItems:"center", gap:"0.5rem", marginBottom:"0.65rem",
-                    padding:"0.3rem 0.5rem", borderRadius:"var(--radius-sm)",
-                    background:"rgba(255,255,255,0.03)", border:"1px solid var(--hj-border-input)" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.46rem", letterSpacing:"0.1em",
-                       textTransform:"uppercase", color:"var(--hj-text-muted)", flexShrink:0 }}>
-          {C.hitDice}
-        </span>
-        <select style={{ background:"transparent", border:"none", outline:"none",
-                         fontFamily:"Cinzel,serif", fontSize:"0.75rem", color:"var(--hj-accent)",
-                         cursor:"pointer" }}
-          value={(char.hitDice||{type:"d8"}).type}
-          onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),type:e.target.value}}))}>
-          {["d4","d6","d8","d10","d12"].map(d => <option key={d} value={d}>{d}</option>)}
-        </select>
-        <span style={{ color:"var(--hj-text-muted)", fontSize:"0.6rem" }}>max</span>
-        <input type="number" min={1}
-          value={(char.hitDice||{max:1}).max||1}
-          onFocus={e => e.target.select()}
-          onChange={e => setChar(c => ({...c, hitDice:{...(c.hitDice||{type:"d8",max:1,used:0}),max:parseInt(e.target.value)||1}}))}
-          style={{ width:28, background:"transparent", border:"none",
-                   borderBottom:"1px dashed var(--hj-text-muted)", outline:"none",
-                   fontFamily:"Cinzel,serif", fontSize:"0.9rem", textAlign:"center",
-                   color:"var(--hj-text-muted)" }}/>
       </div>
 
       <div className="subtab-bar">

@@ -99,11 +99,10 @@ export default function Header({
             style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0,
                      cursor:"pointer", background:"transparent", border:"none", padding:0,
                      color:"inherit", textAlign:"left" }}
-            onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero}>
+            onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
             <div className="hj-logo" style={{ display:"flex", alignItems:"center", gap:"0.3rem" }}>
               <Icon name="sword" size="1em"/> HJ
             </div>
-            <span className="hj-char-name" style={{ flex:1 }}>{char.name?.trim() || T.UI.hero}</span>
           </button>
 
           <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexShrink:0 }}>
@@ -211,18 +210,27 @@ export default function Header({
                         padding:"8px 10px", border:"1px solid var(--hj-border)" }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
               <span className="vitals-hp-label">PŻ</span>
-              <span className="vitals-hp-value">
-                <input type="number" className="vitals-hp-current" value={hp.current}
-                  style={{ color: hpCol, fontSize:"1.3rem", width:"2.2em" }}
-                  onFocus={e => e.target.select()}
-                  onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
-                  onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
-                <span className="vitals-hp-sep" style={{ fontSize:"1.1rem" }}>/</span>
-                <input type="number" min={1} className="vitals-hp-max" value={hp.max}
-                  style={{ fontSize:"1.1rem", color:hpCol, opacity:0.6 }}
-                  onFocus={e => e.target.select()}
-                  onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
-                  onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
+              <span style={{ display:"flex", alignItems:"baseline", gap:"0.4rem" }}>
+                <span className="vitals-hp-temp" title={C.hpTemp}>
+                  <Icon name="shield" size="0.8em"/>
+                  <input type="number" min={0} value={hp.temp||0}
+                    onFocus={e => e.target.select()}
+                    onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,temp:e.target.value===""?0:Math.max(0,parseInt(e.target.value)||0)}}; })}
+                    onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,temp:Math.max(0,parseInt(e.target.value)||0)}}; })}/>
+                </span>
+                <span className="vitals-hp-value">
+                  <input type="number" className="vitals-hp-current" value={hp.current}
+                    style={{ color: hpCol, fontSize:"1.3rem", width:"2.2em" }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
+                    onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
+                  <span className="vitals-hp-sep" style={{ fontSize:"1.1rem" }}>/</span>
+                  <input type="number" min={1} className="vitals-hp-max" value={hp.max}
+                    style={{ fontSize:"1.1rem", color:hpCol, opacity:0.6 }}
+                    onFocus={e => e.target.select()}
+                    onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
+                    onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
+                </span>
               </span>
             </div>
             <div style={{ display:"flex", alignItems:"center", gap:"6px" }}>
