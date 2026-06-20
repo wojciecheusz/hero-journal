@@ -18,8 +18,15 @@ const mkToggleStyle = (open, color) => ({
   whiteSpace:"nowrap", overflow:"hidden",
 });
 
+/* ── Skala czcionek — 4 poziomy (zob. propozycja A) ──
+   1: hero (imię, PŻ aktualne) · 2: ważne liczby (mini-staty, XP)
+   3: etykiety caps-lock · 4: przyciski (bez zmian, już spójne) */
+const SIZE_HERO  = "1.25rem";
+const SIZE_STAT  = "0.9rem";
+const SIZE_LABEL = "0.46rem";
+
 const LBL = {
-  fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+  fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, letterSpacing:"0.1em",
   textTransform:"uppercase", color:"var(--hj-text-muted)",
   marginBottom:"0.15rem", display:"block",
 };
@@ -168,7 +175,7 @@ export default function Header({
                 onClick={() => setMoreOpen?.(s => !s)}
                 aria-expanded={!!moreOpen}
                 style={{ display:"flex", alignItems:"center", gap:"0.25rem", flexShrink:0,
-                         fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.1em",
+                         fontFamily:"Cinzel,serif", fontSize:"0.47rem", letterSpacing:"0.1em",
                          textTransform:"uppercase", padding:"0.3rem 0.75rem",
                          background:moreOpen?"rgba(226,185,78,0.08)":"transparent",
                          border:`1px solid ${moreOpen?"var(--hj-accent-border)":"var(--hj-border-input)"}`,
@@ -180,7 +187,7 @@ export default function Header({
             </div>
           </div>
 
-          {/* ── Panel Więcej: rasa, przeszłość, charakter, wygląd ── */}
+          {/* ── Panel Więcej: rasa, przeszłość, charakter, wygląd + mini-staty ── */}
           {moreOpen && (
             <div style={{ marginTop:"0.3rem" }}>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.4rem", marginBottom:"0.4rem" }}>
@@ -192,7 +199,7 @@ export default function Header({
                   </div>
                 ))}
               </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.4rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"0.4rem", marginBottom:"0.4rem" }}>
                 {[["alignment",C.alignment,C.alignmentPh||"CN, LG…",null],
                   ["age",C.age,C.agePh,"appearance"],["height",C.height,C.heightPh,"appearance"],
                   ["weight",C.weight,C.weightPh,"appearance"],["eyes",C.eyes,C.eyesPh,"appearance"],
@@ -207,14 +214,64 @@ export default function Header({
                   </div>
                 ))}
               </div>
+
+              {/* ── Mini-staty referencyjne (Pas. Percepcja / Biegłość / DC / Atak Czarami) ── */}
+              <div style={{ display:"flex", gap:"6px" }}>
+                {[
+                  { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: "var(--hj-accent)" },
+                  { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: "var(--hj-text)", direct: true },
+                  { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC,      color: "var(--hj-spell-accent)" },
+                  { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-accent)", signed: true },
+                ].map(({ label, key, computed, color, direct, signed }) => {
+                  const over = direct ? undefined : char[key];
+                  const displayVal = direct && pbDraft !== null
+                    ? pbDraft
+                    : signed ? numMod(over ?? computed) : String(over ?? computed);
+                  const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
+                  return (
+                    <div key={key} style={{ ...fieldBoxStyle, flex:1, textAlign:"center" }}>
+                      <input className="vitals-mini-value" type="text" inputMode="numeric"
+                        value={displayVal}
+                        title={C.overrideTip || "Wpisz by nadpisać"}
+                        style={{ width:"100%", display:"block", textAlign:"center",
+                                 fontSize:SIZE_STAT, color: overrideColor }}
+                        onFocus={e => { e.target.select(); if (direct) setPbDraft(String(computed)); }}
+                        onChange={e => {
+                          const r = e.target.value.replace(/[^-\d]/g, "");
+                          if (direct) {
+                            setPbDraft(r);
+                            const v = parseInt(r);
+                            if (!isNaN(v) && v > 0) setChar(c => ({...c, profBonus: v}));
+                          } else {
+                            setChar(c => r===""
+                              ? (o => { const n={...o}; delete n[key]; return n; })(c)
+                              : {...c, [key]: parseInt(r)});
+                          }
+                        }}
+                        onBlur={e => {
+                          if (direct) {
+                            const v = parseInt(pbDraft ?? "");
+                            setChar(c => ({...c, profBonus: (!isNaN(v) && v > 0) ? v : 2}));
+                            setPbDraft(null);
+                          } else if (!e.target.value.trim() || isNaN(parseInt(e.target.value))) {
+                            setChar(c => { const n={...c}; delete n[key]; return n; });
+                          }
+                        }}/>
+                      <span style={{ ...LBL, marginBottom:0, fontSize:SIZE_LABEL }}>{label}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {/* ── Pasek PŻ (pełna szerokość) ── */}
-          <div style={{ margin:"6px 0 0", borderRadius:"var(--radius-md)",
-                        padding:"8px 10px" }}>
+          {/* ════ STREFA „VITALS" — PŻ + XP, dane zmieniające się co rundę ════ */}
+          <div style={{ margin:"8px 0 0", padding:"9px 10px", borderRadius:"var(--radius-md)",
+                        background:"rgba(255,255,255,0.025)", border:"1px solid var(--hj-border)" }}>
+
+            {/* ── Pasek PŻ ── */}
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:"3px" }}>
-              <span className="vitals-hp-label">PŻ</span>
+              <span className="vitals-hp-label" style={{ fontSize:SIZE_LABEL }}>PŻ</span>
               <span style={{ display:"flex", alignItems:"baseline", gap:"0.4rem" }}>
                 <span className="vitals-hp-temp" title={C.hpTemp}>
                   <Icon name="shield" size="0.8em"/>
@@ -225,13 +282,13 @@ export default function Header({
                 </span>
                 <span className="vitals-hp-value">
                   <input type="number" className="vitals-hp-current" value={hp.current}
-                    style={{ color: hpCol, fontSize:"1.3rem", width:"2.2em" }}
+                    style={{ color: hpCol, fontSize:SIZE_HERO, width:"2.2em" }}
                     onFocus={e => e.target.select()}
                     onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:e.target.value===""?0:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}
                     onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,current:clamp(parseInt(e.target.value)||0,0,h.max)}}; })}/>
-                  <span className="vitals-hp-sep" style={{ fontSize:"1.1rem" }}>/</span>
+                  <span className="vitals-hp-sep" style={{ fontSize:SIZE_STAT }}>/</span>
                   <input type="number" min={1} className="vitals-hp-max" value={hp.max}
-                    style={{ fontSize:"1.1rem", color:hpCol, opacity:0.6 }}
+                    style={{ fontSize:SIZE_STAT, color:hpCol, opacity:0.6 }}
                     onFocus={e => e.target.select()}
                     onChange={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:e.target.value===""?1:Math.max(1,parseInt(e.target.value)||1)}}; })}
                     onBlur={e => setChar(c => { const h=c.hp||{current:0,max:1,temp:0}; return {...c,hp:{...h,max:Math.max(1,parseInt(e.target.value)||1)}}; })}/>
@@ -257,94 +314,49 @@ export default function Header({
                 <Icon name="plus" size="0.7em"/>
               </button>
             </div>
-          </div>
 
-          {/* ── Pasek XP (jeden wiersz: label + wartość + bar + cel) ── */}
-          <div style={{ margin:"6px 0 0", display:"flex", alignItems:"center", gap:"7px" }}>
-            <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
-                           textTransform:"uppercase", color:"var(--hj-text-muted)", flexShrink:0 }}>XP</span>
-            <input type="number" min={0}
-              value={xp}
-              onFocus={e => e.target.select()}
-              onChange={e => {
-                const raw = parseInt(e.target.value);
-                setChar(c => ({...c, xp: isNaN(raw) ? raw : Math.max(0, raw)}));
-              }}
-              onBlur={e => {
-                const v = parseInt(e.target.value);
-                setChar(c => ({...c, xp: isNaN(v) ? 0 : Math.max(0, v)}));
-              }}
-              style={{ fontFamily:"Cinzel,serif", fontSize:"0.78rem", fontWeight:700,
-                       color:"var(--hj-accent)", background:"transparent", border:"none",
-                       outline:"none", width:48, textAlign:"left", flexShrink:0, padding:0 }}/>
-            <div style={{ flex:1, height:6, borderRadius:"var(--radius-pill)",
-                          background:"var(--hj-border-input)", overflow:"hidden" }}>
-              <div style={{ height:"100%", width:`${xpPct}%`, background:"var(--hj-accent)",
-                            borderRadius:"var(--radius-pill)", transition:"width 0.3s ease" }}/>
+            {/* ── Pasek XP (jeden wiersz: label + wartość + bar + cel) ── */}
+            <div style={{ margin:"8px 0 0", display:"flex", alignItems:"center", gap:"7px" }}>
+              <span style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, letterSpacing:"0.1em",
+                             textTransform:"uppercase", color:"var(--hj-text-muted)", flexShrink:0 }}>XP</span>
+              <input type="number" min={0}
+                value={xp}
+                onFocus={e => e.target.select()}
+                onChange={e => {
+                  const raw = parseInt(e.target.value);
+                  setChar(c => ({...c, xp: isNaN(raw) ? raw : Math.max(0, raw)}));
+                }}
+                onBlur={e => {
+                  const v = parseInt(e.target.value);
+                  setChar(c => ({...c, xp: isNaN(v) ? 0 : Math.max(0, v)}));
+                }}
+                style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_STAT, fontWeight:700,
+                         color:"var(--hj-accent)", background:"transparent", border:"none",
+                         outline:"none", width:48, textAlign:"left", flexShrink:0, padding:0 }}/>
+              <div style={{ flex:1, height:6, borderRadius:"var(--radius-pill)",
+                            background:"var(--hj-border-input)", overflow:"hidden" }}>
+                <div style={{ height:"100%", width:`${xpPct}%`, background:"var(--hj-accent)",
+                              borderRadius:"var(--radius-pill)", transition:"width 0.3s ease" }}/>
+              </div>
+              {xpNext ? (
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, letterSpacing:"0.04em",
+                               fontWeight:600,
+                               color: xpSafe >= xpNext ? "var(--hj-accent)" : "var(--hj-text-muted)",
+                               flexShrink:0, whiteSpace:"nowrap" }}>
+                  {xpSafe >= xpNext
+                    ? `✦ ${C.level} ${totalLevel + 1}`
+                    : `${(xpNext - xpSafe).toLocaleString()} XP → ${C.level} ${totalLevel + 1}`}
+                </span>
+              ) : (
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, color:"var(--hj-accent)", flexShrink:0 }}>
+                  {C.xpMax || "MAX"}
+                </span>
+              )}
             </div>
-            {xpNext ? (
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpacing:"0.04em",
-                             fontWeight:600,
-                             color: xpSafe >= xpNext ? "var(--hj-accent)" : "var(--hj-text-muted)",
-                             flexShrink:0, whiteSpace:"nowrap" }}>
-                {xpSafe >= xpNext
-                  ? `✦ ${C.level} ${totalLevel + 1}`
-                  : `${(xpNext - xpSafe).toLocaleString()} XP → ${C.level} ${totalLevel + 1}`}
-              </span>
-            ) : (
-              <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.48rem", color:"var(--hj-accent)", flexShrink:0 }}>
-                {C.xpMax || "MAX"}
-              </span>
-            )}
           </div>
 
-          {/* ── Rząd mini-statów — osobne boxy ── */}
-          <div style={{ display:"flex", gap:"6px", margin:"7px 0 0" }}>
-            {[
-              { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: "var(--hj-accent)" },
-              { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: "var(--hj-text)", direct: true },
-              { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC,      color: "var(--hj-spell-accent)" },
-              { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-accent)", signed: true },
-            ].map(({ label, key, computed, color, direct, signed }) => {
-              const over = direct ? undefined : char[key];
-              const displayVal = direct && pbDraft !== null
-                ? pbDraft
-                : signed ? numMod(over ?? computed) : String(over ?? computed);
-              const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
-              return (
-                <div key={key} style={{ flex:1, padding:"6px 4px", textAlign:"center" }}>
-                  <input className="vitals-mini-value" type="text" inputMode="numeric"
-                    value={displayVal}
-                    title={C.overrideTip || "Wpisz by nadpisać"}
-                    style={{ width:"100%", display:"block", textAlign:"center",
-                             fontSize:"1.05rem", color: overrideColor }}
-                    onFocus={e => { e.target.select(); if (direct) setPbDraft(String(computed)); }}
-                    onChange={e => {
-                      const r = e.target.value.replace(/[^-\d]/g, "");
-                      if (direct) {
-                        setPbDraft(r);
-                        const v = parseInt(r);
-                        if (!isNaN(v) && v > 0) setChar(c => ({...c, profBonus: v}));
-                      } else {
-                        setChar(c => r===""
-                          ? (o => { const n={...o}; delete n[key]; return n; })(c)
-                          : {...c, [key]: parseInt(r)});
-                      }
-                    }}
-                    onBlur={e => {
-                      if (direct) {
-                        const v = parseInt(pbDraft ?? "");
-                        setChar(c => ({...c, profBonus: (!isNaN(v) && v > 0) ? v : 2}));
-                        setPbDraft(null);
-                      } else if (!e.target.value.trim() || isNaN(parseInt(e.target.value))) {
-                        setChar(c => { const n={...c}; delete n[key]; return n; });
-                      }
-                    }}/>
-                  <span className="vitals-mini-label">{label}</span>
-                </div>
-              );
-            })}
-          </div>
+          {/* ── Cienki separator między strefą Vitals i Stats & Actions ── */}
+          <div style={{ height:1, background:"var(--hj-border-sub)", opacity:0.5, margin:"9px 0 0" }}/>
 
           {/* ── Wiersz 1: Odpoczynek (z pipsami kości) ── */}
           <div style={{ display:"flex", gap:"7px", marginTop:"7px" }}>
@@ -406,11 +418,11 @@ export default function Header({
                           border:"1px solid rgba(170,68,68,0.3)", background:"rgba(170,68,68,0.05)",
                           borderRadius:"var(--radius-md)" }}>
               <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.45rem" }}>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, letterSpacing:"0.1em",
                                textTransform:"uppercase", color:"#cc7070" }}>
                   {C.stanyTitle || "Stany"}
                 </span>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.4rem", color:"var(--hj-text-dim)" }}>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, color:"var(--hj-text-dim)" }}>
                   {Object.keys(char.conditions||{}).filter(k => k!=="exhaustion" && char.conditions[k]).length} / {CONDITIONS.length}
                 </span>
               </div>
@@ -443,7 +455,7 @@ export default function Header({
             <div style={{ marginTop:"0.4rem", padding:"0.5rem 0.6rem",
                           border:"1px solid rgba(154,58,58,0.3)", background:"rgba(154,58,58,0.05)",
                           borderRadius:"var(--radius-md)" }}>
-              <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+              <div style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, letterSpacing:"0.1em",
                             textTransform:"uppercase", color:"#cc8080", marginBottom:"0.5rem" }}>
                 {C.deathSaves}
               </div>
@@ -471,11 +483,11 @@ export default function Header({
                           border:"1px solid rgba(176,96,32,0.3)", background:"rgba(176,96,32,0.05)",
                           borderRadius:"var(--radius-md)" }}>
               <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between", marginBottom:"0.5rem" }}>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.1em",
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, letterSpacing:"0.1em",
                                textTransform:"uppercase", color:"#d4a060" }}>
                   {C.exhaustion}
                 </span>
-                <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.4rem", color:"var(--hj-text-dim)" }}>
+                <span style={{ fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, color:"var(--hj-text-dim)" }}>
                   {exhaustion} / 6
                 </span>
               </div>
