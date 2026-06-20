@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { CONDITIONS, XP_THRESHOLDS } from '../constants/gameConstants';
+import { CONDITIONS, XP_THRESHOLDS, DND_CLASSES } from '../constants/gameConstants';
 import SettingsMenu from './SettingsMenu';
 import Icon from '../shared/icons';
 import { clamp, numMod } from '../utils/math';
@@ -36,6 +36,47 @@ const ieditStyle = {
   border:"none", outline:"none", color:"var(--hj-text)", width:"100%", padding:0,
 };
 
+const ICON_CHOICES = [...new Set(DND_CLASSES.map(c => c.icon))];
+
+/* ── Wybór ikony profilu bohatera (obok logo HJ) ── */
+function CharIconPicker({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ position:"relative" }}>
+      <button onClick={e => { e.stopPropagation(); setOpen(o => !o); }} aria-expanded={open}
+        title="Zmień ikonę bohatera"
+        style={{ background:"transparent", border:"1px solid var(--hj-border-input)",
+                 color:"var(--hj-accent)", width:28, height:28, borderRadius:"50%",
+                 cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center",
+                 transition:"all 0.15s", flexShrink:0 }}>
+        <Icon name={value} size="1em"/>
+      </button>
+      {open && (
+        <>
+          <div style={{ position:"fixed", inset:0, zIndex:200 }} onClick={() => setOpen(false)}/>
+          <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, zIndex:201,
+                        background:"var(--hj-modal-bg)", border:"1px solid var(--hj-accent-border)",
+                        borderRadius:"var(--radius-md)", padding:"0.4rem",
+                        display:"grid", gridTemplateColumns:"repeat(5, 1fr)", gap:"0.3rem",
+                        boxShadow:"0 8px 24px rgba(0,0,0,0.45)", width:170 }}>
+            {ICON_CHOICES.map(icon => (
+              <button key={icon} onClick={() => { onChange(icon); setOpen(false); }}
+                aria-label={icon}
+                style={{ width:28, height:28, display:"flex", alignItems:"center", justifyContent:"center",
+                         background: icon===value ? "rgba(226,185,78,0.15)" : "transparent",
+                         border:`1px solid ${icon===value ? "var(--hj-accent-border)" : "transparent"}`,
+                         borderRadius:"var(--radius-sm)", cursor:"pointer",
+                         color: icon===value ? "var(--hj-accent)" : "var(--hj-text-muted)" }}>
+                <Icon name={icon} size="1em"/>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Header({
   T, theme, setTheme, toggleLanguage, char, tab,
   showHelp, setShowHelp, showSettings, setShowSettings,
@@ -50,6 +91,9 @@ export default function Header({
 }) {
   const { className, totalLevel } = getClassLevelLabel(char, T.CHAR);
   const C = T.CHAR;
+
+  const classIcon = DND_CLASSES.find(c => c.name === char.classes?.[0]?.name)?.icon || "sword";
+  const charIcon  = char.icon || classIcon;
 
   const hp    = char.hp || { current: 0, max: 1, temp: 0 };
   const hpPct = Math.round(clamp((hp.current / (hp.max || 1)) * 100, 0, 100));
@@ -102,15 +146,16 @@ export default function Header({
 
         {/* ── Rząd: logo + imię bohatera + ikony ── */}
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:"0.5rem" }}>
-          <button className="hj-header-brand"
-            style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0,
-                     cursor:"pointer", background:"transparent", border:"none", padding:0,
-                     color:"inherit", textAlign:"left" }}
-            onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
-            <div className="hj-logo" style={{ display:"flex", alignItems:"center", gap:"0.3rem" }}>
-              <Icon name="sword" size="1em"/> HJ
-            </div>
-          </button>
+          <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flex:1, minWidth:0 }}>
+            <CharIconPicker value={charIcon} onChange={icon => setChar(c => ({...c, icon}))}/>
+            <button className="hj-header-brand"
+              style={{ display:"flex", alignItems:"center", gap:"0.5rem", flex:1, minWidth:0,
+                       cursor:"pointer", background:"transparent", border:"none", padding:0,
+                       color:"inherit", textAlign:"left" }}
+              onClick={() => setScreen("profiles")} aria-label={T.UI.changeHero} title={T.UI.changeHero}>
+              <div className="hj-logo">HJ</div>
+            </button>
+          </div>
 
           <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexShrink:0 }}>
             <button onClick={() => setPanelCollapsed?.(s => !s)}
