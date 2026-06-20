@@ -110,12 +110,15 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
   const spellMeta = sp =>
     sp.castingTime || [displaySpellLevel(sp.level), sp.school && displaySpellSchool(sp.school)].filter(Boolean).join(' · ');
 
-  const spellExpand = sp => sp.note
-    ? <ExpandText muted>{sp.note}</ExpandText>
+  const spellExpand = sp => (sp.description || sp.notes)
+    ? <>
+        {sp.description && <ExpandText>{sp.description}</ExpandText>}
+        {sp.notes && <ExpandText muted>{sp.notes}</ExpandText>}
+      </>
     : null;
 
-  const skillExpand = sk => sk.note
-    ? <ExpandText muted>{sk.note}</ExpandText>
+  const skillExpand = sk => sk.description
+    ? <ExpandText muted>{sk.description}</ExpandText>
     : null;
 
   const initiative = char.initiativeBonus !== undefined
