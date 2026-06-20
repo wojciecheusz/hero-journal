@@ -196,8 +196,66 @@ export default function Header({
               ["hair",       C.hair,       C.hairPh,       "appearance"],
             ];
             const totalRows = Math.ceil(moreFields.length / 2);
+            const classes = char.classes?.length ? char.classes : [{ name:"", level:1 }];
             return (
-              <div style={{ marginTop:"0.3rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 0.8rem" }}>
+              <div style={{ marginTop:"0.3rem" }}>
+
+                {/* ── Klasy / multiclassing ── */}
+                <div style={{ paddingBottom:"0.5rem", borderBottom:"1px solid var(--hj-border-sub)", marginBottom:"0.5rem" }}>
+                  <span style={LBL}>{C.classLabel}</span>
+                  {classes.map((cls, i) => (
+                    <div key={i} style={{ display:"flex", alignItems:"center", gap:"0.4rem",
+                                           marginTop: i>0 ? "0.35rem" : 0 }}>
+                      <input style={{ ...ieditStyle, flex:1 }} value={cls.name||""}
+                        placeholder={i===0 ? C.classPh : `${C.classPh} (${i+1})`}
+                        onChange={e => setChar(c => {
+                          const cl = c.classes?.length ? [...c.classes] : [{ name:"", level:1 }];
+                          cl[i] = { ...cl[i], name:e.target.value };
+                          return { ...c, classes: cl };
+                        })}/>
+                      <span style={{ ...LBL, marginBottom:0, flexShrink:0 }}>{C.level}</span>
+                      <input type="number" min={1} max={20} value={cls.level||1}
+                        style={{ ...ieditStyle, width:30, textAlign:"center", flexShrink:0 }}
+                        onFocus={e => e.target.select()}
+                        onChange={e => {
+                          const v = parseInt(e.target.value);
+                          setChar(c => {
+                            const cl = c.classes?.length ? [...c.classes] : [{ name:"", level:1 }];
+                            cl[i] = { ...cl[i], level: isNaN(v) ? v : clamp(v,1,20) };
+                            return { ...c, classes: cl };
+                          });
+                        }}
+                        onBlur={e => {
+                          const v = parseInt(e.target.value);
+                          setChar(c => {
+                            const cl = c.classes?.length ? [...c.classes] : [{ name:"", level:1 }];
+                            cl[i] = { ...cl[i], level: (!isNaN(v)) ? clamp(v,1,20) : 1 };
+                            return { ...c, classes: cl };
+                          });
+                        }}/>
+                      {i > 0 && (
+                        <button onClick={() => setChar(c => ({...c, classes:(c.classes||[]).filter((_,j) => j!==i)}))}
+                          aria-label="Usuń klasę"
+                          style={{ background:"transparent", border:"none", color:"var(--hj-text-dim)",
+                                   cursor:"pointer", flexShrink:0, display:"flex", padding:0 }}>
+                          <Icon name="close" size="0.75em"/>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {classes.length < 4 && (
+                    <button
+                      onClick={() => setChar(c => ({...c, classes:[...(c.classes?.length ? c.classes : [{name:"",level:1}]), {name:"",level:1}]}))}
+                      style={{ marginTop:"0.4rem", display:"flex", alignItems:"center", gap:"0.25rem",
+                               background:"transparent", border:"none", color:"var(--hj-accent)", cursor:"pointer",
+                               fontFamily:"Cinzel,serif", fontSize:SIZE_LABEL, letterSpacing:"0.08em",
+                               textTransform:"uppercase", padding:0 }}>
+                      <Icon name="plus" size="0.7em"/> {C.addClass}
+                    </button>
+                  )}
+                </div>
+
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 0.8rem" }}>
                 {moreFields.map(([key,label,ph,group], i) => {
                   const row = Math.floor(i / 2);
                   return (
@@ -214,6 +272,7 @@ export default function Header({
                     </div>
                   );
                 })}
+                </div>
               </div>
             );
           })()}
