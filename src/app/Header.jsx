@@ -376,56 +376,8 @@ export default function Header({
           {/* ── Cienki separator między strefą Vitals i Stats & Actions ── */}
           <div style={{ height:1, background:"var(--hj-border-sub)", opacity:0.5, margin:"9px 0 0" }}/>
 
-          {/* ── Rząd mini-statów — widoczny domyślnie w strefie Stats & Actions ── */}
-          <div style={{ display:"flex", gap:"6px", margin:"9px 0 0" }}>
-            {[
-              { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus, color: "var(--hj-accent)" },
-              { label: C.profBonus,    key:"profBonus",                  computed: pb,           color: "var(--hj-text)", direct: true },
-              { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC,      color: "var(--hj-spell-accent)" },
-              { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     color: "var(--hj-accent)", signed: true },
-            ].map(({ label, key, computed, color, direct, signed }) => {
-              const over = direct ? undefined : char[key];
-              const displayVal = direct && pbDraft !== null
-                ? pbDraft
-                : signed ? numMod(over ?? computed) : String(over ?? computed);
-              const overrideColor = over !== undefined ? "var(--hj-pip-prof)" : color;
-              return (
-                <div key={key} style={{ flex:1, padding:"6px 4px", textAlign:"center" }}>
-                  <input className="vitals-mini-value" type="text" inputMode="numeric"
-                    value={displayVal}
-                    title={C.overrideTip || "Wpisz by nadpisać"}
-                    style={{ width:"100%", display:"block", textAlign:"center",
-                             fontSize:SIZE_STAT, color: overrideColor }}
-                    onFocus={e => { e.target.select(); if (direct) setPbDraft(String(computed)); }}
-                    onChange={e => {
-                      const r = e.target.value.replace(/[^-\d]/g, "");
-                      if (direct) {
-                        setPbDraft(r);
-                        const v = parseInt(r);
-                        if (!isNaN(v) && v > 0) setChar(c => ({...c, profBonus: v}));
-                      } else {
-                        setChar(c => r===""
-                          ? (o => { const n={...o}; delete n[key]; return n; })(c)
-                          : {...c, [key]: parseInt(r)});
-                      }
-                    }}
-                    onBlur={e => {
-                      if (direct) {
-                        const v = parseInt(pbDraft ?? "");
-                        setChar(c => ({...c, profBonus: (!isNaN(v) && v > 0) ? v : 2}));
-                        setPbDraft(null);
-                      } else if (!e.target.value.trim() || isNaN(parseInt(e.target.value))) {
-                        setChar(c => { const n={...c}; delete n[key]; return n; });
-                      }
-                    }}/>
-                  <span className="vitals-mini-label" style={{ fontSize:SIZE_LABEL }}>{label}</span>
-                </div>
-              );
-            })}
-          </div>
-
           {/* ── Wiersz 1: Odpoczynek (z pipsami kości) ── */}
-          <div style={{ display:"flex", gap:"7px", marginTop:"7px" }}>
+          <div style={{ display:"flex", gap:"7px", margin:"9px 0 0" }}>
             <button className="btn-rest short"
               style={{ flex:"1 1 0", padding:"0.5rem 0.5rem", borderRadius:"var(--radius-md)" }}
               aria-label="Short rest" onClick={() => onRestModal("short")}>
@@ -453,6 +405,51 @@ export default function Header({
               <Icon name="sun" size="1em"/>
               <span>{C.longRest}</span>
             </button>
+          </div>
+
+          {/* ── Rząd mini-statów — widoczny domyślnie w strefie Stats & Actions ── */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.4rem", marginTop:"7px" }}>
+            {[
+              { label: C.passivePerc,  key:"passivePerceptionOverride", computed: 10+percBonus },
+              { label: C.profBonus,    key:"profBonus",                  computed: pb,           direct: true },
+              { label: C.spellDC,      key:"skillDCOverride",            computed: spellDC },
+              { label: C.spellAtk,     key:"spellAttackOverride",        computed: spellAtk,     signed: true },
+            ].map(({ label, key, computed, direct, signed }) => {
+              const over = direct ? undefined : char[key];
+              const displayVal = direct && pbDraft !== null
+                ? pbDraft
+                : signed ? numMod(over ?? computed) : String(over ?? computed);
+              return (
+                <div key={key} className="combat-box">
+                  <span className="combat-box-label">{label}</span>
+                  <input className="combat-box-input" type="text" inputMode="numeric"
+                    value={displayVal}
+                    title={C.overrideTip || "Wpisz by nadpisać"}
+                    onFocus={e => { e.target.select(); if (direct) setPbDraft(String(computed)); }}
+                    onChange={e => {
+                      const r = e.target.value.replace(/[^-\d]/g, "");
+                      if (direct) {
+                        setPbDraft(r);
+                        const v = parseInt(r);
+                        if (!isNaN(v) && v > 0) setChar(c => ({...c, profBonus: v}));
+                      } else {
+                        setChar(c => r===""
+                          ? (o => { const n={...o}; delete n[key]; return n; })(c)
+                          : {...c, [key]: parseInt(r)});
+                      }
+                    }}
+                    onBlur={e => {
+                      if (direct) {
+                        const v = parseInt(pbDraft ?? "");
+                        setChar(c => ({...c, profBonus: (!isNaN(v) && v > 0) ? v : 2}));
+                        setPbDraft(null);
+                      } else if (!e.target.value.trim() || isNaN(parseInt(e.target.value))) {
+                        setChar(c => { const n={...c}; delete n[key]; return n; });
+                      }
+                    }}/>
+                </div>
+              );
+            })}
           </div>
 
           {/* ── Wiersz 2: Stany / Rzuty / Wyczerpanie ── */}
