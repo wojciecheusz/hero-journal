@@ -1203,8 +1203,6 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   color: var(--spell-accent); text-align: left; padding: 0;
 }
 
-.vitals-controls { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
-
 /* ── Miniboksy AC/Inicj./Bieg. w VitalsBar (P24) ──────────────── */
 .vitals-mini-grid { display: flex; gap: 0.4rem; flex-shrink: 0; }
 .vitals-mini-box {
@@ -1260,10 +1258,9 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .vitals-bar-sidebar .vitals-mini-box { flex: 1; min-width: 0; padding: 0.25rem 0.3rem; }
 .vitals-bar-sidebar .vitals-mini-value { width: 100%; font-size: 0.85rem; }
 .vitals-bar-sidebar .vitals-mini-label {
-  white-space: normal; overflow-wrap: break-word; word-break: break-word;
+  white-space: normal; overflow-wrap: normal; word-break: keep-all;
   font-size: 0.38rem; line-height: 1.15; text-align: center;
 }
-.vitals-bar-sidebar .vitals-controls { justify-content: center; }
 
 .rest-row-sidebar { margin: 0 0.75rem 0.6rem; }
 .rest-row-sidebar .btn-rest { border-radius: var(--radius-md); }

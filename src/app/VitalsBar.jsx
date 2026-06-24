@@ -89,8 +89,12 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
               onBlur={e => { const v=parseInt(e.target.value); setChar(c => { const h = c.hp || { current:0, max:1, temp:0 }; return { ...c, hp: { ...h, temp: isNaN(v)?0:Math.max(0,v) } }; }); }}/>
           </span>
         </div>
-        <div className="hp-bar-bg">
-          <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpColor(hpPct) }}/>
+        <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", marginTop:"0.7rem" }}>
+          <button className="btn-pm minus" aria-label="Decrease HP" onClick={() => adjustHP(-1)}><Icon name="minus" size="1em"/></button>
+          <div className="hp-bar-bg" style={{ flex:1, margin:0 }}>
+            <div className="hp-bar-fill" style={{ width: `${hpPct}%`, background: hpColor(hpPct) }}/>
+          </div>
+          <button className="btn-pm plus" aria-label="Increase HP" onClick={() => adjustHP(1)}><Icon name="plus" size="1em"/></button>
         </div>
       </div>
 
@@ -104,7 +108,7 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
           onBlur={e => { const v=parseInt(e.target.value); setChar(c => ({...c, xp: isNaN(v)?0:Math.max(0,v)})); }}
           style={{ fontFamily:"Cinzel,serif", fontSize:"0.78rem", fontWeight:700,
                    color:"var(--hj-accent)", background:"transparent", border:"none",
-                   outline:"none", width:42, textAlign:"left", flexShrink:0, padding:0 }}/>
+                   outline:"none", width:60, textAlign:"left", flexShrink:0, padding:0 }}/>
         <div style={{ flex:1, height:5, borderRadius:"var(--radius-pill)",
                       background:"var(--hj-border-input)", overflow:"hidden" }}>
           <div style={{ height:"100%", width:`${xpPct}%`, background:"var(--hj-accent)",
@@ -129,11 +133,12 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
            AC i Inicjatywa nie powtarzają się tutaj, są w karcie Walka/Ekwipunek ── */}
       <div className="vitals-mini-grid" style={{ marginTop:"6px" }}>
         <div className="vitals-mini-box" title={C.profBonusTip}>
-          <input className="vitals-mini-value" type="number" value={pbDraft ?? pb}
+          <input className="vitals-mini-value" type="text" inputMode="numeric" value={pbDraft ?? pb}
             onFocus={e => { e.target.select(); setPbDraft(String(pb)); }}
             onChange={e => {
-              setPbDraft(e.target.value);
-              const v = parseInt(e.target.value);
+              const r = e.target.value.replace(/[^\d]/g, "");
+              setPbDraft(r);
+              const v = parseInt(r);
               if (!isNaN(v) && v > 0) upd("profBonus", v);
             }}
             onBlur={e => {
@@ -170,11 +175,6 @@ export default function VitalsBar({ char, setChar, C, T, pb, onRestModal, varian
             </div>
           );
         })}
-      </div>
-
-      <div className="vitals-controls">
-        <button className="btn-pm minus" aria-label="Decrease HP" onClick={() => adjustHP(-1)}><Icon name="minus" size="1em"/></button>
-        <button className="btn-pm plus" aria-label="Increase HP" onClick={() => adjustHP(1)}><Icon name="plus" size="1em"/></button>
       </div>
 
       {/* ── Stany / Rzuty vs Śmierć / Wyczerpanie ── */}
