@@ -7,7 +7,7 @@ import { useScrollToEntity } from '../../../hooks/useScrollToEntity';
 import { useEntityList } from '../../../hooks/useEntityList';
 import Icon from '../../../shared/icons';
 
-function FactionsPanel({ title, factions, setFactions, openEntity }) {
+function FactionsPanel({ factions, setFactions, openEntity }) {
   const T = useT();
   const F = T.FACTIONS;
 
@@ -43,7 +43,7 @@ function FactionsPanel({ title, factions, setFactions, openEntity }) {
   return (
     <>
       <div className="sect-divider sect-divider-actions">
-        <span>{title} · {F.count(factions.length)}</span>
+        <span>{F.count(factions.length)}</span>
         <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
           {showForm ? <><Icon name="close" size="0.85em"/> {F.cancel}</> : <><Icon name="plus" size="0.85em"/> {F.add}</>}
         </button>

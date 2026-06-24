@@ -9,7 +9,7 @@ import Icon from '../../shared/icons';
 
 const numMod = v => v >= 0 ? `+${v}` : String(v);
 
-function SpellsScreen({ title, spells, setSpells, char, setChar }) {
+function SpellsScreen({ spells, setSpells, char, setChar }) {
   const T  = useT();
   const SP = T.SPELLS;
 
@@ -55,7 +55,7 @@ function SpellsScreen({ title, spells, setSpells, char, setChar }) {
   return (
     <>
       <div className="sect-divider sect-divider-actions">
-        <span>{title} · {SP.count(spells.length, inUseCount)}</span>
+        <span>{SP.count(spells.length, inUseCount)}</span>
         <button className="sect-divider-btn" style={{ borderColor:"var(--hj-spell-border)", color:"var(--hj-spell-accent)" }} onClick={() => setShowSlots(s => !s)}>
           {showSlots ? <><Icon name="close" size="0.85em"/> {SP.hideSlots}</> : <><Icon name="settings" size="0.85em"/> {SP.manageSlots}</>}
         </button>

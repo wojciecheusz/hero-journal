@@ -22,7 +22,7 @@ const catColor = cat => ({
   "Feat":            "#9a6030",
 })[cat] || "#8a7848";
 
-function SkillsScreen({ title, skills, setSkills, openEntity }) {
+function SkillsScreen({ skills, setSkills, openEntity }) {
   const T    = useT();
   const SK   = T.SKILLS;
   const CATS = T.SKILL_CATS;
@@ -62,7 +62,7 @@ function SkillsScreen({ title, skills, setSkills, openEntity }) {
   return (
     <>
       <div className="sect-divider sect-divider-actions">
-        <span>{title} · {SK.count(skills.length, inUseCount)}</span>
+        <span>{SK.count(skills.length, inUseCount)}</span>
         <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
           {showForm ? <><Icon name="close" size="0.85em"/> {SK.cancel}</> : <><Icon name="plus" size="0.85em"/> {SK.add}</>}
         </button>

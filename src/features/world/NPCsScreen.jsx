@@ -6,7 +6,7 @@ import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 import Icon from '../../shared/icons';
 
-function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
+function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const T  = useT();
   const N  = T.NPCS;
   const RL = T.REL_LABELS;
@@ -41,7 +41,7 @@ function NPCsScreen({ title, npcs, setNPCs, openEntity }) {
   return (
     <>
       <div className="sect-divider sect-divider-actions">
-        <span>{title} · {N.count(npcs.length)}</span>
+        <span>{N.count(npcs.length)}</span>
         <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
           {showForm ? <><Icon name="close" size="0.85em"/> {N.cancel}</> : <><Icon name="plus" size="0.85em"/> {N.add}</>}
         </button>

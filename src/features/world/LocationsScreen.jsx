@@ -7,7 +7,7 @@ import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 import Icon from '../../shared/icons';
 
-function LocationsScreen({ title, locations, setLocations, openEntity }) {
+function LocationsScreen({ locations, setLocations, openEntity }) {
   const T = useT();
 
   const [form, setForm] = useState({ name:"", type:LOC_TYPE.SETTLEMENT, notes:"", tags:[] });
@@ -40,7 +40,7 @@ function LocationsScreen({ title, locations, setLocations, openEntity }) {
   return (
     <>
       <div className="sect-divider sect-divider-actions">
-        <span>{title} · {T.LOCATIONS.count(locations.length)}</span>
+        <span>{T.LOCATIONS.count(locations.length)}</span>
         <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
           {showForm ? <><Icon name="close" size="0.85em"/> {T.LOCATIONS.cancel}</> : <><Icon name="plus" size="0.85em"/> {T.LOCATIONS.add}</>}
         </button>

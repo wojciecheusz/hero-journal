@@ -741,9 +741,11 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 /* ── Nagłówek listy w stylu sect-divider + akcje po prawej (P24) ─ */
 .sect-divider-actions {
   margin: 0 0 0.85rem;
+  flex-wrap: wrap;
 }
 .sect-divider-actions > span:first-child {
   white-space: nowrap;
+  min-width: 0;
 }
 .sect-divider-btn {
   font-family: 'Cinzel', serif;

@@ -7,7 +7,7 @@ import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 import Icon from '../../shared/icons';
 
-function InventoryScreen({ title, inventory, setInventory, openEntity }) {
+function InventoryScreen({ inventory, setInventory, openEntity }) {
   const T = useT();
   const I = T.INVENTORY;
   const displayItemType = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
@@ -46,7 +46,7 @@ function InventoryScreen({ title, inventory, setInventory, openEntity }) {
   return (
     <>
       <div className="sect-divider sect-divider-actions">
-        <span>{title} · {I.count(inventory.length, equippedCount)}</span>
+        <span>{I.count(inventory.length, equippedCount)}</span>
         <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
           {showForm ? <><Icon name="close" size="0.85em"/> {I.cancel}</> : <><Icon name="plus" size="0.85em"/> {I.add}</>}
         </button>
