@@ -107,7 +107,7 @@ export function validateCharData(data, defaults) {
   ensureObj('deathSaves',   defaults.deathSaves);
   ensureObj('conditions',   defaults.conditions);
   ensureArr('classes',      defaults.classes);
-  ensureArr('spellSlots',   defaults.spellSlots);
+  ensureObj('spellSlots',   defaults.spellSlots);
   ensureNum('xp',           defaults.xp ?? 0);
   ensureNum('ac',           defaults.ac ?? 10);
   ensureNum('speed',        defaults.speed ?? 30);
@@ -115,7 +115,6 @@ export function validateCharData(data, defaults) {
   if (!safe.classes || safe.classes.length === 0) {
     safe.classes = defaults.classes;
   }
-  if (Array.isArray(safe.spellSlots)) safe.spellSlots = {};
   return safe;
 }
 
