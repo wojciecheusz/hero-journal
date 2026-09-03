@@ -5,15 +5,27 @@ service cloud.firestore {
       // Odczyt (get + list) — tylko właściciel, zalogowany
       allow read: if request.auth != null && request.auth.uid == userId;
 
-      // Zapis — tylko właściciel + walidacja struktury dokumentu:
-      //   • dokument musi mieć dokładnie jedno pole 'value' (zapobiega
+      // Zapis — tylko właściciel + walidacja kształtu dokumentu:
+      //   • dokument ma dokładnie pola 'value' i 'updatedAt' (zapobiega
       //     zapisywaniu arbitralnych pól przez złośliwy/buggy klient)
       //   • 'value' nie może być null
+      //   • 'updatedAt' to liczba (znacznik czasu last-write-wins)
+      //
+      // UWAGA: ten zestaw pól MUSI odpowiadać dokładnie temu, co wysyła
+      // cloudSave() w src/firebase/firestore.js. Rozjazd między tymi dwoma
+      // miejscami kończy się PERMISSION_DENIED przy KAŻDYM zapisie, czyli
+      // cichą utratą synchronizacji między urządzeniami (dane zostają
+      // wyłącznie w localStorage). Pilnuje tego test src/__tests__/firestore.test.js.
+      //
+      // Rozmiaru dokumentu nie da się zwalidować w regułach Firestore
+      // (brak odpowiednika request.resource.size z Cloud Storage) — obowiązuje
+      // natywny limit Firestore 1 MiB na dokument.
       allow write: if request.auth != null
                    && request.auth.uid == userId
-                   && request.resource.data.keys().hasOnly(['value'])
-                   && request.resource.data.keys().size() == 1
-                   && request.resource.data.value != null;
+                   && request.resource.data.keys().hasOnly(['value', 'updatedAt'])
+                   && request.resource.data.keys().hasAll(['value', 'updatedAt'])
+                   && request.resource.data.value != null
+                   && request.resource.data.updatedAt is number;
 
       // Usuwanie (na wypadek przyszłego pruning starych slotów)
       allow delete: if request.auth != null && request.auth.uid == userId;

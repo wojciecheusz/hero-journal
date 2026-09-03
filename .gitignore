@@ -14,6 +14,9 @@ dev-dist
 *.local
 *.bak
 __*
+# ...ale wzorzec __* lapal tez src/__tests__/ i po cichu wycinal nowe
+# pliki testow z repo (git nie wchodzi do wykluczonego katalogu).
+!src/__tests__/
 
 # Editor directories and files
 .vscode/*
