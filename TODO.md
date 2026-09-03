@@ -3,6 +3,44 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P25 — Naprawa synchronizacji między urządzeniami: reguły Firestore odrzucały każdy zapis (2026-09-03) — UKOŃCZONE
+**Objaw:** logowanie kontem Google działało, dane zapisywały się lokalnie, ale żadna
+zmiana nie docierała na drugie urządzenie. W UI: żółty baner `☁ Synchronizacja…`
+(`syncWarning`), po 3 nieudanych zapisach czerwony baner (`syncFailed`). W konsoli:
+`[HJ] cloudSave error: Missing or insufficient permissions.`
+
+**Przyczyna:** rozjazd między klientem a regułami bezpieczeństwa. Punkt 7 audytu
+(last-write-wins) zmienił payload `cloudSave()` na `{ value, updatedAt }`, a punkt 12
+(walidacja kształtu dokumentu) dopuszczał w `allow write` wyłącznie
+`hasOnly(['value'])` + `keys().size() == 1`. Oba punkty trafiły do repo tym samym
+commitem (`ecfca56`), więc od chwili wgrania reguł do Firebase **każdy** `setDoc()`
+kończył się `PERMISSION_DENIED`. Zapis do chmury nie następował nigdy, a `syncFromCloud`
+nie miał czego pobrać — dane zostawały wyłącznie w `localStorage`, osobno na każdym
+urządzeniu. Logowanie i odczyt działały poprawnie, dlatego awaria była cicha.
+
+**Poprawka:** `firestore.rules` — `allow write` dopuszcza i wymaga dokładnie pól
+`['value','updatedAt']` (`hasOnly` + `hasAll`), nadal z `value != null` i dodatkowo
+`updatedAt is number`. Intencja punktu 12 (brak arbitralnych pól) zachowana.
+
+**Zabezpieczenie przed nawrotem:** `src/__tests__/firestore.test.js` (14 testów) —
+test kontraktowy parsuje `firestore.rules` i porównuje listy z `hasOnly()`/`hasAll()`
+z rzeczywistym zestawem pól wysyłanym przez `cloudSave()`; rozjazd = czerwony test
+(zweryfikowane: na starych regułach test pada, na nowych przechodzi). Pozostałe testy
+pokrywają rekurencyjne usuwanie `undefined`, `updatedAt` jako liczbę całkowitą, zapis
+`hj_ts_{key}`, ścieżkę `users/{uid}/data/{key}` oraz last-write-wins w `syncFromCloud`.
+Cały pakiet: 57 testów zielonych.
+
+**Znalezione przy okazji:** wzorzec `__*` w `.gitignore` wykluczał katalog
+`src/__tests__/`, przez co każdy **nowy** plik testów cicho nie trafiał do repo
+(git nie wchodzi do wykluczonego katalogu, a 5 wcześniejszych plików było już
+śledzonych, więc nikt tego nie zauważył). To dlatego plik z punktu 8 audytu
+zniknął. Dodano wyjątek `!src/__tests__/`.
+
+**⚠️ Wymagane działanie ręczne:** repo nie zawiera `firebase.json`/`.firebaserc`, więc
+reguły nie wdrażają się automatycznie. Poprawka zadziała dopiero po wgraniu
+`firestore.rules` do projektu Firebase — konsola (Firestore → Rules → Publish) albo
+`firebase deploy --only firestore:rules --project <projectId>`.
+
 ### ✅ P24 — Struktura/estetyka wg "Hero Journal Mobile v4" 1:1, bez zmiany palety (2026-06-15) — UKOŃCZONE
 Polecenie: odwzorować 1:1 strukturę, kolejność kart w zakładkach, "miękką"
 warstwową/przezroczystą estetykę kart oraz wygląd nagłówka z referencyjnych
@@ -336,6 +374,11 @@ to osobne, przyszłe polecenia.**
    pomija `value === undefined`, obsługuje wiele dokumentów niezależnie, łyka
    błędy sieci. Mock pattern: `vi.mock('firebase/firestore', ...)` +
    `vi.mock('../firebase/index.js', ...)`. Wszystkie 55 testów przechodzi.
+   ⚠️ **Sprostowanie:** pliku nie było w repo (HEAD miał 43 testy w 5 plikach).
+   Powód: wzorzec `__*` w `.gitignore` łapał katalog `src/__tests__/`, więc nowy
+   plik testów został po cichu pominięty przy commicie (5 wcześniejszych plików
+   było już śledzonych, dlatego reguła ich nie ruszyła). Odtworzony w P25 jako
+   14 testów, łącznie 57; `.gitignore` dostał wyjątek `!src/__tests__/`.
 
 #### 🟡 Priorytet ŚREDNI
 9. [x] **Brak potwierdzenia usuwania pojedynczych wpisów** (przedmioty/czary/NPC/...) —
@@ -357,10 +400,19 @@ to osobne, przyszłe polecenia.**
     ścieżek `(.*)`. CSP pokrywa Firebase Auth/Firestore (Google APIs, WebSocket),
     Google Fonts (style/font-src), Google OAuth (frame-src/accounts.google.com);
     `style-src 'unsafe-inline'` zachowany (wymagany przez React inline styles).
-12. **Reguły Firestore bez walidacji kształtu/rozmiaru danych** (`firestore.rules`) —
+12. [x] **Reguły Firestore bez walidacji kształtu/rozmiaru danych** (`firestore.rules`) —
     poprawnie izolują dane per-user, ale zalogowany użytkownik może zapisać
     dowolnie duży/zniekształcony dokument (koszty/awarie klienta). Dodać
     `request.resource.size()` i podstawową walidację typów/rozmiaru w `allow write`.
+    ✅ **UKOŃCZONE** — `allow write` waliduje kształt dokumentu: zestaw pól dokładnie
+    `['value','updatedAt']` (`hasOnly` + `hasAll`), `value != null`, `updatedAt is number`.
+    Rozmiaru w bajtach **nie da się** sprawdzić w regułach Firestore (nie ma
+    odpowiednika `request.resource.size` znanego z Cloud Storage) — obowiązuje natywny
+    limit 1 MiB na dokument.
+    ⚠️ Pierwsza wersja tej walidacji dopuszczała tylko `['value']` i była sprzeczna
+    z payloadem z punktu 7 (`{ value, updatedAt }`) — skutkiem był `PERMISSION_DENIED`
+    przy każdym zapisie i utrata synchronizacji między urządzeniami. Naprawione w P25,
+    kontrakt pilnowany testem `src/__tests__/firestore.test.js`.
 13. [x] **Podwójna reprezentacja Wycieńczenia (lore bug)** — binarny `exhausted`
     w `CONDITIONS` sprzeczny z licznikiem poziomów 0-6 `conditions.exhaustion`.
     ✅ **UKOŃCZONE** — usunięto wpis `{ key:"exhausted", label:"Wyczerpany" }`
