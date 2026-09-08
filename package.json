@@ -11,7 +11,8 @@
     "test": "vitest run --config vitest.config.js",
     "test:watch": "vitest --config vitest.config.js",
     "test:coverage": "vitest run --config vitest.config.js --coverage",
-    "screenshots": "node scripts/screenshots.js"
+    "screenshots": "node scripts/screenshots.js",
+    "deploy:rules": "firebase deploy --only firestore:rules"
   },
   "dependencies": {
     "firebase": "^12.14.0",

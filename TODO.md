@@ -36,10 +36,17 @@ Cały pakiet: 57 testów zielonych.
 śledzonych, więc nikt tego nie zauważył). To dlatego plik z punktu 8 audytu
 zniknął. Dodano wyjątek `!src/__tests__/`.
 
-**⚠️ Wymagane działanie ręczne:** repo nie zawiera `firebase.json`/`.firebaserc`, więc
-reguły nie wdrażają się automatycznie. Poprawka zadziała dopiero po wgraniu
-`firestore.rules` do projektu Firebase — konsola (Firestore → Rules → Publish) albo
-`firebase deploy --only firestore:rules --project <projectId>`.
+**✅ Wdrożone:** reguły opublikowane w konsoli Firebase (Firestore → Rules → Publish);
+synchronizacja między urządzeniami potwierdzona jako działająca.
+
+**Wdrażanie reguł z repo:** dodany `firebase.json` wskazuje na `firestore.rules`, więc
+kolejne zmiany reguł idą przez `npm run deploy:rules` (`firebase deploy --only
+firestore:rules`) zamiast ręcznego wklejania do konsoli — dzięki temu plik w repo
+i reguły w Firebase nie rozjadą się niezauważenie. Wymaga CLI: `npm i -g firebase-tools`
++ `firebase login`, oraz wskazania projektu — jednorazowo `firebase use --add` (tworzy
+`.firebaserc`, warto zacommitować) albo doraźnie `--project <projectId>`. `.firebaserc`
+nie trafił do repo, bo id projektu nie jest tu nigdzie zapisane — siedzi w zmiennych
+środowiskowych Vercela. Cache deploya (`.firebase/`) dopisany do `.gitignore`.
 
 ### ✅ P24 — Struktura/estetyka wg "Hero Journal Mobile v4" 1:1, bez zmiany palety (2026-06-15) — UKOŃCZONE
 Polecenie: odwzorować 1:1 strukturę, kolejność kart w zakładkach, "miękką"
