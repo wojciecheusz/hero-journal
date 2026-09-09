@@ -3,6 +3,45 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P26 — Karta postaci nieosiągalna w prawej kolumnie przy 1024-1365px + lint zasypany przez dev-dist (2026-09-09) — UKOŃCZONE
+Dwie pozycje wybrane z audytu (technicznego/UI/UX/lore). Pozostałe punkty audytu
+świadomie **nie** ruszane.
+
+**1. Prawa kolumna karty postaci wychodziła poza viewport i była nieosiągalna.**
+Układ desktopowy startuje od `min-width: 1024px`, ale `.char-sheet-grid`
+dostawał tam `grid-template-columns: 1fr 1fr`. Tor `1fr` to `minmax(auto, 1fr)`,
+więc nie schodzi poniżej swojej szerokości `min-content` — lewa kolumna
+(siatka umiejętności + karty walki) ma jej ok. 744px, przez co prawa kolumna
+lądowała za krawędzią ekranu. Strona nie ma przewijania poziomego
+(`documentElement.scrollWidth == clientWidth`), więc treść była **nie do
+odzyskania**: Biegłości i Języki, Cechy Osobowości, Notatki osobiste, Historia
+postaci. Zmierzone przed poprawką: 1024px → 62 elementy poza kadrem, najgorszy
++286px; 1100px → +210px; 1280px → +30px; 1366px → czysto. Dotyczyło iPada Pro
+w pionie i poziomie, laptopów 1280×800 i każdego niezmaksymalizowanego okna.
+Tylko zakładka Postać — `world-all`, `equipment`, `inventory`, `sessions`,
+`quests` były w tym zakresie czyste.
+✅ **POPRAWKA** — reguła dwukolumnowa przeniesiona z bloku `min-width: 1024px`
+do nowego `@media (min-width: 1366px)`. Do 1365px karta jest jednokolumnowa
+(bazowy `.char-sheet-grid` to `flex-direction: column`), sidebar i reszta
+chromu desktopowego zostają bez zmian od 1024px. Plik: `src/styles/global.css`.
+Zweryfikowane pomiarem na 11 szerokościach (768→2560): 768-1365 jedna kolumna,
+obie `.char-col` pełnej szerokości w kadrze, 0 elementów poza viewportem;
+1366+ dwie kolumny, też 0. Brak regresji na 1440/1920/2560.
+*Zostaje kosmetyka:* przy 1366-1440px kolumny są nierówne (744+273px, 744+308px)
+z tego samego powodu `min-content`; wyrównują się dopiero ok. 1920px. Nie
+przepełnia już niczego, więc nie ruszane.
+
+**2. `npm run lint` był zasypany błędami z kodu generowanego.**
+`eslint.config.js` ignorował tylko `dist`, więc lintowany był też `dev-dist/`
+(service worker z `vite-plugin-pwa`). Zmierzone: **88 problemów / 69 błędów
+przed, 46 / 31 po** — `dev-dist` odpowiadał za 42 problemy i 38 błędów, w
+których ginęły prawdziwe znaleziska.
+✅ **POPRAWKA** — `globalIgnores(['dist', 'dev-dist'])`. Plik: `eslint.config.js`.
+*Uwaga:* pozostałe 31 błędów jest realne i nadal nienaprawione — m.in.
+`clamp` niezaimportowany w `shared/ui.jsx:113` (martwy `StatBox`),
+`react-refresh/only-export-components`, `no-empty` w `storage.js:32`
+oraz `process` w `scripts/screenshots.js` (brak globali node w configu).
+
 ### ✅ P25 — Naprawa synchronizacji między urządzeniami: reguły Firestore odrzucały każdy zapis (2026-09-03) — UKOŃCZONE
 **Objaw:** logowanie kontem Google działało, dane zapisywały się lokalnie, ale żadna
 zmiana nie docierała na drugie urządzenie. W UI: żółty baner `☁ Synchronizacja…`

@@ -483,8 +483,12 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   /* HelpPanel overlay ukryty na desktop (panel jest w sidebarze) */
   .hj-help-overlay  { display: none !important; }
 
-  /* Karta postaci — 2 kolumny */
-  .char-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+  /* Karta postaci — jedna kolumna aż do 1365px; druga wchodzi dopiero
+     od 1366px (blok niżej). Przy 1024-1365px siatka `1fr 1fr` nie
+     mieściła się w treści pomniejszonej o sidebar: tory `1fr` nie
+     schodzą poniżej swojej szerokości min-content, więc prawa kolumna
+     wychodziła poza viewport (+286px przy 1024px) i była nieosiągalna,
+     bo strona nie ma przewijania poziomego. */
   .char-col         { gap: 1.2rem; }
 
   /* Karty — więcej powietrza */
@@ -530,6 +534,11 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 }
 
 /* Karta postaci — aktualizacje dla szerszych breakpointów */
+@media (min-width: 1366px) {
+  /* Dwie kolumny dopiero od tej szerokości — dopiero tutaj obie mieszczą
+     się obok sidebara bez wychodzenia poza viewport. */
+  .char-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+}
 @media (min-width: 1440px) {
   .char-sheet-grid { gap: 1.4rem; }
   .char-col         { gap: 1.4rem; }
