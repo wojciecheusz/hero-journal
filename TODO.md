@@ -3,6 +3,79 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P27 — Urządzenia rozjeżdżały się bezpowrotnie: przebudowa scalania synchronizacji (2026-09-10) — UKOŃCZONE
+Zgłoszenie: telefon pokazuje co innego niż tablet, mimo restartu i „Synchronizuj dane".
+Reguły z P25 działały poprawnie — zapis do chmury szedł. Problem był w scalaniu.
+
+**Przyczyna.** Znacznik `hj_ts_{klucz}` znaczył dwie różne rzeczy w dwóch miejscach:
+`save()` (`storage.js`) ustawiał go przy **każdej lokalnej edycji**, bezwarunkowo,
+jeszcze przed próbą zapisu do chmury; `cloudSave()` ustawiał go po **udanym** zapisie.
+`syncFromCloud` porównywał go (`updatedAt > localTs`) tak, jakby zawsze znaczył to
+drugie. Skutki, oba trwałe:
+- Urządzenie z lokalną zmianą, która nie doszła do chmury, miało znacznik „teraz"
+  i od tej pory **odrzucało wszystko, co przychodziło z chmury**. Pobieranie jest
+  warunkowe i jednokierunkowe, więc „Synchronizuj dane" nie miało jak tego naprawić.
+- `Date.now()` to zegar konkretnego urządzenia. Tablet z zegarem do przodu zawsze
+  bił znaczniki telefonu i **nigdy** nie przyjmował jego danych.
+Do tego doszła zaległość po awarii z P25: przez cały czas, gdy reguły odrzucały
+zapisy, każda edycja podbijała lokalny znacznik, a chmura zostawała pusta — więc po
+naprawie każde urządzenie wygrywało część kluczy i nie było zbieżności.
+
+**Nowy model.** Zamiast jednego znacznika czasu — dwa rozdzielone znaczniki plus
+identyfikator wersji:
+- `hj_syn_{klucz}` — `rev` wersji, o której wiemy, że jest w chmurze I którą trzymamy
+  lokalnie. Wspólny punkt odniesienia obu stron. Ustawia go wyłącznie udany zapis
+  albo przyjęcie danych z chmury.
+- `hj_dirty_{klucz}` — są lokalne zmiany, których chmura nie potwierdziła.
+- `rev` w dokumencie — nieprzezroczysty identyfikator, porównywany **wyłącznie na
+  równość, nigdy na kolejność**. Dzięki temu rozjazd zegarów przestał mieć
+  jakikolwiek wpływ na poprawność scalania.
+- `updatedAt` to teraz `serverTimestamp()` — znacznika nie da się przesunąć zegarem
+  urządzenia; służy do prezentacji, nie do automatycznego scalania.
+
+Decyzja scalania per klucz: brak danych lokalnych → bierz chmurę; `rev` z chmury
+równy potwierdzonemu → nic nie rób (lokalne zmiany są nowsze i pojadą przy zapisie);
+nowy `rev` bez lokalnych zmian → bierz chmurę; nowy `rev` **z** lokalnymi zmianami →
+**realny konflikt**, nic nie jest nadpisywane, decyduje użytkownik.
+
+**Rozstrzyganie konfliktów i furtka awaryjna.** Nowy `SyncModal` (Ustawienia →
+„Synchronizacja — narzędzia", otwiera się też sam, gdy sync zwróci konflikt): stan
+(ile kluczy czeka na wysłanie), lista konfliktów po czytelnych nazwach z wyborem
+„zachowaj lokalne" / „weź z chmury", oraz awaryjne `forcePushAll` / `forcePullAll`
+z dwustopniowym potwierdzeniem. `forcePullAll` robi z urządzenia dokładne odbicie
+chmury — usuwa lokalne klucze, których w chmurze nie ma — dlatego kolejność jest
+istotna: najpierw push z urządzenia-źródła, potem pull na pozostałych.
+
+**Migracja.** `migrateSyncMarkers()` (wołane przed pierwszym syncem) usuwa stare
+`hj_ts_*` i oznacza wszystkie istniejące klucze jako brudne. Starych znaczników nie
+da się przełożyć: nie wiadomo, czy wartość kiedykolwiek dotarła do chmury. Efekt
+zamierzony — pierwszy sync po aktualizacji niczego nie nadpisze po cichu. Dokumenty
+w chmurze bez `rev` trafiają do `legacy` i też nie nadpisują danych lokalnych.
+
+**Reguły.** Kształt dokumentu to teraz `['value','updatedAt','rev']`,
+`updatedAt is timestamp`, `rev` niepusty string do 64 znaków. Wymóg `value != null`
+**usunięty celowo**: `hj_active_profile` ma wartość null, gdy nie ma aktywnego
+profilu (usunięcie ostatniego profilu woła `saveActiveId(null)`), więc ten zapis
+wcześniej zawsze kończył się `PERMISSION_DENIED`. Walidację kształtu trzyma
+hasOnly + hasAll.
+
+⚠️ **To zmiana skoordynowana klient + reguły. Reguły trzeba wgrać PRZED wdrożeniem
+aplikacji** (`npm run deploy:rules`) — nowy payload zawiera `rev`, a stare reguły
+dopuszczają dokładnie `['value','updatedAt']`, więc na starych regułach każdy zapis
+kończy się `PERMISSION_DENIED`, dokładnie jak w awarii z P25.
+
+**Testy.** `src/__tests__/firestore.test.js` przepisany: 66 testów w całym pakiecie.
+Test kontraktowy (payload ↔ `hasOnly`/`hasAll` w regułach) zadziałał zgodnie
+z przeznaczeniem — wyłapał zmianę kształtu payloadu przy tej przebudowie. Doszły
+testy scalania po `rev` (wszystkie cztery przypadki decyzji), osobna regresja na
+rozjazd zegarów, `value: null` i `undefined`, znaczniki po udanym i nieudanym
+zapisie, rozstrzyganie konfliktów oraz wymuszony push/pull. Lint 45/30 problemów
+(przed zmianą 46/31 — jeden błąd mniej), build OK, smoke test w przeglądarce:
+aplikacja startuje, wszystkie zakładki renderują, zero błędów w konsoli.
+
+*Nietknięte, znane:* propagacja usuwania do chmury (`remove()`/`deleteCharData()`
+nadal omijają `cloudSave`) i brak czyszczenia `localStorage` przy wylogowaniu.
+
 ### ✅ P26 — Karta postaci nieosiągalna w prawej kolumnie przy 1024-1365px + lint zasypany przez dev-dist (2026-09-09) — UKOŃCZONE
 Dwie pozycje wybrane z audytu (technicznego/UI/UX/lore). Pozostałe punkty audytu
 świadomie **nie** ruszane.

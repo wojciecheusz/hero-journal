@@ -40,7 +40,7 @@ const ieditStyle = {
 export default function Header({
   T, theme, setTheme, toggleLanguage, char, tab,
   showHelp, setShowHelp, showSettings, setShowSettings,
-  setScreen, setShowReset, user, onCloudRefresh, onLogout,
+  setScreen, setShowReset, user, onCloudRefresh, onSyncTools, onLogout,
   onExport, onImport,
   setChar, pb, onRestModal,
   panelCollapsed, setPanelCollapsed,
@@ -157,7 +157,7 @@ export default function Header({
                 <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
                 <SettingsMenu T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage}
                   setScreen={setScreen} setShowReset={setShowReset} setShowSettings={setShowSettings}
-                  user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+                  user={user} onCloudRefresh={onCloudRefresh} onSyncTools={onSyncTools} onLogout={onLogout}
                   onExport={onExport} onImport={onImport}
                   dropdownStyle={{ position:"absolute", top:"calc(100% + 8px)", right:0 }}/>
               </>}

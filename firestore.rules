@@ -6,10 +6,18 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == userId;
 
       // Zapis — tylko właściciel + walidacja kształtu dokumentu:
-      //   • dokument ma dokładnie pola 'value' i 'updatedAt' (zapobiega
-      //     zapisywaniu arbitralnych pól przez złośliwy/buggy klient)
-      //   • 'value' nie może być null
-      //   • 'updatedAt' to liczba (znacznik czasu last-write-wins)
+      //   • dokument ma dokładnie pola 'value', 'updatedAt' i 'rev'
+      //     (zapobiega zapisywaniu arbitralnych pól przez złośliwy/buggy klient)
+      //   • 'updatedAt' to timestamp — klient wysyła serverTimestamp(), więc
+      //     znacznika nie da się przesunąć zegarem urządzenia
+      //   • 'rev' to niepusty string — nieprzezroczysty identyfikator wersji,
+      //     na którym opiera się scalanie (porównanie na równość, nie kolejność)
+      //
+      // 'value' MOŻE być null i to jest zamierzone: `hj_active_profile` ma
+      // wartość null, gdy nie ma aktywnego profilu (usunięcie ostatniego
+      // profilu woła saveActiveId(null)). Poprzednia wersja reguł wymagała
+      // `value != null` i ten zapis zawsze kończył się PERMISSION_DENIED.
+      // Walidację kształtu (brak dowolnych pól) trzyma hasOnly + hasAll.
       //
       // UWAGA: ten zestaw pól MUSI odpowiadać dokładnie temu, co wysyła
       // cloudSave() w src/firebase/firestore.js. Rozjazd między tymi dwoma
@@ -22,10 +30,12 @@ service cloud.firestore {
       // natywny limit Firestore 1 MiB na dokument.
       allow write: if request.auth != null
                    && request.auth.uid == userId
-                   && request.resource.data.keys().hasOnly(['value', 'updatedAt'])
-                   && request.resource.data.keys().hasAll(['value', 'updatedAt'])
-                   && request.resource.data.value != null
-                   && request.resource.data.updatedAt is number;
+                   && request.resource.data.keys().hasOnly(['value', 'updatedAt', 'rev'])
+                   && request.resource.data.keys().hasAll(['value', 'updatedAt', 'rev'])
+                   && request.resource.data.updatedAt is timestamp
+                   && request.resource.data.rev is string
+                   && request.resource.data.rev.size() > 0
+                   && request.resource.data.rev.size() <= 64;
 
       // Usuwanie (na wypadek przyszłego pruning starych slotów)
       allow delete: if request.auth != null && request.auth.uid == userId;
