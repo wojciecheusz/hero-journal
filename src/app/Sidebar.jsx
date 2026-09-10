@@ -72,7 +72,7 @@ function SidebarHelp({ tab, T, onClose }) {
 export default function Sidebar({
   T, theme, setTheme, toggleLanguage, char, setChar, pb, tab, setTab, navGroupsDesktop,
   showHelp, setShowHelp, showSettings, setShowSettings,
-  setScreen, setShowReset, user, onCloudRefresh, onLogout,
+  setScreen, setShowReset, user, onCloudRefresh, onSyncTools, onLogout,
   onExport, onImport, onRestModal,
 }) {
   const { className, totalLevel } = getClassLevelLabel(char, T.CHAR);
@@ -274,7 +274,7 @@ export default function Sidebar({
             <div style={{ position:"fixed", inset:0, zIndex:199 }} onClick={() => setShowSettings(false)}/>
             <SettingsMenu T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage}
               setScreen={setScreen} setShowReset={setShowReset} setShowSettings={setShowSettings}
-              user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+              user={user} onCloudRefresh={onCloudRefresh} onSyncTools={onSyncTools} onLogout={onLogout}
               onExport={onExport} onImport={onImport}
               dropdownStyle={{ position:"fixed", bottom:"48px", left:"5px" }}/>
           </>}

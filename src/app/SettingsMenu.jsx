@@ -9,7 +9,7 @@ import { PALETTES, THEMES } from '../theme/themes';
 export default function SettingsMenu({
   T, theme, setTheme, toggleLanguage,
   setScreen, setShowReset, setShowSettings,
-  user, onCloudRefresh, onLogout,
+  user, onCloudRefresh, onSyncTools, onLogout,
   onExport, onImport,
   dropdownStyle,
 }) {
@@ -57,6 +57,11 @@ export default function SettingsMenu({
         {user && onCloudRefresh && (
           <button style={btnStyle} onClick={close(onCloudRefresh)}>
             {T.UI.syncData}
+          </button>
+        )}
+        {user && onSyncTools && (
+          <button style={btnStyle} onClick={close(onSyncTools)}>
+            {T.UI.syncTools}
           </button>
         )}
         {user && onLogout && (

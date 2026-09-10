@@ -10,6 +10,75 @@ export const setQuotaExceededHook  = fn  => { _hooks.quotaExceeded = fn; };
 
 export const CHAR_SLOTS = ["char","inventory","npcs","locations","skills","spells","sessions","quests","factions"];
 
+/* ── Znaczniki synchronizacji ──────────────────────────────────────
+   hj_syn_{key}   — `rev` wersji, o ktorej wiemy, ze jest w chmurze I ktora
+                    trzymamy lokalnie. To wspolny punkt odniesienia obu stron.
+   hj_dirty_{key} — sa lokalne zmiany, ktorych chmura jeszcze nie potwierdzila.
+
+   Rozdzielenie tych dwoch rzeczy jest calym sensem tego modelu. Poprzedni
+   `hj_ts_{key}` byl podbijany ZAROWNO przy lokalnej edycji, jak i przy udanym
+   zapisie do chmury, a `syncFromCloud` porownywal go tak, jakby zawsze znaczyl
+   to drugie. Urzadzenie z niezsynchronizowana zmiana wygladalo wiec jak
+   "nowsze" i na stale odrzucalo dane z chmury — dwa urzadzenia rozjezdzaly sie
+   bezpowrotnie, a przycisk synchronizacji nie mial jak tego naprawic.
+
+   Kolejnosc wersji NIE jest juz nigdzie porownywana przez znaczniki czasu:
+   `rev` to nieprzezroczysty identyfikator, sprawdzany wylacznie na rownosc.
+   Dzieki temu rozjazd zegarow miedzy urzadzeniami nie ma wplywu na scalanie. */
+const SYN_PREFIX   = "hj_syn_";
+const DIRTY_PREFIX = "hj_dirty_";
+const SYNC_MODEL_KEY = "hj_sync_model_v2";
+
+export const getSyncedRev = key => { try { return localStorage.getItem(SYN_PREFIX + key); } catch { return null; } };
+export const setSyncedRev = (key, rev) => { try { localStorage.setItem(SYN_PREFIX + key, rev); } catch { /* localStorage niedostepny: tryb prywatny lub brak miejsca */ } };
+export const isDirty      = key => { try { return localStorage.getItem(DIRTY_PREFIX + key) === "1"; } catch { return false; } };
+export const markDirty    = key => { try { localStorage.setItem(DIRTY_PREFIX + key, "1"); } catch { /* localStorage niedostepny: tryb prywatny lub brak miejsca */ } };
+export const clearDirty   = key => { try { localStorage.removeItem(DIRTY_PREFIX + key); } catch { /* localStorage niedostepny: tryb prywatny lub brak miejsca */ } };
+
+const isMarkerKey = k =>
+  k.startsWith(SYN_PREFIX) || k.startsWith(DIRTY_PREFIX) || k.startsWith("hj_ts_") || k === SYNC_MODEL_KEY;
+
+/* Wszystkie klucze danych podlegajace synchronizacji (bez znacznikow). */
+export function syncableKeys() {
+  const out = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith("hj_") && !isMarkerKey(k)) out.push(k);
+    }
+  } catch { /* localStorage niedostepny: tryb prywatny lub brak miejsca */ }
+  return out;
+}
+
+/* Usuwa znaczniki po kluczu, ktory przestal istniec. */
+export const clearSyncMarkers = key => {
+  try { localStorage.removeItem(SYN_PREFIX + key); localStorage.removeItem(DIRTY_PREFIX + key); } catch { /* localStorage niedostepny: tryb prywatny lub brak miejsca */ }
+};
+
+/* Migracja ze starego modelu `hj_ts_*`.
+
+   Starych znacznikow nie da sie przelozyc na nowy model: nie wiadomo, czy dana
+   wartosc kiedykolwiek dotarla do chmury. Dlatego usuwamy je i oznaczamy
+   wszystkie istniejace klucze jako "brudne". Efekt: pierwszy sync po migracji
+   nie nadpisze niczego po cichu — zglosi konflikt i zapyta uzytkownika. */
+export function migrateSyncMarkers() {
+  try {
+    if (localStorage.getItem(SYNC_MODEL_KEY)) return { removed: 0, marked: 0 };
+    const stale = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith("hj_ts_")) stale.push(k);
+    }
+    stale.forEach(k => localStorage.removeItem(k));
+    const keys = syncableKeys();
+    keys.forEach(markDirty);
+    localStorage.setItem(SYNC_MODEL_KEY, "1");
+    return { removed: stale.length, marked: keys.length };
+  } catch {
+    return { removed: 0, marked: 0 };
+  }
+}
+
 export const load = (key, fb) => {
   try { return JSON.parse(localStorage.getItem(key)) ?? fb; }
   catch { return fb; }
@@ -18,7 +87,9 @@ export const load = (key, fb) => {
 export const save = (key, val) => {
   try {
     localStorage.setItem(key, JSON.stringify(val));
-    localStorage.setItem(`hj_ts_${key}`, String(Date.now()));
+    /* Tylko oznaczenie "sa lokalne zmiany". Potwierdzenie (hj_syn_) ustawia
+       wylacznie cloudSave po UDANYM zapisie — patrz komentarz przy prefiksach. */
+    markDirty(key);
   } catch (e) {
     if (e?.name === 'QuotaExceededError' || e?.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
       _hooks.quotaExceeded?.();
@@ -29,13 +100,17 @@ export const save = (key, val) => {
 };
 
 export const remove = (key) => {
-  try { localStorage.removeItem(key); } catch {}
+  try { localStorage.removeItem(key); } catch { /* localStorage niedostepny: tryb prywatny lub brak miejsca */ }
 };
 
 const charKey              = (slot, id) => `hj_${slot}_${id}`;
 export const loadChar       = (slot, id, fb) => load(charKey(slot, id), fb);
 export const saveChar       = (slot, id, val) => save(charKey(slot, id), val);
-export const deleteCharData = id => CHAR_SLOTS.forEach(s => localStorage.removeItem(`hj_${s}_${id}`));
+export const deleteCharData = id => CHAR_SLOTS.forEach(s => {
+  const k = `hj_${s}_${id}`;
+  localStorage.removeItem(k);
+  clearSyncMarkers(k);
+});
 
 export const loadProfiles  = () => load("hj_profiles", []);
 export const saveProfiles  = p  => save("hj_profiles", p);
@@ -48,6 +123,7 @@ const PROTECTED_KEYS = new Set([
   "hj_tutorial_seen",
   "hj_enum_migration_v1",
   "hj_lang",
+  SYNC_MODEL_KEY,
 ]);
 
 export function pruneOrphanedData() {
