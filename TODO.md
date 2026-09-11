@@ -3,6 +3,46 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P28 — Jeden przycisk „Synchronizuj" zamiast panelu narzędzi + naprawa pobierania (2026-09-11) — UKOŃCZONE
+Zgłoszenie: osobne narzędzia push/pull to przerost formy, a pobieranie z chmury
+i tak nie działało (edycja na tablecie → wypchnięcie → pobranie na PC = brak efektu).
+
+**Przyczyna niedziałającego pobierania.** `migrateSyncMarkers()` z P27 oznaczał
+**wszystkie** klucze jako „brudne". Urządzenie uważało więc każdą swoją wartość za
+niezapisaną zmianę i konsekwentnie odmawiało przyjęcia czegokolwiek z chmury.
+Nadgorliwość w imię „żadnej cichej utraty danych" zablokowała podstawową funkcję.
+Teraz migracja zostawia klucze CZYSTE.
+
+**Drugi błąd, wyłapany przez test.** W `syncNow` krok 2 (pobieranie) pracował na
+snapshocie chmury sprzed kroku 1 (wysyłanie), więc każdy właśnie wypchnięty klucz
+wyglądał na „nową wersję w chmurze" i był natychmiast nadpisywany starą treścią.
+Dotyczyłoby to **każdego** wypchnięcia. Poprawka: zbiór `justPushed` pomijany w kroku 2.
+
+**Uproszczenie.** `SyncModal`, `forcePushAll`, `forcePullAll`, `resolveKeepLocal`,
+`resolveTakeCloud` i osobna pozycja w menu — usunięte. Zostaje jedno `syncNow(uid)`:
+wypchnij lokalne zmiany, potem pobierz z chmury to, czego to urządzenie nie widziało.
+Obsługuje je przycisk „Synchronizuj dane" i logowanie. Netto −267 linii.
+
+Rozstrzyganie tuż po migracji: klucz bez potwierdzonego `rev` jedzie do chmury tylko
+wtedy, gdy chmura nie ma dla niego wersji z `rev`. Gdy ma — wygrywa chmura. Dzięki
+temu urządzenie, które zsynchronizuje się pierwsze, zasila chmurę, a pozostałe ją
+przyjmują, zamiast nadpisywać się nawzajem w kółko.
+
+Przy prawdziwej kolizji (były lokalne zmiany I chmura ma nową wersję) wygrywa wersja
+lokalna — ale jest to **raportowane** w podsumowaniu, nie dzieje się po cichu.
+
+**Błędy są teraz dosłowne.** Zamiast „Nie udało się" toast pokazuje treść błędu
+z Firestore. Poprzednia wersja nie pozwalała zdiagnozować niczego.
+
+**Przy okazji — ucinanie tekstu widoczne na zrzucie z 3840×2160.** To nie było
+przepełnienie układu (pomiar: 0 elementów poza kadrem na 1920/2560/3440/3840), tylko
+trzy `text-overflow: ellipsis`: imię bohatera, podtytuł (klasa · poziom) i opis
+przedmiotu w karcie Wyposażenie. Zamienione na zawijanie. Efekt uboczny: kolumny przy
+1366-1440px wyrównały się (488+488 zamiast 744+273), bo zawijanie zmniejszyło
+szerokość min-content lewej kolumny.
+
+Testy 63, lint 45/30 (bez zmian), build OK.
+
 ### ✅ P27 — Urządzenia rozjeżdżały się bezpowrotnie: przebudowa scalania synchronizacji (2026-09-10) — UKOŃCZONE
 Zgłoszenie: telefon pokazuje co innego niż tablet, mimo restartu i „Synchronizuj dane".
 Reguły z P25 działały poprawnie — zapis do chmury szedł. Problem był w scalaniu.

@@ -1,13 +1,10 @@
 import { doc, setDoc, getDocs, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from './index';
-import {
-  getSyncedRev, setSyncedRev, isDirty, clearDirty, clearSyncMarkers, syncableKeys,
-} from '../utils/storage';
+import { getSyncedRev, setSyncedRev, isDirty, clearDirty, syncableKeys } from '../utils/storage';
 
 /* Identyfikator wersji dokumentu. Nieprzezroczysty — porownywany WYLACZNIE na
    rownosc, nigdy na kolejnosc. Dlatego rozjazd zegarow miedzy urzadzeniami nie
-   wplywa na poprawnosc scalania (stary model porownywal Date.now() i tablet
-   z zegarem do przodu na stale odrzucal dane z telefonu). */
+   wplywa na poprawnosc scalania. */
 const newRev = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
 
 function readLocal(key) {
@@ -37,9 +34,7 @@ export async function cloudSave(uid, key, value) {
      jego obecnosci. */
   const payload = JSON.parse(JSON.stringify({ value: value ?? null, rev }));
   /* updatedAt dokladany PO round-tripie — serverTimestamp() to sentinel SDK,
-     ktory nie przetrwalby serializacji. Znacznik jest serwerowy, wiec nie da sie
-     go przesunac zegarem urzadzenia. Sluzy do prezentacji i do rozstrzygania
-     konfliktow przez uzytkownika, nie do automatycznego scalania. */
+     ktory nie przetrwalby serializacji. */
   await setDoc(doc(db, 'users', uid, 'data', key), { ...payload, updatedAt: serverTimestamp() });
   setSyncedRev(key, rev);
   clearDirty(key);
@@ -47,122 +42,74 @@ export async function cloudSave(uid, key, value) {
 }
 
 /**
- * Scala chmure z localStorage. Nie nadpisuje niczego, czego uzytkownik nie
- * potwierdzil: kolizja lokalnych zmian z nowa wersja w chmurze konczy sie
- * wpisem w `conflicts`, nie cichym wyborem jednej ze stron.
+ * JEDNA dwukierunkowa synchronizacja — cala obsluga przycisku "Synchronizuj
+ * dane" i logowania. Najpierw wypycha lokalne zmiany, potem pobiera z chmury
+ * to, czego to urzadzenie jeszcze nie widzialo.
  *
- * Zwraca { pulled, conflicts, legacy, error? } — listy kluczy.
+ * Zwraca { pushed, pulled, keptLocal, error? } — listy kluczy.
+ * `keptLocal` to prawdziwe kolizje: byly lokalne zmiany I chmura miala nowa
+ * wersje. Wygrywa lokalna, bo na tym urzadzeniu uzytkownik wlasnie pracuje —
+ * ale jest to raportowane, zeby nie stalo sie po cichu.
  */
-export async function syncFromCloud(uid) {
-  const result = { pulled: [], conflicts: [], legacy: [] };
-  if (!db) return result;
+export async function syncNow(uid) {
+  const out = { pushed: [], pulled: [], keptLocal: [] };
+  if (!db) return out;
+  /* Klucze wyslane w kroku 1. Snapshot chmury pochodzi SPRZED tych zapisow,
+     wiec w kroku 2 wygladalyby na "nowa wersje w chmurze" i nadpisalyby to,
+     co wlasnie wyslalismy. */
+  const justPushed = new Set();
+
+  const cloud = new Map();
   try {
     const snap = await getDocs(collection(db, 'users', uid, 'data'));
-    snap.forEach(docSnap => {
-      const data = docSnap.data();
-      if (!('value' in data)) return;
-      const key      = docSnap.id;
-      const cloudRev = (typeof data.rev === 'string' && data.rev) ? data.rev : null;
-      const local    = readLocal(key);
-
-      // Brak danych lokalnych — nie ma czego stracic, bierzemy chmure.
-      if (!local.present) {
-        acceptCloud(key, data.value, cloudRev);
-        result.pulled.push(key);
-        return;
-      }
-
-      /* Dokument w starym formacie (bez `rev`) — brak wspolnego punktu
-         odniesienia, wiec nie ryzykujemy nadpisania danych lokalnych. */
-      if (!cloudRev) { result.legacy.push(key); return; }
-
-      /* Chmura trzyma dokladnie te wersje, ktora juz znamy. Jesli mamy przy tym
-         lokalne zmiany, sa one nowsze — zostaja i pojada przy najblizszym zapisie. */
-      if (cloudRev === getSyncedRev(key)) return;
-
-      // Chmura ma wersje, ktorej nie widzielismy.
-      if (isDirty(key)) { result.conflicts.push(key); return; }
-
-      acceptCloud(key, data.value, cloudRev);
-      result.pulled.push(key);
+    snap.forEach(d => {
+      const data = d.data();
+      if ('value' in data) cloud.set(d.id, data);
     });
   } catch (e) {
-    console.warn('[HeroJournal] Sync z chmury nieudany:', e.message);
-    result.error = e.message;
+    out.error = e.message;
+    return out;
   }
-  return result;
-}
 
-/** Rozstrzygniecie konfliktu: zachowaj wersje lokalna — wypchnij ja do chmury. */
-export async function resolveKeepLocal(uid, keys) {
-  const failed = [];
-  for (const key of keys) {
-    const local = readLocal(key);
-    if (!local.present) continue;
-    try { await cloudSave(uid, key, local.value); }
-    catch { failed.push(key); }
-  }
-  return { failed };
-}
+  const cloudRevOf = key => {
+    const d = cloud.get(key);
+    return (d && typeof d.rev === 'string' && d.rev) ? d.rev : null;
+  };
 
-/** Rozstrzygniecie konfliktu: wez wersje z chmury dla wskazanych kluczy. */
-export async function resolveTakeCloud(uid, keys) {
-  if (!db) return { applied: [] };
-  const wanted = new Set(keys);
-  const applied = [];
-  const snap = await getDocs(collection(db, 'users', uid, 'data'));
-  snap.forEach(docSnap => {
-    if (!wanted.has(docSnap.id)) return;
-    const data = docSnap.data();
-    if (!('value' in data)) return;
-    const rev = (typeof data.rev === 'string' && data.rev) ? data.rev : null;
-    acceptCloud(docSnap.id, data.value, rev);
-    applied.push(docSnap.id);
-  });
-  return { applied };
-}
+  /* ── 1. Wypchnij to, co lokalne ──────────────────────────────────────
+     Kolizje trzeba wykryc TU, przed zapisem, bo udany zapis czysci flage.
 
-/**
- * Awaryjne: to urzadzenie ma racje — wypchnij wszystkie lokalne klucze do
- * chmury z nowym `rev`. Po tym pozostale urzadzenia zobacza je jako nowa wersje.
- */
-export async function forcePushAll(uid) {
-  const keys = syncableKeys();
-  const failed = [];
-  let pushed = 0;
-  for (const key of keys) {
-    const local = readLocal(key);
-    if (!local.present) continue;
-    try { await cloudSave(uid, key, local.value); pushed++; }
-    catch { failed.push(key); }
-  }
-  return { pushed, failed, total: keys.length };
-}
-
-/**
- * Awaryjne: chmura ma racje — zrob z tego urzadzenia jej dokladne odbicie.
- * Klucze, ktorych w chmurze nie ma, sa lokalnie USUWANE. Wolac tylko po tym,
- * jak urzadzenie-zrodlo wykonalo forcePushAll.
- */
-export async function forcePullAll(uid) {
-  if (!db) return { pulled: 0, removed: 0 };
-  const snap = await getDocs(collection(db, 'users', uid, 'data'));
-  const seen = new Set();
-  let pulled = 0;
-  snap.forEach(docSnap => {
-    const data = docSnap.data();
-    if (!('value' in data)) return;
-    const rev = (typeof data.rev === 'string' && data.rev) ? data.rev : null;
-    seen.add(docSnap.id);
-    acceptCloud(docSnap.id, data.value, rev);
-    pulled++;
-  });
-  let removed = 0;
+     Klucz bez potwierdzonego `rev` (np. swiezo po migracji ze starego modelu)
+     wypychamy tylko wtedy, gdy chmura nie ma dla niego wersji z `rev`. Gdy ma,
+     wygrywa chmura (krok 2): zostala zapisana swiadomie przez urzadzenie
+     dzialajace na nowym modelu, a nasza kopia jest sprzed migracji. Bez tego
+     warunku kazde urzadzenie nadpisywaloby poprzednie i "wygrywalby" ten, kto
+     zsynchronizowal sie ostatni. */
   for (const key of syncableKeys()) {
-    if (seen.has(key)) continue;
-    localStorage.removeItem(key);
-    clearSyncMarkers(key);
-    removed++;
+    const dirty = isDirty(key);
+    const synced = getSyncedRev(key);
+    const cRev = cloudRevOf(key);
+    const neverSynced = !synced && !cRev;
+    if (!dirty && !neverSynced) continue;
+    if (dirty && cRev && cRev !== synced) out.keptLocal.push(key);
+    const local = readLocal(key);
+    if (!local.present) continue;
+    try { await cloudSave(uid, key, local.value); out.pushed.push(key); justPushed.add(key); }
+    catch (e) { out.error = e.message; }
   }
-  return { pulled, removed };
+
+  /* ── 2. Pobierz z chmury to, czego nie mamy ──────────────────────────
+     Po kroku 1 brudne sa tylko klucze, ktorych zapis sie NIE udal — tych nie
+     nadpisujemy, zeby nie zgubic lokalnej zmiany. */
+  for (const [key, data] of cloud) {
+    const cRev = cloudRevOf(key);
+    if (justPushed.has(key)) continue;
+    if (isDirty(key)) continue;
+    if (!cRev) continue;                       // dokument legacy bez `rev`
+    if (cRev === getSyncedRev(key)) continue;  // juz to mamy
+    acceptCloud(key, data.value, cRev);
+    out.pulled.push(key);
+  }
+
+  return out;
 }

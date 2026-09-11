@@ -1,19 +1,27 @@
 import { useState, useEffect } from 'react';
 import { auth, googleProvider, firebaseReady } from './firebase/index';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import {
-  syncFromCloud, resolveKeepLocal, resolveTakeCloud, forcePushAll, forcePullAll,
-} from './firebase/firestore';
-import { pruneOrphanedData, migrateSyncMarkers, syncableKeys, isDirty } from './utils/storage';
+import { syncNow } from './firebase/firestore';
+import { pruneOrphanedData, migrateSyncMarkers } from './utils/storage';
 import { TRANSLATIONS, detectLang } from './i18n/translations';
 import HeroJournal from './app/HeroJournal';
 import LoginScreen from './app/LoginScreen';
 import LoadingScreen from './app/LoadingScreen';
 import ErrorBoundary from './app/ErrorBoundary';
-import SyncModal from './app/SyncModal';
+import Icon from './shared/icons';
 import { Router } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import './styles/global.css';
+
+/* Wynik synchronizacji w jednym zdaniu. Blad pokazujemy DOSLOWNIE — ogolne
+   "nie udalo sie" nie pozwala niczego zdiagnozowac. */
+function describeSync(T, r) {
+  if (r.error) return { text: T.SYNC.error(r.error), bad: true };
+  const moved = r.pushed.length + r.pulled.length;
+  let text = moved === 0 ? T.SYNC.upToDate : T.SYNC.summary(r.pushed.length, r.pulled.length);
+  if (r.keptLocal.length > 0) text += T.SYNC.keptLocal(r.keptLocal.length);
+  return { text, bad: false };
+}
 
 export default function App() {
   const [authReady, setAuthReady] = useState(false);
@@ -22,11 +30,16 @@ export default function App() {
   const [appKey, setAppKey]       = useState(0);
   const [syncing, setSyncing]     = useState(false);
   const [loadStage, setLoadStage] = useState('auth');
-  const [conflicts, setConflicts] = useState([]);
-  const [legacy, setLegacy]       = useState([]);
-  const [showSync, setShowSync]   = useState(false);
+  const [toast, setToast]         = useState(null);
 
   const T = TRANSLATIONS[detectLang()];
+
+  /* Udany wynik znika sam; blad zostaje, dopoki uzytkownik go nie zamknie. */
+  useEffect(() => {
+    if (!toast || toast.bad) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   useEffect(() => {
     if (!firebaseReady) { pruneOrphanedData(); setAuthReady(true); return; }
@@ -34,25 +47,20 @@ export default function App() {
       if (firebaseUser) {
         setLoadStage('sync');
         setSyncing(true);
-        /* Migracja ze starego modelu znacznikow MUSI poprzedzac pierwszy sync —
-           inaczej `hj_ts_*` z poprzedniej wersji nadal mialyby wplyw na to,
-           co zostanie nadpisane. */
+        /* Migracja ze starego modelu znacznikow MUSI poprzedzac pierwszy sync. */
         migrateSyncMarkers();
-        const r = await syncFromCloud(firebaseUser.uid);
+        const r = await syncNow(firebaseUser.uid);
         pruneOrphanedData();
-        setConflicts(r.conflicts);
-        setLegacy(r.legacy);
-        /* Konflikt nigdy nie jest rozstrzygany po cichu — pokazujemy modal. */
-        if (r.conflicts.length > 0) setShowSync(true);
         setSyncing(false);
         setUser(firebaseUser);
         setAppKey(k => k + 1);
+        if (r.error) setToast(describeSync(T, r));
       } else {
         setUser(null);
       }
       setAuthReady(true);
     });
-  }, []);
+  }, [T]);
 
   const handleLogin = async () => {
     setLogin(true);
@@ -66,54 +74,18 @@ export default function App() {
     setAppKey(k => k + 1);
   };
 
-  const handleCloudRefresh = async () => {
+  /* Przycisk "Synchronizuj dane" — jedno klikniecie zalatwia oba kierunki. */
+  const handleSync = async () => {
     if (!user?.uid) return;
-    setLoadStage('sync');
-    setSyncing(true);
-    const r = await syncFromCloud(user.uid);
-    setConflicts(r.conflicts);
-    setLegacy(r.legacy);
-    setSyncing(false);
-    if (r.conflicts.length > 0) setShowSync(true);
+    setToast({ text: T.SYNC.running, bad: false });
+    const r = await syncNow(user.uid);
+    setToast(describeSync(T, r));
     setAppKey(n => n + 1);
-  };
-
-  /* Po kazdym rozstrzygnieciu przemontowujemy HeroJournal, zeby odczytal
-     localStorage na nowo. */
-  const remount = () => setAppKey(n => n + 1);
-
-  const handleKeepLocal = async (keys) => {
-    const { failed } = await resolveKeepLocal(user.uid, keys);
-    setConflicts(failed);
-    remount();
-    return failed.length > 0 ? T.SYNC.failed : T.SYNC.pushDone(keys.length);
-  };
-
-  const handleTakeCloud = async (keys) => {
-    const { applied } = await resolveTakeCloud(user.uid, keys);
-    setConflicts(keys.filter(k => !applied.includes(k)));
-    remount();
-    return T.SYNC.pullDone(applied.length, 0);
-  };
-
-  const handleForcePush = async () => {
-    const r = await forcePushAll(user.uid);
-    setConflicts([]); setLegacy([]);
-    remount();
-    return r.failed.length > 0 ? T.SYNC.failed : T.SYNC.pushDone(r.pushed);
-  };
-
-  const handleForcePull = async () => {
-    const r = await forcePullAll(user.uid);
-    setConflicts([]); setLegacy([]);
-    remount();
-    return T.SYNC.pullDone(r.pulled, r.removed);
   };
 
   // Callback wyciągnięty poza JSX — Rolldown (Linux) ma bug z `k => k+1` wewnątrz atrybutu JSX
   const handleReset = () => setAppKey(n => n + 1);
-  const openSyncTools = () => setShowSync(true);
-  const closeSyncTools = () => setShowSync(false);
+  const dismissToast = () => setToast(null);
   const loadingStage = loadStage;
 
   if (!authReady || syncing) return <LoadingScreen stage={loadingStage} />;
@@ -122,26 +94,32 @@ export default function App() {
   return (
     <Router hook={useHashLocation}>
       <ErrorBoundary onReset={handleReset}>
-        {showSync && (
-          <SyncModal
-            T={T}
-            conflicts={conflicts}
-            legacy={legacy}
-            dirtyCount={syncableKeys().filter(isDirty).length}
-            signedIn={!!user}
-            onKeepLocal={handleKeepLocal}
-            onTakeCloud={handleTakeCloud}
-            onForcePush={handleForcePush}
-            onForcePull={handleForcePull}
-            onClose={closeSyncTools}
-          />
+        {toast && (
+          <div style={{
+            position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%",
+            transform:"translateX(-50%)", zIndex:600, maxWidth:"92vw",
+            background: toast.bad ? "#5a1a1a" : "rgba(30,34,52,0.97)",
+            border: `1px solid ${toast.bad ? "#8a3a3a" : "var(--hj-accent-border)"}`,
+            color: toast.bad ? "#f0c0c0" : "var(--hj-text)",
+            fontFamily:"Crimson Text,Georgia,serif", fontSize:"0.92rem",
+            padding:"0.55rem 0.9rem", borderRadius:"var(--radius-md)",
+            display:"flex", alignItems:"center", gap:"0.6rem",
+            boxShadow:"0 4px 16px rgba(0,0,0,0.5)",
+          }}>
+            <Icon name="cloud" size="0.95em"/>
+            <span>{toast.text}</span>
+            <button onClick={dismissToast} aria-label="OK"
+              style={{ background:"transparent", border:"none", color:"inherit", cursor:"pointer",
+                       padding:"0.25rem", lineHeight:1, flexShrink:0, display:"flex" }}>
+              <Icon name="close" size="0.95em"/>
+            </button>
+          </div>
         )}
         <HeroJournal
           key={appKey}
           user={user}
           onLogout={user ? handleLogout : null}
-          onCloudRefresh={user ? handleCloudRefresh : null}
-          onSyncTools={user ? openSyncTools : null}
+          onCloudRefresh={user ? handleSync : null}
         />
       </ErrorBoundary>
     </Router>

@@ -143,12 +143,15 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .hj-header-identity .hcv2-name,
 .hj-sidebar-identity .hcv2-name {
   font-size: 1.25rem; margin-bottom: 0.2rem;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  /* Zawijamy zamiast ucinac wielokropkiem. Sidebar ma stala szerokosc, wiec
+     dluzsze imie ("Khoro Cien Poludnia") bylo obcinane na KAZDEJ rozdzielczosci
+     desktopowej, takze na 4K, gdzie miejsca jest az nadto. Pionowo miejsce jest. */
+  white-space: normal; overflow-wrap: anywhere;
 }
 .hj-header-identity .hcv2-subtitle,
 .hj-sidebar-identity .hcv2-subtitle {
   font-size: 0.7rem; margin-bottom: 0;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: normal; overflow-wrap: anywhere;
 }
 
 /* Etykieta aktualnej zakładki — wyśrodkowany sect-divider pod tożsamością */

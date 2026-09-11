@@ -50,7 +50,7 @@ function TabLoader() {
 
 /* EMPTY_DATA / loadProfileData → src/hooks/useCharacterData.js */
 
-export default function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null, onSyncTools = null }) {
+export default function HeroJournal({ user = null, onLogout = null, onCloudRefresh = null }) {
   /* ── Custom hooks ────────────────────────────────────────────── */
   const { theme, setTheme }            = useTheme();
   const { lang, toggleLanguage } = useLanguage();
@@ -248,13 +248,13 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <Sidebar T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} setChar={setChar} pb={pb}
         tab={tab} setTab={setTab} navGroupsDesktop={navGroupsDesktop}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
-        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onSyncTools={onSyncTools} onLogout={onLogout}
+        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport} onRestModal={setRestModal}/>
 
       {/* ── Header (mobile only) — zawiera pasek HP + mini-statsy ── */}
       <Header T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} tab={tab}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
-        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onSyncTools={onSyncTools} onLogout={onLogout}
+        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
         onExport={handleExport} onImport={handleImport}
         setChar={setChar} pb={pb} onRestModal={setRestModal}
         panelCollapsed={panelCollapsed} setPanelCollapsed={setPanelCollapsed}
