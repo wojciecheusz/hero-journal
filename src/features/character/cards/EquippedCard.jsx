@@ -34,7 +34,7 @@ function EquippedRow({ iconName, name, meta, badge, badgeColor, badgeBorder, nam
           </span>
         )}
         {!badge && meta && (
-          <span style={{ fontFamily:"'Crimson Text',Georgia,serif", fontSize:"0.8rem", fontStyle:"italic", color:"var(--hj-text-muted)", flexShrink:0, textAlign:"right", maxWidth:"42%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+          <span style={{ fontFamily:"'Crimson Text',Georgia,serif", fontSize:"0.8rem", fontStyle:"italic", color:"var(--hj-text-muted)", flexShrink:0, textAlign:"right", maxWidth:"42%", overflowWrap:"anywhere" }}>
             {meta}
           </span>
         )}

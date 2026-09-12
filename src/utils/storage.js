@@ -55,27 +55,27 @@ export const clearSyncMarkers = key => {
   try { localStorage.removeItem(SYN_PREFIX + key); localStorage.removeItem(DIRTY_PREFIX + key); } catch { /* localStorage niedostepny: tryb prywatny lub brak miejsca */ }
 };
 
-/* Migracja ze starego modelu `hj_ts_*`.
+/* Migracja ze starego modelu `hj_ts_*` — usuwa martwe znaczniki czasu.
 
-   Starych znacznikow nie da sie przelozyc na nowy model: nie wiadomo, czy dana
-   wartosc kiedykolwiek dotarla do chmury. Dlatego usuwamy je i oznaczamy
-   wszystkie istniejace klucze jako "brudne". Efekt: pierwszy sync po migracji
-   nie nadpisze niczego po cichu — zglosi konflikt i zapyta uzytkownika. */
+   Klucze zostaja CZYSTE (bez flagi "brudny"). To celowe: oznaczanie ich jako
+   brudnych sprawialo, ze urzadzenie uwazalo kazda swoja wartosc za niezapisana
+   zmiane i odmawialo przyjecia czegokolwiek z chmury — pobieranie po prostu nie
+   dzialalo. O tym, ktora strona wygrywa tuz po migracji, decyduje `syncNow`:
+   klucz bez potwierdzonego `rev` jedzie do chmury tylko wtedy, gdy chmura nie ma
+   dla niego wersji z `rev`. */
 export function migrateSyncMarkers() {
   try {
-    if (localStorage.getItem(SYNC_MODEL_KEY)) return { removed: 0, marked: 0 };
+    if (localStorage.getItem(SYNC_MODEL_KEY)) return { removed: 0 };
     const stale = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
       if (k && k.startsWith("hj_ts_")) stale.push(k);
     }
     stale.forEach(k => localStorage.removeItem(k));
-    const keys = syncableKeys();
-    keys.forEach(markDirty);
     localStorage.setItem(SYNC_MODEL_KEY, "1");
-    return { removed: stale.length, marked: keys.length };
+    return { removed: stale.length };
   } catch {
-    return { removed: 0, marked: 0 };
+    return { removed: 0 };
   }
 }
 
