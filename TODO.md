@@ -168,6 +168,10 @@ zrzutu/danych — do potwierdzenia.
       zmiana typu w oknie edycji. [O] z #4: legenda znaczników biegłości i
       znaczniki pod palec (`ProfMarker.jsx`), modyfikator atrybutu jako główna
       liczba. F (ikony) pominięte zgodnie z decyzją — czeka na folder ikon.
+      **Audyt końcowy** (wszystkie 9 zakładek × 1180×820, 820×1180, 1920×1080,
+      390×844): brak przewijania w poziomie; dopięte cele dotykowe — nagłówki
+      zwijanych kart postaci, „pigułki" języków, tytuł/data sesji, starsze
+      przyciski `.btn-ghost/.btn-danger/.btn-sm/.btn-gold` (≥36px, 44px na dotyku).
 
 **F. Ikony** — pełny spis w `IKONY.md` (istniejące, brakujące, do ujednolicenia).
 - [ ] F1 🐞 `activity` (przycisk Stanów) nie istnieje w rejestrze `ICONS` →

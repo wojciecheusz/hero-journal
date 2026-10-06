@@ -9,6 +9,7 @@ import { CardHeader, LBL } from './cards/shared';
 
 /* ── Pill input dla pól-tagów (np. języki) ── */
 function PillInput({ value, onChange, placeholder }) {
+  const T = useT();
   const [draft, setDraft] = useState('');
   const pills = value ? value.split(',').map(s => s.trim()).filter(Boolean) : [];
 
@@ -21,32 +22,20 @@ function PillInput({ value, onChange, placeholder }) {
   const remove = i => onChange(pills.filter((_, idx) => idx !== i).join(', '));
 
   return (
-    <div style={{ display:'flex', flexWrap:'wrap', gap:'0.3rem', alignItems:'center', minHeight:'1.8rem', marginTop:'0.2rem' }}>
+    <div className="pill-input">
       {pills.map((p, i) => (
-        <span key={i} style={{ display:'flex', alignItems:'center', gap:'0.2rem',
-          fontFamily:'Cinzel,serif', fontSize:'0.5rem', letterSpacing:'0.08em',
-          textTransform:'uppercase', padding:'0.2rem 0.5rem 0.2rem 0.65rem',
-          border:'1px solid var(--hj-accent-border)', color:'var(--hj-accent)',
-          borderRadius:'var(--radius-pill)' }}>
+        <span key={i} className="pill">
           {p}
-          <button onClick={() => remove(i)}
-            style={{ background:'none', border:'none', color:'inherit', cursor:'pointer',
-                     padding:0, lineHeight:1, opacity:0.65, fontSize:'1em', display:'flex' }}>
-            ×
-          </button>
+          <button className="pill-remove" onClick={() => remove(i)} aria-label={`${T.UI.removeTag}: ${p}`}>×</button>
         </span>
       ))}
-      <input value={draft} onChange={e => setDraft(e.target.value)}
+      <input className="pill-draft" value={draft} onChange={e => setDraft(e.target.value)}
         placeholder={pills.length === 0 ? placeholder : ''}
         onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(draft); }
           if (e.key === 'Backspace' && !draft && pills.length) remove(pills.length - 1);
         }}
-        onBlur={() => { if (draft.trim()) add(draft); }}
-        style={{ fontFamily:'Cinzel,serif', fontSize:'0.5rem', letterSpacing:'0.06em',
-                 background:'transparent', border:'none',
-                 borderBottom:'1px dashed var(--hj-border-input)',
-                 outline:'none', minWidth:'70px', color:'inherit', padding:'0.1rem 0.1rem' }}/>
+        onBlur={() => { if (draft.trim()) add(draft); }}/>
     </div>
   );
 }

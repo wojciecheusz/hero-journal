@@ -241,3 +241,7 @@
 .choice-btn:active, .exh-btn:active, .death-pip:active, .stepper-btn:active:not(:disabled) {
   transform: scale(0.97);
 }
+
+/* Starsze przyciski (Kronika, Zadania, okno odpoczynku) — minimum pod palec */
+.btn-ghost, .btn-danger, .btn-sm, .btn-gold { min-height: var(--hj-tap-sm); display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; }
+@media (pointer: coarse) { .btn-ghost, .btn-danger, .btn-sm, .btn-gold { min-height: var(--hj-tap); } }

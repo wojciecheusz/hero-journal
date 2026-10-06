@@ -51,9 +51,9 @@ function SessionsScreen({ sessions, setSessions, npcs, locations, quests, invent
           <div key={sess.id} className="sess-entry">
             <div className={`sess-header${open ? " open" : ""}`} onClick={() => toggle(sess.id)}>
               <span className="sess-num">#{String(sess.number).padStart(2, "0")}</span>
-              <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"0.92rem" }}
+              <input className="iedit flex1 sess-title-input" style={{ fontFamily:"Cinzel,serif", fontSize:"0.92rem" }}
                 value={sess.title} onChange={e => { e.stopPropagation(); upd(sess.id, "title", e.target.value); }} onClick={e => e.stopPropagation()}/>
-              <input type="date" style={{ background:"transparent", border:"none", color:"inherit", fontFamily:"inherit", fontSize:"0.75rem", outline:"none", flexShrink:0, opacity:0.6 }}
+              <input type="date" className="sess-date-input" style={{ background:"transparent", border:"none", color:"inherit", fontFamily:"inherit", fontSize:"0.75rem", outline:"none", flexShrink:0, opacity:0.6 }}
                 value={sess.date} onChange={e => { e.stopPropagation(); upd(sess.id, "date", e.target.value); }} onClick={e => e.stopPropagation()}/>
               <span style={{ flexShrink:0, opacity:0.5, display:"inline-flex" }}><Icon name={open ? "chevron-up" : "chevron-down"} size="0.85em"/></span>
             </div>

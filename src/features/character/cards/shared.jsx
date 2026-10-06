@@ -7,6 +7,7 @@ export const LBL_SM = { fontFamily:"Cinzel,serif", fontSize:"0.48rem", letterSpa
 export function CardHeader({ label, open, onToggle, hint }) {
   return (
     <button aria-expanded={open} aria-label={label}
+      className="card-header-btn"
       style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: open ? "0.85rem" : 0, cursor:"pointer", userSelect:"none", width:"100%", background:"transparent", border:"none", padding:0, color:"inherit" }}
       onClick={onToggle}>
       <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--hj-text-label)", display:"flex", alignItems:"center", gap:"0.5rem", flex:1 }}>

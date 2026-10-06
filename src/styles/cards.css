@@ -274,3 +274,26 @@
   background: var(--hj-bg-input); border: 1px solid var(--hj-border-input); border-radius: var(--radius-pill); outline: none;
 }
 .hcv2-stat-box .hcv2-stat-score:focus { border-color: var(--hj-accent-border); color: var(--hj-text); }
+
+/* Nagłówki zwijanych kart postaci i pola-pigułki (języki) — pod palec */
+.card-header-btn { min-height: var(--hj-tap-sm); }
+@media (pointer: coarse) { .card-header-btn { min-height: var(--hj-tap); } }
+.pill-input { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; margin-top: 0.2rem; }
+.pill {
+  display: inline-flex; align-items: center; gap: 0.1rem;
+  padding: 0 0.1rem 0 0.7rem; min-height: var(--hj-tap-sm);
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.06em; text-transform: uppercase;
+  border: 1px solid var(--hj-accent-border); color: var(--hj-accent); border-radius: var(--radius-pill);
+}
+.pill-remove {
+  width: var(--hj-tap-sm); height: var(--hj-tap-sm);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: none; color: inherit; cursor: pointer; opacity: 0.7; font-size: 1.1em; border-radius: 50%;
+}
+.pill-draft {
+  min-width: 8rem; min-height: var(--hj-tap-sm); flex: 1;
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(16px, 0.85rem);
+  background: transparent; border: none; border-bottom: 1px dashed var(--hj-border-input); outline: none; color: inherit;
+}
+.sess-title-input, .sess-date-input { min-height: var(--hj-tap-sm); }
+@media (pointer: coarse) { .sess-title-input, .sess-date-input { min-height: var(--hj-tap); } }
