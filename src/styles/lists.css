@@ -14,7 +14,8 @@
   .subtabs { position: static; }
 }
 @media (min-width: 1024px) {
-  .subtabs { top: var(--hj-safe-top); }
+  /* Pod górnym paskiem aplikacji (P34) */
+  .subtabs { top: calc(var(--hj-appbar-h) + var(--hj-safe-top)); }
 }
 .subtabs-inner {
   display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr);

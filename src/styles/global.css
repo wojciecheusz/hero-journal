@@ -104,7 +104,9 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   line-height: 1.55;
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   width: 100%;
-  overflow-x: hidden;
+  /* clip zamiast hidden — hidden tworzy kontener przewijania i psuło
+     position: sticky (podzakładki, górny pasek mobilny), P34 */
+  overflow-x: clip;
   /* Górny pasek mobilny jest przyklejony w przepływie (P29) — bez sztucznego odstępu */
   padding-top: 0;
   --pip-prof:     var(--hj-accent);

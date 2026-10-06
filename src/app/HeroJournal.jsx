@@ -19,6 +19,7 @@ import HelpPanel     from './HelpPanel';
 import SettingsMenu  from './SettingsMenu';
 import { Popover }   from '../shared/Overlay';
 import Sidebar       from './Sidebar';
+import AppBar        from './AppBar';
 import Header        from './Header';
 import MobileHeroPanel from './hero/MobileHeroPanel';
 import MobileNav     from './MobileNav';
@@ -256,9 +257,11 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
       {/* ── Sidebar (desktop ≥1024px) ── */}
       <Sidebar T={T} char={char} setChar={setChar} pb={pb}
-        tab={tab} setTab={setTab} navGroupsDesktop={navGroupsDesktop}
-        showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
         setScreen={setScreen} onRestModal={setRestModal}/>
+
+      {/* ── Górny pasek z zakładkami (desktop ≥1024px, P34) ── */}
+      <AppBar T={T} navGroups={navGroupsDesktop} tab={tab} setTab={setTab}
+        showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}/>
 
       {/* ── Górny pasek (telefon / tablet w pionie) ── */}
       <Header T={T} char={char} setChar={setChar}

@@ -237,7 +237,7 @@
 /* Natychmiastowa reakcja na stuknięcie (dotyk nie ma :hover) */
 .hj-btn:active:not(:disabled), .hj-icon-btn:active, .settings-btn:active, .theme-btn:active,
 .vp-step:active, .vp-status-btn:active, .vp-rest-btn:active, .vp-levelup:active,
-.hero-chip:active, .sb-nav-item:active, .sb-foot-btn:active, .cond-chip:active,
+.hero-chip:active, .cond-chip:active,
 .choice-btn:active, .exh-btn:active, .death-pip:active, .stepper-btn:active:not(:disabled) {
   transform: scale(0.97);
 }
@@ -256,7 +256,6 @@
    Pełne sylwetki są czytelne dopiero od ok. 18–20px; CSS nadpisuje
    atrybut width/height ikony, więc skalujemy je per kontekst. */
 .icon-badge > svg       { width: 1.3em;  height: 1.3em; }
-.sb-nav-item > svg      { width: 1.45em; height: 1.45em; }
 .subtab > svg           { width: 1.35em; height: 1.35em; }
 .hj-nav-icon svg        { width: 1.5rem; height: 1.5rem; }
 .eq-icon > svg          { width: 1.25em; height: 1.25em; }
@@ -272,9 +271,9 @@
 /* ── P32: czytelność drobnych etykiet ──
    Cinzel w grubości 400 przy 11–12px i wersalikach jest zbyt cienki
    (zwłaszcza jasny tekst na ciemnym tle) — etykiety dostają 600. */
-.form-label, .settings-heading, .meta-badge, .sb-nav-group-label, .field-cell dt,
+.form-label, .settings-heading, .meta-badge, .field-cell dt,
 .vp-status-label, .vp-rest-label, .help-label, .theme-name, .lt-group-label,
-.coin-label, .prof-attr, .lt-summary, .hero-chip, .sb-nav-item, .vp-mini-label,
+.coin-label, .prof-attr, .lt-summary, .hero-chip, .vp-mini-label,
 .combat-box-label, .stat-name, .trait-label, .pack-field-label, .tags-suggest-label {
   font-weight: 600;
 }

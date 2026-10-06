@@ -3,6 +3,23 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P34 — Zakładki główne na górnym pasku aplikacji (2026-10-06) — UKOŃCZONE
+Zgłoszenie: nawigacja w sidebarze zabiera miejsce, przez co panel Życia trzeba przewijać.
+- [x] `app/AppBar.jsx` (≥1024px): górny pasek nad obszarem roboczym — Postać,
+      Wyposażenie, Świat, Kronika, Zadania (ikona + podpis; przy 1024–1279px
+      ikona nad podpisem) + pomoc / wsparcie / ustawienia jako same ikony.
+- [x] Sidebar = tożsamość + panel Życia (bez nawigacji i stopki); usunięte
+      style `.sb-nav*` / `.sb-foot*`.
+- [x] Podzakładki przyklejone pod górnym paskiem (`--hj-appbar-h`), popover
+      ustawień pod paskiem po prawej; safe-area iPada. `.hj-root` ma
+      `overflow-x: clip` (hidden psuło `position: sticky`).
+- [x] Tryb kompaktowy dla niskich ekranów (≤800px wysokości), etykiety stanów
+      i przyciski odpoczynku bez łamania wierszy.
+- [x] Weryfikacja: panel Życia bez przewijania przy 1024×768, 1366×768,
+      1180×820 (iPad), 1920×1080 i 3840×2160; zakładki bez obcinania 1024px–4K;
+      podzakładki przyklejają się dokładnie pod paskiem; mobile bez zmian
+      (dolna nawigacja, brak poziomego przewijania).
+
 ### ✅ P33 — Awans: ręczne wpisanie nowego maks. PŻ po fizycznym rzucie (2026-10-06) — UKOŃCZONE
 Zgłoszenie: gracz rzuca kością fizycznie i wpisuje nowe maksymalne PŻ.
 - [x] Okno awansu (`hero/VitalsModals.jsx`): pole „Nowe maksymalne PŻ” (puste,
