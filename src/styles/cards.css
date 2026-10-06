@@ -297,3 +297,5 @@
 }
 .sess-title-input, .sess-date-input { min-height: var(--hj-tap-sm); }
 @media (pointer: coarse) { .sess-title-input, .sess-date-input { min-height: var(--hj-tap); } }
+.hcv2-stat-box .hcv2-stat-label { display: inline-flex; align-items: center; gap: 0.3rem; }
+.cond-chip svg { flex-shrink: 0; }

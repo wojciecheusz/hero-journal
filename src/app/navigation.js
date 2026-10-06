@@ -41,7 +41,7 @@ export function getNavGroupsDesktop(lang) {
       id: "log", label: n.log, icon: "scroll",
       tabs: [
         { id:"sessions", label: n.sessions, icon:"book-open" },
-        { id:"quests",   label: n.quests,   icon:"zap" },
+        { id:"quests",   label: n.quests,   icon:"quest" },
       ],
     },
   ];

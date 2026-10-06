@@ -101,6 +101,13 @@ export default function SettingsMenu({
           <Icon name="warning" size="1.1em"/> {T.UI.resetChar}
         </button>
       </div>
+
+      {/* Licencja CC BY 3.0 wymaga podania autorów ikon */}
+      <p className="settings-credits">
+        {T.UI.iconCredits}{" "}
+        <a href="https://game-icons.net" target="_blank" rel="noopener noreferrer">game-icons.net</a>
+        {" "}(Lorc, Delapouite {T.UI.andOthers}) · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a>
+      </p>
     </>
   );
 }

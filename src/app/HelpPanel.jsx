@@ -1,5 +1,5 @@
 import { useT } from '../i18n/translations';
-import Icon, { ICONS } from '../shared/icons';
+import Icon, { hasIcon } from '../shared/icons';
 import { Drawer } from '../shared/Overlay';
 
 /* Mapuje aktywny tab na klucz w T.HELP */
@@ -24,7 +24,7 @@ export default function HelpPanel({ tab, onClose }) {
     <Drawer title={content.title} icon="help-circle" onClose={onClose} closeLabel={T.UI.close}>
       {content.intro && <p className="help-intro">{content.intro}</p>}
       {content.items.map(([icon, label, desc]) => {
-        const iconKeys = Array.isArray(icon) ? icon : (ICONS[icon] ? [icon] : null);
+        const iconKeys = Array.isArray(icon) ? icon : (hasIcon(icon) ? [icon] : null);
         return (
           <div key={label} className="help-item">
             <span className="help-badge">

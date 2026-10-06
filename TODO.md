@@ -3,6 +3,29 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P30 — Ikony Game Icons (2026-10-06) — UKOŃCZONE
+Decyzja użytkownika: zestaw **Game Icons** (game-icons.net, CC BY 3.0), pobrany
+przez publiczne API Iconify (serwis iconstack ma martwy backend — wpis MCP
+`iconstack` usunięty z konfiguracji). Jeśli styl nie przypadnie do gustu — zmiana.
+- [x] 108 ikon SVG w `src/assets/icons/game-icons/` (nazwa pliku = nazwa ikony),
+      znormalizowane: tylko kształty, kolor z `currentColor`.
+- [x] `shared/svgIcons.js` — wczytuje folder (`import.meta.glob`), parsuje do
+      bezpiecznych kształtów (bez innerHTML) + testy; `Icon` rysuje plik SVG,
+      a gdy go brak — liniową ikonę lucide (sterujące: zamknij, strzałki,
+      plus/minus, edycja, pinezka, wyszukiwanie, filtry, ustawienia, pomoc).
+- [x] Nowe nazwy semantyczne: `quest` (Zadania, zamiast błyskawicy), `charges`,
+      `unknown` (zamiast znaku zapytania pomocy), `faction-*` (typy frakcji — ikona
+      karty i filtrów), `cond-*` (okno stanów), `stat-*` (Atrybuty), `dmg-*`
+      (zarezerwowane). Lupa i suwaki w pasku narzędzi.
+- [x] Dostosowanie: margines 8% (optyczna równowaga z ikonami liniowymi),
+      większe rozmiary w kluczowych miejscach, jaśniejsze odcienie `ICON_COLORS`
+      pod pełne sylwetki; sprawdzone na motywie ciemnym (Arkana) i jasnym
+      (Pergamin), iPad poziomo/pionowo.
+- [x] Podpis autorów (CC BY) w menu Ustawień, `src/assets/icons/README.md`,
+      `IKONY.md` przebudowany na tabelę nazwa → ikona → gdzie użyta.
+- [x] Stopka sidebara (pomoc / wesprzyj / ustawienia) — same ikony, bez
+      podpisów (prośba użytkownika); nazwy w `title` i `aria-label`.
+
 ### ✅ P29 — Pakiet poprawek UI z przeglądu na iPadzie A16 (zrzuty #1–#6, 2026-10-06) — UKOŃCZONE (bez F — ikony)
 **Decyzje użytkownika (2026-10-06):** obserwacje [O] wchodzą do zakresu; EN w 100%
 po angielsku, PL w 100% po polsku (poza treścią użytkownika); przedmioty: licznik

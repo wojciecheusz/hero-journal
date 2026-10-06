@@ -1,4 +1,5 @@
 import { statMod, clamp } from '../../../utils/math';
+import Icon from '../../../shared/icons';
 
 const STAT_KEYS = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
 const STAT_MIN = 1;
@@ -15,7 +16,7 @@ export default function HeroHeaderCard({ char, setChar, C }) {
           const val = char.stats?.[key] ?? 10;
           return (
             <label key={key} className="hcv2-stat-box">
-              <div className="hcv2-stat-label">{statAbbr[key] || key}</div>
+              <div className="hcv2-stat-label"><Icon name={`stat-${key.toLowerCase()}`} size="1.15em"/> {statAbbr[key] || key}</div>
               <div className="hcv2-stat-mod">{statMod(val)}</div>
               <input
                 type="text" inputMode="numeric"

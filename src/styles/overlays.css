@@ -245,3 +245,26 @@
 /* Starsze przyciski (Kronika, Zadania, okno odpoczynku) — minimum pod palec */
 .btn-ghost, .btn-danger, .btn-sm, .btn-gold { min-height: var(--hj-tap-sm); display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; }
 @media (pointer: coarse) { .btn-ghost, .btn-danger, .btn-sm, .btn-gold { min-height: var(--hj-tap); } }
+
+.settings-credits {
+  padding: 0.6rem 0.9rem 0.8rem; border-top: 1px solid var(--hj-border-sub);
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(12px, 0.66rem); line-height: 1.4; color: var(--hj-text-dim);
+}
+.settings-credits a { color: var(--hj-text-muted); }
+
+/* ── P30: rozmiary ikon Game Icons w kluczowych miejscach ──
+   Pełne sylwetki są czytelne dopiero od ok. 18–20px; CSS nadpisuje
+   atrybut width/height ikony, więc skalujemy je per kontekst. */
+.icon-badge > svg       { width: 1.3em;  height: 1.3em; }
+.sb-nav-item > svg      { width: 1.45em; height: 1.45em; }
+.subtab > svg           { width: 1.35em; height: 1.35em; }
+.hj-nav-icon svg        { width: 1.5rem; height: 1.5rem; }
+.eq-icon > svg          { width: 1.25em; height: 1.25em; }
+.hero-icon-btn > svg    { width: 1.45em; height: 1.45em; }
+.lt-chip > svg { width: 1.2em; height: 1.2em; }
+.cond-chip > svg { width: 1.55em; height: 1.55em; }
+.vp-rest-btn > svg      { width: 1.5em; height: 1.5em; }
+
+.help-badge svg         { width: 1.3em; height: 1.3em; }
+.theme-swatch > svg     { width: 0.95rem; height: 0.95rem; }
+.icon-choice > svg      { width: 1.6em; height: 1.6em; }

@@ -31,8 +31,8 @@ export default function ListToolbar({
   return (
     <div className="list-toolbar">
       <div className="lt-row">
-        {/* Ikona lupy zostanie podpięta z folderu ikon użytkownika (IKONY.md §3) */}
         <label className="lt-search">
+          <Icon name="search" size="1.05em"/>
           <input type="search" value={search} onChange={e => onSearch(e.target.value)}
             placeholder={searchPlaceholder || T.UI.searchPlaceholder} aria-label={L.search}
             enterKeyHint="search"/>
@@ -45,6 +45,7 @@ export default function ListToolbar({
         {groups.length > 0 && (
           <button className={`hj-btn lt-filter-btn${open || active.length ? " on" : ""}`}
             aria-expanded={open} onClick={() => setOpen(o => !o)}>
+            <Icon name="filters" size="1em"/>
             <span>{L.filters}</span>
             {active.length > 0 && <span className="lt-badge">{active.length}</span>}
             <Icon name={open ? "chevron-up" : "chevron-down"} size="1em"/>

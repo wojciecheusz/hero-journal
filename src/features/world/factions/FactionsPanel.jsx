@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_ICONS } from '../../../constants/gameConstants';
+import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_ICONS, FACTION_TYPE_ICONS } from '../../../constants/gameConstants';
 import { FACTION_TYPE, FACTION_RANK } from '../../../constants/enums.js';
 import { TagsEditor } from '../../../shared/ui';
 import { useT, useLang } from '../../../i18n/translations';
@@ -53,7 +53,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
         summary={[F.count(factions.length), T.LIST.shown(visible.length, factions.length)].filter(Boolean).join(" · ")}
         filterGroups={[
           { key:"type", label:T.LIST.type, value:filterType, onChange:setFilterType,
-            options: FACTION_TYPES.map(t => ({ value:t, label:displayFactionType(t), count:factions.filter(f => f.type === t).length })).filter(o => o.count) },
+            options: FACTION_TYPES.map(t => ({ value:t, label:displayFactionType(t), icon:FACTION_TYPE_ICONS[t], count:factions.filter(f => f.type === t).length })).filter(o => o.count) },
           { key:"rank", label:T.LIST.rank, value:filterRank, onChange:setFilterRank,
             options: FACTION_RANKS.map(r => ({ value:r, label:displayFactionRank(r), icon:FACTION_RANK_ICONS[r], count:factions.filter(f => (f.rank || FACTION_RANK.UNKNOWN) === r).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
@@ -69,7 +69,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
           const tone = RANK_TONE[rank] || "unknown";
           return (
             <EntityCard key={fac.id} id={fac.id}
-              icon={FACTION_RANK_ICONS[rank]} iconTone={tone} title={fac.name}
+              icon={FACTION_TYPE_ICONS[fac.type] || FACTION_RANK_ICONS[rank]} iconTone={tone} title={fac.name}
               open={!!expanded[fac.id]} onToggle={() => toggle(fac.id)}
               pinned={fac.pinned} onPin={() => upd(fac.id, "pinned", !fac.pinned)}
               onEdit={() => setEditing({ item: fac, isNew: false })}
@@ -94,7 +94,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
           onSave={saveFaction} onDelete={() => deleteFaction(editing.item.id)} onClose={() => setEditing(null)}>
           {(d, set) => <>
             <ChoiceChips label={F.type} value={d.type} onChange={v => set("type", v)}
-              options={FACTION_TYPES.map(t => ({ value:t, label:displayFactionType(t) }))}/>
+              options={FACTION_TYPES.map(t => ({ value:t, label:displayFactionType(t), icon:FACTION_TYPE_ICONS[t] }))}/>
             <ChoiceChips label={T.LIST.rank} value={d.rank || FACTION_RANK.UNKNOWN} onChange={v => set("rank", v)}
               options={FACTION_RANKS.map(r => ({ value:r, label:displayFactionRank(r), icon:FACTION_RANK_ICONS[r] }))}/>
             <div className="form-grid">

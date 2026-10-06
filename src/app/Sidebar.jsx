@@ -6,7 +6,8 @@ import VitalsPanel from './hero/VitalsPanel';
 import { isEquipmentTab, isWorldTab } from './navigation';
 
 /* Sidebar desktopowy (≥1024px), P29: tożsamość bohatera → panel Życia →
-   nawigacja → stopka (pomoc / wsparcie / ustawienia). Szerokość w rem
+   nawigacja → stopka (pomoc / wsparcie / ustawienia — same ikony, nazwy
+   w podpowiedzi i aria-label). Szerokość w rem
    (--hj-sidebar-w), więc rośnie razem z czcionką na QHD/4K. Stopka jest
    przyklejona do dołu — zawsze osiągalna, nawet gdy sidebar się przewija. */
 export default function Sidebar({
@@ -53,16 +54,18 @@ export default function Sidebar({
 
       <footer className="sb-foot">
         <button className={`sb-foot-btn${showHelp ? " active" : ""}`} aria-pressed={showHelp}
+          aria-label={T.UI.help} title={T.UI.help}
           onClick={() => { setShowHelp(s => !s); setShowSettings(false); }}>
-          <Icon name="help-circle" size="1.2em"/><span>{T.UI.help}</span>
+          <Icon name="help-circle" size="1.2em"/>
         </button>
         <a className="sb-foot-btn" href="https://ko-fi.com/herojournal" target="_blank" rel="noopener noreferrer"
-          title={T.UI.buyBeer}>
-          <Icon name="beer" size="1.2em"/><span>{T.UI.support}</span>
+          aria-label={T.UI.buyBeer} title={T.UI.buyBeer}>
+          <Icon name="beer" size="1.2em"/>
         </a>
         <button className={`sb-foot-btn${showSettings ? " active" : ""}`} aria-pressed={showSettings}
+          aria-label={T.UI.settings} title={T.UI.settings}
           onClick={() => { setShowSettings(s => !s); setShowHelp(false); }}>
-          <Icon name="settings" size="1.2em"/><span>{T.UI.settings}</span>
+          <Icon name="settings" size="1.2em"/>
         </button>
       </footer>
 

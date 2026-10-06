@@ -70,7 +70,6 @@
   font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.06em; text-transform: uppercase;
   transition: all 0.15s;
 }
-.sb-foot-btn span { line-height: 1.1; text-align: center; overflow-wrap: anywhere; }
 .sb-foot-btn.active { border-color: var(--hj-accent-border); color: var(--hj-accent); background: rgba(168,120,48,0.12); }
 
 /* ── Tożsamość bohatera ──────────────────────────────────────── */
@@ -452,5 +451,8 @@
    żeby dłuższe polskie słowa („Ustawienia", „Zmień bohatera") mieściły się
    bez łamania w środku wyrazu. */
 .sb-foot-btn { font-family: 'Crimson Text', Georgia, serif; font-size: max(13px, 0.68rem); font-weight: 600; letter-spacing: 0; text-transform: none; }
-.sb-foot-btn span { overflow-wrap: normal; word-break: keep-all; }
 .hero-chip { font-size: max(13px, 0.68rem); gap: 0.3rem; }
+
+/* Stopka: same ikony (P30) — niższa, ikony większe */
+.sb-foot-btn { min-height: var(--hj-tap); flex-direction: row; }
+.sb-foot-btn > svg { width: 1.5em; height: 1.5em; }

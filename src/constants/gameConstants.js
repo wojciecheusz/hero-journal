@@ -50,11 +50,11 @@ export const REL_ICONS = {
   ally:    "handshake",
   neutral: "scale",
   hostile: "swords",
-  unknown: "help-circle",
+  unknown: "unknown",
 };
 
 export const FACTION_RANK_ICONS = {
-  [FACTION_RANK.UNKNOWN]: "help-circle",
+  [FACTION_RANK.UNKNOWN]: "unknown",
   [FACTION_RANK.ALLY]:    "handshake",
   [FACTION_RANK.NEUTRAL]: "scale",
   [FACTION_RANK.ENEMY]:   "swords",
@@ -62,6 +62,11 @@ export const FACTION_RANK_ICONS = {
   [FACTION_RANK.OFFICER]: "medal",
   [FACTION_RANK.LEADER]:  "crown",
 };
+
+/* Typy frakcji → ikony (P30) */
+export const FACTION_TYPE_ICONS = Object.fromEntries(
+  FACTION_TYPES_ENUM.map(t => [t, `faction-${t}`])
+);
 
 export const LOC_TYPE_ICONS = {
   [LOC_TYPE.SETTLEMENT]: "home",

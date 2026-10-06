@@ -197,7 +197,7 @@ export function ConditionsModal({ T, char, setChar, onClose }) {
           const on = !!active[cond.key];
           return (
             <button key={cond.key} className={`cond-chip${on ? " on" : ""}`} aria-pressed={on} onClick={() => toggle(cond.key)}>
-              {on && <Icon name="check" size="0.95em"/>}
+              <Icon name={`cond-${cond.key}`} size="1.15em"/>
               {T.CONDITIONS?.[cond.key] || cond.label}
             </button>
           );
