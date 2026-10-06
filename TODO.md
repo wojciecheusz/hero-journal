@@ -95,6 +95,14 @@ zrzutu/danych — do potwierdzenia.
 - [ ] E2 [O] (dane) Legacy typ przedmiotu „Ogólny" → „general" (4 szt.);
       kołczan zapisany jako broń.
 
+**F. Ikony** — pełny spis w `IKONY.md` (istniejące, brakujące, do ujednolicenia).
+- [ ] F1 🐞 `activity` (przycisk Stanów) nie istnieje w rejestrze `ICONS` →
+      ikona się nie renderuje (`VitalsBar.jsx:196`, `Header.jsx:471`).
+- [ ] F2 Nowe ikony potrzebne do A–D (szukaj, filtry, sortowanie, kosz,
+      tymcz. PŻ, XP/awans, mini-staty, wyczerpanie, reset, ładunki).
+- [ ] F3 Ikony rozszerzające (tagi akcji, typy frakcji, stany, typy obrażeń,
+      atrybuty, Kronika/Zadania) — do decyzji użytkownika.
+
 ### ✅ P28 — Jeden przycisk „Synchronizuj" zamiast panelu narzędzi + naprawa pobierania (2026-09-11) — UKOŃCZONE
 Zgłoszenie: osobne narzędzia push/pull to przerost formy, a pobieranie z chmury
 i tak nie działało (edycja na tablecie → wypchnięcie → pobranie na PC = brak efektu).
