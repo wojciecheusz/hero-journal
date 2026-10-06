@@ -36,7 +36,7 @@ Podgląd każdej ikony: kliknij jej nazwę w kolumnie „Game Icons”.
 | `heart` | [hearts](https://icon-sets.iconify.design/game-icons/hearts/) | Punkty życia |
 | `shield` | [shield](https://icon-sets.iconify.design/game-icons/shield/) | Tymczasowe PŻ, Odpychanie, tarcza, Paladyn |
 | `moon` | [night-sleep](https://icon-sets.iconify.design/game-icons/night-sleep/) | Krótki odpoczynek |
-| `sun` | [sun](https://icon-sets.iconify.design/game-icons/sun/) | Długi odpoczynek, motyw Świt |
+| `sun` | [sun](https://icon-sets.iconify.design/game-icons/sun/) | Długi odpoczynek |
 | `dice` | [rolling-dices](https://icon-sets.iconify.design/game-icons/rolling-dices/) | Kości wytrzymałości |
 | `star` | [star-medal](https://icon-sets.iconify.design/game-icons/star-medal/) | Atut, nagroda za zadanie |
 | `sparkle` | [magic-swirl](https://icon-sets.iconify.design/game-icons/magic-swirl/) | Awans, inna szkoła magii, motyw Arkana |
@@ -55,10 +55,10 @@ Podgląd każdej ikony: kliknij jej nazwę w kolumnie „Game Icons”.
 | Nazwa w aplikacji | Game Icons | Gdzie |
 |---|---|---|
 | `eye` | [crystal-ball](https://icon-sets.iconify.design/game-icons/crystal-ball/) | Wróżbiarstwo |
-| `flame` | [fireball](https://icon-sets.iconify.design/game-icons/fireball/) | Wywoływanie, Czarownik, motyw Gniew |
+| `flame` | [fireball](https://icon-sets.iconify.design/game-icons/fireball/) | Wywoływanie, Czarownik |
 | `drama` | [drama-masks](https://icon-sets.iconify.design/game-icons/drama-masks/) | Iluzja |
 | `rotate-cw` | [magic-portal](https://icon-sets.iconify.design/game-icons/magic-portal/) | Przywoływanie |
-| `orbit` | [transform](https://icon-sets.iconify.design/game-icons/transform/) | Przemiana, motyw Wieczny |
+| `orbit` | [transform](https://icon-sets.iconify.design/game-icons/transform/) | Przemiana |
 
 ## Relacje i stosunek
 
@@ -176,13 +176,9 @@ Podgląd każdej ikony: kliknij jej nazwę w kolumnie „Game Icons”.
 
 | Nazwa w aplikacji | Game Icons | Gdzie |
 |---|---|---|
-| `moon-star` | [evil-moon](https://icon-sets.iconify.design/game-icons/evil-moon/) | Motyw Cienista Otchłań |
 | `sunrise` | [sunrise](https://icon-sets.iconify.design/game-icons/sunrise/) | Motyw Wschód |
-| `tree-deciduous` | [oak](https://icon-sets.iconify.design/game-icons/oak/) | Motyw Drewno |
 | `bone` | [crossed-bones](https://icon-sets.iconify.design/game-icons/crossed-bones/) | Motyw Kość |
-| `sprout` | [sprout](https://icon-sets.iconify.design/game-icons/sprout/) | Motyw Feywild |
 | `key-round` | [key](https://icon-sets.iconify.design/game-icons/key/) | Motyw Loch |
-| `flower` | [flowers](https://icon-sets.iconify.design/game-icons/flowers/) | Motyw Łąka |
 | `beer` | [beer-stein](https://icon-sets.iconify.design/game-icons/beer-stein/) | Wesprzyj |
 | `lightbulb` | [light-bulb](https://icon-sets.iconify.design/game-icons/light-bulb/) | Samouczek |
 

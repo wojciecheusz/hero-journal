@@ -151,7 +151,7 @@
   cursor: pointer; transition: all 0.15s;
 }
 .settings-btn .settings-btn-sub { margin-left: auto; color: var(--hj-text-dim); text-transform: none; font-family: 'Crimson Text', Georgia, serif; font-size: 0.9rem; letter-spacing: 0; }
-.settings-btn.danger { border-color: #6a2a2a; color: #d05050; }
+.settings-btn.danger { border-color: color-mix(in srgb, var(--hj-bad) 50%, transparent); color: var(--hj-bad); }
 .settings-danger { background: rgba(140,40,40,0.06); }
 .settings-danger .settings-heading { color: #c06060; }
 
@@ -176,7 +176,7 @@
   overflow-wrap: anywhere;
 }
 .theme-btn.active .theme-name { color: var(--hj-accent); }
-.settings-error { display: flex; align-items: center; gap: 0.4rem; color: #d05050; font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; }
+.settings-error { display: flex; align-items: center; gap: 0.4rem; color: var(--hj-bad); font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; }
 
 /* ── Modal ── */
 .hj-modal {
@@ -221,17 +221,17 @@
   cursor: pointer; transition: all 0.15s;
 }
 .hj-btn.primary { border-color: var(--hj-accent-border); color: var(--hj-accent); background: rgba(168,120,48,0.12); }
-.hj-btn.danger { border-color: #6a2a2a; color: #d05050; }
+.hj-btn.danger { border-color: color-mix(in srgb, var(--hj-bad) 50%, transparent); color: var(--hj-bad); }
 .hj-btn:disabled { opacity: 0.45; cursor: default; }
 
 /* Efekty najechania tylko dla myszy — na dotyku :hover „przykleja się" po stuknięciu */
 @media (hover: hover) {
   .settings-btn:hover, .settings-btn:focus-visible { border-color: var(--hj-accent-border); color: var(--hj-accent); background: rgba(168,120,48,0.06); }
-  .settings-btn.danger:hover, .settings-btn.danger:focus-visible { background: rgba(192,64,64,0.1); border-color: #c04040; color: #e06060; }
+  .settings-btn.danger:hover, .settings-btn.danger:focus-visible { background: rgba(192,64,64,0.1); border-color: var(--hj-bad); color: var(--hj-bad); }
   .theme-btn:hover  { border-color: var(--hj-accent-border); }
   .hj-btn:hover, .hj-btn:focus-visible { border-color: var(--hj-accent-border); color: var(--hj-accent); }
   .hj-btn.primary:hover { background: rgba(168,120,48,0.2); border-color: var(--hj-accent); }
-  .hj-btn.danger:hover { background: rgba(192,64,64,0.12); border-color: #c04040; }
+  .hj-btn.danger:hover { background: rgba(192,64,64,0.12); border-color: var(--hj-bad); }
 }
 
 /* Natychmiastowa reakcja na stuknięcie (dotyk nie ma :hover) */
@@ -268,3 +268,13 @@
 .help-badge svg         { width: 1.3em; height: 1.3em; }
 .theme-swatch > svg     { width: 0.95rem; height: 0.95rem; }
 .icon-choice > svg      { width: 1.6em; height: 1.6em; }
+
+/* ── P32: czytelność drobnych etykiet ──
+   Cinzel w grubości 400 przy 11–12px i wersalikach jest zbyt cienki
+   (zwłaszcza jasny tekst na ciemnym tle) — etykiety dostają 600. */
+.form-label, .settings-heading, .meta-badge, .sb-nav-group-label, .field-cell dt,
+.vp-status-label, .vp-rest-label, .help-label, .theme-name, .lt-group-label,
+.coin-label, .prof-attr, .lt-summary, .hero-chip, .sb-nav-item, .vp-mini-label,
+.combat-box-label, .stat-name, .trait-label, .pack-field-label, .tags-suggest-label {
+  font-weight: 600;
+}

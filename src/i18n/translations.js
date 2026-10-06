@@ -19,10 +19,7 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   pl: {
     PALETTE_LABELS: {
-      arcane:"Arkana", pergamin:"Pergamin", dawn:"Świt", wschod:"Wschód",
-      drewno:"Drewno", bone:"Kość",
-      feywild:"Feywild", eldritch:"Wieczny", dungeon:"Loch",
-      shadowfell:"Cienista Otchłań", wrath:"Gniew", meadow:"Łąka",
+      arcane:"Arkana", pergamin:"Pergamin", wschod:"Wschód", bone:"Kość", dungeon:"Loch",
     },
     LABELS: {
       questStatus: { active:"Aktywne", completed:"Ukończone", failed:"Nieudane" },
@@ -511,10 +508,7 @@ export const TRANSLATIONS = {
   ══════════════════════════════════════════════════════════════ */
   en: {
     PALETTE_LABELS: {
-      arcane:"Arcane", pergamin:"Parchment", dawn:"Dawn", wschod:"Sunrise",
-      drewno:"Wood", bone:"Bone",
-      feywild:"Feywild", eldritch:"Eldritch", dungeon:"Dungeon",
-      shadowfell:"Shadowfell", wrath:"Wrath", meadow:"Meadow",
+      arcane:"Arcane", pergamin:"Parchment", wschod:"Sunrise", bone:"Bone", dungeon:"Dungeon",
     },
     LABELS: {
       questStatus: { active:"Active", completed:"Completed", failed:"Failed" },

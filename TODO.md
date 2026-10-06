@@ -3,6 +3,26 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P32 — Motywy: usunięcie 6, scalenie Arkany z Cienistą Otchłanią, audyt czytelności (2026-10-06) — UKOŃCZONE
+- [x] Usunięte: Świt, Drewno, Feywild, Wieczny, Gniew, Łąka; Cienista Otchłań
+      scalona z Arkaną (granat + złoto, jaśniejszy tekst). Zostało 5: Arkana,
+      Pergamin, Kość, Loch, Wschód. Zapisany usunięty motyw → najbliższy
+      (`THEME_MIGRATION` w `theme/themes.js`, `useTheme`).
+- [x] Audyt kontrastu (WCAG) — przed: Arkana tekst pomocniczy 3.8:1, przygaszony
+      2.0:1, obramowania pól 1.4:1; Pergamin akcent 3.1:1, czary 3.9:1, zieleń/
+      czerwień stanów 1.6–2.9:1; Kość/Loch/C.O. przygaszony ~2.5–3.0:1, Loch
+      czerwień 2.6:1. Po: wszystkie motywy spełniają progi (tekst ≥7, etykiety ≥6,
+      pomocniczy ≥4.8, przygaszony ≥3.4, akcent/czary/stany ≥4.6, pola ≥2.3) —
+      pilnuje test `__tests__/themes.test.js`.
+- [x] Kolory stanów per motyw (`good/warn/bad` → `--hj-good/--hj-warn/--hj-bad`)
+      zamiast ~70 kolorów wpisanych na sztywno w CSS (na Pergaminie były nieczytelne).
+- [x] Ikony tematyczne na jasnym motywie przyciemniane (`--hj-icon-strength`,
+      `color-mix` z kolorem tekstu).
+- [x] Drobne etykiety Cinzel 400 → 600; ziarno tła (noise) zmniejszone w Kości,
+      Lochu i Wschodzie (nie przykrywa tekstu); naprawione dziedziczenie
+      `--hj-shadow-soft` z poprzedniego motywu.
+- [x] Usunięte nieużywane ikony motywów (moon-star, tree-deciduous, sprout, flower).
+
 ### ✅ P31 — Relacja NPC „Martwy / Dead" (2026-10-06) — UKOŃCZONE
 Powód: backup `hj_Khoro_Update_Lore.json` ma postać (Malrik) z relacją `dead`,
 której aplikacja nie znała (pusta plakietka, brak w filtrze i w edycji).

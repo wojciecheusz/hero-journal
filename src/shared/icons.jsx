@@ -12,7 +12,7 @@ import {
   ChevronUp, ChevronDown, ChevronRight, ChevronsUpDown,
   Plus, Minus, GripVertical, ArrowRight, ArrowLeft,
   Globe, LogOut, RefreshCw, Cloud, Beer, Download, Upload,
-  User, Users, Dices, Moon, MoonStar, Sun, Sunrise,
+  User, Users, Dices, Moon, Sun, Sunrise,
   Heart, Sparkles, Sparkle, Skull, Star, Lightbulb,
   CornerDownRight, Circle, Diamond, ToggleLeft,
   Target, Dna, Shield, Eye, Flame, Drama, RotateCw,
@@ -21,7 +21,7 @@ import {
   Package, Shirt, ScrollText, FlaskConical, Wrench, Coins,
   Backpack, Wand2, Map, Flag, BookOpen, Book, Zap,
   Axe, Music, Cross, Leaf, Hand, Crosshair, Footprints,
-  CircleEllipsis, TreeDeciduous, Bone, Sprout, Orbit, KeyRound, Flower2,
+  CircleEllipsis, Bone, Orbit, KeyRound,
   Search, SlidersHorizontal, Trash2,
 } from 'lucide-react';
 
@@ -38,7 +38,7 @@ export const ICONS = {
   search: Search, filters: SlidersHorizontal, trash: Trash2,
 
   // ── Odpoczynek / walka ──
-  moon: Moon, "moon-star": MoonStar, sun: Sun, sunrise: Sunrise,
+  moon: Moon, sun: Sun, sunrise: Sunrise,
   heart: Heart, sparkles: Sparkles, sparkle: Sparkle, skull: Skull,
   star: Star, lightbulb: Lightbulb, "corner-down-right": CornerDownRight,
   circle: Circle, diamond: Diamond, toggle: ToggleLeft,
@@ -68,23 +68,18 @@ export const ICONS = {
   crosshair: Crosshair, footprints: Footprints, "circle-ellipsis": CircleEllipsis,
 
   // ── Motywy kolorystyczne ──
-  "tree-deciduous": TreeDeciduous, bone: Bone, sprout: Sprout, orbit: Orbit,
-  "key-round": KeyRound, flower: Flower2,
+  bone: Bone, orbit: Orbit, "key-round": KeyRound,
 };
 
 /* Mapa motyw → ikona (dla SettingsMenu) */
 export const PALETTE_ICONS = {
-  arcane: "sparkle", pergamin: "scroll", dawn: "sun", wschod: "sunrise",
-  drewno: "tree-deciduous", bone: "bone",
-  feywild: "sprout", eldritch: "orbit", dungeon: "key-round",
-  shadowfell: "moon-star", wrath: "flame", meadow: "flower",
+  arcane: "sparkle", pergamin: "scroll", wschod: "sunrise", bone: "bone", dungeon: "key-round",
 };
 
 /* Domyślne kolory dla ikon tematycznych — reszta dziedziczy currentColor */
 export const ICON_COLORS = {
   // Odpoczynek
   heart:        "#c0584f",
-  "moon-star":  "#7a8ac9",
   sun:          "#e2b94e",
   skull:        "#9a9aa6",
 
@@ -143,12 +138,9 @@ export const ICON_COLORS = {
 
   // Motywy
   sunrise:          "#e08a4e",
-  "tree-deciduous": "#9a7a4e",
   bone:             "#c9c0a8",
-  sprout:           "#9a6ad0",
   orbit:            "#9a7ad0",
   "key-round":      "#8a8a96",
-  flower:           "#c9a84c",
 
   // Ranga "leader" (👑) i logo marki
   swords: "#c9943e",
@@ -171,7 +163,12 @@ function paddedViewBox(vb) {
 /* <Icon name="sword" size="1em" color="#fff" /> — domyślnie dziedziczy
    kolor tekstu (currentColor), o ile dana ikona nie ma wpisu w ICON_COLORS. */
 export default function Icon({ name, size = "1em", color, strokeWidth = 1.75, fill = "none", className, style }) {
-  const resolvedColor = color || ICON_COLORS[name] || "currentColor";
+  /* Kolor tematyczny mieszany z kolorem tekstu wg --hj-icon-strength:
+     na jasnym motywie jasne odcienie (złoto, kość) są przyciemniane. */
+  const themed = !color && ICON_COLORS[name];
+  const resolvedColor = color || (themed
+    ? `color-mix(in srgb, ${ICON_COLORS[name]} var(--hj-icon-strength, 100%), var(--hj-text))`
+    : "currentColor");
   const file = SVG_ICONS[name];
   if (file) {
     return (

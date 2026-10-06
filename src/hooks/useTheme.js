@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { THEMES, PALETTES } from '../theme/themes';
+import { THEMES, PALETTES, THEME_MIGRATION } from '../theme/themes';
 import { applyThemeVars } from '../utils/themeUtils';
 import { load, save } from '../utils/storage';
 
@@ -9,7 +9,9 @@ import { load, save } from '../utils/storage';
  */
 export function useTheme() {
   const [theme, setTheme] = useState(() => {
-    const s = load("hj_theme", "arcane");
+    const saved = load("hj_theme", "arcane");
+    /* Usunięty motyw → najbliższy z pozostałych (P32) */
+    const s = THEME_MIGRATION[saved] || saved;
     const name = PALETTES.includes(s) ? s : "arcane";
     applyThemeVars(THEMES[name] || THEMES.arcane);
     return name;

@@ -724,7 +724,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   border-radius: var(--radius-md);
 }
 
-.btn-ghost:hover { border-color: #9b2c2c; color: #c04040; }
+.btn-ghost:hover { border-color: color-mix(in srgb, var(--hj-bad) 50%, transparent); color: var(--hj-bad); }
 
 .btn-secondary {
   font-family: 'Cinzel', serif;
@@ -745,8 +745,8 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 
 .btn-danger {
   background: transparent;
-  border: 1px solid #6a2a2a;
-  color: #c04040;
+  border: 1px solid color-mix(in srgb, var(--hj-bad) 50%, transparent);
+  color: var(--hj-bad);
   font-size: 0.68rem;
   padding: 0.28rem 0.65rem;
   cursor: pointer;
@@ -757,7 +757,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   border-radius: var(--radius-sm);
 }
 
-.btn-danger:hover { background: rgba(192,64,64,0.12); border-color: #c04040; }
+.btn-danger:hover { background: rgba(192,64,64,0.12); border-color: var(--hj-bad); }
 
 .btn-sm {
   font-family: 'Cinzel', serif;
@@ -819,7 +819,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
   transition: color 0.15s;
 }
 
-.tag-remove:hover { color: #c04040; }
+.tag-remove:hover { color: var(--hj-bad); }
 
 .tag-input {
   background: transparent;
@@ -1065,9 +1065,9 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .entity-toggle:hover { color: var(--hj-text-muted); }
 
 .rel-badge { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.1em; padding: 0.15rem 0.5rem; cursor: pointer; flex-shrink: 0; transition: all 0.15s; user-select: none; text-transform: uppercase; border-radius: var(--radius-pill); }
-.rel-ally    { border: 1px solid #3a6a3a; color: #6acc6a; background: rgba(74,122,74,0.08); }
+.rel-ally    { border: 1px solid color-mix(in srgb, var(--hj-good) 55%, transparent); color: var(--hj-good); background: rgba(74,122,74,0.08); }
 .rel-neutral { border: 1px solid #4a4030; color: var(--hj-text-muted); background: rgba(74,64,48,0.08); }
-.rel-hostile { border: 1px solid #6a2a2a; color: #cc4444; background: rgba(122,44,44,0.08); }
+.rel-hostile { border: 1px solid color-mix(in srgb, var(--hj-bad) 50%, transparent); color: var(--hj-bad); background: rgba(122,44,44,0.08); }
 .rel-unknown { border: 1px solid var(--hj-border); color: var(--hj-text-dim); background: transparent; }
 .rel-badge:hover { filter: brightness(1.2); }
 
@@ -1136,8 +1136,8 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 
 .badge          { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.15rem 0.55rem; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all 0.15s; user-select:none; border-radius:var(--radius-pill); }
 .badge.active   { border:1px solid var(--hj-accent-border); color:var(--hj-accent); background:rgba(168,120,48,0.1); }
-.badge.completed{ border:1px solid #3a6a3a; color:#6acc6a; background:rgba(74,122,74,0.1); }
-.badge.failed   { border:1px solid #6a2a2a; color:#cc4444; background:rgba(122,44,44,0.1); }
+.badge.completed{ border:1px solid color-mix(in srgb, var(--hj-good) 55%, transparent); color:var(--hj-good); background:rgba(74,122,74,0.1); }
+.badge.failed   { border:1px solid color-mix(in srgb, var(--hj-bad) 50%, transparent); color:var(--hj-bad); background:rgba(122,44,44,0.1); }
 .badge:hover    { filter:brightness(1.25); }
 
 .checklist-item       { display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0; border-bottom:1px solid var(--hj-border-sub); }
@@ -1149,8 +1149,8 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 
 /* ── Modalne ──────────────────────────────────────────────────── */
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; }
-.modal-box     { background:var(--hj-modal-bg); border:1px solid #6a2a2a; padding:1.5rem; max-width:380px; width:100%; border-radius:var(--radius-xl); box-shadow: 0 16px 48px var(--hj-shadow-soft), 0 4px 16px var(--hj-shadow-bot); }
-.modal-title   { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:#cc4444; margin-bottom:0.75rem; }
+.modal-box     { background:var(--hj-modal-bg); border:1px solid color-mix(in srgb, var(--hj-bad) 50%, transparent); padding:1.5rem; max-width:380px; width:100%; border-radius:var(--radius-xl); box-shadow: 0 16px 48px var(--hj-shadow-soft), 0 4px 16px var(--hj-shadow-bot); }
+.modal-title   { font-family:'Cinzel',serif; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--hj-bad); margin-bottom:0.75rem; }
 .modal-text    { font-family:'Crimson Text',serif; font-size:1rem; color:var(--hj-text); line-height:1.6; margin-bottom:1.2rem; }
 .modal-detail  { font-family:'Crimson Text',serif; font-size:0.9rem; color:var(--hj-text); background:var(--hj-bg-input); border:1px solid var(--hj-border-input); padding:0.5rem 0.75rem; margin-bottom:1rem; line-height:1.6; border-radius:var(--radius-md); }
 
@@ -1179,7 +1179,7 @@ textarea { overflow-y: auto; overscroll-behavior: contain; }
 .profile-card-name { font-family:'Cinzel',serif; font-size:0.95rem; font-weight:700; color:var(--hj-text); }
 .profile-card-sub  { font-family:'Crimson Text',Georgia,serif; font-size:0.88rem; color:var(--hj-text-muted); font-style:italic; margin-top:0.1rem; }
 .profile-card-del  { position:absolute; top:0.4rem; right:0.5rem; background:transparent; border:none; cursor:pointer; font-size:0.75rem; color:var(--hj-text-dim); opacity:0.4; transition:all 0.15s; padding:0.15rem 0.3rem; }
-.profile-card-del:hover { color:#c04040; opacity:1; }
+.profile-card-del:hover { color:var(--hj-bad); opacity:1; }
 
 .btn-new-profile {
   font-family: 'Cinzel', serif;

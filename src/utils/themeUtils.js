@@ -22,7 +22,8 @@ export function applyThemeVars(t) {
   set('--hj-noise',            t.noise);
   set('--hj-shadow-bot',       t.shadowBot);
   set('--hj-shadow-card',      t.shadowCard);
-  if (t.shadowSoft) set('--hj-shadow-soft', t.shadowSoft);
+  /* Zawsze ustawiane — wcześniej motyw bez shadowSoft dziedziczył cień poprzedniego */
+  set('--hj-shadow-soft',      t.shadowSoft ?? t.shadowCard);
   set('--hj-inner-div-bg',     t.innerDivBg);
   set('--hj-hp-bg',            t.hpBg);
   set('--hj-add-form',         t.addForm);
@@ -61,4 +62,9 @@ export function applyThemeVars(t) {
   set('--hj-spell-text',       t.spellText);
   set('--hj-spell-bg',         t.spellBg);
   set('--hj-quest-reward',     t.questReward);
+  /* Kolory stanów (P32) — dobrane pod kontrast danego motywu */
+  set('--hj-good',             t.good);
+  set('--hj-warn',             t.warn);
+  set('--hj-bad',              t.bad);
+  set('--hj-icon-strength',    t.iconStrength ?? '100%');
 }
