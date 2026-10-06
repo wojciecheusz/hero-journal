@@ -31,6 +31,12 @@ export function getNavGroups(lang) {
   ];
 }
 
+/* Grupy podzakładek (P29/A1–A2): Wyposażenie i Świat */
+export const EQUIPMENT_TABS = ["inventory", "skills", "spells"];
+export const WORLD_TABS     = ["npcs", "locations", "factions"];
+export const isEquipmentTab = t => t === "equipment" || EQUIPMENT_TABS.includes(t);
+export const isWorldTab     = t => t === "world-all" || WORLD_TABS.includes(t);
+
 /* Etykieta aktualnej zakładki — wyświetlana w trwałym nagłówku (Header/Sidebar) */
 export function getTabLabel(T, tab) {
   const n = T.NAV;

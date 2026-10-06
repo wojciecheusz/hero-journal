@@ -1,0 +1,243 @@
+/* ════════════════════════════════════════════════════════════════
+   P29 — wspólne tokeny dotykowe + nakładki (szuflada, popover, modal)
+   Rozmiary w rem skalują się razem z bazową czcionką (16px mobile,
+   20px desktop, 22px QHD, 25px 4K), więc proporcje są takie same na
+   każdej rozdzielczości. --hj-tap pilnuje minimum 44px pod palec.
+   ════════════════════════════════════════════════════════════════ */
+:root {
+  --hj-tap: max(44px, 2.2rem);
+  --hj-tap-sm: max(36px, 1.8rem);
+  --hj-label: max(11px, 0.56rem);     /* najmniejsza etykieta CAPS */
+  --hj-small: max(12px, 0.62rem);     /* drobny tekst / przyciski  */
+  --hj-sidebar-w: 0px;
+  --hj-safe-top: env(safe-area-inset-top, 0px);
+  --hj-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (min-width: 1024px) {
+  :root { --hj-sidebar-w: 14.5rem; }
+}
+
+/* Przycisk-ikona (zamknij, akcje w nagłówkach) */
+.hj-icon-btn {
+  width: var(--hj-tap); height: var(--hj-tap);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--hj-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.hj-icon-btn:hover,
+.hj-icon-btn:focus-visible { background: rgba(168,120,48,0.08); color: var(--hj-accent); }
+.hj-icon-btn:active { background: rgba(168,120,48,0.16); }
+
+/* ── Tło nakładek ── */
+.hj-overlay-backdrop {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(0,0,0,0.45);
+  animation: hj-fade 0.15s ease-out;
+}
+.hj-overlay-backdrop-clear { background: rgba(0,0,0,0.18); }
+
+@keyframes hj-fade  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hj-slide { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes hj-rise  { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ── Szuflada (pomoc) ── */
+.hj-drawer {
+  position: fixed; z-index: 901;
+  top: 0; right: 0; bottom: 0;
+  width: min(24rem, 100vw);
+  display: flex; flex-direction: column;
+  background: var(--hj-modal-bg);
+  border-left: 1px solid var(--hj-border);
+  box-shadow: -16px 0 48px var(--hj-shadow-bot);
+  padding-top: var(--hj-safe-top);
+  padding-bottom: var(--hj-safe-bottom);
+  animation: hj-slide 0.18s ease-out;
+}
+.hj-drawer-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  padding: 0.6rem 0.6rem 0.6rem 1.1rem;
+  border-bottom: 1px solid var(--hj-border);
+  flex-shrink: 0;
+}
+.hj-drawer-title {
+  display: flex; align-items: center; gap: 0.5rem; min-width: 0;
+  font-family: 'Cinzel', serif; font-weight: 600;
+  font-size: max(13px, 0.7rem); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--hj-accent);
+}
+.hj-drawer-title span { overflow-wrap: anywhere; }
+.hj-drawer-body {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 1rem 1.1rem 2rem;
+}
+
+/* ── Treść pomocy ── */
+.help-intro {
+  font-family: 'Crimson Text', Georgia, serif; font-style: italic;
+  font-size: 1rem; line-height: 1.65; color: var(--hj-text); opacity: 0.88;
+  margin-bottom: 1rem;
+}
+.help-item {
+  display: grid; grid-template-columns: auto 1fr; gap: 0.75rem;
+  padding: 0.75rem 0; border-top: 1px solid var(--hj-border-sub);
+}
+.help-badge {
+  min-width: 2.6rem; padding: 0.25rem 0.4rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem;
+  align-self: start;
+  font-family: 'Cinzel', serif; font-size: var(--hj-small); color: var(--hj-accent);
+  background: rgba(168,120,48,0.08); border: 1px solid var(--hj-accent-border);
+  border-radius: var(--radius-sm); line-height: 1.4;
+}
+.help-label {
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--hj-text-label); margin-bottom: 0.2rem;
+}
+.help-desc {
+  font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; line-height: 1.6;
+  color: var(--hj-text-muted);
+}
+
+/* ── Popover (ustawienia) ── */
+.hj-popover {
+  position: fixed; z-index: 901;
+  width: min(22rem, calc(100vw - 1.5rem));
+  max-height: calc(100dvh - var(--hj-safe-top) - 1.5rem);
+  overflow-y: auto; overscroll-behavior: contain;
+  background: var(--hj-modal-bg);
+  border: 1px solid var(--hj-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px var(--hj-shadow-bot);
+  animation: hj-rise 0.16s ease-out;
+}
+/* Mobile/tablet pionowo: pod przyciskiem w nagłówku (prawy górny róg) */
+.hj-popover.settings-pop {
+  top: calc(var(--hj-safe-top) + 3.6rem);
+  right: 0.75rem;
+}
+/* Desktop: obok sidebara, przy dolnej krawędzi — nigdy nie jest przycinany */
+@media (min-width: 1024px) {
+  .hj-popover.settings-pop {
+    top: auto; right: auto;
+    left: calc(var(--hj-sidebar-w) + 0.75rem);
+    bottom: calc(var(--hj-safe-bottom) + 0.75rem);
+  }
+}
+
+/* ── Menu ustawień ── */
+.settings-section { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.settings-section + .settings-section { border-top: 1px solid var(--hj-border-sub); }
+.settings-heading {
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--hj-text-muted); padding: 0 0.15rem 0.1rem;
+}
+.settings-btn {
+  min-height: var(--hj-tap);
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--hj-border-input);
+  border-radius: var(--radius-md);
+  color: var(--hj-text);
+  font-family: 'Cinzel', serif; font-size: var(--hj-small); letter-spacing: 0.06em;
+  text-transform: uppercase; text-align: left;
+  cursor: pointer; transition: all 0.15s;
+}
+.settings-btn .settings-btn-sub { margin-left: auto; color: var(--hj-text-dim); text-transform: none; font-family: 'Crimson Text', Georgia, serif; font-size: 0.9rem; letter-spacing: 0; }
+.settings-btn.danger { border-color: #6a2a2a; color: #d05050; }
+.settings-danger { background: rgba(140,40,40,0.06); }
+.settings-danger .settings-heading { color: #c06060; }
+
+.theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.6rem, 1fr)); gap: 0.4rem; }
+.theme-btn {
+  min-height: var(--hj-tap);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3rem;
+  padding: 0.45rem 0.25rem;
+  background: transparent;
+  border: 1px solid var(--hj-border-input);
+  border-radius: var(--radius-md);
+  cursor: pointer; transition: all 0.15s;
+}
+.theme-btn.active { background: rgba(168,120,48,0.12); border-color: var(--hj-accent); }
+.theme-swatch {
+  width: 1.4rem; height: 1.4rem; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.theme-name {
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.02em;
+  text-transform: uppercase; color: var(--hj-text-muted); text-align: center; line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.theme-btn.active .theme-name { color: var(--hj-accent); }
+.settings-error { display: flex; align-items: center; gap: 0.4rem; color: #d05050; font-family: 'Crimson Text', Georgia, serif; font-size: 0.95rem; }
+
+/* ── Modal ── */
+.hj-modal {
+  position: fixed; z-index: 901;
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(30rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - var(--hj-safe-top) - var(--hj-safe-bottom) - 2rem);
+  display: flex; flex-direction: column;
+  background: var(--hj-modal-bg);
+  border: 1px solid var(--hj-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 64px var(--hj-shadow-bot);
+  animation: hj-fade 0.16s ease-out;
+}
+.hj-modal-wide { width: min(44rem, calc(100vw - 2rem)); }
+.hj-modal-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 1rem 1.1rem 1.2rem; }
+.hj-modal-foot {
+  display: flex; justify-content: flex-end; gap: 0.6rem; flex-wrap: wrap;
+  padding: 0.75rem 1.1rem calc(0.75rem + var(--hj-safe-bottom));
+  border-top: 1px solid var(--hj-border-sub);
+}
+/* Telefon: arkusz od dołu, pełna szerokość */
+@media (max-width: 639px) {
+  .hj-modal, .hj-modal-wide {
+    left: 0; right: 0; top: auto; bottom: 0; transform: none;
+    width: 100%;
+    max-height: calc(100dvh - var(--hj-safe-top) - 1rem);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    animation: hj-rise 0.18s ease-out;
+  }
+}
+
+/* Przyciski akcji w nakładkach — duże, pod palec */
+.hj-btn {
+  min-height: var(--hj-tap);
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+  padding: 0.4rem 1.1rem;
+  font-family: 'Cinzel', serif; font-size: var(--hj-small); letter-spacing: 0.08em; text-transform: uppercase;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hj-border-input);
+  background: transparent; color: var(--hj-text-muted);
+  cursor: pointer; transition: all 0.15s;
+}
+.hj-btn.primary { border-color: var(--hj-accent-border); color: var(--hj-accent); background: rgba(168,120,48,0.12); }
+.hj-btn.danger { border-color: #6a2a2a; color: #d05050; }
+.hj-btn:disabled { opacity: 0.45; cursor: default; }
+
+/* Efekty najechania tylko dla myszy — na dotyku :hover „przykleja się" po stuknięciu */
+@media (hover: hover) {
+  .settings-btn:hover, .settings-btn:focus-visible { border-color: var(--hj-accent-border); color: var(--hj-accent); background: rgba(168,120,48,0.06); }
+  .settings-btn.danger:hover, .settings-btn.danger:focus-visible { background: rgba(192,64,64,0.1); border-color: #c04040; color: #e06060; }
+  .theme-btn:hover  { border-color: var(--hj-accent-border); }
+  .hj-btn:hover, .hj-btn:focus-visible { border-color: var(--hj-accent-border); color: var(--hj-accent); }
+  .hj-btn.primary:hover { background: rgba(168,120,48,0.2); border-color: var(--hj-accent); }
+  .hj-btn.danger:hover { background: rgba(192,64,64,0.12); border-color: #c04040; }
+}
+
+/* Natychmiastowa reakcja na stuknięcie (dotyk nie ma :hover) */
+.hj-btn:active:not(:disabled), .hj-icon-btn:active, .settings-btn:active, .theme-btn:active,
+.vp-step:active, .vp-status-btn:active, .vp-rest-btn:active, .vp-levelup:active,
+.hero-chip:active, .sb-nav-item:active, .sb-foot-btn:active, .cond-chip:active,
+.choice-btn:active, .exh-btn:active, .death-pip:active, .stepper-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}

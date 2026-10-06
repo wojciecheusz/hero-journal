@@ -3,7 +3,16 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
-### 📋 P29 — Pakiet poprawek UI z przeglądu na iPadzie A16 (zrzuty #1–#6, 2026-10-06) — DO ZATWIERDZENIA
+### 🔄 P29 — Pakiet poprawek UI z przeglądu na iPadzie A16 (zrzuty #1–#6, 2026-10-06) — W TRAKCIE
+**Decyzje użytkownika (2026-10-06):** obserwacje [O] wchodzą do zakresu; EN w 100%
+po angielsku, PL w 100% po polsku (poza treścią użytkownika); przedmioty: licznik
+użyć + ładunki odnawiane; ikony (F) pomijamy — użytkownik dostarczy folder z ikonami;
+kolejność wg uznania. Weryfikacja po każdej poprawce: lint/test/build + przegląd w
+przeglądarce (iPad 1180×820 i 820×1180, 1366×768, 1920×1080, 2560×1440, 3840×2160,
+telefon) z myślą o obsłudze palcami (cele dotykowe ≥44px, nic tylko na hover).
+**Kolejność:** Faza 1 — sidebar i nakładki (D7, D8, D9, D4, D5, D6, D3, D1, D2);
+Faza 2 — podzakładki i pasek narzędzi (A1–A4); Faza 3 — karty (B1–B4);
+Faza 4 — Walka i wyposażenie (C1–C3); Faza 5 — język i dane (E1–E2).
 Zrzuty z iPada A16 (viewport ~1180×820 poziomo) tylko ilustrują problemy.
 Każda poprawka ma działać kompleksowo na PC: 1366×768, 1536×864, 1920×1080,
 2560×1440, 3840×2160 (także przy skalowaniu Windows 125–200%), bez regresji
@@ -57,37 +66,54 @@ zrzutu/danych — do potwierdzenia.
       ###, >, --- — np. Wywar pożyczonej siły, Ołowiany klucz introligatorski).
 
 **D. Sidebar (lewy pasek)**
-- [ ] D1 [U] (#2) Blok Życia i przyciski w sidebarze — brzydkie, nieczytelne
+- [x] D1 [U] (#2) Blok Życia i przyciski w sidebarze — brzydkie, nieczytelne
       kształty: przeprojektować przyciski, pola i mini-staty ([O] etykiety
       PROF/PERC/SPELL DC/SPELL ATK za małe).
-- [ ] D2 [U] (#2) Nie da się dodać XP ani awansować powyżej 7. [O] Diagnoza:
+- [x] D2 [U] (#2) Nie da się dodać XP ani awansować powyżej 7. [O] Diagnoza:
       poziom = suma poziomów klas (=6), a „✦ LVL. 7" to tylko wskaźnik, że XP
       (23000) osiągnęło próg 7 (`VitalsBar.jsx:35-38,118-124`); nie ma akcji
       awansu ani dodawania XP (tylko nadpisywanie liczby). Do zrobienia:
       „+ XP" (dodaj kwotę), przycisk „Awansuj" po przekroczeniu progu
       (multiklasa: wybór klasy), aktualizacja max kości wytrzymałości (dziś 5
       przy poz. 6), czytelne „Poziom 6 · awans dostępny".
-- [ ] D3 [U] (#2) Tymczasowe PŻ (niebieska tarcza) wychodzą poza kartę i nie
+- [x] D3 [U] (#2) Tymczasowe PŻ (niebieska tarcza) wychodzą poza kartę i nie
       są opisane — zmieścić w bloku i dodać czytelną etykietę.
-- [ ] D4 [U] (#4) Przycisk zmiany bohatera (lewy górny róg) schowany pod
+- [x] D4 [U] (#4) Przycisk zmiany bohatera (lewy górny róg) schowany pod
       paskiem statusu urządzenia — uwzględnić safe-area i powiększyć obszar
       kliknięcia.
-- [ ] D5 [U] (#4) Nazwa bohatera łamie się na 3 wiersze — ma mieścić się w 1
+- [x] D5 [U] (#4) Nazwa bohatera łamie się na 3 wiersze — ma mieścić się w 1
       (skalowanie czcionki, przy bardzo długich wielokropek + podpowiedź);
       [O] „Rogue Phantom · Lv…" też ucięte.
-- [ ] D6 [U] (#4) Panel „More" wygląda prowizorycznie — przeprojektować.
-- [ ] D7 [U] (#3) Pomoc „?" otwiera się pod nawigacją w sidebarze i jest
+- [x] D6 [U] (#4) Panel „More" wygląda prowizorycznie — przeprojektować.
+- [x] D7 [U] (#3) Pomoc „?" otwiera się pod nawigacją w sidebarze i jest
       niewidoczna (nie da się przewinąć) — przenieść do panelu/szuflady nad
       obszarem roboczym z własnym przewijaniem; działa z każdej zakładki.
-- [ ] D8 [U] (#6) Panel Ustawień zasłonięty przez obszar roboczy — renderować
+- [x] D8 [U] (#6) Panel Ustawień zasłonięty przez obszar roboczy — renderować
       nad wszystkim (warstwa/portal), cały widoczny; [O] siatka motywów
       ucięta w 4. kolumnie; „Reset postaci" oddzielić od „Zmień bohatera" jako
       strefę niebezpieczną.
-- [ ] D9 [O] (#3, #6) Przyciski stopki sidebara (? / kufel / zębatka) różnej
+- [x] D9 [O] (#3, #6) Przyciski stopki sidebara (? / kufel / zębatka) różnej
       szerokości — wyrównać.
       Rozdzielczości (D1–D9): na 1366×768 sidebar nie może wymagać
       przewijania do kluczowych akcji; na QHD/4K skalowanie przez clamp(),
       bez rozjeżdżania (por. 12ec84e).
+      ✅ **Zrobione (faza 1):** nowy sidebar (`Sidebar.jsx`) = tożsamość
+      (`hero/HeroIdentity.jsx`, imię w 1 linii przez `hero/FitText.jsx`, przyciski
+      „Zmień bohatera"/„Szczegóły") → przewijany panel Życia
+      (`hero/VitalsPanel.jsx`) → stała nawigacja → przyklejona stopka (3 równe
+      przyciski z podpisem). PŻ/XP w oknach (`hero/VitalsModals.jsx`): obrażenia
+      zdejmują najpierw tymcz. PŻ, leczenie, tymcz. PŻ, dodawanie XP, **awans**
+      (`levelUp()` w `utils/character.js`: poziom klasy, PŻ, kości wyt. = poziom,
+      premia z biegłości; multiklasa z wyborem klasy) — testy
+      `__tests__/character.test.js`. Szczegóły bohatera (dawne „More") w
+      `hero/HeroDetailsModal.jsx`. Pomoc = szuflada (`shared/Overlay.jsx` Drawer),
+      Ustawienia = popover w portalu (nieprzycinany, strefa niebezpieczna).
+      Szerokość sidebara w rem (`--hj-sidebar-w`), safe-area iPada, cele ≥44px,
+      hover tylko dla myszy. Mobile (<1024): przyklejony pasek z PŻ +
+      `hero/MobileHeroPanel.jsx` na zakładce Postać (zamiast stałego nagłówka
+      z ręcznie liczonym przesunięciem). Usunięte `VitalsBar.jsx`,
+      `RestStrip.jsx` i ich style. Sprawdzone: 1180×820, 820×1180, 390×844,
+      1366×768, 1920×1080, 2560×1440, 3840×2160.
 
 **E. Spójność językowa i danych**
 - [ ] E1 [O] (#1, #4, #6) Mieszanka EN/PL: interfejs w trybie EN, ale Rzuty

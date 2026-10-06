@@ -12,6 +12,8 @@ import Icon from './shared/icons';
 import { Router } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
 import './styles/global.css';
+import './styles/overlays.css';
+import './styles/hero-panel.css';
 
 /* Wynik synchronizacji w jednym zdaniu. Blad pokazujemy DOSLOWNIE — ogolne
    "nie udalo sie" nie pozwala niczego zdiagnozowac. */

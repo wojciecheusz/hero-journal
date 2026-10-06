@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useT } from '../i18n/translations';
 import Icon from './icons';
+import { clamp } from '../utils/math';
 
 export function TagsEditor({ tags, onChange, suggestions }) {
   const T = useT();

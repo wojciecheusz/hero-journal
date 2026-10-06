@@ -14,8 +14,11 @@ import { getNavGroups, getNavGroupsDesktop } from './navigation';
 import TutorialModal from './TutorialModal';
 import DiceRoller from '../features/dice/DiceRoller';
 import HelpPanel     from './HelpPanel';
+import SettingsMenu  from './SettingsMenu';
+import { Popover }   from '../shared/Overlay';
 import Sidebar       from './Sidebar';
 import Header        from './Header';
+import MobileHeroPanel from './hero/MobileHeroPanel';
 import MobileNav     from './MobileNav';
 import { RestModal } from '../features/character/widgets/RestModal';
 import { LangContext, TRANSLATIONS } from '../i18n/translations';
@@ -24,6 +27,7 @@ import { ResetModal } from '../shared/ui';
 import ErrorBoundary from './ErrorBoundary';
 import { setQuotaExceededHook } from '../utils/storage';
 import Icon from '../shared/icons';
+import { totalLevelOf } from '../utils/character';
 
 /* ── Lazy imports — każdy tab ładowany na żądanie ─────────────── */
 const CharacterScreen  = lazy(() => import('../features/character/CharacterScreen'));
@@ -86,14 +90,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   const [openEntity, setOpenEntity] = useState(null);
   const [quotaWarning, setQuotaWarning] = useState(false);
   const [restModal, setRestModal] = useState(null);
-  const [panelCollapsed, setPanelCollapsed] = useState(false);
-  const [stanyOpen,      setStanyOpen]      = useState(false);
-  const [deathOpen,      setDeathOpen]      = useState(false);
-  const [exhOpen,        setExhOpen]        = useState(false);
-  const [moreOpen,       setMoreOpen]       = useState(false);
   useEffect(() => {
     setQuotaExceededHook(() => setQuotaWarning(true));
   }, []);
+  /* Stabilne referencje — Drawer/Popover rejestrują na nich obsługę Escape */
+  const closeHelp     = useCallback(() => setShowHelp(false), []);
+  const closeSettings = useCallback(() => setShowSettings(false), []);
 
   /* ── Auto-resize textarea (input listener + po zmianie taba/profilu) ── */
   useTextareaAutoResize(tab, activeId);
@@ -106,7 +108,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         ...p,
         name:  data.char.name?.trim() || p.name,
         class: (data.char.classes || [])[0]?.name  || p.class,
-        level: (data.char.classes || [])[0]?.level || p.level,
+        level: data.char.classes?.length ? totalLevelOf(data.char) : p.level,
         icon:  data.char.icon || p.icon,
       });
       saveProfiles(updated);
@@ -213,19 +215,9 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
   );
 
   /* ── Główny widok aplikacji ───────────────────────────────────── */
-  const contentTopBase = 363; // brand + identity + strefa Vitals (PŻ+XP) + separator + mini-staty + 2 btn rows + spacing
-  const contentTopExtra =
-    (moreOpen  ? 270 : 0) + // klasy (multiclass) + rasa/przeszlosc/charakter/wyglad
-    (stanyOpen ?  96 : 0) +
-    (deathOpen ?  94 : 0) +
-    (exhOpen   ?  82 : 0);
-  const contentTop = panelCollapsed
-    ? "calc(env(safe-area-inset-top, 0px) + 62px)"
-    : `calc(env(safe-area-inset-top, 0px) + ${contentTopBase + contentTopExtra}px)`;
-
   return (
     <LangContext.Provider value={lang}>
-    <div className="hj-root" style={{ "--hj-content-top": contentTop }}>
+    <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
       {syncWarning && !syncFailed && (
@@ -241,27 +233,27 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
         </div>
       )}
       {showTutorial && <TutorialModal theme={theme} onClose={() => { setShowTutorial(false); save("hj_tutorial_seen","1"); }}/>}
-      {/* HelpPanel — tylko na mobile (sidebar przejmuje rolę na desktop) */}
-      {showHelp && <HelpPanel tab={tab} theme={theme} onClose={() => setShowHelp(false)}/>}
+      {/* Pomoc kontekstowa — szuflada na każdej szerokości (P29/D7) */}
+      {showHelp && <HelpPanel tab={tab} onClose={closeHelp}/>}
+      {/* Ustawienia — popover w portalu, nie przycinany przez sidebar (P29/D8) */}
+      {showSettings && (
+        <Popover className="settings-pop" onClose={closeSettings} label={T.UI.settings}>
+          <SettingsMenu T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage}
+            setScreen={setScreen} setShowReset={setShowReset} onClose={closeSettings}
+            user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
+            onExport={handleExport} onImport={handleImport}/>
+        </Popover>
+      )}
 
-      {/* ── Sidebar (desktop only) ── */}
-      <Sidebar T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} setChar={setChar} pb={pb}
+      {/* ── Sidebar (desktop ≥1024px) ── */}
+      <Sidebar T={T} char={char} setChar={setChar} pb={pb}
         tab={tab} setTab={setTab} navGroupsDesktop={navGroupsDesktop}
         showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
-        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
-        onExport={handleExport} onImport={handleImport} onRestModal={setRestModal}/>
+        setScreen={setScreen} onRestModal={setRestModal}/>
 
-      {/* ── Header (mobile only) — zawiera pasek HP + mini-statsy ── */}
-      <Header T={T} theme={theme} setTheme={setTheme} toggleLanguage={toggleLanguage} char={char} tab={tab}
-        showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}
-        setScreen={setScreen} setShowReset={setShowReset} user={user} onCloudRefresh={onCloudRefresh} onLogout={onLogout}
-        onExport={handleExport} onImport={handleImport}
-        setChar={setChar} pb={pb} onRestModal={setRestModal}
-        panelCollapsed={panelCollapsed} setPanelCollapsed={setPanelCollapsed}
-        stanyOpen={stanyOpen} setStanyOpen={setStanyOpen}
-        deathOpen={deathOpen} setDeathOpen={setDeathOpen}
-        exhOpen={exhOpen}     setExhOpen={setExhOpen}
-        moreOpen={moreOpen}   setMoreOpen={setMoreOpen}/>
+      {/* ── Górny pasek (telefon / tablet w pionie) ── */}
+      <Header T={T} char={char} setChar={setChar}
+        showHelp={showHelp} setShowHelp={setShowHelp} showSettings={showSettings} setShowSettings={setShowSettings}/>
 
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>
@@ -273,6 +265,8 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       <main className="hj-content">
       <ErrorBoundary>
       <Suspense fallback={<TabLoader/>}>
+        {tab === "character" && <MobileHeroPanel T={T} char={char} setChar={setChar} pb={pb}
+          onRestModal={setRestModal} onChangeHero={() => setScreen("profiles")}/>}
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} skills={skills} setSkills={setSkills} spells={spells} setSpells={setSpells}/>}
 
         {/* ── Equipment (virtual desktop tab) + mobile individual tabs ── */}
