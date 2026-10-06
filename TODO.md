@@ -3,6 +3,98 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### 📋 P29 — Pakiet poprawek UI z przeglądu na iPadzie A16 (zrzuty #1–#6, 2026-10-06) — DO ZATWIERDZENIA
+Zrzuty z iPada A16 (viewport ~1180×820 poziomo) tylko ilustrują problemy.
+Każda poprawka ma działać kompleksowo na PC: 1366×768, 1536×864, 1920×1080,
+2560×1440, 3840×2160 (także przy skalowaniu Windows 125–200%), bez regresji
+na tablecie/telefonie. Poprawki z audytu (P19) wstrzymane do odwołania.
+Legenda: **[U]** = zgłoszone przez użytkownika, **[O]** = moja obserwacja ze
+zrzutu/danych — do potwierdzenia.
+
+**A. Struktura zakładek Equipment i World**
+- [ ] A1 [U] (#1) Equipment → podzakładki **Przedmioty / Zdolności / Czary**
+      zamiast 3 kolumn obok siebie. Kliknięcie Equipment otwiera ostatnio
+      używaną podzakładkę; cały obszar roboczy = jedna lista.
+- [ ] A2 [U] (#5) World → podzakładki **Postacie / Lokacje / Frakcje**, ten sam
+      mechanizm (pamięć ostatniej podzakładki).
+- [ ] A3 [U] (#5) Pasek podzakładek na GÓRZE obszaru roboczego, wizualnie
+      odróżniony od głównej nawigacji w sidebarze.
+- [ ] A4 [U] (#1, #5) Jeden wspólny pasek narzędzi na podzakładkę: **Szukaj**
+      (także w Equipment, gdzie go dziś brak) + **Dodaj** + **Filtry**.
+      Filtry (kategorie + tagi) domyślnie zwinięte; aktywne pokazane jako
+      usuwalne chipy. Identyczny układ we wszystkich 6 podzakładkach.
+      [O] dziś w Locations "+ ADD" w linii tytułu, w innych w osobnym rzędzie.
+      Rozdzielczości: na ≤1366 jeden rząd z ikonami; od FHD pełne etykiety;
+      lista kart w siatce o min. szerokości karty (QHD/4K: 2–3 kolumny kart,
+      nigdy wąskie słupki), treść z max szerokością czytelnego tekstu.
+
+**B. Czytelność kart wpisów (Equipment + World)**
+- [ ] B1 [U] (#1, #5) Karty nieczytelne — tytuł w pełni widoczny (zawijanie do
+      2 wierszy zamiast ucinania; [O] dziś "BŁOGOSŁA", "VAXIAN DC", dwie
+      "KARCZMA "" nierozróżnialne), ikony pin/edytuj/rozwiń nie zjadają tytułu.
+- [ ] B2 [U] (#1, #5) Rozwinięty opis nie może zawijać się w wąski słupek ani
+      robić ogromnego pola: pełna szerokość karty, szerokość linii ~65–80 zn.,
+      długie opisy z limitem wysokości + "Pokaż więcej".
+- [ ] B3 [O] (#1, #5) Edytor tagów ("Suggested: + action…", "+ TAG") widoczny
+      tylko w trybie edycji, nie na każdej karcie.
+- [ ] B4 [O] (#1) Metadane czaru (czas rzucania · zasięg · czas trwania) w
+      zwartej siatce zamiast słupka; [O] (#5) relacja NPC (wrogi/sojusznik)
+      widoczna już na zwiniętej karcie; pola NPC (Rola/Przynależność) nie
+      ucinane ("Fundacja "Now").
+
+**C. Character → karta „Walka i wyposażenie" (#2)**
+- [ ] C1 [U] Jednolity układ wpisów „In use" niezależnie od typu (eliksir =
+      amulet = broń): ikona · nazwa · skrót (obrażenia/KP/efekt) · strzałka;
+      opis po rozwinięciu POD wierszem, wyrównany do lewej. [O] dziś opis
+      eliksiru wyświetla się w całości, do prawej, kursywą; amulet nie ma
+      strzałki.
+- [ ] C2 [U] Przedmioty jednorazowe: w Equipment oznaczenie „jednorazowy" +
+      liczba użyć; w karcie licznik pozostałych użyć i szybkie odznaczanie
+      zużycia. Wymaga nowego pola w modelu danych (dziś `charges` to wolny
+      tekst, np. „raz dziennie"; ładunki tylko w notatkach) — decyzja: czy
+      łączyć z ładunkami odnawianymi po odpoczynku/świcie.
+- [ ] C3 [O] Renderowanie markdownu w opisach/notatkach (dziś surowe **, ##,
+      ###, >, --- — np. Wywar pożyczonej siły, Ołowiany klucz introligatorski).
+
+**D. Sidebar (lewy pasek)**
+- [ ] D1 [U] (#2) Blok Życia i przyciski w sidebarze — brzydkie, nieczytelne
+      kształty: przeprojektować przyciski, pola i mini-staty ([O] etykiety
+      PROF/PERC/SPELL DC/SPELL ATK za małe).
+- [ ] D2 [U] (#2) Nie da się dodać XP ani awansować powyżej 7. [O] Diagnoza:
+      poziom = suma poziomów klas (=6), a „✦ LVL. 7" to tylko wskaźnik, że XP
+      (23000) osiągnęło próg 7 (`VitalsBar.jsx:35-38,118-124`); nie ma akcji
+      awansu ani dodawania XP (tylko nadpisywanie liczby). Do zrobienia:
+      „+ XP" (dodaj kwotę), przycisk „Awansuj" po przekroczeniu progu
+      (multiklasa: wybór klasy), aktualizacja max kości wytrzymałości (dziś 5
+      przy poz. 6), czytelne „Poziom 6 · awans dostępny".
+- [ ] D3 [U] (#2) Tymczasowe PŻ (niebieska tarcza) wychodzą poza kartę i nie
+      są opisane — zmieścić w bloku i dodać czytelną etykietę.
+- [ ] D4 [U] (#4) Przycisk zmiany bohatera (lewy górny róg) schowany pod
+      paskiem statusu urządzenia — uwzględnić safe-area i powiększyć obszar
+      kliknięcia.
+- [ ] D5 [U] (#4) Nazwa bohatera łamie się na 3 wiersze — ma mieścić się w 1
+      (skalowanie czcionki, przy bardzo długich wielokropek + podpowiedź);
+      [O] „Rogue Phantom · Lv…" też ucięte.
+- [ ] D6 [U] (#4) Panel „More" wygląda prowizorycznie — przeprojektować.
+- [ ] D7 [U] (#3) Pomoc „?" otwiera się pod nawigacją w sidebarze i jest
+      niewidoczna (nie da się przewinąć) — przenieść do panelu/szuflady nad
+      obszarem roboczym z własnym przewijaniem; działa z każdej zakładki.
+- [ ] D8 [U] (#6) Panel Ustawień zasłonięty przez obszar roboczy — renderować
+      nad wszystkim (warstwa/portal), cały widoczny; [O] siatka motywów
+      ucięta w 4. kolumnie; „Reset postaci" oddzielić od „Zmień bohatera" jako
+      strefę niebezpieczną.
+- [ ] D9 [O] (#3, #6) Przyciski stopki sidebara (? / kufel / zębatka) różnej
+      szerokości — wyrównać.
+      Rozdzielczości (D1–D9): na 1366×768 sidebar nie może wymagać
+      przewijania do kluczowych akcji; na QHD/4K skalowanie przez clamp(),
+      bez rozjeżdżania (por. 12ec84e).
+
+**E. Spójność językowa i danych**
+- [ ] E1 [O] (#1, #4, #6) Mieszanka EN/PL: interfejs w trybie EN, ale Rzuty
+      obronne, tagi i część etykiet po polsku. Ustalić docelowy język.
+- [ ] E2 [O] (dane) Legacy typ przedmiotu „Ogólny" → „general" (4 szt.);
+      kołczan zapisany jako broń.
+
 ### ✅ P28 — Jeden przycisk „Synchronizuj" zamiast panelu narzędzi + naprawa pobierania (2026-09-11) — UKOŃCZONE
 Zgłoszenie: osobne narzędzia push/pull to przerost formy, a pobieranie z chmury
 i tak nie działało (edycja na tablecie → wypchnięcie → pobranie na PC = brak efektu).
