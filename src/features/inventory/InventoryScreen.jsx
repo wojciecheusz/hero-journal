@@ -1,7 +1,9 @@
 import { useState, memo } from 'react';
 import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
-import { Toggle, TagsEditor, PrzypnijBtn, FilterBar } from '../../shared/ui';
+import { Toggle, TagsEditor, PrzypnijBtn } from '../../shared/ui';
+import ListToolbar from '../../shared/ListToolbar';
+import { matchesSearch } from '../../utils/search';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
@@ -16,6 +18,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name:"", type:ITEM_TYPE.GENERAL, qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
   const [filterType, setFilterType] = useState(null);
+  const [search, setSearch] = useState('');
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
@@ -35,6 +38,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
   const visible      = inventory
     .filter(i => !filterType || i.type === filterType)
     .filter(i => !activeTag || (i.tags || []).includes(activeTag))
+    .filter(i => matchesSearch(search, [i.name, i.note, i.effect, i.charges, displayItemType(i.type), ...(i.tags || [])]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
   const equippedCount = inventory.filter(i => i.equipped).length;
   const needsExtras  = t => [ITEM_TYPE.WEAPON, ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
@@ -45,12 +49,16 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
 
   return (
     <>
-      <div className="sect-divider sect-divider-actions">
-        <span>{I.count(inventory.length, equippedCount)}</span>
-        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
-          {showForm ? <><Icon name="close" size="0.85em"/> {I.cancel}</> : <><Icon name="plus" size="0.85em"/> {I.add}</>}
-        </button>
-      </div>
+      <ListToolbar
+        search={search} onSearch={setSearch}
+        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={I.add}
+        summary={[I.count(inventory.length, equippedCount), T.LIST.shown(visible.length, inventory.length)].filter(Boolean).join(" · ")}
+        filterGroups={[
+          { key:"type", label:T.LIST.type, value:filterType, onChange:setFilterType,
+            options: ITEM_TYPES.map((t, i) => ({ value:t, label:T.ITEM_TYPES[i] ?? t, icon:ITEM_ICONS[t], count:inventory.filter(x => x.type === t).length })).filter(o => o.count) },
+          { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
+            options: allTags.map(tag => ({ value:tag, label:tag, count:inventory.filter(x => (x.tags||[]).includes(tag)).length })) },
+        ]}/>
 
       {showForm && (
         <div className="add-form">
@@ -95,22 +103,16 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
         </div>
       )}
 
-      <div className="filter-bar">
-        <button className={`filter-tag${!filterType ? " active-filter" : ""}`} onClick={() => setFilterType(null)}>{I.all}</button>
-        {ITEM_TYPES.map((t, i) => {
-          const c = inventory.filter(x => x.type === t).length; if (!c) return null;
-          return <button key={t} className={`filter-tag${filterType === t ? " active-filter" : ""}`} onClick={() => setFilterType(filterType === t ? null : t)}><Icon name={ITEM_ICONS[t]} size="0.85em"/> {T.ITEM_TYPES[i] ?? t} ({c})</button>;
-        })}
-      </div>
-      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-
       {inventory.length === 0 && <div className="card empty-state">{I.empty}</div>}
-      {groupWeapons.length > 0 && <div className="sect-divider">{I.sectionWeapons}</div>}
-      {groupWeapons.map(renderItem)}
-      {groupArmor.length > 0 && <div className="sect-divider">{I.sectionArmor}</div>}
-      {groupArmor.map(renderItem)}
-      {groupMisc.length > 0 && <div className="sect-divider">{I.sectionMisc}</div>}
-      {groupMisc.map(renderItem)}
+      {inventory.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
+      <div className="entity-grid">
+        {groupWeapons.length > 0 && <div className="sect-divider">{I.sectionWeapons}</div>}
+        {groupWeapons.map(renderItem)}
+        {groupArmor.length > 0 && <div className="sect-divider">{I.sectionArmor}</div>}
+        {groupArmor.map(renderItem)}
+        {groupMisc.length > 0 && <div className="sect-divider">{I.sectionMisc}</div>}
+        {groupMisc.map(renderItem)}
+      </div>
     </>
   );
 
@@ -119,7 +121,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
         const isEditing = !!editing[item.id];
         const preview   = [item.effect, item.note].filter(Boolean).join(" · ");
         return (
-          <div key={item.id} id={`entity-${item.id}`} className={`pack-item${item.equipped ? " equipped-active" : ""}${item.pinned ? " pinned" : ""}`}>
+          <div key={item.id} id={`entity-${item.id}`} className={`pack-item${item.equipped ? " equipped-active" : ""}${item.pinned ? " pinned" : ""}${open ? " is-open" : ""}`}>
 
             {/* Nagłówek */}
             <div className="pack-item-header">

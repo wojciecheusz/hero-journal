@@ -1,6 +1,8 @@
 import { useState, memo } from 'react';
 import { REL_ICONS } from '../../constants/gameConstants';
-import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
+import { TagsEditor, PrzypnijBtn } from '../../shared/ui';
+import ListToolbar from '../../shared/ListToolbar';
+import { matchesSearch } from '../../utils/search';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
@@ -30,22 +32,24 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
     setShowForm(false);
   };
 
-  const q = search.trim().toLowerCase();
   const visible = npcs
     .filter(n => !activeTag || (n.tags || []).includes(activeTag))
     .filter(n => !filterRel || (n.relation || "unknown") === filterRel)
-    .filter(n => !q || [n.name, n.role, n.affiliation, n.notes, n.connections]
-      .some(f => f?.toLowerCase().includes(q)))
+    .filter(n => matchesSearch(search, [n.name, n.role, n.affiliation, n.metAt, n.notes, n.connections, RL[n.relation || "unknown"], ...(n.tags || [])]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
 
   return (
     <>
-      <div className="sect-divider sect-divider-actions">
-        <span>{N.count(npcs.length)}</span>
-        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
-          {showForm ? <><Icon name="close" size="0.85em"/> {N.cancel}</> : <><Icon name="plus" size="0.85em"/> {N.add}</>}
-        </button>
-      </div>
+      <ListToolbar
+        search={search} onSearch={setSearch}
+        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={N.add}
+        summary={[N.count(npcs.length), T.LIST.shown(visible.length, npcs.length)].filter(Boolean).join(" · ")}
+        filterGroups={[
+          { key:"rel", label:T.LIST.relation, value:filterRel, onChange:setFilterRel,
+            options: ["ally","neutral","hostile","unknown"].map(r => ({ value:r, label:RL[r], icon:REL_ICONS[r], count:npcs.filter(n => (n.relation||"unknown") === r).length })).filter(o => o.count) },
+          { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
+            options: allTags.map(tag => ({ value:tag, label:tag, count:npcs.filter(x => (x.tags||[]).includes(tag)).length })) },
+        ]}/>
 
       {showForm && (
         <div className="add-form">
@@ -70,28 +74,16 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
         </div>
       )}
 
-      <SearchBar value={search} onChange={setSearch}/>
-      <div className="filter-bar">
-        <button className={`filter-tag${!filterRel?" active-filter":""}`} onClick={() => setFilterRel(null)}>{T.UI.filterAll}</button>
-        {["unknown","ally","neutral","hostile"].map(r => {
-          const c = npcs.filter(n => (n.relation||"unknown")===r).length;
-          if (!c) return null;
-          return (
-            <button key={r} className={`filter-tag${filterRel===r?" active-filter":""}`} onClick={() => setFilterRel(filterRel===r?null:r)}>
-              <span className="badge-icon"><Icon name={REL_ICONS[r]} size="0.85em"/></span> {RL[r]} ({c})
-            </button>
-          );
-        })}
-      </div>
-      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
       {npcs.length === 0 && <div className="card empty-state">{N.empty}</div>}
+      {npcs.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
 
+      <div className="entity-grid">
       {visible.map(npc => {
         const open = !!expanded[npc.id];
         const isEditing = !!editing[npc.id];
         const rel = npc.relation || "unknown";
         return (
-          <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
+          <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}${open?" is-open":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
               <span className="icon-badge icon-badge-circle"><Icon name={REL_ICONS[rel]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
@@ -141,6 +133,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
           </div>
         );
       })}
+      </div>
     </>
   );
 }

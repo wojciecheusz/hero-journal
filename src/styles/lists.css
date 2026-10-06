@@ -1,0 +1,144 @@
+/* ════════════════════════════════════════════════════════════════
+   P29 — podzakładki, pasek narzędzi list i siatka kart (A1–A4, B2)
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Podzakładki (na górze obszaru roboczego) ── */
+.subtabs {
+  position: sticky; top: 0; z-index: 20;
+  margin: -0.4rem 0 0;
+  padding: 0.4rem 0;
+  background: var(--hj-bg);
+}
+@media (max-width: 1023px) {
+  /* Pod przyklejonym paskiem mobilnym nie przyklejamy drugiego paska */
+  .subtabs { position: static; }
+}
+@media (min-width: 1024px) {
+  .subtabs { top: var(--hj-safe-top); }
+}
+.subtabs-inner {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr);
+  gap: 0.35rem; padding: 0.3rem;
+  background: var(--hj-bg-card);
+  border: 1px solid var(--hj-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 20px var(--hj-shadow-soft);
+  max-width: 44rem;
+}
+.subtab {
+  min-height: var(--hj-tap);
+  display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+  padding: 0.3rem 0.6rem;
+  background: transparent; border: 1px solid transparent; border-radius: var(--radius-md);
+  font-family: 'Cinzel', serif; font-size: max(12px, 0.64rem); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--hj-text-muted); cursor: pointer; min-width: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.subtab-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subtab-count {
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(12px, 0.66rem); font-weight: 600;
+  min-width: 1.5rem; padding: 0 0.35rem; border-radius: var(--radius-pill);
+  background: rgba(168,120,48,0.1); color: var(--hj-text-muted); letter-spacing: 0;
+}
+.subtab.active { background: rgba(168,120,48,0.14); border-color: var(--hj-accent-border); color: var(--hj-accent); }
+.subtab.active .subtab-count { background: rgba(168,120,48,0.22); color: var(--hj-accent); }
+@media (max-width: 420px) {
+  .subtab { flex-direction: column; gap: 0.1rem; font-size: 11px; letter-spacing: 0.04em; }
+}
+
+/* ── Pasek narzędzi ── */
+.list-toolbar { display: flex; flex-direction: column; gap: 0.5rem; }
+.lt-row { display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; }
+.lt-search {
+  flex: 1 1 14rem; min-width: 0;
+  display: flex; align-items: center; gap: 0.4rem;
+  min-height: var(--hj-tap);
+  padding: 0 0.4rem 0 0.9rem;
+  background: var(--hj-bg-input);
+  border: 1px solid var(--hj-border-input);
+  border-radius: var(--radius-md);
+  color: var(--hj-text-dim);
+}
+.lt-search:focus-within { border-color: var(--hj-accent-border); box-shadow: 0 0 0 1px var(--hj-accent-border); }
+.lt-search input {
+  flex: 1; min-width: 0; height: 100%;
+  background: transparent; border: none; outline: none;
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(16px, 1rem); color: var(--hj-text);
+}
+.lt-search input::placeholder { color: var(--hj-text-dim); font-style: italic; }
+.lt-search input::-webkit-search-cancel-button { display: none; }
+.lt-search-clear {
+  width: var(--hj-tap-sm); height: var(--hj-tap-sm); flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: 50%; color: var(--hj-text-muted); cursor: pointer;
+}
+.lt-filter-btn.on { border-color: var(--hj-accent-border); color: var(--hj-accent); }
+.lt-badge {
+  min-width: 1.3rem; height: 1.3rem; padding: 0 0.3rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-pill); background: var(--hj-accent); color: var(--hj-bg);
+  font-family: 'Crimson Text', Georgia, serif; font-weight: 700; font-size: max(12px, 0.62rem); letter-spacing: 0;
+}
+.lt-add.on { background: transparent; }
+
+.lt-panel {
+  display: flex; flex-direction: column; gap: 0.7rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--hj-bg-card);
+  border: 1px solid var(--hj-border);
+  border-radius: var(--radius-lg);
+  animation: hj-rise 0.14s ease-out;
+}
+.lt-group { display: flex; flex-direction: column; gap: 0.35rem; }
+.lt-group-label {
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--hj-text-label);
+}
+.lt-options { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.lt-chip {
+  min-height: var(--hj-tap-sm);
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.2rem 0.75rem;
+  background: transparent; border: 1px solid var(--hj-border-input); border-radius: var(--radius-pill);
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(14px, 0.78rem); color: var(--hj-text-muted);
+  cursor: pointer; transition: all 0.15s;
+}
+@media (pointer: coarse) { .lt-chip { min-height: var(--hj-tap); } }
+.lt-chip.on { background: rgba(168,120,48,0.14); border-color: var(--hj-accent-border); color: var(--hj-accent); }
+.lt-chip-count { font-size: 0.85em; opacity: 0.75; }
+.lt-chip-group { opacity: 0.75; }
+.lt-chip.removable { padding-right: 0.55rem; }
+
+.lt-status { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; min-height: 1.5rem; }
+.lt-summary {
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--hj-text-label); margin-right: 0.3rem;
+}
+.lt-clear {
+  min-height: var(--hj-tap-sm); padding: 0 0.6rem;
+  background: transparent; border: none; color: var(--hj-text-muted); text-decoration: underline; cursor: pointer;
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(14px, 0.78rem);
+}
+
+/* ── Siatka kart ──
+   Karty obok siebie w kolumnach o minimalnej szerokości ~18rem: iPad poziomo
+   = 2, Full HD = 3–4, 4K = 5–6. Rozwinięta karta zajmuje cały wiersz, więc
+   długi opis nie zawija się w wąski słupek (B2). */
+.entity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: 0.75rem;
+  align-items: start;
+}
+.entity-grid > .sect-divider,
+.entity-grid > .grid-full,
+.entity-grid > .is-open { grid-column: 1 / -1; }
+.entity-grid > .sect-divider { margin: 0.6rem 0 0; }
+.entity-grid > .pack-item, .entity-grid > .card { margin-bottom: 0; }
+.list-empty { grid-column: 1 / -1; }
+
+/* Telefon: wyszukiwarka na całą szerokość, przyciski pod nią po równo */
+@media (max-width: 560px) {
+  .lt-search { flex-basis: 100%; }
+  .lt-row > .hj-btn { flex: 1 1 0; padding-left: 0.5rem; padding-right: 0.5rem; }
+}

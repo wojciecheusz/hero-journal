@@ -21,14 +21,14 @@ Legenda: **[U]** = zgłoszone przez użytkownika, **[O]** = moja obserwacja ze
 zrzutu/danych — do potwierdzenia.
 
 **A. Struktura zakładek Equipment i World**
-- [ ] A1 [U] (#1) Equipment → podzakładki **Przedmioty / Zdolności / Czary**
+- [x] A1 [U] (#1) Equipment → podzakładki **Przedmioty / Zdolności / Czary**
       zamiast 3 kolumn obok siebie. Kliknięcie Equipment otwiera ostatnio
       używaną podzakładkę; cały obszar roboczy = jedna lista.
-- [ ] A2 [U] (#5) World → podzakładki **Postacie / Lokacje / Frakcje**, ten sam
+- [x] A2 [U] (#5) World → podzakładki **Postacie / Lokacje / Frakcje**, ten sam
       mechanizm (pamięć ostatniej podzakładki).
-- [ ] A3 [U] (#5) Pasek podzakładek na GÓRZE obszaru roboczego, wizualnie
+- [x] A3 [U] (#5) Pasek podzakładek na GÓRZE obszaru roboczego, wizualnie
       odróżniony od głównej nawigacji w sidebarze.
-- [ ] A4 [U] (#1, #5) Jeden wspólny pasek narzędzi na podzakładkę: **Szukaj**
+- [x] A4 [U] (#1, #5) Jeden wspólny pasek narzędzi na podzakładkę: **Szukaj**
       (także w Equipment, gdzie go dziś brak) + **Dodaj** + **Filtry**.
       Filtry (kategorie + tagi) domyślnie zwinięte; aktywne pokazane jako
       usuwalne chipy. Identyczny układ we wszystkich 6 podzakładkach.
@@ -36,6 +36,16 @@ zrzutu/danych — do potwierdzenia.
       Rozdzielczości: na ≤1366 jeden rząd z ikonami; od FHD pełne etykiety;
       lista kart w siatce o min. szerokości karty (QHD/4K: 2–3 kolumny kart,
       nigdy wąskie słupki), treść z max szerokością czytelnego tekstu.
+      ✅ **Zrobione (faza 2):** `SubTabBar.jsx` na górze obszaru (Przedmioty/
+      Zdolności/Czary, Postacie/Lokacje/Frakcje, z licznikami); ostatnia
+      podzakładka pamiętana per urządzenie (`hooks/useLastSubtab.js`), stare
+      adresy #/equipment i #/world-all przekierowują. Dolne menu mobilne = te
+      same 5 pozycji co sidebar (bez szuflady). `shared/ListToolbar.jsx` w 6
+      listach: szukaj (bez polskich znaków — `utils/search.js` + testy),
+      Filtry (panel zwinięty, aktywne jako usuwalne chipy), Dodaj; w Czarach
+      sortowanie + „Sloty czarów"; w Frakcjach doszedł filtr stosunku.
+      Siatka `.entity-grid` (min. 18rem): iPad 2 kol., FHD 4, 4K 5; rozwinięta
+      karta zajmuje cały wiersz. Usunięty widok 3 kolumn.
 
 **B. Czytelność kart wpisów (Equipment + World)**
 - [ ] B1 [U] (#1, #5) Karty nieczytelne — tytuł w pełni widoczny (zawijanie do

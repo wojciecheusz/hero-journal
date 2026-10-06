@@ -10,7 +10,9 @@ import { useCharacterData, EMPTY_DATA, loadProfileData } from '../hooks/useChara
 import { useProfileManager } from '../hooks/useProfileManager';
 import { useTextareaAutoResize } from '../hooks/useTextareaAutoResize';
 import { useCloudSaveQueue } from '../hooks/useCloudSaveQueue';
-import { getNavGroups, getNavGroupsDesktop } from './navigation';
+import { getNavGroupsDesktop, isEquipmentTab, isWorldTab } from './navigation';
+import { useResolveTab, rememberSubtab } from '../hooks/useLastSubtab';
+import SubTabBar from './SubTabBar';
 import TutorialModal from './TutorialModal';
 import DiceRoller from '../features/dice/DiceRoller';
 import HelpPanel     from './HelpPanel';
@@ -78,8 +80,15 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     "sessions","quests",
   ]);
   const tabFromUrl = location.replace(/^\//, '') || "character";
-  const tab = VALID_TABS.has(tabFromUrl) ? tabFromUrl : "character";
-  const setTab = useCallback((t) => navigate("/" + t), [navigate]);
+  const resolveTab = useResolveTab();
+  /* "equipment" / "world-all" to grupy — rozwijamy je do ostatnio otwartej
+     podzakładki (P29/A1–A2), także dla starych linków z hasha. */
+  const tab = resolveTab(VALID_TABS.has(tabFromUrl) ? tabFromUrl : "character");
+  const setTab = useCallback((t) => navigate("/" + resolveTab(t)), [navigate, resolveTab]);
+  useEffect(() => {
+    rememberSubtab(tab);
+    if (tabFromUrl !== tab) navigate("/" + tab, { replace: true }); // stare linki #/equipment, #/world-all
+  }, [tab, tabFromUrl, navigate]);
 
   /* ── UI state (pozostaje w HeroJournal — czysto prezentacyjny) ── */
   const [showReset, setShowReset]       = useState(false);
@@ -190,8 +199,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
   /* ── Zlokalizowane dane ───────────────────────────────────────── */
   const T                = TRANSLATIONS[lang];
-  const navGroups        = getNavGroups(lang);         // mobile bottom nav
-  const navGroupsDesktop = getNavGroupsDesktop(lang);  // desktop sidebar
+  const navGroupsDesktop = getNavGroupsDesktop(lang);  // sidebar + dolne menu mobilne
 
   /* ── Ekrany pomocnicze ───────────────────────────────────────── */
   if (screen === "profiles") return (
@@ -269,46 +277,28 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
           onRestModal={setRestModal} onChangeHero={() => setScreen("profiles")}/>}
         {tab === "character" && <CharacterScreen char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} skills={skills} setSkills={setSkills} spells={spells} setSpells={setSpells}/>}
 
-        {/* ── Equipment (virtual desktop tab) + mobile individual tabs ── */}
-        {(tab === "equipment" || ["inventory","skills","spells"].includes(tab)) && <>
-          <div className="multi-col-desktop">
-            <div className="screen-col">
-              <InventoryScreen title={T.NAV.inventory} inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>
-            </div>
-            <div className="screen-col">
-              <SkillsScreen title={T.NAV.skills} skills={skills} setSkills={setSkills} openEntity={openEntity}/>
-            </div>
-            <div className="screen-col">
-              <SpellsScreen title={T.NAV.spells} spells={spells} setSpells={setSpells} char={char} setChar={setChar}/>
-            </div>
-          </div>
-          <div className="single-col-mobile">
-            {tab === "inventory" && <InventoryScreen title={T.NAV.inventory} inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
-            {tab === "skills"    && <SkillsScreen    title={T.NAV.skills}    skills={skills}       setSkills={setSkills}  openEntity={openEntity}/>}
-            {tab === "spells"    && <SpellsScreen    title={T.NAV.spells}    spells={spells}       setSpells={setSpells}         char={char} setChar={setChar}/>}
-            {tab === "equipment" && <InventoryScreen title={T.NAV.inventory} inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
-          </div>
+        {/* ── Wyposażenie: podzakładki na górze, jedna lista na cały obszar (P29/A1) ── */}
+        {isEquipmentTab(tab) && <>
+          <SubTabBar label={T.NAV.equipment} active={tab} onSelect={setTab} tabs={[
+            { id:"inventory", label:T.CHAR.tabItems,     icon:"backpack", count: inventory.length },
+            { id:"skills",    label:T.CHAR.tabAbilities, icon:"sparkles", count: skills.length },
+            { id:"spells",    label:T.CHAR.tabSpells,    icon:"wand",     count: spells.length },
+          ]}/>
+          {tab === "inventory" && <InventoryScreen inventory={inventory} setInventory={setInventory} openEntity={openEntity}/>}
+          {tab === "skills"    && <SkillsScreen    skills={skills}       setSkills={setSkills}       openEntity={openEntity}/>}
+          {tab === "spells"    && <SpellsScreen    spells={spells}       setSpells={setSpells}       char={char} setChar={setChar}/>}
         </>}
 
-        {/* ── World-all (virtual desktop tab) + mobile individual tabs ── */}
-        {(tab === "world-all" || ["npcs","locations","factions"].includes(tab)) && <>
-          <div className="multi-col-desktop">
-            <div className="screen-col">
-              <NPCsScreen title={T.NAV.npcs} npcs={npcs} setNPCs={setNPCs} openEntity={openEntity}/>
-            </div>
-            <div className="screen-col">
-              <LocationsScreen title={T.NAV.locations} locations={locations} setLocations={setLocations} openEntity={openEntity}/>
-            </div>
-            <div className="screen-col">
-              <FactionsPanel title={T.NAV.factions} factions={factions} setFactions={setFactions} openEntity={openEntity}/>
-            </div>
-          </div>
-          <div className="single-col-mobile">
-            {tab === "npcs"      && <NPCsScreen       title={T.NAV.npcs}      npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
-            {tab === "locations" && <LocationsScreen  title={T.NAV.locations} locations={locations} setLocations={setLocations}  openEntity={openEntity}/>}
-            {tab === "factions"  && <FactionsPanel    title={T.NAV.factions}  factions={factions}   setFactions={setFactions}    openEntity={openEntity}/>}
-            {tab === "world-all" && <NPCsScreen       title={T.NAV.npcs}      npcs={npcs}           setNPCs={setNPCs}            openEntity={openEntity}/>}
-          </div>
+        {/* ── Świat: podzakładki jak w Wyposażeniu (P29/A2) ── */}
+        {isWorldTab(tab) && <>
+          <SubTabBar label={T.NAV.world} active={tab} onSelect={setTab} tabs={[
+            { id:"npcs",      label:T.NAV.npcs,      icon:"users", count: npcs.length },
+            { id:"locations", label:T.NAV.locations, icon:"map",   count: locations.length },
+            { id:"factions",  label:T.NAV.factions,  icon:"flag",  count: factions.length },
+          ]}/>
+          {tab === "npcs"      && <NPCsScreen      npcs={npcs}           setNPCs={setNPCs}           openEntity={openEntity}/>}
+          {tab === "locations" && <LocationsScreen locations={locations} setLocations={setLocations} openEntity={openEntity}/>}
+          {tab === "factions"  && <FactionsPanel   factions={factions}   setFactions={setFactions}   openEntity={openEntity}/>}
         </>}
 
         {tab === "sessions"  && <SessionsScreen   sessions={sessions}   setSessions={setSessions}      npcs={npcs} locations={locations} quests={quests} inventory={inventory} skills={skills} onNavigate={handleNavigate}/>}
@@ -317,7 +307,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       </ErrorBoundary>
       </main>
 
-      <MobileNav navGroups={navGroups} tab={tab} setTab={setTab}/>
+      <MobileNav navGroups={navGroupsDesktop} tab={tab} setTab={setTab}/>
 
       {/* ── Rzutnik kości — FAB + panel (ukryty na razie, DICE_FAB_ENABLED) ── */}
       {DICE_FAB_ENABLED && (

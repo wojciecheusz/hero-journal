@@ -1,7 +1,9 @@
 import { useState, memo } from 'react';
 import { SKILL_CATS, SKILL_CAT_ICONS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
-import { TagsEditor, FilterBar, PrzypnijBtn, Toggle } from '../../shared/ui';
+import { TagsEditor, PrzypnijBtn, Toggle } from '../../shared/ui';
+import ListToolbar from '../../shared/ListToolbar';
+import { matchesSearch } from '../../utils/search';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
@@ -30,6 +32,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
   const [form, setForm] = useState({ name:"", category: SKILL_CAT.SKILL, description:"", level:0 });
   const [showForm, setShowForm] = useState(false);
   const [activeCat, setActiveCat] = useState(null);
+  const [search, setSearch] = useState('');
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
@@ -48,25 +51,33 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
   };
   const toggleInUse = id => setSkills(l => l.map(x => x.id===id ? { ...x, inUse: !x.inUse } : x));
 
-  const visible = skills.filter(s =>
-    (!activeTag || (s.tags||[]).includes(activeTag)) &&
-    (!activeCat || s.category===activeCat || SKILL_CATS[CATS.indexOf(activeCat)]===s.category)
-  ).sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
-
   const RACIAL_VALUES = [SKILL_CAT.RACIAL, "Cecha rasowa", "Racial Feature"];
   const FEAT_VALUES   = [SKILL_CAT.FEAT, "Atut", "Feat"];
+  /* Kategoria kanoniczna — obsługuje też stare wartości PL/EN sprzed migracji */
+  const catKey = c => RACIAL_VALUES.includes(c) ? SKILL_CAT.RACIAL : FEAT_VALUES.includes(c) ? SKILL_CAT.FEAT : SKILL_CAT.SKILL;
+  const catLabel = c => CATS[SKILL_CATS.indexOf(catKey(c))] ?? c;
+
+  const visible = skills.filter(s =>
+    (!activeTag || (s.tags||[]).includes(activeTag)) &&
+    (!activeCat || catKey(s.category) === activeCat) &&
+    matchesSearch(search, [s.name, s.description, catLabel(s.category), ...(s.tags || [])])
+  ).sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
   const groupRacial = visible.filter(sk => RACIAL_VALUES.includes(sk.category));
   const groupFeats  = visible.filter(sk => FEAT_VALUES.includes(sk.category));
   const groupClass  = visible.filter(sk => !RACIAL_VALUES.includes(sk.category) && !FEAT_VALUES.includes(sk.category));
 
   return (
     <>
-      <div className="sect-divider sect-divider-actions">
-        <span>{SK.count(skills.length, inUseCount)}</span>
-        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
-          {showForm ? <><Icon name="close" size="0.85em"/> {SK.cancel}</> : <><Icon name="plus" size="0.85em"/> {SK.add}</>}
-        </button>
-      </div>
+      <ListToolbar
+        search={search} onSearch={setSearch}
+        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={SK.add}
+        summary={[SK.count(skills.length, inUseCount), T.LIST.shown(visible.length, skills.length)].filter(Boolean).join(" · ")}
+        filterGroups={[
+          { key:"cat", label:T.LIST.category, value:activeCat, onChange:setActiveCat,
+            options: SKILL_CATS.map((c, i) => ({ value:c, label:CATS[i], icon:SKILL_CAT_ICONS[c], count:skills.filter(s => catKey(s.category) === c).length })).filter(o => o.count) },
+          { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
+            options: allTags.map(tag => ({ value:tag, label:tag, count:skills.filter(x => (x.tags||[]).includes(tag)).length })) },
+        ]}/>
 
       {showForm && (
         <div className="add-form">
@@ -85,25 +96,17 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
         </div>
       )}
 
-      <div className="filter-bar">
-        <button className={`filter-tag${!activeCat?" active-filter":""}`} onClick={() => setActiveCat(null)}>{SK.all}</button>
-        {CATS.map((c, i) => {
-          const plCat = SKILL_CATS[i];
-          const count = skills.filter(s => s.category===plCat || s.category===c).length;
-          if (!count) return null;
-          return <button key={c} className={`filter-tag${activeCat===c?" active-filter":""}`} style={{ borderColor: activeCat===c?catColor(c)+"88":"", color: activeCat===c?catColor(c):"" }} onClick={() => setActiveCat(activeCat===c?null:c)}><Icon name={SKILL_CAT_ICONS[plCat]} size="0.85em"/> {c} ({count})</button>;
-        })}
-      </div>
-      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-
       {skills.length===0 && <div className="card empty-state">{SK.empty}</div>}
+      {skills.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
 
-      {groupRacial.length > 0 && <div className="sect-divider">{SK.sectionRacial}</div>}
-      {groupRacial.map(renderSkill)}
-      {groupClass.length > 0 && <div className="sect-divider">{SK.sectionClass}</div>}
-      {groupClass.map(renderSkill)}
-      {groupFeats.length > 0 && <div className="sect-divider">{SK.sectionFeats}</div>}
-      {groupFeats.map(renderSkill)}
+      <div className="entity-grid">
+        {groupRacial.length > 0 && <div className="sect-divider">{SK.sectionRacial}</div>}
+        {groupRacial.map(renderSkill)}
+        {groupClass.length > 0 && <div className="sect-divider">{SK.sectionClass}</div>}
+        {groupClass.map(renderSkill)}
+        {groupFeats.length > 0 && <div className="sect-divider">{SK.sectionFeats}</div>}
+        {groupFeats.map(renderSkill)}
+      </div>
     </>
   );
 
@@ -114,7 +117,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
         const catIdx = SKILL_CATS.indexOf(sk.category);
         const displayCat = catIdx>=0 ? CATS[catIdx] : sk.category;
         return (
-          <div key={sk.id} id={`entity-${sk.id}`} className={`card${sk.pinned?" pinned":""}${sk.inUse?" inuse-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor: cc+"55", borderLeftWidth:2 }}>
+          <div key={sk.id} id={`entity-${sk.id}`} className={`card${sk.pinned?" pinned":""}${sk.inUse?" inuse-active":""}${open?" is-open":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor: cc+"55", borderLeftWidth:2 }}>
             <div className="entity-header">
               <span className="icon-badge"><Icon name={SKILL_CAT_ICONS[sk.category] || "diamond"}/></span>
               <div className="flex1" style={{ display:"flex", flexDirection:"column", gap:"0.2rem" }}>

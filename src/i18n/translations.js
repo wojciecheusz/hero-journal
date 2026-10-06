@@ -108,6 +108,13 @@ export const TRANSLATIONS = {
       error:(msg) => `Nie udało się zsynchronizować: ${msg}`,
     },
 
+    LIST: {
+      search:"Szukaj", clearSearch:"Wyczyść wyszukiwanie", filters:"Filtry", all:"Wszystkie",
+      add:"Dodaj", removeFilter:"Usuń filtr", clearAll:"Wyczyść filtry",
+      type:"Typ", tags:"Tagi", category:"Kategoria", relation:"Relacja", level:"Poziom", school:"Szkoła",
+      rank:"Stosunek", sortBy:"Sortuj", noResults:"Nic nie pasuje do wyszukiwania lub filtrów.",
+      shown:(n, total) => n === total ? "" : `pokazano ${n} z ${total}`,
+    },
     HERO: {
       changeHero:"Zmień bohatera", details:"Szczegóły", detailsTitle:"Szczegóły bohatera",
       changeIcon:"Zmień ikonę bohatera",
@@ -570,6 +577,13 @@ export const TRANSLATIONS = {
       error:(msg) => `Sync failed: ${msg}`,
     },
 
+    LIST: {
+      search:"Search", clearSearch:"Clear search", filters:"Filters", all:"All",
+      add:"Add", removeFilter:"Remove filter", clearAll:"Clear filters",
+      type:"Type", tags:"Tags", category:"Category", relation:"Relation", level:"Level", school:"School",
+      rank:"Standing", sortBy:"Sort", noResults:"Nothing matches your search or filters.",
+      shown:(n, total) => n === total ? "" : `showing ${n} of ${total}`,
+    },
     HERO: {
       changeHero:"Change hero", details:"Details", detailsTitle:"Hero details",
       changeIcon:"Change hero icon",

@@ -1,7 +1,9 @@
 import { useState, memo } from 'react';
 import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_COLORS, FACTION_RANK_ICONS } from '../../../constants/gameConstants';
 import { FACTION_TYPE, FACTION_RANK } from '../../../constants/enums.js';
-import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../../shared/ui';
+import { TagsEditor, PrzypnijBtn } from '../../../shared/ui';
+import ListToolbar from '../../../shared/ListToolbar';
+import { matchesSearch } from '../../../utils/search';
 import { useT } from '../../../i18n/translations';
 import { useScrollToEntity } from '../../../hooks/useScrollToEntity';
 import { useEntityList } from '../../../hooks/useEntityList';
@@ -14,6 +16,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
   const [form, setForm] = useState({ name:"", type:FACTION_TYPE.GUILD, rank:FACTION_RANK.UNKNOWN, leader:"", headquarters:"", goal:"", notes:"" });
   const [showForm, setShowForm] = useState(false);
   const [filterType, setFilterType] = useState(null);
+  const [filterRank, setFilterRank] = useState(null);
   const [search, setSearch] = useState('');
 
   const {
@@ -34,20 +37,26 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
     setShowForm(false);
   };
 
-  const q = search.trim().toLowerCase();
   const visible = factions
     .filter(f => (!activeTag||(f.tags||[]).includes(activeTag)) && (!filterType||f.type===filterType))
-    .filter(f => !q || [f.name, f.goal, f.notes, f.leader, f.headquarters].some(v => v?.toLowerCase().includes(q)))
+    .filter(f => !filterRank || (f.rank || FACTION_RANK.UNKNOWN) === filterRank)
+    .filter(f => matchesSearch(search, [f.name, f.goal, f.notes, f.leader, f.headquarters, displayFactionType(f.type), displayFactionRank(f.rank || FACTION_RANK.UNKNOWN), ...(f.tags || [])]))
     .sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
 
   return (
     <>
-      <div className="sect-divider sect-divider-actions">
-        <span>{F.count(factions.length)}</span>
-        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
-          {showForm ? <><Icon name="close" size="0.85em"/> {F.cancel}</> : <><Icon name="plus" size="0.85em"/> {F.add}</>}
-        </button>
-      </div>
+      <ListToolbar
+        search={search} onSearch={setSearch}
+        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={F.add}
+        summary={[F.count(factions.length), T.LIST.shown(visible.length, factions.length)].filter(Boolean).join(" · ")}
+        filterGroups={[
+          { key:"type", label:T.LIST.type, value:filterType, onChange:setFilterType,
+            options: FACTION_TYPES.map(t => ({ value:t, label:displayFactionType(t), count:factions.filter(f => f.type === t).length })).filter(o => o.count) },
+          { key:"rank", label:T.LIST.rank, value:filterRank, onChange:setFilterRank,
+            options: FACTION_RANKS.map(r => ({ value:r, label:displayFactionRank(r), icon:FACTION_RANK_ICONS[r], count:factions.filter(f => (f.rank || FACTION_RANK.UNKNOWN) === r).length })).filter(o => o.count) },
+          { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
+            options: allTags.map(tag => ({ value:tag, label:tag, count:factions.filter(x => (x.tags||[]).includes(tag)).length })) },
+        ]}/>
 
       {showForm && (
         <div className="add-form">
@@ -77,21 +86,17 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
         </div>
       )}
 
-      <SearchBar value={search} onChange={setSearch}/>
-      <div className="filter-bar">
-        <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={() => setFilterType(null)}>{F.all}</button>
-        {FACTION_TYPES.map(t => { const c=factions.filter(f=>f.type===t).length; if(!c) return null; return <button key={t} className={`filter-tag${filterType===t?" active-filter":""}`} onClick={() => setFilterType(filterType===t?null:t)}>{displayFactionType(t)} ({c})</button>; })}
-      </div>
-      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-
       {factions.length===0 && <div className="card empty-state">{F.empty}<br/><span style={{ fontSize:"0.62rem" }}>{F.emptySub}</span></div>}
 
+      {factions.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
+
+      <div className="entity-grid">
       {visible.map(fac => {
         const open = !!expanded[fac.id];
         const isEditing = !!editing[fac.id];
         const rc  = rankColor(fac.rank||FACTION_RANK.UNKNOWN);
         return (
-          <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
+          <div key={fac.id} id={`entity-${fac.id}`} className={`card${fac.pinned?" pinned":""}${open?" is-open":""}`} style={{ padding:"1rem 1.1rem", borderLeftWidth:2, borderLeftColor: rc+"55" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
               <span className="icon-badge icon-badge-circle"><Icon name={FACTION_RANK_ICONS[fac.rank||FACTION_RANK.UNKNOWN]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
@@ -142,6 +147,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
           </div>
         );
       })}
+      </div>
     </>
   );
 }

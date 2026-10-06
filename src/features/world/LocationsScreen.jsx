@@ -1,7 +1,9 @@
 import { useState, memo } from 'react';
 import { LOC_TYPES, LOC_TYPE_ICONS } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
-import { TagsEditor, FilterBar, SearchBar, PrzypnijBtn } from '../../shared/ui';
+import { TagsEditor, PrzypnijBtn } from '../../shared/ui';
+import ListToolbar from '../../shared/ListToolbar';
+import { matchesSearch } from '../../utils/search';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
@@ -29,22 +31,25 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
     setShowForm(false);
   };
 
-  const q = search.trim().toLowerCase();
+  const displayLocType = type => T.LABELS.locType[type] || type;
   const visible = locations
     .filter(l => !activeTag || (l.tags || []).includes(activeTag))
     .filter(l => !filterType || l.type === filterType)
-    .filter(l => !q || [l.name, l.notes].some(f => f?.toLowerCase().includes(q)))
+    .filter(l => matchesSearch(search, [l.name, l.notes, displayLocType(l.type), ...(l.tags || [])]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
-  const displayLocType = type => T.LABELS.locType[type] || type;
 
   return (
     <>
-      <div className="sect-divider sect-divider-actions">
-        <span>{T.LOCATIONS.count(locations.length)}</span>
-        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
-          {showForm ? <><Icon name="close" size="0.85em"/> {T.LOCATIONS.cancel}</> : <><Icon name="plus" size="0.85em"/> {T.LOCATIONS.add}</>}
-        </button>
-      </div>
+      <ListToolbar
+        search={search} onSearch={setSearch}
+        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={T.LOCATIONS.add}
+        summary={[T.LOCATIONS.count(locations.length), T.LIST.shown(visible.length, locations.length)].filter(Boolean).join(" · ")}
+        filterGroups={[
+          { key:"type", label:T.LIST.type, value:filterType, onChange:setFilterType,
+            options: LOC_TYPES.map(type => ({ value:type, label:displayLocType(type), icon:LOC_TYPE_ICONS[type], count:locations.filter(l => l.type === type).length })).filter(o => o.count) },
+          { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
+            options: allTags.map(tag => ({ value:tag, label:tag, count:locations.filter(x => (x.tags||[]).includes(tag)).length })) },
+        ]}/>
 
       {showForm && (
         <div className="add-form">
@@ -71,27 +76,15 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
         </div>
       )}
 
-      <SearchBar value={search} onChange={setSearch}/>
-      <div className="filter-bar">
-        <button className={`filter-tag${!filterType?" active-filter":""}`} onClick={() => setFilterType(null)}>{T.UI.filterAll}</button>
-        {LOC_TYPES.map(type => {
-          const c = locations.filter(l => l.type === type).length;
-          if (!c) return null;
-          return (
-            <button key={type} className={`filter-tag${filterType===type?" active-filter":""}`} onClick={() => setFilterType(filterType===type?null:type)}>
-              <span className="badge-icon"><Icon name={LOC_TYPE_ICONS[type]} size="0.85em"/></span> {displayLocType(type)} ({c})
-            </button>
-          );
-        })}
-      </div>
-      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
       {locations.length === 0 && <div className="card empty-state">{T.LOCATIONS.empty}</div>}
+      {locations.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
 
+      <div className="entity-grid">
       {visible.map(loc => {
         const open = !!expanded[loc.id];
         const isEditing = !!editing[loc.id];
         return (
-          <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned?" pinned":""}`} style={{ padding:"1rem 1.1rem" }}>
+          <div key={loc.id} id={`entity-${loc.id}`} className={`card${loc.pinned?" pinned":""}${open?" is-open":""}`} style={{ padding:"1rem 1.1rem" }}>
             <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
               <span className="icon-badge icon-badge-circle"><Icon name={LOC_TYPE_ICONS[loc.type]}/></span>
               <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
@@ -134,6 +127,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
           </div>
         );
       })}
+      </div>
     </>
   );
 }

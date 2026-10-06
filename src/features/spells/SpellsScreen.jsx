@@ -1,7 +1,9 @@
 import { useState, memo } from 'react';
 import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS } from '../../constants/gameConstants';
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
-import { TagsEditor, PrzypnijBtn, Toggle, FilterBar } from '../../shared/ui';
+import { TagsEditor, PrzypnijBtn, Toggle } from '../../shared/ui';
+import ListToolbar from '../../shared/ListToolbar';
+import { matchesSearch } from '../../utils/search';
 import { SpellSlotsWidget } from '../character/widgets/SpellSlotsWidget';
 import { useT } from '../../i18n/translations';
 import { useEntityList } from '../../hooks/useEntityList';
@@ -19,6 +21,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
   const [activeSchool, setActiveSchool] = useState(null);
   const [sortMode, setSortMode] = useState("level"); // 'level' | 'school'
   const [showSlots, setShowSlots] = useState(false);
+  const [search, setSearch] = useState('');
 
   const {
     expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
@@ -28,21 +31,22 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
   const pb = char.profBonus || 2;
   const spMod = Math.floor(((char.stats||{})[char.spellcastingAbility||"INT"]||10)-10)/2;
   const inUseCount = spells.filter(s => s.inUse).length;
-  const filtered = (sortMode === "school"
-    ? (activeSchool ? spells.filter(s => s.school===activeSchool) : spells)
-    : (activeLevel ? spells.filter(s => s.level===activeLevel) : spells))
-    .filter(s => !activeTag || (s.tags || []).includes(activeTag));
+  const displayLevel  = lv => T.LABELS.spellLevel[lv]  ?? lv;
+  const displaySchool = sc => T.LABELS.spellSchool[sc] ?? sc;
+  const filtered = spells
+    .filter(s => !activeLevel  || s.level === activeLevel)
+    .filter(s => !activeSchool || s.school === activeSchool)
+    .filter(s => !activeTag || (s.tags || []).includes(activeTag))
+    .filter(s => matchesSearch(search, [s.name, s.description, s.notes, displaySchool(s.school), displayLevel(s.level), ...(s.tags || [])]));
   const visible = [...filtered].sort((a, b) => {
     const pinDiff = (b.pinned?1:0) - (a.pinned?1:0);
     if (pinDiff) return pinDiff;
-    return (sortMode === "school" && !activeSchool) ? (a.school||"").localeCompare(b.school||"") : 0;
+    if (sortMode === "school") return (a.school||"").localeCompare(b.school||"") || SPELL_LEVELS.indexOf(a.level) - SPELL_LEVELS.indexOf(b.level);
+    return SPELL_LEVELS.indexOf(a.level) - SPELL_LEVELS.indexOf(b.level) || (a.name||"").localeCompare(b.name||"");
   });
 
   const groupCantrips = visible.filter(sp => sp.level === SPELL_LEVEL.CANTRIP);
   const groupActive   = visible.filter(sp => sp.level !== SPELL_LEVEL.CANTRIP);
-
-  const displayLevel  = lv => T.LABELS.spellLevel[lv]  ?? lv;
-  const displaySchool = sc => T.LABELS.spellSchool[sc] ?? sc;
 
   const addSpell = () => {
     const n = form.name.trim(); if (!n) return;
@@ -54,15 +58,25 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
 
   return (
     <>
-      <div className="sect-divider sect-divider-actions">
-        <span>{SP.count(spells.length, inUseCount)}</span>
-        <button className="sect-divider-btn" style={{ borderColor:"var(--hj-spell-border)", color:"var(--hj-spell-accent)" }} onClick={() => setShowSlots(s => !s)}>
-          {showSlots ? <><Icon name="close" size="0.85em"/> {SP.hideSlots}</> : <><Icon name="settings" size="0.85em"/> {SP.manageSlots}</>}
-        </button>
-        <button className="sect-divider-btn" onClick={() => setShowForm(s => !s)}>
-          {showForm ? <><Icon name="close" size="0.85em"/> {SP.cancel}</> : <><Icon name="plus" size="0.85em"/> {SP.add}</>}
-        </button>
-      </div>
+      <ListToolbar
+        search={search} onSearch={setSearch}
+        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={SP.add}
+        summary={[SP.count(spells.length, inUseCount), T.LIST.shown(visible.length, spells.length)].filter(Boolean).join(" · ")}
+        extraActions={
+          <button className={`hj-btn spell-slots-btn${showSlots ? " on" : ""}`} aria-expanded={showSlots} onClick={() => setShowSlots(s => !s)}>
+            <Icon name={showSlots ? "close" : "settings"} size="1em"/> <span>{showSlots ? SP.hideSlots : SP.manageSlots}</span>
+          </button>
+        }
+        filterGroups={[
+          { key:"sort", label:T.LIST.sortBy, value:sortMode, onChange:setSortMode, isSort:true,
+            options: [{ value:"level", label:SP.sortByLevel }, { value:"school", label:SP.sortBySchool }] },
+          { key:"level", label:T.LIST.level, value:activeLevel, onChange:setActiveLevel,
+            options: SPELL_LEVELS.map((lv, i) => ({ value:lv, label:T.SPELL_LEVELS[i] ?? lv, count:spells.filter(s => s.level === lv).length })).filter(o => o.count) },
+          { key:"school", label:T.LIST.school, value:activeSchool, onChange:setActiveSchool,
+            options: SPELL_SCHOOLS.map((sc, i) => ({ value:sc, label:T.SPELL_SCHOOLS[i] ?? sc, icon:SPELL_SCHOOL_ICONS[sc], count:spells.filter(s => s.school === sc).length })).filter(o => o.count) },
+          { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
+            options: allTags.map(tag => ({ value:tag, label:tag, count:spells.filter(x => (x.tags||[]).includes(tag)).length })) },
+        ]}/>
 
       {showSlots && (
         <div className="card" style={{ borderColor:"var(--hj-spell-border)" }}>
@@ -107,30 +121,15 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
         </div>
       )}
 
-      <div className="filter-bar">
-        <button className={`filter-tag${sortMode==="level"?" active-filter":""}`} style={{ borderColor: sortMode==="level"?"var(--hj-spell-border)":"", color: sortMode==="level"?"var(--hj-spell-accent)":"" }} onClick={() => setSortMode("level")}>{SP.sortByLevel}</button>
-        <button className={`filter-tag${sortMode==="school"?" active-filter":""}`} style={{ borderColor: sortMode==="school"?"var(--hj-spell-border)":"", color: sortMode==="school"?"var(--hj-spell-accent)":"" }} onClick={() => setSortMode("school")}>{SP.sortBySchool}</button>
-        <span style={{ width:1, alignSelf:"stretch", background:"rgba(128,128,128,0.18)", margin:"0 0.15rem" }}/>
-        {sortMode === "level" ? (
-          <>
-            <button className={`filter-tag${!activeLevel?" active-filter":""}`} onClick={() => setActiveLevel(null)}>{SP.all}</button>
-            {SPELL_LEVELS.map((lv,i) => { const count=spells.filter(s=>s.level===lv).length; if(!count) return null; return <button key={lv} className={`filter-tag${activeLevel===lv?" active-filter":""}`} style={{ borderColor: activeLevel===lv?"var(--hj-spell-border)":"", color: activeLevel===lv?"var(--hj-spell-accent)":"" }} onClick={() => setActiveLevel(activeLevel===lv?null:lv)}>{T.SPELL_LEVELS[i]??lv} ({count})</button>; })}
-          </>
-        ) : (
-          <>
-            <button className={`filter-tag${!activeSchool?" active-filter":""}`} onClick={() => setActiveSchool(null)}>{SP.all}</button>
-            {SPELL_SCHOOLS.map((sc,i) => { const count=spells.filter(s=>s.school===sc).length; if(!count) return null; return <button key={sc} className={`filter-tag${activeSchool===sc?" active-filter":""}`} style={{ borderColor: activeSchool===sc?"var(--hj-spell-border)":"", color: activeSchool===sc?"var(--hj-spell-accent)":"" }} onClick={() => setActiveSchool(activeSchool===sc?null:sc)}><Icon name={SPELL_SCHOOL_ICONS[sc]} size="0.85em"/> {T.SPELL_SCHOOLS[i]??sc} ({count})</button>; })}
-          </>
-        )}
-      </div>
-      <FilterBar allTags={allTags} activeTag={activeTag} onSelect={setActiveTag}/>
-
       {spells.length===0 && <div className="card empty-state">{SP.empty}</div>}
+      {spells.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
 
-      {groupCantrips.length > 0 && <div className="sect-divider">{SP.cantripsTitle}</div>}
-      {groupCantrips.map(renderSpell)}
-      {groupActive.length > 0 && <div className="sect-divider">{SP.activeSpellsTitle}</div>}
-      {groupActive.map(renderSpell)}
+      <div className="entity-grid">
+        {groupCantrips.length > 0 && <div className="sect-divider">{SP.cantripsTitle}</div>}
+        {groupCantrips.map(renderSpell)}
+        {groupActive.length > 0 && <div className="sect-divider">{SP.activeSpellsTitle}</div>}
+        {groupActive.map(renderSpell)}
+      </div>
     </>
   );
 
@@ -138,7 +137,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
         const open = !!expanded[sp.id];
         const isEditing = !!editing[sp.id];
         return (
-          <div key={sp.id} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"var(--hj-spell-border)", borderLeftWidth:2 }}>
+          <div key={sp.id} id={`entity-${sp.id}`} className={`card${sp.pinned?" pinned":""}${sp.inUse?" spell-active":""}${open?" is-open":""}`} style={{ padding:"1rem 1.1rem", borderLeftColor:"var(--hj-spell-border)", borderLeftWidth:2 }}>
             <div className="entity-header">
               <span className="icon-badge"><Icon name={SPELL_SCHOOL_ICONS[sp.school] || "diamond"}/></span>
               <div className="flex1">
