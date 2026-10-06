@@ -1,0 +1,161 @@
+/* ════════════════════════════════════════════════════════════════
+   P29 — karty wpisów (B1–B4) i formatowany opis (C3)
+   ════════════════════════════════════════════════════════════════ */
+.ecard {
+  position: relative;
+  display: flex; flex-direction: column; gap: 0.45rem;
+  min-width: 0;
+  padding: 0.65rem 0.75rem 0.75rem;
+  background: var(--hj-bg-card);
+  border: 1px solid var(--hj-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 20px var(--hj-shadow-soft);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ecard.pinned { border-color: var(--hj-accent-border); }
+.ecard.pinned::before {
+  content: ''; position: absolute; top: 0; left: 1rem; right: 1rem; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--hj-accent), transparent);
+  pointer-events: none;
+}
+.ecard.accent-gold   { box-shadow: inset 3px 0 0 var(--hj-accent), 0 6px 20px var(--hj-shadow-soft); }
+.ecard.accent-purple { box-shadow: inset 3px 0 0 #9a6acc, 0 6px 20px var(--hj-shadow-soft); }
+.ecard.accent-blue   { box-shadow: inset 3px 0 0 var(--spell-accent), 0 6px 20px var(--hj-shadow-soft); }
+.ecard.accent-red    { box-shadow: inset 3px 0 0 #b04040, 0 6px 20px var(--hj-shadow-soft); }
+.ecard.accent-green  { box-shadow: inset 3px 0 0 #4a9a5a, 0 6px 20px var(--hj-shadow-soft); }
+.ecard.is-open { padding: 0.8rem 1rem 1rem; }
+
+/* Nagłówek: duży przycisk (ikona + tytuł) rozwija kartę */
+.ecard-head { display: flex; align-items: flex-start; gap: 0.25rem; }
+.ecard-toggle {
+  flex: 1; min-width: 0;
+  display: flex; align-items: center; gap: 0.65rem;
+  min-height: var(--hj-tap);
+  padding: 0; background: transparent; border: none; color: inherit; text-align: left; cursor: pointer;
+}
+.ecard-title {
+  font-family: 'Cinzel', serif; font-weight: 700; font-size: max(15px, 0.86rem); line-height: 1.25;
+  color: var(--hj-text); letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+  /* Zwinięta karta: maks. 2 linie, rozwinięta: pełna nazwa */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ecard.is-open .ecard-title { -webkit-line-clamp: unset; display: block; font-size: max(17px, 0.98rem); }
+.ecard-actions { display: flex; flex-shrink: 0; }
+.ecard-act {
+  width: var(--hj-tap); height: var(--hj-tap);
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: var(--radius-md);
+  color: var(--hj-text-dim); cursor: pointer;
+}
+.ecard-act.pin { opacity: 0.55; }
+.ecard-act.pin.on { opacity: 1; color: #e2b94e; }
+
+.icon-badge.tone-ally    { color: #6acc6a; border-color: #3a6a3a; }
+.icon-badge.tone-hostile { color: #e05a5a; border-color: #6a2a2a; }
+.icon-badge.tone-neutral { color: #c9a84c; border-color: #6a5a30; }
+.icon-badge.tone-spell   { color: var(--spell-accent); border-color: var(--spell-border); }
+.icon-badge.tone-skill   { color: #a87acc; border-color: #5a3a8a; }
+
+/* Wiersz meta: odznaki, kluczowa statystyka, szybki przełącznik */
+.ecard-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem 0.45rem; min-width: 0; }
+.meta-badge {
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.12rem 0.55rem; border: 1px solid var(--hj-border-input); border-radius: var(--radius-pill);
+  color: var(--hj-text-muted); white-space: nowrap;
+}
+.meta-badge.spell  { border-color: var(--spell-border); color: var(--spell-accent); background: var(--spell-bg); }
+.meta-badge.ally    { border-color: #3a6a3a; color: #6acc6a; background: rgba(74,122,74,0.08); }
+.meta-badge.neutral { border-color: #5a4a30; color: #c9a84c; background: rgba(120,100,48,0.08); }
+.meta-badge.hostile { border-color: #6a2a2a; color: #e05a5a; background: rgba(122,44,44,0.1); }
+.meta-badge.unknown { border-style: dashed; }
+.meta-stat {
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(14px, 0.8rem); font-style: italic;
+  color: var(--hj-text); opacity: 0.9; min-width: 0; overflow-wrap: anywhere;
+}
+.meta-sub { font-family: 'Crimson Text', Georgia, serif; font-size: max(14px, 0.8rem); font-style: italic; color: var(--hj-text-muted); overflow-wrap: anywhere; }
+.ecard-quick { margin-left: auto; display: inline-flex; }
+.ecard-quick .toggle-wrap { min-height: var(--hj-tap-sm); padding: 0 0.2rem; }
+.ecard-quick .toggle-label { font-size: var(--hj-label); }
+@media (pointer: coarse) { .ecard-quick .toggle-wrap { min-height: var(--hj-tap); } }
+
+.ecard-preview {
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(14px, 0.84rem); line-height: 1.5;
+  color: var(--hj-text-muted);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* Rozwinięta treść — czytelna szerokość linii niezależnie od ekranu */
+.ecard-body { display: flex; flex-direction: column; gap: 0.75rem; padding-top: 0.35rem; border-top: 1px solid var(--hj-border-sub); }
+.ecard-foot { display: flex; justify-content: flex-end; gap: 0.5rem; }
+
+.field-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: 0.5rem 1rem; margin: 0;
+}
+.field-cell { min-width: 0; }
+.field-cell dt {
+  font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--hj-text-muted); margin-bottom: 0.1rem;
+}
+.field-cell dd { margin: 0; font-family: 'Crimson Text', Georgia, serif; font-size: max(15px, 0.9rem); color: var(--hj-text); overflow-wrap: anywhere; }
+
+.tag-list { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+/* ── Formatowany opis (markdown) ── */
+.rich {
+  max-width: 72ch;
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(15px, 0.92rem); line-height: 1.65;
+  color: var(--hj-text);
+  overflow-wrap: anywhere;
+}
+.rich > * + * { margin-top: 0.55em; }
+.rich h4, .rich h5 {
+  font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 0.06em; color: var(--hj-accent);
+  margin-top: 0.9em; line-height: 1.3;
+}
+.rich h4 { font-size: 1.02em; }
+.rich h5 { font-size: 0.92em; }
+.rich > :first-child { margin-top: 0; }
+.rich strong { color: var(--hj-text); font-weight: 700; }
+.rich em { font-style: italic; }
+.rich ul, .rich ol { padding-left: 1.3em; }
+.rich li + li { margin-top: 0.2em; }
+.rich blockquote {
+  padding: 0.4em 0.8em; border-left: 3px solid var(--hj-accent-border);
+  background: rgba(168,120,48,0.06); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.rich hr { border: none; border-top: 1px solid var(--hj-border); margin: 0.9em 0; }
+
+/* ── Formularz edycji ── */
+.form-span-2 { grid-column: span 2; }
+@media (max-width: 639px) { .form-span-2 { grid-column: auto; } }
+.foot-spacer { flex: 1; }
+.edit-name { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.05rem; }
+.edit-delete.confirm { background: rgba(192,64,64,0.16); }
+.hj-modal .tags-row { margin-top: 0.2rem; }
+.hj-modal .tag-add-btn, .hj-modal .tag-suggestion { min-height: var(--hj-tap-sm); padding: 0.2rem 0.7rem; font-size: var(--hj-label); }
+.hj-modal .tag { font-size: var(--hj-label); padding: 0.25rem 0.6rem; }
+.hj-modal .tag-remove { min-width: 1.6rem; min-height: 1.6rem; }
+.hj-modal .tags-suggest-label { font-size: var(--hj-label); }
+.hj-modal .tag-input { font-size: max(16px, 0.8rem); width: 9rem; min-height: var(--hj-tap-sm); }
+.hj-modal .g-textarea { min-height: 8rem; }
+
+@media (hover: hover) {
+  .ecard:hover { border-color: var(--hj-accent-border); }
+  .ecard-act:hover { color: var(--hj-accent); background: rgba(168,120,48,0.08); }
+}
+.ecard-act:active, .ecard-toggle:active .icon-badge { transform: scale(0.95); }
+
+.form-hint.small { font-size: max(13px, 0.72rem); margin-top: 0.15rem; }
+
+.ecard-subsection { display: flex; flex-direction: column; gap: 0.25rem; }
+
+/* Sloty czarów (panel nad listą czarów) */
+.spell-slots-card { border-color: var(--spell-border); }
+.spell-ability-row { display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.spell-ability-row .form-field { min-width: 9rem; }
+.spell-stats { font-family: 'Cinzel', serif; font-size: max(13px, 0.72rem); color: var(--spell-accent); padding-bottom: 0.7rem; }
+.spell-slots-btn { border-color: var(--spell-border); color: var(--spell-accent); }
+.spell-slots-btn.on { background: var(--spell-bg); }

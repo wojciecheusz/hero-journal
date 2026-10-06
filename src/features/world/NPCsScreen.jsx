@@ -1,139 +1,108 @@
 import { useState, memo } from 'react';
 import { REL_ICONS } from '../../constants/gameConstants';
-import { TagsEditor, PrzypnijBtn } from '../../shared/ui';
-import ListToolbar from '../../shared/ListToolbar';
-import { matchesSearch } from '../../utils/search';
+import { TagsEditor } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
-import Icon from '../../shared/icons';
+import ListToolbar from '../../shared/ListToolbar';
+import EntityCard, { FieldGrid, TagList } from '../../shared/EntityCard';
+import EntityEditModal, { ChoiceChips, RichTextArea } from '../../shared/EntityEditModal';
+import RichText from '../../shared/RichText';
+import { matchesSearch } from '../../utils/search';
+import { plainText } from '../../utils/markdown';
+
+const RELATIONS = ["ally", "neutral", "hostile", "unknown"];
+const REL_ACCENT = { ally: "green", hostile: "red" };
+const EMPTY_NPC = { name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"", tags:[] };
 
 function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const T  = useT();
   const N  = T.NPCS;
   const RL = T.REL_LABELS;
 
-  const [formState, setForm] = useState({ name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"" });
-  const [showForm, setShowForm] = useState(false);
   const [filterRel, setFilterRel] = useState(null);
   const [search, setSearch] = useState('');
+  const [editing, setEditing] = useState(null);
 
-  const {
-    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, pendingDelete, toggle, startEdit, stopEdit,
-  } = useEntityList(npcs, setNPCs);
-
+  const { expanded, setExpanded, activeTag, setActiveTag, allTags, upd, toggle } = useEntityList(npcs, setNPCs);
   useScrollToEntity(openEntity, npcs, setExpanded);
 
-  const addNPC = () => {
-    const n = formState.name.trim(); if (!n) return;
-    setNPCs(l => [...l, { id: Date.now(), ...formState, name: n, tags: [], pinned: false }]);
-    setForm({ name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"" });
-    setShowForm(false);
-  };
+  const saveNPC   = n => setNPCs(l => n.id ? l.map(x => x.id === n.id ? n : x) : [...l, { ...n, id: Date.now(), pinned: false }]);
+  const deleteNPC = id => setNPCs(l => l.filter(x => x.id !== id));
 
   const visible = npcs
     .filter(n => !activeTag || (n.tags || []).includes(activeTag))
     .filter(n => !filterRel || (n.relation || "unknown") === filterRel)
-    .filter(n => matchesSearch(search, [n.name, n.role, n.affiliation, n.metAt, n.notes, n.connections, RL[n.relation || "unknown"], ...(n.tags || [])]))
+    .filter(n => matchesSearch(search, [n.name, n.role, n.affiliation, n.metAt, plainText(n.notes), n.connections, RL[n.relation || "unknown"], ...(n.tags || [])]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
 
   return (
     <>
       <ListToolbar
         search={search} onSearch={setSearch}
-        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={N.add}
+        onAdd={() => setEditing({ item: { ...EMPTY_NPC }, isNew: true })} addLabel={N.add}
         summary={[N.count(npcs.length), T.LIST.shown(visible.length, npcs.length)].filter(Boolean).join(" · ")}
         filterGroups={[
           { key:"rel", label:T.LIST.relation, value:filterRel, onChange:setFilterRel,
-            options: ["ally","neutral","hostile","unknown"].map(r => ({ value:r, label:RL[r], icon:REL_ICONS[r], count:npcs.filter(n => (n.relation||"unknown") === r).length })).filter(o => o.count) },
+            options: RELATIONS.map(r => ({ value:r, label:RL[r], icon:REL_ICONS[r], count:npcs.filter(n => (n.relation||"unknown") === r).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
             options: allTags.map(tag => ({ value:tag, label:tag, count:npcs.filter(x => (x.tags||[]).includes(tag)).length })) },
         ]}/>
-
-      {showForm && (
-        <div className="add-form">
-          <div className="col">
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem" }}>
-              <input className="g-input" placeholder={N.namePh} value={formState.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key==="Enter" && addNPC()}/>
-              <input className="g-input" placeholder={N.rolePh} value={formState.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}/>
-              <input className="g-input" placeholder={N.affiliationPh} value={formState.affiliation} onChange={e => setForm(f => ({ ...f, affiliation: e.target.value }))}/>
-              <input className="g-input" placeholder={N.metAtPh} value={formState.metAt} onChange={e => setForm(f => ({ ...f, metAt: e.target.value }))}/>
-            </div>
-            <input className="g-input" placeholder={N.connectionsPh} value={formState.connections} onChange={e => setForm(f => ({ ...f, connections: e.target.value }))}/>
-            <div className="row" style={{ gap:"0.5rem", flexWrap:"wrap" }}>
-              {["unknown","ally","neutral","hostile"].map(r => (
-                <button key={r} className={`rel-badge rel-${r}`} style={{ opacity: formState.relation===r?1:0.45 }}
-                  onClick={() => setForm(f => ({ ...f, relation: r }))}>{RL[r]}</button>
-              ))}
-            </div>
-            <textarea className="g-textarea" rows={3} placeholder={N.notesPh} value={formState.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addNPC}><Icon name="plus" size="0.85em"/> {N.addBtn}</button></div>
-          </div>
-        </div>
-      )}
 
       {npcs.length === 0 && <div className="card empty-state">{N.empty}</div>}
       {npcs.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
 
       <div className="entity-grid">
-      {visible.map(npc => {
-        const open = !!expanded[npc.id];
-        const isEditing = !!editing[npc.id];
-        const rel = npc.relation || "unknown";
-        return (
-          <div key={npc.id} id={`entity-${npc.id}`} className={`card${npc.pinned?" pinned":""}${open?" is-open":""}`} style={{ padding:"1rem 1.1rem" }}>
-            <div className="row" style={{ gap:"0.5rem", marginBottom:"0.2rem" }}>
-              <span className="icon-badge icon-badge-circle"><Icon name={REL_ICONS[rel]}/></span>
-              <input className="iedit flex1" style={{ fontFamily:"Cinzel,serif", fontSize:"1rem", fontWeight:700 }}
-                value={npc.name} onChange={e => upd(npc.id, "name", e.target.value)} placeholder={N.editNamePh}/>
-              <PrzypnijBtn pinned={npc.pinned} onToggle={() => upd(npc.id,"pinned",!npc.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(npc.id)} aria-label="Edit entry"><Icon name="edit" size="0.85em"/></button>
-              <button className="entity-toggle" onClick={() => toggle(npc.id)} aria-label={open?"Collapse":"Expand"}><Icon name={open ? "chevron-up" : "chevron-down"}/></button>
-            </div>
-
-            <TagsEditor tags={npc.tags||[]} onChange={v => upd(npc.id,"tags",v)}/>
-
-            {open && (
-              <>
-                <div style={{ margin:"0.4rem 0" }}>
-                  <span className={`rel-badge rel-${rel}`}>{RL[rel]}</span>
-                </div>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.25rem 0.6rem", marginBottom:"0.3rem" }}>
-                  <div className="pack-field"><span className="pack-field-label">{N.role}</span><input className="iedit" style={{ fontSize:"0.88rem", fontStyle:"italic" }} value={npc.role||""} onChange={e => upd(npc.id,"role",e.target.value)} placeholder={N.editRolePh}/></div>
-                  <div className="pack-field"><span className="pack-field-label">{N.affiliation}</span><input className="iedit" style={{ fontSize:"0.88rem" }} value={npc.affiliation||""} onChange={e => upd(npc.id,"affiliation",e.target.value)} placeholder={N.editAffilPh}/></div>
-                  <div className="pack-field"><span className="pack-field-label">{N.metAt}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.metAt||""} onChange={e => upd(npc.id,"metAt",e.target.value)} placeholder={N.editMetAtPh}/></div>
-                  <div className="pack-field"><span className="pack-field-label">{N.connections}</span><input className="iedit" style={{ fontSize:"0.85rem" }} value={npc.connections||""} onChange={e => upd(npc.id,"connections",e.target.value)} placeholder={N.editConnPh}/></div>
-                </div>
-
-                {npc.notes && !isEditing && (
-                  <p className="entry-preview" style={{ whiteSpace:"pre-wrap" }}>{npc.notes}</p>
-                )}
-
-                {isEditing && (
-                  <div style={{ marginTop:"0.8rem" }}>
-                    <div className="row" style={{ gap:"0.35rem", flexWrap:"wrap", marginBottom:"0.6rem" }}>
-                      {["unknown","ally","neutral","hostile"].map(r => (
-                        <button key={r} className="filter-tag" style={{ opacity: rel===r?1:0.4, borderColor: rel===r?"currentColor":"" }}
-                          onClick={() => upd(npc.id,"relation",r)}><Icon name={REL_ICONS[r]} size="0.85em"/> {RL[r]}</button>
-                      ))}
-                    </div>
-                    <textarea className="g-textarea" rows={4} placeholder={N.editNotesPh} value={npc.notes||""} onChange={e => upd(npc.id,"notes",e.target.value)}/>
-                    <div className="row mt05" style={{ justifyContent:"space-between" }}>
-                      <button className="btn-ghost" onClick={() => del(npc.id)}
-                        style={pendingDelete[npc.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)",display:"flex",alignItems:"center",gap:"0.3rem"}:{}}>
-                        {pendingDelete[npc.id] ? <><Icon name="warning" size="0.8em"/> {T.UI.confirmDelete}</> : N.delete}</button>
-                      <button className="btn-ghost" onClick={() => stopEdit(npc.id)}><Icon name="check" size="0.85em"/></button>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        );
-      })}
+        {visible.map(npc => {
+          const open = !!expanded[npc.id];
+          const rel  = npc.relation || "unknown";
+          return (
+            <EntityCard key={npc.id} id={npc.id}
+              icon={REL_ICONS[rel]} iconTone={rel} title={npc.name}
+              open={open} onToggle={() => toggle(npc.id)}
+              pinned={npc.pinned} onPin={() => upd(npc.id, "pinned", !npc.pinned)}
+              onEdit={() => setEditing({ item: npc, isNew: false })}
+              accent={REL_ACCENT[rel]}
+              meta={<>
+                <span className={`meta-badge ${rel}`}>{RL[rel]}</span>
+                {npc.role && !open && <span className="meta-sub">{npc.role}</span>}
+              </>}
+              preview={!open && npc.notes ? plainText(npc.notes) : (npc.affiliation || null)}>
+              <FieldGrid fields={[
+                [N.role, npc.role], [N.affiliation, npc.affiliation],
+                [N.metAt, npc.metAt], [N.connections, npc.connections],
+              ]}/>
+              <RichText text={npc.notes}/>
+              <TagList tags={npc.tags}/>
+            </EntityCard>
+          );
+        })}
       </div>
+
+      {editing && (
+        <EntityEditModal kind="npcs" initial={editing.item} isNew={editing.isNew} textFields={["notes"]}
+          onSave={saveNPC} onDelete={() => deleteNPC(editing.item.id)} onClose={() => setEditing(null)}>
+          {(d, set) => <>
+            <ChoiceChips label={T.LIST.relation} value={d.relation || "unknown"} onChange={v => set("relation", v)}
+              options={RELATIONS.map(r => ({ value:r, label:RL[r], icon:REL_ICONS[r] }))}/>
+            <div className="form-grid">
+              <label className="form-field"><span className="form-label">{N.role}</span>
+                <input className="g-input" value={d.role || ""} placeholder={N.rolePh} onChange={e => set("role", e.target.value)}/></label>
+              <label className="form-field"><span className="form-label">{N.affiliation}</span>
+                <input className="g-input" value={d.affiliation || ""} placeholder={N.affiliationPh} onChange={e => set("affiliation", e.target.value)}/></label>
+              <label className="form-field"><span className="form-label">{N.metAt}</span>
+                <input className="g-input" value={d.metAt || ""} placeholder={N.metAtPh} onChange={e => set("metAt", e.target.value)}/></label>
+              <label className="form-field"><span className="form-label">{N.connections}</span>
+                <input className="g-input" value={d.connections || ""} placeholder={N.connectionsPh} onChange={e => set("connections", e.target.value)}/></label>
+            </div>
+            <RichTextArea label={T.LIST.notes} value={d.notes} placeholder={N.editNotesPh} onChange={v => set("notes", v)}/>
+            <div className="form-field">
+              <span className="form-label">{T.LIST.tagsLabel}</span>
+              <TagsEditor tags={d.tags || []} onChange={v => set("tags", v)}/>
+            </div>
+          </>}
+        </EntityEditModal>
+      )}
     </>
   );
 }

@@ -1,57 +1,68 @@
 import { useState, memo } from 'react';
 import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
-import { Toggle, TagsEditor, PrzypnijBtn } from '../../shared/ui';
-import ListToolbar from '../../shared/ListToolbar';
-import { matchesSearch } from '../../utils/search';
+import { Toggle, TagsEditor } from '../../shared/ui';
 import { useT } from '../../i18n/translations';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
-import Icon from '../../shared/icons';
+import ListToolbar from '../../shared/ListToolbar';
+import EntityCard, { FieldGrid, TagList } from '../../shared/EntityCard';
+import EntityEditModal, { ChoiceChips, RichTextArea } from '../../shared/EntityEditModal';
+import RichText from '../../shared/RichText';
+import { matchesSearch } from '../../utils/search';
+import { plainText } from '../../utils/markdown';
+
+const EMPTY_ITEM = { name:"", type:ITEM_TYPE.GENERAL, qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"", tags:[] };
+const hasCombat  = t => t === ITEM_TYPE.WEAPON;
+const hasCharges = t => [ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
+const isArmor    = t => t === ITEM_TYPE.ARMOR || t === ITEM_TYPE.SHIELD;
 
 function InventoryScreen({ inventory, setInventory, openEntity }) {
   const T = useT();
   const I = T.INVENTORY;
-  const displayItemType = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
+  const displayItemType   = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
   const displayDamageType = dt => T.DAMAGE_TYPES[DAMAGE_TYPES.indexOf(dt)] ?? dt;
 
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name:"", type:ITEM_TYPE.GENERAL, qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
   const [filterType, setFilterType] = useState(null);
   const [search, setSearch] = useState('');
+  const [editing, setEditing] = useState(null); // { item, isNew }
 
-  const {
-    expanded, setExpanded, editing, activeTag, setActiveTag, allTags,
-    upd, del, pendingDelete, toggle, startEdit, stopEdit,
-  } = useEntityList(inventory, setInventory);
-
+  const { expanded, setExpanded, activeTag, setActiveTag, allTags, upd, toggle } = useEntityList(inventory, setInventory);
   useScrollToEntity(openEntity, inventory, setExpanded);
 
-  const addItem = () => {
-    const n = form.name.trim(); if (!n) return;
-    setInventory(inv => [...inv, { id: Date.now(), equipped: false, tags: [], pinned: false, ...form, name: n }]);
-    setForm({ name:"", type:"Ogólny", qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"" });
-    setShowForm(false);
-  };
   const toggleEquip = id => setInventory(inv => inv.map(x => x.id === id ? { ...x, equipped: !x.equipped } : x));
+  const saveItem = item => setInventory(inv => item.id
+    ? inv.map(x => x.id === item.id ? item : x)
+    : [...inv, { ...item, id: Date.now(), equipped: false, pinned: false }]);
+  const deleteItem = id => setInventory(inv => inv.filter(x => x.id !== id));
 
-  const visible      = inventory
+  /* Najważniejsza informacja w zwiniętej karcie — zależna od typu */
+  const keyStat = item => {
+    if (hasCombat(item.type) && item.damage)
+      return [item.damage, item.damageType && displayDamageType(item.damageType), item.modifier && `${I.hitBonus} ${parseInt(item.modifier) >= 0 ? "+" : ""}${parseInt(item.modifier) || 0}`].filter(Boolean).join(" · ");
+    if (item.effect) return item.effect;
+    if (isArmor(item.type) && item.note && item.note.length <= 30) return item.note;
+    return null;
+  };
+
+  const visible = inventory
     .filter(i => !filterType || i.type === filterType)
     .filter(i => !activeTag || (i.tags || []).includes(activeTag))
-    .filter(i => matchesSearch(search, [i.name, i.note, i.effect, i.charges, displayItemType(i.type), ...(i.tags || [])]))
+    .filter(i => matchesSearch(search, [i.name, plainText(i.note), i.effect, i.charges, displayItemType(i.type), ...(i.tags || [])]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
   const equippedCount = inventory.filter(i => i.equipped).length;
-  const needsExtras  = t => [ITEM_TYPE.WEAPON, ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
 
-  const groupWeapons = visible.filter(i => i.type === ITEM_TYPE.WEAPON);
-  const groupArmor   = visible.filter(i => i.type === ITEM_TYPE.ARMOR || i.type === ITEM_TYPE.SHIELD);
-  const groupMisc    = visible.filter(i => i.type !== ITEM_TYPE.WEAPON && i.type !== ITEM_TYPE.ARMOR && i.type !== ITEM_TYPE.SHIELD);
+  const groups = [
+    [I.sectionWeapons, visible.filter(i => i.type === ITEM_TYPE.WEAPON)],
+    [I.sectionArmor,   visible.filter(i => isArmor(i.type))],
+    [I.sectionMisc,    visible.filter(i => i.type !== ITEM_TYPE.WEAPON && !isArmor(i.type))],
+  ];
 
   return (
     <>
       <ListToolbar
         search={search} onSearch={setSearch}
-        onAdd={() => setShowForm(f => !f)} addActive={showForm} addLabel={I.add}
+        onAdd={() => setEditing({ item: { ...EMPTY_ITEM }, isNew: true })} addLabel={I.add}
         summary={[I.count(inventory.length, equippedCount), T.LIST.shown(visible.length, inventory.length)].filter(Boolean).join(" · ")}
         filterGroups={[
           { key:"type", label:T.LIST.type, value:filterType, onChange:setFilterType,
@@ -60,145 +71,107 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
             options: allTags.map(tag => ({ value:tag, label:tag, count:inventory.filter(x => (x.tags||[]).includes(tag)).length })) },
         ]}/>
 
-      {showForm && (
-        <div className="add-form">
-          <div className="col">
-            <div className="row">
-              <input className="g-input flex1" placeholder={I.namePh} value={form.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && addItem()}/>
-              <input className="g-input" style={{ width:60 }} placeholder={I.qty} value={form.qty}
-                onChange={e => setForm(f => ({ ...f, qty: e.target.value }))}/>
-            </div>
-            <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap" }}>
-              {ITEM_TYPES.map((t, i) => (
-                <button key={t} className="filter-tag" style={{ opacity: form.type === t ? 1 : 0.5, borderColor: form.type === t ? "currentColor" : "" }}
-                  onClick={() => setForm(f => ({ ...f, type: t }))}><Icon name={ITEM_ICONS[t]} size="0.85em"/> {T.ITEM_TYPES[i] ?? t}</button>
-              ))}
-            </div>
-            {needsExtras(form.type) && (
-              <>
-                {form.type === ITEM_TYPE.WEAPON && (
-                  <div className="pack-item-row">
-                    <div className="pack-field"><span className="pack-field-label">{I.damageDice}</span><input className="pack-field-input" placeholder="e.g. 1d8" value={form.damage} onChange={e => setForm(f => ({ ...f, damage: e.target.value }))}/></div>
-                    <div className="pack-field"><span className="pack-field-label">{I.damageType}</span>
-                      <select className="g-select pack-field-input" value={form.damageType} onChange={e => setForm(f => ({ ...f, damageType: e.target.value }))}>
-                        <option value="">—</option>
-                        {DAMAGE_TYPES.map((dt,i) => <option key={dt} value={dt}>{T.DAMAGE_TYPES[i]??dt}</option>)}
-                      </select>
-                    </div>
-                    <div className="pack-field"><span className="pack-field-label">{I.hitBonus}</span><input className="pack-field-input" type="number" value={form.modifier} onChange={e => setForm(f => ({ ...f, modifier: e.target.value }))}/></div>
-                  </div>
-                )}
-                {[ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(form.type) && (
-                  <div className="pack-item-row">
-                    <div className="pack-field"><span className="pack-field-label">{I.charges}</span><input className="pack-field-input" value={form.charges} onChange={e => setForm(f => ({ ...f, charges: e.target.value }))}/></div>
-                    <div className="pack-field" style={{ flex:2 }}><span className="pack-field-label">{I.effect}</span><input className="pack-field-input" value={form.effect} onChange={e => setForm(f => ({ ...f, effect: e.target.value }))}/></div>
-                  </div>
-                )}
-              </>
-            )}
-            <input className="g-input" placeholder={I.note} value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))}/>
-            <div className="row" style={{ justifyContent:"flex-end" }}><button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addItem}><Icon name="plus" size="0.85em"/> {I.save}</button></div>
-          </div>
-        </div>
-      )}
-
       {inventory.length === 0 && <div className="card empty-state">{I.empty}</div>}
       {inventory.length > 0 && visible.length === 0 && <div className="card empty-state">{T.LIST.noResults}</div>}
+
       <div className="entity-grid">
-        {groupWeapons.length > 0 && <div className="sect-divider">{I.sectionWeapons}</div>}
-        {groupWeapons.map(renderItem)}
-        {groupArmor.length > 0 && <div className="sect-divider">{I.sectionArmor}</div>}
-        {groupArmor.map(renderItem)}
-        {groupMisc.length > 0 && <div className="sect-divider">{I.sectionMisc}</div>}
-        {groupMisc.map(renderItem)}
+        {groups.map(([label, items]) => items.length > 0 && [
+          <div key={label} className="sect-divider">{label}</div>,
+          ...items.map(renderItem),
+        ])}
       </div>
+
+      {editing && (
+        <EntityEditModal kind="inventory" initial={editing.item} isNew={editing.isNew} textFields={["note"]}
+          onSave={saveItem} onDelete={() => deleteItem(editing.item.id)} onClose={() => setEditing(null)}>
+          {(d, set) => <ItemForm d={d} set={set} T={T}/>}
+        </EntityEditModal>
+      )}
     </>
   );
 
   function renderItem(item) {
-        const open      = !!expanded[item.id];
-        const isEditing = !!editing[item.id];
-        const preview   = [item.effect, item.note].filter(Boolean).join(" · ");
-        return (
-          <div key={item.id} id={`entity-${item.id}`} className={`pack-item${item.equipped ? " equipped-active" : ""}${item.pinned ? " pinned" : ""}${open ? " is-open" : ""}`}>
-
-            {/* Nagłówek */}
-            <div className="pack-item-header">
-              <span className="icon-badge"><Icon name={ITEM_ICONS[item.type] || "diamond"}/></span>
-              <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", gap:"0.2rem" }}>
-                <input className="iedit" style={{ fontFamily:"Cinzel,serif", fontSize:"0.9rem", fontWeight:700, width:"100%" }}
-                  value={item.name} onChange={e => upd(item.id, "name", e.target.value)}/>
-                <div style={{ display:"flex", alignItems:"center", gap:"0.4rem", flexWrap:"wrap" }}>
-                  <span className="equipped-type-badge">{displayItemType(item.type)}</span>
-                  <Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>
-                </div>
-              </div>
-              <PrzypnijBtn pinned={item.pinned} onToggle={() => upd(item.id,"pinned",!item.pinned)}/>
-              <button className="entity-toggle" onClick={() => startEdit(item.id)} aria-label="Edit entry"><Icon name="edit" size="0.85em"/></button>
-              <button className="entity-toggle" onClick={() => toggle(item.id)}><Icon name={open ? "chevron-up" : "chevron-down"}/></button>
-            </div>
-
-            {/* Podgląd — 2 linie gdy zwinięty, pełny gdy rozwinięty (ale nie w trybie edycji) */}
-            {preview && !isEditing && (
-              <p className="entry-preview" style={{ ...(open ? { whiteSpace:"pre-wrap" } : { display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }) }}>
-                {preview}
-              </p>
-            )}
-
-            <TagsEditor tags={item.tags||[]} onChange={v => upd(item.id,"tags",v)}
-              suggestions={(item.tags||[]).some(t => (T.UI.SUGGESTED_ACTION_TAGS||[]).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
-
-            {/* Statystyki broni/czaru — zawsze widoczne gdy rozwinięty i nie w edycji */}
-            {open && !isEditing && (item.damage || item.charges) && (
-              <div style={{ display:"flex", flexWrap:"wrap", gap:"0.5rem", marginTop:"0.35rem" }}>
-                {item.damage && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-label)", display:"inline-flex", alignItems:"center", gap:"0.25rem" }}><Icon name="sword" size="0.85em"/> {item.damage}{item.damageType ? ` (${displayDamageType(item.damageType)})` : ""}{item.modifier ? ` +${parseInt(item.modifier)||0}` : ""}</span>}
-                {item.charges && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-label)" }}>{I.charges} {item.charges}</span>}
-                {item.qty && item.qty !== "1" && <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", color:"var(--hj-text-dim)" }}>×{item.qty}</span>}
-              </div>
-            )}
-
-            {/* Formularz edycji */}
-            {isEditing && (
-              <div className="pack-item-body">
-                <div className="row" style={{ gap:"0.4rem", flexWrap:"wrap", marginBottom:"0.5rem" }}>
-                  {ITEM_TYPES.map((t, i) => (
-                    <button key={t} className="filter-tag" style={{ opacity: item.type === t ? 1 : 0.45, borderColor: item.type === t ? "currentColor" : "" }}
-                      onClick={() => upd(item.id, "type", t)}><Icon name={ITEM_ICONS[t]} size="0.85em"/> {T.ITEM_TYPES[i] ?? t}</button>
-                  ))}
-                </div>
-                <div className="pack-item-row">
-                  <div className="pack-field"><span className="pack-field-label">{I.qty}</span><input className="pack-field-input" value={item.qty || "1"} onChange={e => upd(item.id, "qty", e.target.value)}/></div>
-                  {item.type === ITEM_TYPE.WEAPON && (
-                    <>
-                      <div className="pack-field"><span className="pack-field-label">{I.damage}</span><input className="pack-field-input" value={item.damage || ""} onChange={e => upd(item.id, "damage", e.target.value)}/></div>
-                      <div className="pack-field"><span className="pack-field-label">{I.type}</span>
-                        <select className="g-select pack-field-input" value={item.damageType || ""} onChange={e => upd(item.id, "damageType", e.target.value)}>
-                          <option value="">—</option>
-                          {DAMAGE_TYPES.map((dt,i) => <option key={dt} value={dt}>{T.DAMAGE_TYPES[i]??dt}</option>)}
-                        </select>
-                      </div>
-                      <div className="pack-field"><span className="pack-field-label">{I.attackBonus}</span><input className="pack-field-input" type="number" value={item.modifier || ""} onChange={e => upd(item.id, "modifier", e.target.value)}/></div>
-                    </>
-                  )}
-                  {[ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(item.type) && (
-                    <>
-                      <div className="pack-field"><span className="pack-field-label">{I.charges}</span><input className="pack-field-input" value={item.charges || ""} onChange={e => upd(item.id, "charges", e.target.value)}/></div>
-                      <div className="pack-field" style={{ flex:2 }}><span className="pack-field-label">{I.action}</span><input className="pack-field-input" value={item.effect || ""} onChange={e => upd(item.id, "effect", e.target.value)}/></div>
-                    </>
-                  )}
-                </div>
-                <div className="pack-field"><span className="pack-field-label">{I.notes}</span><input className="pack-field-input" value={item.note || ""} onChange={e => upd(item.id, "note", e.target.value)}/></div>
-                <div className="row" style={{ justifyContent:"space-between", marginTop:"0.3rem" }}>
-                  <button className="btn-ghost" onClick={() => del(item.id)}
-                    style={pendingDelete[item.id]?{color:"var(--hj-danger,#c94a4a)",borderColor:"var(--hj-danger,#c94a4a)",display:"flex",alignItems:"center",gap:"0.3rem"}:{}}>
-                    {pendingDelete[item.id] ? <><Icon name="warning" size="0.8em"/> {T.UI.confirmDelete}</> : I.delete}</button>
-                  <button className="btn-ghost" onClick={() => stopEdit(item.id)}><Icon name="check" size="0.85em"/></button>
-                </div>
-              </div>
-            )}
-          </div>
-        );
+    const open = !!expanded[item.id];
+    const stat = keyStat(item);
+    const qty  = parseInt(item.qty) || 1;
+    const noteIsStat = stat && stat === item.note;
+    return (
+      <EntityCard key={item.id} id={item.id}
+        icon={ITEM_ICONS[item.type] || "diamond"} title={item.name}
+        open={open} onToggle={() => toggle(item.id)}
+        pinned={item.pinned} onPin={() => upd(item.id, "pinned", !item.pinned)}
+        onEdit={() => setEditing({ item, isNew: false })}
+        accent={item.equipped ? "gold" : null}
+        meta={<>
+          <span className="meta-badge">{displayItemType(item.type)}</span>
+          {qty > 1 && <span className="meta-badge">×{qty}</span>}
+          {stat && <span className="meta-stat">{stat}</span>}
+        </>}
+        quick={<Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>}
+        preview={!noteIsStat && item.note ? plainText(item.note) : null}>
+        <FieldGrid fields={[
+          [I.damage, hasCombat(item.type) ? item.damage : null],
+          [I.damageType, hasCombat(item.type) && item.damageType ? displayDamageType(item.damageType) : null],
+          [I.attackBonus, hasCombat(item.type) && item.modifier ? `+${parseInt(item.modifier) || 0}` : null],
+          [I.effect, item.effect],
+          [I.charges, item.charges],
+          [T.LIST.qty, qty > 1 ? qty : null],
+        ]}/>
+        {item.note && !noteIsStat && <RichText text={item.note}/>}
+        <TagList tags={item.tags}/>
+      </EntityCard>
+    );
   }
 }
+
+/* Formularz przedmiotu (dodawanie i edycja) */
+function ItemForm({ d, set, T }) {
+  const I = T.INVENTORY;
+  return (
+    <>
+      <ChoiceChips label={I.type} value={d.type} onChange={v => set("type", v)}
+        options={ITEM_TYPES.map((t, i) => ({ value:t, label:T.ITEM_TYPES[i] ?? t, icon:ITEM_ICONS[t] }))}/>
+      <div className="form-grid">
+        <label className="form-field">
+          <span className="form-label">{T.LIST.qty}</span>
+          <input className="g-input" inputMode="numeric" value={d.qty ?? "1"} onChange={e => set("qty", e.target.value)}/>
+        </label>
+        {hasCombat(d.type) && <>
+          <label className="form-field">
+            <span className="form-label">{I.damageDice}</span>
+            <input className="g-input" placeholder="1d8+4" value={d.damage || ""} onChange={e => set("damage", e.target.value)}/>
+          </label>
+          <label className="form-field">
+            <span className="form-label">{I.damageType}</span>
+            <select className="g-select g-input" value={d.damageType || ""} onChange={e => set("damageType", e.target.value)}>
+              <option value="">—</option>
+              {DAMAGE_TYPES.map((dt, i) => <option key={dt} value={dt}>{T.DAMAGE_TYPES[i] ?? dt}</option>)}
+            </select>
+          </label>
+          <label className="form-field">
+            <span className="form-label">{I.attackBonus}</span>
+            <input className="g-input" inputMode="numeric" value={d.modifier || ""} onChange={e => set("modifier", e.target.value.replace(/[^-\d]/g, ""))}/>
+          </label>
+        </>}
+        {(hasCharges(d.type) || d.charges) && (
+          <label className="form-field">
+            <span className="form-label">{I.charges}</span>
+            <input className="g-input" value={d.charges || ""} onChange={e => set("charges", e.target.value)}/>
+          </label>
+        )}
+        <label className="form-field form-span-2">
+          <span className="form-label">{I.effect}</span>
+          <input className="g-input" value={d.effect || ""} onChange={e => set("effect", e.target.value)}/>
+        </label>
+      </div>
+      <RichTextArea label={I.notes} value={d.note} placeholder={I.note} onChange={v => set("note", v)}/>
+      <div className="form-field">
+        <span className="form-label">{T.LIST.tagsLabel}</span>
+        <TagsEditor tags={d.tags || []} onChange={v => set("tags", v)}
+          suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
+      </div>
+    </>
+  );
+}
+
 export default memo(InventoryScreen);

@@ -48,18 +48,31 @@ zrzutu/danych — do potwierdzenia.
       karta zajmuje cały wiersz. Usunięty widok 3 kolumn.
 
 **B. Czytelność kart wpisów (Equipment + World)**
-- [ ] B1 [U] (#1, #5) Karty nieczytelne — tytuł w pełni widoczny (zawijanie do
+- [x] B1 [U] (#1, #5) Karty nieczytelne — tytuł w pełni widoczny (zawijanie do
       2 wierszy zamiast ucinania; [O] dziś "BŁOGOSŁA", "VAXIAN DC", dwie
       "KARCZMA "" nierozróżnialne), ikony pin/edytuj/rozwiń nie zjadają tytułu.
-- [ ] B2 [U] (#1, #5) Rozwinięty opis nie może zawijać się w wąski słupek ani
+- [x] B2 [U] (#1, #5) Rozwinięty opis nie może zawijać się w wąski słupek ani
       robić ogromnego pola: pełna szerokość karty, szerokość linii ~65–80 zn.,
       długie opisy z limitem wysokości + "Pokaż więcej".
-- [ ] B3 [O] (#1, #5) Edytor tagów ("Suggested: + action…", "+ TAG") widoczny
+- [x] B3 [O] (#1, #5) Edytor tagów ("Suggested: + action…", "+ TAG") widoczny
       tylko w trybie edycji, nie na każdej karcie.
-- [ ] B4 [O] (#1) Metadane czaru (czas rzucania · zasięg · czas trwania) w
+- [x] B4 [O] (#1) Metadane czaru (czas rzucania · zasięg · czas trwania) w
       zwartej siatce zamiast słupka; [O] (#5) relacja NPC (wrogi/sojusznik)
       widoczna już na zwiniętej karcie; pola NPC (Rola/Przynależność) nie
       ucinane ("Fundacja "Now").
+      ✅ **Zrobione (faza 3):** wspólna karta `shared/EntityCard.jsx` we wszystkich
+      6 listach: tytuł jako tekst (2 linie, po rozwinięciu pełny), cały nagłówek
+      rozwija kartę, przypinanie i przełącznik stanu jako duże przyciski, wiersz
+      meta z najważniejszą informacją wg typu (obrażenia/efekt/KP, poziom i
+      szkoła czaru, relacja NPC, stosunek i typ frakcji), 2 linie podglądu.
+      Rozwinięta karta na cały wiersz siatki, opis w `shared/RichText.jsx`
+      (markdown, szer. linii ≤72ch), pola w siatce `FieldGrid`. Edycja i
+      dodawanie w oknie `shared/EntityEditModal.jsx` (kopia robocza, Zapisz /
+      Anuluj, usuwanie z potwierdzeniem, walidacja nazwy) — edytor tagów i
+      podpowiedzi tylko tam. Importowane notatki bez 
+ są w edytorze
+      rozbijane na linie. Uproszczony `useEntityList`, usunięte `FilterBar`,
+      `SearchBar`, `PrzypnijBtn`, `FACTION_RANK_COLORS`.
 
 **C. Character → karta „Walka i wyposażenie" (#2)**
 - [ ] C1 [U] Jednolity układ wpisów „In use" niezależnie od typu (eliksir =
@@ -72,7 +85,7 @@ zrzutu/danych — do potwierdzenia.
       zużycia. Wymaga nowego pola w modelu danych (dziś `charges` to wolny
       tekst, np. „raz dziennie"; ładunki tylko w notatkach) — decyzja: czy
       łączyć z ładunkami odnawianymi po odpoczynku/świcie.
-- [ ] C3 [O] Renderowanie markdownu w opisach/notatkach (dziś surowe **, ##,
+- [~] C3 [O] Renderowanie markdownu w opisach/notatkach (dziś surowe **, ##,
       ###, >, --- — np. Wywar pożyczonej siły, Ołowiany klucz introligatorski).
 
 **D. Sidebar (lewy pasek)**

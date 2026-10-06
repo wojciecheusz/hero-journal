@@ -46,16 +46,6 @@ export const SPELL_SCHOOL_ICONS = {
   [SPELL_SCHOOL.OTHER]:         "sparkle",
 };
 
-export const FACTION_RANK_COLORS = {
-  [FACTION_RANK.UNKNOWN]: "#6a5a38",
-  [FACTION_RANK.ALLY]:    "#5a8a5a",
-  [FACTION_RANK.NEUTRAL]: "#8a7840",
-  [FACTION_RANK.ENEMY]:   "#8a3a3a",
-  [FACTION_RANK.MEMBER]:  "#4a7aaa",
-  [FACTION_RANK.OFFICER]: "#c9a84c",
-  [FACTION_RANK.LEADER]:  "#e2b94e",
-};
-
 export const REL_ICONS = {
   ally:    "handshake",
   neutral: "scale",

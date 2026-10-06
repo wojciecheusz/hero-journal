@@ -51,53 +51,6 @@ export function TagsEditor({ tags, onChange, suggestions }) {
   );
 }
 
-export function FilterBar({ allTags, activeTag, onSelect }) {
-  const T = useT();
-  if (!allTags.length) return null;
-  return (
-    <div className="filter-bar">
-      <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.52rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>{T.UI.filterLabel}</span>
-      <button className={`filter-tag${!activeTag ? " active-filter" : ""}`} onClick={() => onSelect(null)}>{T.UI.filterAll}</button>
-      {allTags.map(tag => (
-        <button key={tag} className={`filter-tag${activeTag === tag ? " active-filter" : ""}`}
-          onClick={() => onSelect(activeTag === tag ? null : tag)}>{tag}</button>
-      ))}
-    </div>
-  );
-}
-
-export function SearchBar({ value, onChange }) {
-  const T = useT();
-  const clearSearch = () => onChange('');
-  return (
-    <div style={{ position:"relative", display:"flex", alignItems:"center" }}>
-      <input
-        type="text"
-        className="g-input"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={T.UI.searchPlaceholder}
-        style={{ width:"100%", minWidth:"160px" }}
-      />
-      {value && (
-        <button
-          onClick={clearSearch}
-          aria-label="Wyczysc"
-          style={{ position:"absolute", right:"0.4rem", display:"flex", background:"none", border:"none", cursor:"pointer", opacity:0.5, color:"inherit" }}
-        ><Icon name="close" size="0.85em"/></button>
-      )}
-    </div>
-  );
-}
-
-export function PrzypnijBtn({ pinned, onToggle }) {
-  return (
-    <button className={`pin-btn${pinned ? " pinned" : ""}`} onClick={onToggle} aria-label={pinned ? "Unpin" : "Pin"}>
-      <Icon name="pin" fill={pinned ? "currentColor" : "none"} color={pinned ? "#e2b94e" : "currentColor"}/>
-    </button>
-  );
-}
-
 export function Toggle({ on, onToggle, label, color }) {
   const cls = on ? (color === "purple" ? "on-purple" : color === "blue" ? "on-blue" : "on") : "";
   return (
