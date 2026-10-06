@@ -75,18 +75,30 @@ zrzutu/danych — do potwierdzenia.
       `SearchBar`, `PrzypnijBtn`, `FACTION_RANK_COLORS`.
 
 **C. Character → karta „Walka i wyposażenie" (#2)**
-- [ ] C1 [U] Jednolity układ wpisów „In use" niezależnie od typu (eliksir =
+- [x] C1 [U] Jednolity układ wpisów „In use" niezależnie od typu (eliksir =
       amulet = broń): ikona · nazwa · skrót (obrażenia/KP/efekt) · strzałka;
       opis po rozwinięciu POD wierszem, wyrównany do lewej. [O] dziś opis
       eliksiru wyświetla się w całości, do prawej, kursywą; amulet nie ma
       strzałki.
-- [ ] C2 [U] Przedmioty jednorazowe: w Equipment oznaczenie „jednorazowy" +
+- [x] C2 [U] Przedmioty jednorazowe: w Equipment oznaczenie „jednorazowy" +
       liczba użyć; w karcie licznik pozostałych użyć i szybkie odznaczanie
       zużycia. Wymaga nowego pola w modelu danych (dziś `charges` to wolny
       tekst, np. „raz dziennie"; ładunki tylko w notatkach) — decyzja: czy
       łączyć z ładunkami odnawianymi po odpoczynku/świcie.
-- [~] C3 [O] Renderowanie markdownu w opisach/notatkach (dziś surowe **, ##,
+- [x] C3 [O] Renderowanie markdownu w opisach/notatkach (dziś surowe **, ##,
       ###, >, --- — np. Wywar pożyczonej siły, Ołowiany klucz introligatorski).
+      ✅ **Zrobione (faza 4):** `EquippedCard.jsx` — jeden układ wiersza dla
+      przedmiotów, zdolności i czarów (ikona · nazwa zawijana · kluczowa
+      informacja z `itemKeyStat()` — ta sama co w liście · strzałka), opis
+      rozwijany POD wierszem, do lewej, z markdownem. Nowe pole przedmiotu
+      `uses: { max, used, recharge: none|short|long|dawn }` (formularz w oknie
+      edycji), `shared/ItemUses.jsx`: kropki ładunków (stuknięcie = zużycie /
+      odzyskanie) lub licznik sztuk dla przedmiotów jednorazowych + przycisk
+      „Użyj"; widoczne zawsze w karcie Walki i po rozwinięciu w liście.
+      Krótki odpoczynek odnawia „short", długi — „short/long/dawn"
+      (`restoreCharges()` w `utils/items.js`, okno odpoczynku pokazuje ile
+      przedmiotów odnowi). Testy `__tests__/items.test.js`. Większe pola KP /
+      inicjatywy / prędkości i monet.
 
 **D. Sidebar (lewy pasek)**
 - [x] D1 [U] (#2) Blok Życia i przyciski w sidebarze — brzydkie, nieczytelne

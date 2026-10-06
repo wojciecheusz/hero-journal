@@ -159,3 +159,66 @@
 .spell-stats { font-family: 'Cinzel', serif; font-size: max(13px, 0.72rem); color: var(--spell-accent); padding-bottom: 0.7rem; }
 .spell-slots-btn { border-color: var(--spell-border); color: var(--spell-accent); }
 .spell-slots-btn.on { background: var(--spell-bg); }
+
+/* ── Karta „Walka i wyposażenie" (P29/C1–C2) ── */
+.combat-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem; margin-bottom: 0.7rem; }
+.combat-grid-3 .combat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: max(56px, 2.8rem); cursor: text; }
+.combat-grid-3 .combat-box-label { font-size: var(--hj-label); }
+.eq-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.3rem; padding: 0.25rem; margin-bottom: 0.7rem; border: 1px solid var(--hj-border-input); border-radius: var(--radius-md); }
+
+.coins-row { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin-bottom: 0.7rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--hj-border-sub); }
+.coin { display: inline-flex; align-items: center; gap: 0.35rem; min-height: var(--hj-tap-sm); cursor: text; }
+.coin input {
+  width: 3.4rem; min-height: var(--hj-tap-sm);
+  font-family: 'Cinzel', serif; font-size: max(15px, 0.85rem); font-weight: 700; text-align: center;
+  background: transparent; border: none; border-bottom: 1px dashed var(--coin); outline: none; color: var(--hj-text);
+}
+.coin-label { font-family: 'Cinzel', serif; font-size: var(--hj-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--coin); }
+
+.eq-list { display: flex; flex-direction: column; border: 1px solid var(--hj-border-input); border-radius: var(--radius-md); overflow: hidden; background: var(--hj-inner-div-bg); }
+.eq-row + .eq-row { border-top: 1px solid var(--hj-border-sub); }
+.eq-head {
+  width: 100%; min-height: var(--hj-tap);
+  display: flex; align-items: center; gap: 0.65rem;
+  padding: 0.45rem 0.6rem 0.45rem 0.7rem;
+  background: transparent; border: none; color: inherit; text-align: left; cursor: pointer;
+}
+.eq-head:disabled { cursor: default; }
+.eq-icon { width: 2rem; height: 2rem; font-size: 0.95rem; }
+.eq-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+.eq-name { font-family: 'Cinzel', serif; font-weight: 700; font-size: max(14px, 0.78rem); color: var(--hj-text); line-height: 1.25; overflow-wrap: anywhere; }
+.eq-stat { font-family: 'Crimson Text', Georgia, serif; font-style: italic; font-size: max(14px, 0.8rem); color: var(--hj-text-muted); overflow-wrap: anywhere; }
+.eq-chevron { color: var(--hj-text-dim); display: inline-flex; flex-shrink: 0; width: var(--hj-tap-sm); justify-content: center; }
+.eq-uses { padding: 0 0.7rem 0.55rem calc(0.7rem + 2rem + 0.65rem); }
+.eq-body {
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 0.6rem 0.9rem 0.9rem calc(0.7rem + 2rem + 0.65rem);
+  background: rgba(255,255,255,0.02);
+  border-top: 1px dashed var(--hj-border-sub);
+}
+@media (max-width: 480px) {
+  .eq-uses, .eq-body { padding-left: 0.8rem; }
+}
+
+/* Licznik użyć */
+.item-uses { display: flex; align-items: center; flex-wrap: wrap; gap: 0.45rem 0.7rem; }
+.uses-pips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.uses-pip {
+  width: max(28px, 1.4rem); height: max(28px, 1.4rem);
+  border-radius: 50%; border: 2px solid var(--hj-accent-border); background: transparent; cursor: pointer;
+  position: relative;
+}
+/* Większy obszar dotyku niż sama kropka */
+.uses-pip::after { content: ''; position: absolute; inset: -8px; }
+.uses-pip.on { background: var(--hj-accent); border-color: var(--hj-accent); }
+.uses-text { font-family: 'Crimson Text', Georgia, serif; font-size: max(14px, 0.8rem); color: var(--hj-text); }
+.uses-recharge { color: var(--hj-text-muted); font-style: italic; }
+.uses-btn { min-height: var(--hj-tap-sm); padding: 0.2rem 0.8rem; margin-left: auto; }
+@media (pointer: coarse) { .uses-btn { min-height: var(--hj-tap); } }
+.item-uses.empty .uses-text { color: #d07050; }
+.meta-badge.uses { border-color: var(--hj-accent-border); color: var(--hj-accent); text-transform: none; letter-spacing: 0.02em; font-family: 'Crimson Text', Georgia, serif; font-size: max(13px, 0.74rem); }
+.uses-fields { margin-top: 0.8rem; }
+
+@media (hover: hover) {
+  .eq-head:not(:disabled):hover { background: rgba(168,120,48,0.05); }
+}

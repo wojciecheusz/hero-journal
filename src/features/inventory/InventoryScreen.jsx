@@ -11,10 +11,12 @@ import EntityEditModal, { ChoiceChips, RichTextArea } from '../../shared/EntityE
 import RichText from '../../shared/RichText';
 import { matchesSearch } from '../../utils/search';
 import { plainText } from '../../utils/markdown';
+import { itemKeyStat, hasCharges, chargesLeft, RECHARGE } from '../../utils/items';
+import ItemUses from '../../shared/ItemUses';
 
 const EMPTY_ITEM = { name:"", type:ITEM_TYPE.GENERAL, qty:"1", damage:"", damageType:"", modifier:"", charges:"", effect:"", note:"", tags:[] };
 const hasCombat  = t => t === ITEM_TYPE.WEAPON;
-const hasCharges = t => [ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
+const typeHasCharges = t => [ITEM_TYPE.SCROLL, ITEM_TYPE.WONDROUS, ITEM_TYPE.CONSUMABLE].includes(t);
 const isArmor    = t => t === ITEM_TYPE.ARMOR || t === ITEM_TYPE.SHIELD;
 
 function InventoryScreen({ inventory, setInventory, openEntity }) {
@@ -36,14 +38,8 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
     : [...inv, { ...item, id: Date.now(), equipped: false, pinned: false }]);
   const deleteItem = id => setInventory(inv => inv.filter(x => x.id !== id));
 
-  /* Najważniejsza informacja w zwiniętej karcie — zależna od typu */
-  const keyStat = item => {
-    if (hasCombat(item.type) && item.damage)
-      return [item.damage, item.damageType && displayDamageType(item.damageType), item.modifier && `${I.hitBonus} ${parseInt(item.modifier) >= 0 ? "+" : ""}${parseInt(item.modifier) || 0}`].filter(Boolean).join(" · ");
-    if (item.effect) return item.effect;
-    if (isArmor(item.type) && item.note && item.note.length <= 30) return item.note;
-    return null;
-  };
+  const keyStat = item => itemKeyStat(item, T, DAMAGE_TYPES);
+  const updItem = item => setInventory(inv => inv.map(x => x.id === item.id ? item : x));
 
   const visible = inventory
     .filter(i => !filterType || i.type === filterType)
@@ -106,6 +102,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
           <span className="meta-badge">{displayItemType(item.type)}</span>
           {qty > 1 && <span className="meta-badge">×{qty}</span>}
           {stat && <span className="meta-stat">{stat}</span>}
+          {hasCharges(item) && <span className="meta-badge uses">{T.USES.charges(chargesLeft(item), item.uses.max)}</span>}
         </>}
         quick={<Toggle on={!!item.equipped} onToggle={() => toggleEquip(item.id)} label={item.equipped ? I.equipped : I.inBag}/>}
         preview={!noteIsStat && item.note ? plainText(item.note) : null}>
@@ -114,9 +111,10 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
           [I.damageType, hasCombat(item.type) && item.damageType ? displayDamageType(item.damageType) : null],
           [I.attackBonus, hasCombat(item.type) && item.modifier ? `+${parseInt(item.modifier) || 0}` : null],
           [I.effect, item.effect],
-          [I.charges, item.charges],
+          [T.USES.chargesNote, item.charges],
           [T.LIST.qty, qty > 1 ? qty : null],
         ]}/>
+        <ItemUses item={item} onChange={updItem}/>
         {item.note && !noteIsStat && <RichText text={item.note}/>}
         <TagList tags={item.tags}/>
       </EntityCard>
@@ -153,9 +151,9 @@ function ItemForm({ d, set, T }) {
             <input className="g-input" inputMode="numeric" value={d.modifier || ""} onChange={e => set("modifier", e.target.value.replace(/[^-\d]/g, ""))}/>
           </label>
         </>}
-        {(hasCharges(d.type) || d.charges) && (
+        {(typeHasCharges(d.type) || d.charges) && (
           <label className="form-field">
-            <span className="form-label">{I.charges}</span>
+            <span className="form-label">{T.USES.chargesNote}</span>
             <input className="g-input" value={d.charges || ""} onChange={e => set("charges", e.target.value)}/>
           </label>
         )}
@@ -164,6 +162,7 @@ function ItemForm({ d, set, T }) {
           <input className="g-input" value={d.effect || ""} onChange={e => set("effect", e.target.value)}/>
         </label>
       </div>
+      <UsesFields d={d} set={set} T={T}/>
       <RichTextArea label={I.notes} value={d.note} placeholder={I.note} onChange={v => set("note", v)}/>
       <div className="form-field">
         <span className="form-label">{T.LIST.tagsLabel}</span>
@@ -171,6 +170,37 @@ function ItemForm({ d, set, T }) {
           suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
       </div>
     </>
+  );
+}
+
+/* Ładunki / użycia (P29/C2): przedmiot jednorazowy liczy sztuki, inne mogą
+   mieć ładunki odnawiane przy odpoczynku. */
+function UsesFields({ d, set, T }) {
+  const U = T.USES;
+  if (d.type === ITEM_TYPE.CONSUMABLE && !(parseInt(d.uses?.max) > 0)) {
+    return <p className="form-hint">{U.consumableHint}</p>;
+  }
+  const uses = d.uses || { max: 0, used: 0, recharge: "long" };
+  const setUses = patch => set("uses", { ...uses, ...patch });
+  return (
+    <div className="form-section uses-fields">
+      <div className="form-heading">{U.title}</div>
+      <div className="form-grid">
+        <label className="form-field">
+          <span className="form-label">{U.max}</span>
+          <input className="g-input" inputMode="numeric" value={uses.max || ""} placeholder="0"
+            onChange={e => {
+              const max = Math.max(0, parseInt(e.target.value.replace(/\D/g, "")) || 0);
+              set("uses", max > 0 ? { ...uses, max, used: Math.min(uses.used || 0, max) } : undefined);
+            }}/>
+        </label>
+      </div>
+      {parseInt(uses.max) > 0 && (
+        <ChoiceChips label={U.recharge} value={uses.recharge || "none"} onChange={v => setUses({ recharge: v })}
+          options={RECHARGE.map(r => ({ value: r, label: U.rechargeOpt[r] }))}/>
+      )}
+      <p className="form-hint small">{U.chargesHint}</p>
+    </div>
   );
 }
 

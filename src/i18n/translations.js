@@ -122,6 +122,16 @@ export const TRANSLATIONS = {
       nameRequired:"Podaj nazwę, aby zapisać.",
       markdownHint:"Formatowanie: **pogrubienie**, *kursywa*, # nagłówek, - lista, > cytat, --- linia.",
     },
+    USES: {
+      title:"Ładunki / użycia", max:"Maks. ładunków", recharge:"Odnawia się",
+      rechargeOpt:{ none:"Nie odnawia się", short:"Krótki odpoczynek", long:"Długi odpoczynek", dawn:"O świcie" },
+      rechargeShort:{ none:"", short:"odnawia: krótki odp.", long:"odnawia: długi odp.", dawn:"odnawia: świt" },
+      useOne:"Użyj", left:(n) => `pozostało: ${n}`, charges:(l, m) => `ładunki ${l}/${m}`,
+      consumableHint:"Przedmiot jednorazowy — liczba użyć to ilość sztuk; „Użyj” zmniejsza ilość.",
+      chargesHint:"Ładunki odnawiane przy odpoczynku. Zostaw 0, jeśli przedmiot ich nie ma.",
+      chargesNote:"Opis ładunków", pip:(i) => `Ładunek ${i}`, none:"Brak",
+      restored:(n) => `Odnowi ładunki: ${n} ${n === 1 ? "przedmiot" : "przedmioty"}`,
+    },
     HERO: {
       changeHero:"Zmień bohatera", details:"Szczegóły", detailsTitle:"Szczegóły bohatera",
       changeIcon:"Zmień ikonę bohatera",
@@ -597,6 +607,16 @@ export const TRANSLATIONS = {
       editTitle:{ inventory:"Edit item", skills:"Edit ability", spells:"Edit spell", npcs:"Edit character", locations:"Edit location", factions:"Edit faction" },
       nameRequired:"Enter a name to save.",
       markdownHint:"Formatting: **bold**, *italic*, # heading, - list, > quote, --- divider.",
+    },
+    USES: {
+      title:"Charges / uses", max:"Max charges", recharge:"Recharges",
+      rechargeOpt:{ none:"Doesn't recharge", short:"Short rest", long:"Long rest", dawn:"At dawn" },
+      rechargeShort:{ none:"", short:"recharges: short rest", long:"recharges: long rest", dawn:"recharges: dawn" },
+      useOne:"Use", left:(n) => `${n} left`, charges:(l, m) => `charges ${l}/${m}`,
+      consumableHint:"Single-use item — uses equal the quantity; “Use” lowers the quantity.",
+      chargesHint:"Charges restored on rest. Leave 0 if the item has none.",
+      chargesNote:"Charges note", pip:(i) => `Charge ${i}`, none:"None",
+      restored:(n) => `Restores charges on ${n} item${n === 1 ? "" : "s"}`,
     },
     HERO: {
       changeHero:"Change hero", details:"Details", detailsTitle:"Hero details",

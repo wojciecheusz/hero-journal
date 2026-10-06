@@ -227,7 +227,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
     <LangContext.Provider value={lang}>
     <div className="hj-root">
       {showReset && <ResetModal onConfirm={handleReset} onCancel={() => setShowReset(false)}/>}
-      {restModal && <RestModal type={restModal} char={char} setChar={setChar} onClose={() => setRestModal(null)}/>}
+      {restModal && <RestModal type={restModal} char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} onClose={() => setRestModal(null)}/>}
       {syncWarning && !syncFailed && (
         <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"rgba(40,32,8,0.95)", border:"1px solid #8a7020", color:"#d4aa40", fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.35rem 0.8rem", display:"flex", gap:"0.4rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 2px 8px rgba(0,0,0,0.4)", pointerEvents:"none" }}>
           <Icon name="cloud" size="0.9em"/> Synchronizacja…

@@ -1,72 +1,49 @@
 import { useState, useCallback } from 'react';
-import { ITEM_ICONS, SKILL_CAT_ICONS, SPELL_SCHOOL_ICONS } from '../../../constants/gameConstants';
+import { ITEM_ICONS, SKILL_CAT_ICONS, SPELL_SCHOOL_ICONS, DAMAGE_TYPES } from '../../../constants/gameConstants';
 import { SpellSlotsWidget } from '../widgets/SpellSlotsWidget';
 import { useT } from '../../../i18n/translations';
 import Icon from '../../../shared/icons';
+import RichText from '../../../shared/RichText';
+import ItemUses from '../../../shared/ItemUses';
+import { FieldGrid, TagList } from '../../../shared/EntityCard';
 import { numMod } from '../../../utils/math';
+import { itemKeyStat, hasCharges, isConsumable } from '../../../utils/items';
 
-/* ── Rozwijany wiersz pozycji ── */
-function EquippedRow({ iconName, name, meta, badge, badgeColor, badgeBorder, nameColor, isLast, expandContent }) {
+/* Wiersz pozycji (P29/C1) — JEDEN układ dla przedmiotów, zdolności i czarów:
+   ikona · nazwa (zawijana) · najważniejsza informacja pod nazwą · strzałka.
+   Licznik użyć (ładunki / sztuki) jest zawsze widoczny pod wierszem, a pełny
+   opis rozwija się POD wierszem na całą szerokość karty, wyrównany do lewej. */
+function EquippedRow({ icon, tone, name, stat, uses, children }) {
   const [open, setOpen] = useState(false);
-  const canExpand = !!expandContent;
-
+  const canExpand = !!children;
   return (
-    <div>
-      <div
-        onClick={() => canExpand && setOpen(o => !o)}
-        role={canExpand ? "button" : undefined}
-        aria-expanded={canExpand ? open : undefined}
-        style={{
-          display: "flex", alignItems: "center", gap: "0.6rem",
-          padding: "0.55rem 0.75rem",
-          cursor: canExpand ? "pointer" : "default",
-          borderBottom: (!isLast || open) ? "1px solid rgba(128,128,128,0.06)" : "none",
-        }}>
-        <span style={{ width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:"var(--hj-text-label)" }}>
-          <Icon name={iconName || "diamond"} size="1em"/>
+    <div className={`eq-row${open ? " open" : ""}`}>
+      <button className="eq-head" onClick={() => canExpand && setOpen(o => !o)}
+        aria-expanded={canExpand ? open : undefined} disabled={!canExpand && !uses}>
+        <span className={`icon-badge eq-icon${tone ? ` tone-${tone}` : ""}`}><Icon name={icon || "diamond"}/></span>
+        <span className="eq-main">
+          <span className="eq-name">{name}</span>
+          {stat && <span className="eq-stat">{stat}</span>}
         </span>
-        <span style={{ flex:1, fontFamily:"Cinzel,serif", fontSize:"0.72rem", color:nameColor||"var(--hj-text)", minWidth:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-          {name}
-        </span>
-        {badge && (
-          <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.44rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.18rem 0.5rem", border:`1px solid ${badgeBorder||"var(--hj-accent-border)"}`, color:badgeColor||"var(--hj-accent)", borderRadius:"var(--radius-pill)", flexShrink:0, whiteSpace:"nowrap" }}>
-            {badge}
-          </span>
-        )}
-        {!badge && meta && (
-          <span style={{ fontFamily:"'Crimson Text',Georgia,serif", fontSize:"0.8rem", fontStyle:"italic", color:"var(--hj-text-muted)", flexShrink:0, textAlign:"right", maxWidth:"42%", overflowWrap:"anywhere" }}>
-            {meta}
-          </span>
-        )}
-        {canExpand && (
-          <span style={{ color:"var(--hj-text-dim)", display:"flex", alignItems:"center", flexShrink:0 }}>
-            <Icon name={open ? "chevron-up" : "chevron-down"} size="0.75em"/>
-          </span>
-        )}
-      </div>
-      {open && (
-        <div style={{ padding:"0.45rem 0.75rem 0.5rem 3.85rem", borderBottom:!isLast?"1px solid rgba(128,128,128,0.06)":"none", background:"rgba(255,255,255,0.02)" }}>
-          {expandContent}
-        </div>
-      )}
+        {canExpand && <span className="eq-chevron"><Icon name={open ? "chevron-up" : "chevron-down"}/></span>}
+      </button>
+      {uses && <div className="eq-uses">{uses}</div>}
+      {open && <div className="eq-body">{children}</div>}
     </div>
   );
 }
 
-const ExpandText = ({ children, muted }) => (
-  <p style={{ fontFamily:"'Crimson Text',Georgia,serif", fontSize:"0.88rem", lineHeight:1.5, color:muted?"var(--hj-text-dim)":"var(--hj-text-muted)", margin:"0 0 0.25rem" }}>
-    {children}
-  </p>
-);
-
-export default function EquippedCard({ char, setChar, C, inventory, setInventory, skills, setSkills, spells, setSpells }) {
+export default function EquippedCard({ char, setChar, C, inventory, setInventory, skills, spells }) {
   const T = useT();
   const LB = T.LABELS;
+  const I  = T.INVENTORY;
+  const SP = T.SPELLS;
   const [activeTab, setActiveTab] = useState("items");
 
   const displaySpellLevel  = level    => LB.spellLevel?.[level]  ?? level;
   const displaySpellSchool = school   => LB.spellSchool?.[school] ?? school;
-  const displaySkillCat   = category  => LB.skillCat?.[category]  ?? category;
+  const displaySkillCat    = category => LB.skillCat?.[category]  ?? category;
+  const displayDamageType  = dt => T.DAMAGE_TYPES[DAMAGE_TYPES.indexOf(dt)] ?? dt;
 
   const equippedItems = (inventory || []).filter(i => i.equipped);
   const activeSkills  = (skills    || []).filter(s => s.inUse);
@@ -75,98 +52,74 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
   const updCoins = useCallback((type, val) => setChar(c => ({
     ...c, coins: { ...(c.coins||{gold:0,silver:0,copper:0}), [type]: val }
   })), [setChar]);
-
-  const itemMeta = item => {
-    const parts = [];
-    if (item.damage) {
-      let s = item.damage;
-      if (item.damageType) s += ' ' + item.damageType;
-      if (item.modifier) s += ` · +${parseInt(item.modifier)||0} traf.`;
-      parts.push(s);
-    }
-    if (item.effect) parts.push(item.effect);
-    if (!parts.length && item.note) parts.push(item.note);
-    return parts.join(' · ');
-  };
-
-  const itemExpand = item => item.note
-    ? <ExpandText muted>{item.note}</ExpandText>
-    : null;
-
-  const spellMeta = sp =>
-    sp.castingTime || [displaySpellLevel(sp.level), sp.school && displaySpellSchool(sp.school)].filter(Boolean).join(' · ');
-
-  const spellExpand = sp => (sp.description || sp.notes)
-    ? <>
-        {sp.description && <ExpandText>{sp.description}</ExpandText>}
-        {sp.notes && <ExpandText muted>{sp.notes}</ExpandText>}
-      </>
-    : null;
-
-  const skillExpand = sk => sk.description
-    ? <ExpandText muted>{sk.description}</ExpandText>
-    : null;
+  const updItem = item => setInventory(inv => inv.map(x => x.id === item.id ? item : x));
 
   const initiative = char.initiativeBonus !== undefined
     ? char.initiativeBonus
     : Math.floor(((char.stats?.DEX ?? 10) - 10) / 2);
+
+  const itemBody = item => {
+    const stat = itemKeyStat(item, T, DAMAGE_TYPES);
+    const fields = [
+      [I.damage, item.type === "weapon" ? item.damage : null],
+      [I.damageType, item.type === "weapon" && item.damageType ? displayDamageType(item.damageType) : null],
+      [I.attackBonus, item.type === "weapon" && item.modifier ? numMod(parseInt(item.modifier) || 0) : null],
+      [I.effect, item.effect && item.effect !== stat ? item.effect : null],
+      [T.USES.chargesNote, item.charges],
+    ];
+    const note = item.note && item.note !== stat ? item.note : null;
+    if (!note && !fields.some(([, v]) => v) && !(item.tags || []).length) return null;
+    return <>
+      <FieldGrid fields={fields}/>
+      {note && <RichText text={note}/>}
+      <TagList tags={item.tags}/>
+    </>;
+  };
 
   return (
     <div className="card">
       <div className="sect-divider">{C.equippedTitle}</div>
 
       {/* ── Sekcja bojowa ── */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"0.4rem", marginBottom:"0.5rem" }}>
-        {/* Prędkość */}
-        <div className="combat-box">
+      <div className="combat-grid-3">
+        <label className="combat-box">
           <span className="combat-box-label">{C.speed}</span>
-          <input className="combat-box-input" type="number" value={char.speed ?? 30}
+          <input className="combat-box-input" type="text" inputMode="numeric" value={char.speed ?? 30}
             onFocus={e => e.target.select()}
-            onChange={e => {
-              const v = parseInt(e.target.value);
-              setChar(c => ({...c, speed: v}));
-            }}
-            onBlur={e => {
-              const v = parseInt(e.target.value);
-              setChar(c => ({...c, speed: isNaN(v) ? 30 : v}));
-            }}/>
-        </div>
-        {/* KP */}
-        <div className="combat-box">
+            onChange={e => { const v = parseInt(e.target.value); setChar(c => ({...c, speed: isNaN(v) ? e.target.value : v})); }}
+            onBlur={e => { const v = parseInt(e.target.value); setChar(c => ({...c, speed: isNaN(v) ? 30 : v})); }}/>
+        </label>
+        <label className="combat-box">
           <span className="combat-box-label">{C.ac}</span>
-          <input className="combat-box-input" type="number" value={char.ac ?? 0}
+          <input className="combat-box-input" type="text" inputMode="numeric" value={char.ac ?? 0}
             onFocus={e => e.target.select()}
-            onChange={e => { const v=parseInt(e.target.value); setChar(c => ({...c, ac: v})); }}
-            onBlur={e => { const v=parseInt(e.target.value); setChar(c => ({...c, ac: isNaN(v)?0:v})); }}/>
-        </div>
-        {/* Inicjatywa */}
-        <div className="combat-box">
+            onChange={e => { const v = parseInt(e.target.value); setChar(c => ({...c, ac: isNaN(v) ? e.target.value : v})); }}
+            onBlur={e => { const v = parseInt(e.target.value); setChar(c => ({...c, ac: isNaN(v) ? 0 : v})); }}/>
+        </label>
+        <label className="combat-box">
           <span className="combat-box-label">{C.initiative}</span>
           <input className="combat-box-input" type="text" inputMode="numeric" value={numMod(initiative)}
             onFocus={e => e.target.select()}
             onChange={e => {
               const raw = e.target.value.replace(/[^-\d]/g, "");
-              setChar(c => raw===""
-                ? (({ initiativeBonus:_, ...rest }) => rest)(c)
-                : {...c, initiativeBonus: parseInt(raw)});
-            }}
-            onBlur={e => {
-              if (e.target.value==="" || isNaN(parseInt(e.target.value.replace(/[^-\d]/g,""))))
-                setChar(c => { const o={...c}; delete o.initiativeBonus; return o; });
+              setChar(c => {
+                if (raw === "" || raw === "-") { const o = { ...c }; delete o.initiativeBonus; return o; }
+                return { ...c, initiativeBonus: parseInt(raw) };
+              });
             }}/>
-        </div>
+        </label>
       </div>
 
-      <div className="subtab-bar">
+      <div className="eq-tabs" role="tablist">
         {[
           ["items",  C.tabItems,     equippedItems.length],
           ["skills", C.tabAbilities, activeSkills.length],
           ["spells", C.tabSpells,    activeSpells.length],
         ].map(([key, label, count]) => (
-          <button key={key}
-            className={`subtab-btn${activeTab===key?" active":""}`}
-            onClick={() => setActiveTab(key)}>
-            {label}{count > 0 ? ` (${count})` : ""}
+          <button key={key} role="tab" aria-selected={activeTab === key}
+            className={`subtab${activeTab === key ? " active" : ""}`} onClick={() => setActiveTab(key)}>
+            <span className="subtab-label">{label}</span>
+            <span className="subtab-count">{count}</span>
           </button>
         ))}
       </div>
@@ -174,32 +127,32 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
       {/* ── WYPOSAŻENIE ── */}
       {activeTab === "items" && (
         <>
-          <div style={{ display:"flex", gap:"1rem", justifyContent:"flex-end", marginBottom:"0.65rem", paddingBottom:"0.5rem", borderBottom:"1px solid rgba(128,128,128,0.1)" }}>
+          <div className="coins-row">
             {[["gold",C.gold,"#c8a820"],["silver",C.silver,"#8898a8"],["copper",C.copper,"#b07040"]].map(([type,label,color]) => {
               const val = (char.coins||{})[type] ?? 0;
               return (
-                <div key={type} style={{ display:"flex", alignItems:"center", gap:"0.3rem" }}>
-                  <Icon name="coins" size="0.85em" color={color}/>
-                  <input type="number" min={0} value={val}
-                    onChange={e => updCoins(type, parseInt(e.target.value))}
-                    onBlur={e => { const v=parseInt(e.target.value); updCoins(type, Math.max(0, isNaN(v)?0:v)); }}
-                    onFocus={e => e.target.select()}
-                    style={{ width:40, fontFamily:"Cinzel,serif", fontSize:"0.82rem", fontWeight:700, textAlign:"center", background:"transparent", border:"none", borderBottom:`1px dashed ${color}`, outline:"none", color:"inherit" }}/>
-                  <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.42rem", letterSpacing:"0.06em", textTransform:"uppercase", color, opacity:0.8 }}>{label}</span>
-                </div>
+                <label key={type} className="coin" style={{ "--coin": color }}>
+                  <Icon name="coins" size="1em" color={color}/>
+                  <input type="text" inputMode="numeric" value={val} aria-label={label}
+                    onChange={e => { const v = parseInt(e.target.value.replace(/\D/g, "")); updCoins(type, isNaN(v) ? "" : v); }}
+                    onBlur={e => { const v = parseInt(e.target.value); updCoins(type, Math.max(0, isNaN(v) ? 0 : v)); }}
+                    onFocus={e => e.target.select()}/>
+                  <span className="coin-label">{label}</span>
+                </label>
               );
             })}
           </div>
           {equippedItems.length === 0
             ? <div className="empty-state">{C.emptyItems}</div>
             : (
-              <div style={{ background:"var(--hj-inner-div-bg)", borderRadius:"var(--radius-md)", border:"1px solid var(--hj-border-input)", borderLeft:"2px solid var(--hj-accent-border)", overflow:"hidden" }}>
-                {equippedItems.map((item, i) => (
+              <div className="eq-list">
+                {equippedItems.map(item => (
                   <EquippedRow key={item.id}
-                    iconName={ITEM_ICONS[item.type]||"diamond"}
-                    name={item.name} meta={itemMeta(item)}
-                    expandContent={itemExpand(item)}
-                    isLast={i===equippedItems.length-1}/>
+                    icon={ITEM_ICONS[item.type] || "diamond"} name={item.name}
+                    stat={itemKeyStat(item, T, DAMAGE_TYPES)}
+                    uses={(hasCharges(item) || isConsumable(item)) ? <ItemUses item={item} onChange={updItem} compact/> : null}>
+                    {itemBody(item)}
+                  </EquippedRow>
                 ))}
               </div>
             )
@@ -212,14 +165,12 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
         activeSkills.length === 0
           ? <div className="empty-state">{C.emptyAbilities}</div>
           : (
-            <div style={{ background:"var(--hj-inner-div-bg)", borderRadius:"var(--radius-md)", border:"1px solid var(--hj-border-input)", borderLeft:"2px solid var(--hj-accent-border)", overflow:"hidden" }}>
-              {activeSkills.map((sk, i) => (
-                <EquippedRow key={sk.id}
-                  iconName={SKILL_CAT_ICONS[sk.category]||"sparkles"}
-                  name={sk.name}
-                  badge={displaySkillCat(sk.category)}
-                  expandContent={skillExpand(sk)}
-                  isLast={i===activeSkills.length-1}/>
+            <div className="eq-list">
+              {activeSkills.map(sk => (
+                <EquippedRow key={sk.id} icon={SKILL_CAT_ICONS[sk.category] || "sparkles"} tone="skill"
+                  name={sk.name} stat={[displaySkillCat(sk.category), ...(sk.tags || [])].filter(Boolean).join(" · ")}>
+                  {sk.description ? <RichText text={sk.description}/> : null}
+                </EquippedRow>
               ))}
             </div>
           )
@@ -232,14 +183,21 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
           {activeSpells.length === 0
             ? <div className="empty-state">{C.emptySpells}</div>
             : (
-              <div style={{ background:"var(--hj-inner-div-bg)", borderRadius:"var(--radius-md)", border:"1px solid var(--hj-border-input)", borderLeft:"2px solid var(--hj-spell-border)", overflow:"hidden", marginTop:"0.6rem" }}>
-                {activeSpells.map((sp, i) => (
-                  <EquippedRow key={sp.id}
-                    iconName={SPELL_SCHOOL_ICONS[sp.school]||"wand"}
-                    name={sp.name} nameColor="var(--hj-spell-text)"
-                    meta={spellMeta(sp)}
-                    expandContent={spellExpand(sp)}
-                    isLast={i===activeSpells.length-1}/>
+              <div className="eq-list" style={{ marginTop: "0.6rem" }}>
+                {activeSpells.map(sp => (
+                  <EquippedRow key={sp.id} icon={SPELL_SCHOOL_ICONS[sp.school] || "wand"} tone="spell"
+                    name={sp.name}
+                    stat={[displaySpellLevel(sp.level), sp.castingTime, sp.zakres].filter(Boolean).join(" · ")}>
+                    {(sp.description || sp.notes || sp.duration || sp.components) ? <>
+                      <FieldGrid fields={[
+                        [SP.schoolLbl || SP.school, sp.school ? displaySpellSchool(sp.school) : null],
+                        [SP.durationLbl, sp.duration],
+                        [SP.componentsLbl, sp.components],
+                      ]}/>
+                      <RichText text={sp.description}/>
+                      {sp.notes && <div className="ecard-subsection"><div className="form-label">{SP.higherLevels}</div><RichText text={sp.notes}/></div>}
+                    </> : null}
+                  </EquippedRow>
                 ))}
               </div>
             )

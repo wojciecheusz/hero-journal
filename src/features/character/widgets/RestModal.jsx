@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { clamp } from '../../../utils/math';
 import { useT } from '../../../i18n/translations';
 import Icon from '../../../shared/icons';
+import { restoreCharges, countRestorable } from '../../../utils/items';
 
 const fieldBoxStyle = {
   border: "1px solid var(--hj-border-input)", borderRadius: "var(--radius-md)",
@@ -53,7 +54,7 @@ function DiceTypeDropdown({ value, onChange }) {
   );
 }
 
-export function RestModal({ type, char, setChar, onClose }) {
+export function RestModal({ type, char, setChar, inventory = [], setInventory, onClose }) {
   const T  = useT();
   const R  = T.REST;
   const hd = char.hitDice || { type: "d8", max: 1, used: 0 };
@@ -78,6 +79,7 @@ export function RestModal({ type, char, setChar, onClose }) {
       hp: { ...c.hp, current: clamp(c.hp.current + Math.max(0, healed), 0, c.hp.max) },
       hitDice: { ...hd, used: hd.used + spend },
     }));
+    setInventory?.(inv => restoreCharges(inv, "short"));
     onClose();
   };
 
@@ -92,6 +94,7 @@ export function RestModal({ type, char, setChar, onClose }) {
       deathSaves: { successes: 0, failures: 0 },
       conditions: {},
     }));
+    setInventory?.(inv => restoreCharges(inv, "long"));
     onClose();
   };
 
@@ -165,6 +168,9 @@ export function RestModal({ type, char, setChar, onClose }) {
                 );
               })()}
             </div>
+            {countRestorable(inventory, "short") > 0 && (
+              <p className="form-hint">{T.USES.restored(countRestorable(inventory, "short"))}</p>
+            )}
             <div className="row" style={{ justifyContent: "flex-end", gap: "0.6rem", marginTop: "0.8rem" }}>
               <button className="btn-ghost" style={{ borderColor:"var(--hj-border-input)" }} onClick={onClose}>{R.cancel}</button>
               <button className="btn-ghost"
@@ -181,6 +187,7 @@ export function RestModal({ type, char, setChar, onClose }) {
                 ["dice",   R.recoverDice,  R.recoverDiceDetail(char.hitDice?.max - char.hitDice?.used || 0, char.hitDice?.max||1, char.hitDice?.used||0), "var(--hj-accent)"],
                 ["skull",  R.resetDeath,   R.resetDeathDetail, "#9a3a3a"],
                 ["flag",   R.resetConditions, R.resetConditionsDetail, "#aa4444"],
+                ...(countRestorable(inventory, "long") > 0 ? [["zap", T.USES.title, T.USES.restored(countRestorable(inventory, "long")), "var(--hj-accent)"]] : []),
               ].map(([icon, label, detail, color]) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.35rem 0", borderBottom: "1px solid var(--hj-border-sub)" }}>
                   <span style={{ flexShrink: 0, display: "flex", color }}><Icon name={icon} size="1.1em"/></span>
