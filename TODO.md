@@ -3,6 +3,14 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P31 — Relacja NPC „Martwy / Dead" (2026-10-06) — UKOŃCZONE
+Powód: backup `hj_Khoro_Update_Lore.json` ma postać (Malrik) z relacją `dead`,
+której aplikacja nie znała (pusta plakietka, brak w filtrze i w edycji).
+- [x] Nowa relacja `dead` — etykiety PL „Martwy” / EN „Dead”, ikona Game Icons
+      `tombstone` (`dead.svg`), szary kolor, wyciszony tytuł karty.
+- [x] Filtr relacji i okno edycji obsługują „Martwy”; martwi na końcu listy
+      (po przypiętych i żywych).
+
 ### ✅ P30 — Ikony Game Icons (2026-10-06) — UKOŃCZONE
 Decyzja użytkownika: zestaw **Game Icons** (game-icons.net, CC BY 3.0), pobrany
 przez publiczne API Iconify (serwis iconstack ma martwy backend — wpis MCP

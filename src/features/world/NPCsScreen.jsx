@@ -12,7 +12,7 @@ import RichText from '../../shared/RichText';
 import { matchesSearch } from '../../utils/search';
 import { plainText } from '../../utils/markdown';
 
-const RELATIONS = ["ally", "neutral", "hostile", "unknown"];
+const RELATIONS = ["ally", "neutral", "hostile", "unknown", "dead"];
 const REL_ACCENT = { ally: "green", hostile: "red" };
 const EMPTY_NPC = { name:"", role:"", relation:"unknown", affiliation:"", metAt:"", connections:"", notes:"", tags:[] };
 
@@ -36,7 +36,8 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
     .filter(n => !activeTag || hasTag(n.tags, activeTag))
     .filter(n => !filterRel || (n.relation || "unknown") === filterRel)
     .filter(n => matchesSearch(search, [n.name, n.role, n.affiliation, n.metAt, plainText(n.notes), n.connections, RL[n.relation || "unknown"], ...(n.tags || []).map(t => displayTag(t, lang))]))
-    .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
+    /* Przypięci na górze, martwi na końcu listy */
+    .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0) || (a.relation === "dead") - (b.relation === "dead"));
 
   return (
     <>

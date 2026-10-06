@@ -93,6 +93,7 @@ export const ICON_COLORS = {
   scale:      "#a08a4e",
   "help-circle":"#8a7a6a",
   unknown:    "#8a7a6a",
+  dead:       "#8a8a96",
 
   // Statystyki / kategorie zdolności
   target: "#c9a84c",

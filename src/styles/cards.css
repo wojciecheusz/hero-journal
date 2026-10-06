@@ -299,3 +299,8 @@
 @media (pointer: coarse) { .sess-title-input, .sess-date-input { min-height: var(--hj-tap); } }
 .hcv2-stat-box .hcv2-stat-label { display: inline-flex; align-items: center; gap: 0.3rem; }
 .cond-chip svg { flex-shrink: 0; }
+
+/* Relacja „Martwy" (P31) — wyciszona karta i szara plakietka */
+.meta-badge.dead { border-color: var(--hj-border-input); color: var(--hj-text-dim); background: rgba(128,128,140,0.08); }
+.icon-badge.tone-dead { color: #9a9aa8; border-color: var(--hj-border-input); }
+.ecard:has(.icon-badge.tone-dead) .ecard-title { color: var(--hj-text-muted); }

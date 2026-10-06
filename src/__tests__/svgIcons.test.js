@@ -21,7 +21,7 @@ describe('parseSvg()', () => {
 
 describe('icon folder', () => {
   it('loads every Game Icons file referenced by the app', () => {
-    for (const name of ['backpack', 'sword', 'quest', 'unknown', 'faction-guild', 'cond-blinded', 'stat-str', 'dmg-fire']) {
+    for (const name of ['backpack', 'sword', 'quest', 'unknown', 'dead', 'faction-guild', 'cond-blinded', 'stat-str', 'dmg-fire']) {
       expect(SVG_ICONS[name]?.shapes.length, name).toBeGreaterThan(0);
     }
   });

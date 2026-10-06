@@ -68,6 +68,7 @@ Podgląd każdej ikony: kliknij jej nazwę w kolumnie „Game Icons”.
 | `scale` | [scales](https://icon-sets.iconify.design/game-icons/scales/) | Neutralny |
 | `swords` | [crossed-swords](https://icon-sets.iconify.design/game-icons/crossed-swords/) | Wróg |
 | `unknown` | [cowled](https://icon-sets.iconify.design/game-icons/cowled/) | Nieznany |
+| `dead` | [tombstone](https://icon-sets.iconify.design/game-icons/tombstone/) | Martwy (relacja NPC) |
 | `user` | [person](https://icon-sets.iconify.design/game-icons/person/) | Członek, „Szczegóły” |
 | `medal` | [ribbon-medal](https://icon-sets.iconify.design/game-icons/ribbon-medal/) | Oficer |
 | `crown` | [crown](https://icon-sets.iconify.design/game-icons/crown/) | Przywódca |

@@ -51,6 +51,7 @@ export const REL_ICONS = {
   neutral: "scale",
   hostile: "swords",
   unknown: "unknown",
+  dead:    "dead",
 };
 
 export const FACTION_RANK_ICONS = {
