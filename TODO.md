@@ -3,6 +3,17 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
+### ✅ P33 — Awans: ręczne wpisanie nowego maks. PŻ po fizycznym rzucie (2026-10-06) — UKOŃCZONE
+Zgłoszenie: gracz rzuca kością fizycznie i wpisuje nowe maksymalne PŻ.
+- [x] Okno awansu (`hero/VitalsModals.jsx`): pole „Nowe maksymalne PŻ” (puste,
+      klawiatura numeryczna), podpowiedź „Rzuć d8 + KON i dodaj do obecnego
+      maksimum (X)”, przycisk „Średnia: N” dla grających bez rzutu, na bieżąco
+      przyrost lub ostrzeżenie, gdy wartość jest niższa niż obecna; „Zatwierdź”
+      aktywne dopiero po wpisaniu wartości.
+- [x] `levelUp()` przyjmuje `newMaxHp`; bieżące PŻ rosną o przyrost maksimum
+      i nie przekraczają nowego maksimum — testy w `__tests__/character.test.js`.
+- [x] Pomoc (PL/EN) opisuje wpisywanie PŻ po rzucie.
+
 ### ✅ P32 — Motywy: usunięcie 6, scalenie Arkany z Cienistą Otchłanią, audyt czytelności (2026-10-06) — UKOŃCZONE
 - [x] Usunięte: Świt, Drewno, Feywild, Wieczny, Gniew, Łąka; Cienista Otchłań
       scalona z Arkaną (granat + złoto, jaśniejszy tekst). Zostało 5: Arkana,

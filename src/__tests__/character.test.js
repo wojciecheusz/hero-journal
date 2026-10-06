@@ -84,6 +84,19 @@ describe('levelUp()', () => {
     const c9 = levelUp(c, { classIndex: 0 });
     expect(c9.profBonus).toBe(4); // poziom 9 → +4
   });
+  it('takes the new max HP typed by the player after a physical roll', () => {
+    const c = levelUp(base, { newMaxHp: 51 });
+    expect(c.hp).toEqual({ current: 46, max: 51, temp: 0 });
+    expect(c.classes[0].level).toBe(7);
+  });
+  it('keeps current HP within the new maximum even if the typed max is lower', () => {
+    const c = levelUp({ ...base, hp: { current: 45, max: 45, temp: 0 } }, { newMaxHp: 40 });
+    expect(c.hp).toEqual({ current: 40, max: 40, temp: 0 });
+  });
+  it('ignores an empty or invalid typed max and falls back to the gain', () => {
+    expect(levelUp(base, { newMaxHp: '', hpGain: 5 }).hp.max).toBe(50);
+    expect(levelUp(base, { newMaxHp: 0, hpGain: 5 }).hp.max).toBe(50);
+  });
   it('does nothing at level 20', () => {
     const c20 = { ...base, classes: [{ name: 'Rogue', level: 20 }] };
     expect(levelUp(c20, { hpGain: 5 })).toBe(c20);

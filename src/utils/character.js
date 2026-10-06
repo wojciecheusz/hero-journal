@@ -62,21 +62,27 @@ export function applyTempHp(hp, amount) {
 }
 
 /* Awans o jeden poziom w wybranej klasie. Aktualizuje:
-   poziom klasy, maks. i bieżące PŻ (+hpGain), liczbę kości wytrzymałości
-   (= łączny poziom) i premię z biegłości (wg tabeli 5e). */
-export function levelUp(char, { classIndex = 0, hpGain = 0 } = {}) {
+   poziom klasy, maks. i bieżące PŻ, liczbę kości wytrzymałości
+   (= łączny poziom) i premię z biegłości (wg tabeli 5e).
+   PŻ: newMaxHp — nowe maksimum wpisane przez gracza po fizycznym rzucie
+   kością (P33); bez niego — stare maksimum + hpGain. Bieżące PŻ rosną
+   o tyle, o ile wzrosło maksimum (i nigdy nie przekraczają maksimum). */
+export function levelUp(char, { classIndex = 0, hpGain = 0, newMaxHp } = {}) {
   const classes = (char.classes?.length ? char.classes : [{ name: "", level: 1 }]).map(c => ({ ...c }));
   const i = clamp(classIndex, 0, classes.length - 1);
   if (totalLevelOf({ classes }) >= 20) return char;
   classes[i].level = clamp((parseInt(classes[i].level) || 1) + 1, 1, 20);
   const newLevel = totalLevelOf({ classes });
-  const gain = Math.max(0, parseInt(hpGain) || 0);
   const hp = char.hp || { current: 0, max: 1, temp: 0 };
+  const oldMax = parseInt(hp.max) || 0;
+  const typed = parseInt(newMaxHp);
+  const max = !isNaN(typed) && typed >= 1 ? typed : oldMax + Math.max(0, parseInt(hpGain) || 0);
+  const gain = max - oldMax;
   const hd = char.hitDice || { type: "d8", max: 1, used: 0 };
   return {
     ...char,
     classes,
-    hp: { ...hp, max: (parseInt(hp.max) || 0) + gain, current: (parseInt(hp.current) || 0) + gain },
+    hp: { ...hp, max, current: clamp((parseInt(hp.current) || 0) + Math.max(0, gain), 0, max) },
     hitDice: { ...hd, max: newLevel, used: clamp(hd.used || 0, 0, newLevel) },
     profBonus: profBonusForLevel(newLevel),
   };

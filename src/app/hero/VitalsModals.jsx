@@ -129,19 +129,29 @@ function LevelUpModal({ T, char, setChar, onClose, onBack }) {
   const H = T.HERO;
   const classes = char.classes?.length ? char.classes : [{ name: T.CHAR.title, level: 1 }];
   const [classIndex, setClassIndex] = useState(0);
-  const avg = hitDieAverage(char.hitDice?.type);
+  const die = char.hitDice?.type || "d8";
+  const avg = hitDieAverage(die);
   const con = abilityMod(char.stats?.CON);
-  const [hpGain, setHpGain] = useState(String(Math.max(1, avg + con)));
+  const oldMax = parseInt(char.hp?.max) || 0;
+  const avgMax = oldMax + Math.max(1, avg + con);
+  /* Nowe maksimum PŻ wpisuje gracz po fizycznym rzucie kością (P33) */
+  const [newMax, setNewMax] = useState("");
+  const typed = toInt(newMax);
+  const valid = typed >= 1;
   const p = xpProgress(char);
   const newLevel = Math.min(20, totalLevelOf(char) + 1);
 
-  const confirm = () => { setChar(c => levelUp(c, { classIndex, hpGain: toInt(hpGain) })); onClose(); };
+  const confirm = () => {
+    if (!valid) return;
+    setChar(c => levelUp(c, { classIndex, newMaxHp: typed }));
+    onClose();
+  };
 
   return (
     <Modal title={H.levelUpTitle(newLevel)} onClose={onClose} closeLabel={T.UI.close}
       footer={<>
         <button className="hj-btn" onClick={onBack}>{H.cancel}</button>
-        <button className="hj-btn primary" onClick={confirm}><Icon name="check" size="1em"/> {H.confirm}</button>
+        <button className="hj-btn primary" onClick={confirm} disabled={!valid}><Icon name="check" size="1em"/> {H.confirm}</button>
       </>}>
       {!p.canLevelUp && <p className="form-hint warn">{H.levelUpEarly}</p>}
 
@@ -160,19 +170,30 @@ function LevelUpModal({ T, char, setChar, onClose, onBack }) {
         </div>
       )}
 
+      <p className="form-hint">{H.levelUpRollHint(die, con, oldMax)}</p>
       <label className="form-field">
-        <span className="form-label">{H.levelUpHp}</span>
-        <input className="g-input big-num" type="text" {...numeric} value={hpGain}
-          onFocus={e => e.target.select()}
-          onChange={e => setHpGain(e.target.value.replace(/\D/g, ""))}/>
+        <span className="form-label">{H.levelUpNewMax}</span>
+        <div className="input-with-btn">
+          <input className="g-input big-num" type="text" {...numeric} value={newMax} autoFocus
+            aria-describedby="levelup-hp-status"
+            onChange={e => setNewMax(e.target.value.replace(/\D/g, ""))}
+            onKeyDown={e => { if (e.key === "Enter") confirm(); }}/>
+          <button className="hj-btn" type="button" onClick={() => setNewMax(String(avgMax))}>
+            {H.levelUpUseAverage(avgMax)}
+          </button>
+        </div>
       </label>
-      <p className="form-hint">{H.levelUpHpHint(avg, con)}</p>
+      <p id="levelup-hp-status" className={`form-hint${valid && typed < oldMax ? " warn" : ""}`}>
+        {!valid ? H.levelUpNeedHp
+          : typed < oldMax ? H.levelUpLower(oldMax)
+          : H.levelUpGain(typed - oldMax)}
+      </p>
 
       <div className="form-section">
         <div className="form-heading">{H.levelUpWillChange}</div>
         <ul className="change-list">
           <li>{H.levelN(newLevel)}</li>
-          <li>{H.maxHpFull}: {char.hp?.max ?? 0} → {(char.hp?.max ?? 0) + toInt(hpGain)}</li>
+          <li>{H.maxHpFull}: {oldMax} → {valid ? typed : "?"}</li>
           <li>{H.levelUpHitDice(`${newLevel}${char.hitDice?.type || "d8"}`)}</li>
           <li>{H.levelUpProf(profBonusForLevel(newLevel))}</li>
         </ul>
