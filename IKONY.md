@@ -74,7 +74,7 @@ Wszystkie nazwy w kolumnie „Propozycja" sprawdzono w zainstalowanej wersji luc
 | KP | `shield` | ✅ | |
 | Inicjatywa | brak | ➕ | `zap` (jeśli Zadania dostaną inną ikonę) |
 | Szybkość | brak | ➕ | `footprints` (dziś zajęta przez klasę Łotrzyk — dopuszczalne) |
-| Stany (przycisk) | `activity` | 🐞 | **ikony nie ma w rejestrze `ICONS`, więc się nie renderuje** (`VitalsBar.jsx:196`, `Header.jsx:471`); dodać `Activity` |
+| Stany / rzuty przeciw śmierci / wyczerpanie (przyciski) | brak (sam tekst + stan) | ➕ | P29: przyciski pokazują stan tekstem; błędne odwołanie do `activity` zniknęło razem z `VitalsBar.jsx` |
 | Rzuty przeciw śmierci | `heart` / `skull` | ✅ | |
 | Wyczerpanie | brak | ➕ | `BatteryLow` |
 | Krótki odpoczynek | `moon` | ✅ | |
@@ -275,7 +275,8 @@ informacja `Info` ➕, kości `dice` ✅, porada w samouczku `lightbulb` ✅.
 
 ### Podsumowanie
 
-- **Do naprawy (🐞):** 1 — `activity` (przycisk Stanów) nie istnieje w rejestrze, więc ikona się nie wyświetla.
+- **Do naprawy (🐞):** brak — błędne `activity` usunięte w P29 (nowy panel Życia).
+- **Tymczasowe zamienniki w P29 (do podmiany na ikony z folderu):** pole wyszukiwania bez lupy, przycisk Filtry ze strzałką, Sloty czarów z zębatką, „Użyj” z minusem.
 - **Nowe, potrzebne do P29 (➕):** szukaj, filtry, sortowanie, usuń (kosz), więcej akcji, tymczasowe PŻ, XP, dodaj XP, awans, 4 mini-staty, inicjatywa, szybkość, wyczerpanie, reset postaci, ładunki.
 - **Nowe, rozszerzające (➕, do decyzji):** 4 tagi akcji + tag własny, 10 typów frakcji, 15 stanów, 13 typów obrażeń, 6 atrybutów, Kronika/Zadania, informacja.
 - **Do ujednolicenia (⚠️):** Zadania (`zap`), Usuń (tekst / `X`), Pancerz (`shirt`), Budynek/karczma (`landmark`), przycisk zmiany bohatera, „More".

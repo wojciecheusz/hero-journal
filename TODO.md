@@ -174,7 +174,7 @@ zrzutu/danych — do potwierdzenia.
       przyciski `.btn-ghost/.btn-danger/.btn-sm/.btn-gold` (≥36px, 44px na dotyku).
 
 **F. Ikony** — pełny spis w `IKONY.md` (istniejące, brakujące, do ujednolicenia).
-- [ ] F1 🐞 `activity` (przycisk Stanów) nie istnieje w rejestrze `ICONS` →
+- [x] F1 🐞 (nieaktualne — `VitalsBar.jsx` usunięty w fazie 1) `activity` (przycisk Stanów) nie istnieje w rejestrze `ICONS` →
       ikona się nie renderuje (`VitalsBar.jsx:196`, `Header.jsx:471`).
 - [ ] F2 Nowe ikony potrzebne do A–D (szukaj, filtry, sortowanie, kosz,
       tymcz. PŻ, XP/awans, mini-staty, wyczerpanie, reset, ładunki).
