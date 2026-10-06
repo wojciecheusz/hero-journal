@@ -136,7 +136,7 @@ export function RestModal({ type, char, setChar, inventory = [], setInventory, o
             <div className="modal-detail" style={{ borderColor:"var(--hj-border-input)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase", color:"var(--hj-text-muted)" }}>{R.spend}</span>
-                <button onClick={() => adjustSpend(-1)} aria-label="Decrease dice" style={roundBtnStyle}><Icon name="minus" size="0.9em"/></button>
+                <button onClick={() => adjustSpend(-1)} aria-label={R.decrease} style={roundBtnStyle}><Icon name="minus" size="0.9em"/></button>
                 <input type="number" min={0} max={available} value={spendDraft ?? hdSpend}
                   onFocus={e => { e.target.select(); setSpendDraft(String(hdSpend)); }}
                   onChange={e => {
@@ -151,7 +151,7 @@ export function RestModal({ type, char, setChar, inventory = [], setInventory, o
                     setSpendDraft(null);
                   }}
                   style={{ width: 36, fontFamily: "Cinzel,serif", fontSize: "1.1rem", fontWeight: 700, background: "transparent", border: "none", borderBottom: "1px solid var(--hj-accent-border)", outline: "none", textAlign: "center", color: "var(--hj-accent)" }}/>
-                <button onClick={() => adjustSpend(1)} aria-label="Increase dice" style={roundBtnStyle}><Icon name="plus" size="0.9em"/></button>
+                <button onClick={() => adjustSpend(1)} aria-label={R.increase} style={roundBtnStyle}><Icon name="plus" size="0.9em"/></button>
                 <span style={{ fontFamily: "Cinzel,serif", fontSize: "0.72rem", color:"var(--hj-text-muted)" }}>{hd.type}</span>
               </div>
               {(() => {

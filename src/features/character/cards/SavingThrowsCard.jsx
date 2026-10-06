@@ -1,8 +1,11 @@
 import { useCallback } from 'react';
-import { SAVING_THROWS } from '../../../constants/gameConstants';
+import { useT } from '../../../i18n/translations';
+import { ProfMarker, ProfLegend } from './ProfMarker';
 import { numMod } from '../../../utils/math';
 
 export default function SavingThrowsCard({ char, setChar, C, pb }) {
+  const T = useT();
+  const SAVING_THROWS = T.SAVING_THROWS;
   const cycleSavingThrow = useCallback(key => setChar(c => {
     const wasP = !!(c.savingThrows||{})[key]; const wasE = !!(c.savingThrowExp||{})[key];
     const ov = {...(c.savingThrowOverride||{})}; delete ov[key]; // klik pipsa = wróć do liczonej wartości
@@ -24,7 +27,8 @@ export default function SavingThrowsCard({ char, setChar, C, pb }) {
   return (
     <div className="card">
       <div className="sect-divider">{C.savingThrowsTitle}</div>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.35rem 0.6rem" }}>
+      <ProfLegend C={C}/>
+      <div className="prof-grid">
         {SAVING_THROWS.map(st => {
           const statVal = char.stats?.[st.attr] ?? 10;
           const base    = Math.floor((statVal - 10) / 2);
@@ -33,32 +37,18 @@ export default function SavingThrowsCard({ char, setChar, C, pb }) {
           const computed = exp ? base + pb*2 : prz ? base + pb : base;
           const over    = (char.savingThrowOverride||{})[st.key];
           const display = over !== undefined ? (over >= 0 ? `+${over}` : `${over}`) : numMod(computed);
-          const pipColor  = exp ? "var(--hj-pip-exp)"  : prz ? "var(--hj-pip-prof)" : "transparent";
-          const pipBorder = exp ? "2px solid var(--hj-pip-exp)" : prz ? "1.5px solid var(--hj-pip-prof)" : "1.5px solid var(--hj-pip-empty)";
-          const pipClip   = exp ? "polygon(50% 0%,100% 50%,50% 100%,0% 50%)" : "none";
           const valColor  = over !== undefined ? "var(--hj-pip-prof)" : exp ? "var(--hj-pip-exp)" : prz ? "var(--hj-pip-prof)" : "var(--hj-text-muted)";
 
           return (
-            <div key={st.key} style={{ display:"flex", alignItems:"center", gap:"0.45rem", padding:"0.18rem 0" }}>
-              <button
-                aria-label={`${st.attr}: ${exp?"Expertise":prz?"Proficient":"Not proficient"}`}
-                aria-pressed={prz || exp}
-                onClick={() => cycleSavingThrow(st.key)}
-                style={{ width:10, height:10, padding:0, flexShrink:0,
-                         borderRadius: exp ? "0" : "50%",
-                         border:pipBorder, background:pipColor, clipPath:pipClip,
-                         boxShadow:exp?"0 0 4px var(--hj-pip-exp)":prz?"0 0 4px var(--hj-pip-prof)":"none",
-                         cursor:"pointer", transition:"all 0.15s" }}/>
-              <span style={{ flex:1, fontFamily:"Cinzel,serif", fontSize:"0.78rem",
-                             fontWeight:(prz||exp)?700:400,
-                             color:exp?"var(--hj-pip-exp)":prz?"var(--hj-pip-prof)":"inherit",
-                             overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+            <div key={st.key} className="prof-row">
+              <ProfMarker prof={prz} exp={exp} label={st.label} C={C} onClick={() => cycleSavingThrow(st.key)}/>
+              <span className={`prof-name${exp ? " exp" : prz ? " prof" : ""}`}>
                 {st.label}
               </span>
               <input
                 type="text" inputMode="numeric"
                 value={display}
-                title={C.overrideTip || "Wpisz by nadpisać, wyczyść by przywrócić"}
+                title={C.overrideTip}
                 onFocus={e => e.target.select()}
                 onChange={e => {
                   const r = e.target.value.replace(/[^-\d]/g, "");
@@ -68,11 +58,7 @@ export default function SavingThrowsCard({ char, setChar, C, pb }) {
                   const r = e.target.value.replace(/[^-\d]/g, "");
                   if (!r || isNaN(parseInt(r))) setOverride(st.key, "");
                 }}
-                style={{ fontFamily:"Cinzel,serif", fontSize:"0.85rem", fontWeight:700,
-                         color:valColor, minWidth:"1.8rem", width:"1.8rem", textAlign:"right",
-                         background:"transparent", border:"none", outline:"none",
-                         borderBottom: over !== undefined ? "1px dashed var(--hj-pip-prof)" : "none",
-                         padding:0 }}/>
+                className={`prof-value${over !== undefined ? " overridden" : ""}`} style={{ color: valColor }}/>
             </div>
           );
         })}

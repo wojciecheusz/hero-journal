@@ -3,7 +3,8 @@ import { SPELL_SCHOOLS, SPELL_LEVELS, STAT_KEYS, SPELL_SCHOOL_ICONS } from '../.
 import { SPELL_LEVEL, SPELL_SCHOOL } from '../../constants/enums.js';
 import { TagsEditor, Toggle } from '../../shared/ui';
 import { SpellSlotsWidget } from '../character/widgets/SpellSlotsWidget';
-import { useT } from '../../i18n/translations';
+import { useT, useLang } from '../../i18n/translations';
+import { displayTag, hasTag, sameTag } from '../../utils/tags';
 import { useEntityList } from '../../hooks/useEntityList';
 import ListToolbar from '../../shared/ListToolbar';
 import EntityCard, { FieldGrid, TagList } from '../../shared/EntityCard';
@@ -19,6 +20,7 @@ const EMPTY_SPELL = { name:"", level:SPELL_LEVEL.CANTRIP, school:SPELL_SCHOOL.EV
 
 function SpellsScreen({ spells, setSpells, char, setChar }) {
   const T  = useT();
+  const lang = useLang();
   const SP = T.SPELLS;
 
   const [activeLevel, setActiveLevel] = useState(null);
@@ -39,8 +41,8 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
   const visible = spells
     .filter(s => !activeLevel  || s.level === activeLevel)
     .filter(s => !activeSchool || s.school === activeSchool)
-    .filter(s => !activeTag || (s.tags || []).includes(activeTag))
-    .filter(s => matchesSearch(search, [s.name, plainText(s.description), s.notes, displaySchool(s.school), displayLevel(s.level), ...(s.tags || [])]))
+    .filter(s => !activeTag || hasTag(s.tags, activeTag))
+    .filter(s => matchesSearch(search, [s.name, plainText(s.description), s.notes, displaySchool(s.school), displayLevel(s.level), ...(s.tags || []).map(t => displayTag(t, lang))]))
     .sort((a, b) => {
       const pinDiff = (b.pinned?1:0) - (a.pinned?1:0);
       if (pinDiff) return pinDiff;
@@ -78,7 +80,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
           { key:"school", label:T.LIST.school, value:activeSchool, onChange:setActiveSchool,
             options: SPELL_SCHOOLS.map((sc, i) => ({ value:sc, label:T.SPELL_SCHOOLS[i] ?? sc, icon:SPELL_SCHOOL_ICONS[sc], count:spells.filter(s => s.school === sc).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
-            options: allTags.map(tag => ({ value:tag, label:tag, count:spells.filter(x => (x.tags||[]).includes(tag)).length })) },
+            options: allTags.map(tag => ({ value:tag, label:displayTag(tag, lang), count:spells.filter(x => hasTag(x.tags, tag)).length })) },
         ]}/>
 
       {showSlots && (
@@ -131,7 +133,7 @@ function SpellsScreen({ spells, setSpells, char, setChar }) {
             <div className="form-field">
               <span className="form-label">{T.LIST.tagsLabel}</span>
               <TagsEditor tags={d.tags || []} onChange={v => set("tags", v)}
-                suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
+                suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).some(s => sameTag(s, t))) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
             </div>
           </>}
         </EntityEditModal>

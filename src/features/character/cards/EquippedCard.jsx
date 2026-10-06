@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 import { ITEM_ICONS, SKILL_CAT_ICONS, SPELL_SCHOOL_ICONS, DAMAGE_TYPES } from '../../../constants/gameConstants';
 import { SpellSlotsWidget } from '../widgets/SpellSlotsWidget';
-import { useT } from '../../../i18n/translations';
+import { useT, useLang } from '../../../i18n/translations';
+import { displayTag } from '../../../utils/tags';
 import Icon from '../../../shared/icons';
 import RichText from '../../../shared/RichText';
 import ItemUses from '../../../shared/ItemUses';
@@ -35,6 +36,7 @@ function EquippedRow({ icon, tone, name, stat, uses, children }) {
 
 export default function EquippedCard({ char, setChar, C, inventory, setInventory, skills, spells }) {
   const T = useT();
+  const lang = useLang();
   const LB = T.LABELS;
   const I  = T.INVENTORY;
   const SP = T.SPELLS;
@@ -168,7 +170,7 @@ export default function EquippedCard({ char, setChar, C, inventory, setInventory
             <div className="eq-list">
               {activeSkills.map(sk => (
                 <EquippedRow key={sk.id} icon={SKILL_CAT_ICONS[sk.category] || "sparkles"} tone="skill"
-                  name={sk.name} stat={[displaySkillCat(sk.category), ...(sk.tags || [])].filter(Boolean).join(" · ")}>
+                  name={sk.name} stat={[displaySkillCat(sk.category), ...(sk.tags || []).map(t => displayTag(t, lang))].filter(Boolean).join(" · ")}>
                   {sk.description ? <RichText text={sk.description}/> : null}
                 </EquippedRow>
               ))}

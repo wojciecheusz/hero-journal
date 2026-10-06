@@ -2,7 +2,8 @@ import { useState, memo } from 'react';
 import { FACTION_TYPES, FACTION_RANKS, FACTION_RANK_ICONS } from '../../../constants/gameConstants';
 import { FACTION_TYPE, FACTION_RANK } from '../../../constants/enums.js';
 import { TagsEditor } from '../../../shared/ui';
-import { useT } from '../../../i18n/translations';
+import { useT, useLang } from '../../../i18n/translations';
+import { displayTag, hasTag } from '../../../utils/tags';
 import { useScrollToEntity } from '../../../hooks/useScrollToEntity';
 import { useEntityList } from '../../../hooks/useEntityList';
 import ListToolbar from '../../../shared/ListToolbar';
@@ -22,6 +23,7 @@ const TONE_ACCENT = { ally: "green", hostile: "red" };
 
 function FactionsPanel({ factions, setFactions, openEntity }) {
   const T = useT();
+  const lang = useLang();
   const F = T.FACTIONS;
 
   const [filterType, setFilterType] = useState(null);
@@ -38,9 +40,9 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
   const deleteFaction = id => setFactions(l => l.filter(x => x.id !== id));
 
   const visible = factions
-    .filter(f => (!activeTag||(f.tags||[]).includes(activeTag)) && (!filterType||f.type===filterType))
+    .filter(f => (!activeTag || hasTag(f.tags, activeTag)) && (!filterType||f.type===filterType))
     .filter(f => !filterRank || (f.rank || FACTION_RANK.UNKNOWN) === filterRank)
-    .filter(f => matchesSearch(search, [f.name, f.goal, plainText(f.notes), f.leader, f.headquarters, displayFactionType(f.type), displayFactionRank(f.rank || FACTION_RANK.UNKNOWN), ...(f.tags || [])]))
+    .filter(f => matchesSearch(search, [f.name, f.goal, plainText(f.notes), f.leader, f.headquarters, displayFactionType(f.type), displayFactionRank(f.rank || FACTION_RANK.UNKNOWN), ...(f.tags || []).map(t => displayTag(t, lang))]))
     .sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
 
   return (
@@ -55,7 +57,7 @@ function FactionsPanel({ factions, setFactions, openEntity }) {
           { key:"rank", label:T.LIST.rank, value:filterRank, onChange:setFilterRank,
             options: FACTION_RANKS.map(r => ({ value:r, label:displayFactionRank(r), icon:FACTION_RANK_ICONS[r], count:factions.filter(f => (f.rank || FACTION_RANK.UNKNOWN) === r).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
-            options: allTags.map(tag => ({ value:tag, label:tag, count:factions.filter(x => (x.tags||[]).includes(tag)).length })) },
+            options: allTags.map(tag => ({ value:tag, label:displayTag(tag, lang), count:factions.filter(x => hasTag(x.tags, tag)).length })) },
         ]}/>
 
       {factions.length === 0 && <div className="card empty-state">{F.empty}<br/><span style={{ fontSize:"0.85rem" }}>{F.emptySub}</span></div>}

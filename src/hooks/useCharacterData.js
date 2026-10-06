@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { DEFAULT_CHAR } from '../constants/gameConstants';
 import {
   CHAR_SLOTS, loadChar, saveChar,
-  validateCharData, validateArray,
+  validateCharData, validateArray, normalizeSlot,
 } from '../utils/storage';
 
 export const EMPTY_DATA = {
@@ -12,16 +12,17 @@ export const EMPTY_DATA = {
 };
 
 export function loadProfileData(id) {
+  const load = slot => normalizeSlot(slot, loadChar(slot, id, null));
   return {
-    char:      validateCharData(loadChar("char",      id, null), DEFAULT_CHAR),
-    inventory: validateArray(loadChar("inventory", id, null)),
-    npcs:      validateArray(loadChar("npcs",      id, null)),
-    locations: validateArray(loadChar("locations", id, null)),
-    skills:    validateArray(loadChar("skills",    id, null)),
-    spells:    validateArray(loadChar("spells",    id, null)),
-    sessions:  validateArray(loadChar("sessions",  id, null)),
-    quests:    validateArray(loadChar("quests",    id, null)),
-    factions:  validateArray(loadChar("factions",  id, null)),
+    char:      validateCharData(load("char"), DEFAULT_CHAR),
+    inventory: validateArray(load("inventory")),
+    npcs:      validateArray(load("npcs")),
+    locations: validateArray(load("locations")),
+    skills:    validateArray(load("skills")),
+    spells:    validateArray(load("spells")),
+    sessions:  validateArray(load("sessions")),
+    quests:    validateArray(load("quests")),
+    factions:  validateArray(load("factions")),
   };
 }
 

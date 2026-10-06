@@ -2,7 +2,8 @@ import { useState, memo } from 'react';
 import { LOC_TYPES, LOC_TYPE_ICONS } from '../../constants/gameConstants';
 import { LOC_TYPE } from '../../constants/enums.js';
 import { TagsEditor } from '../../shared/ui';
-import { useT } from '../../i18n/translations';
+import { useT, useLang } from '../../i18n/translations';
+import { displayTag, hasTag } from '../../utils/tags';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 import ListToolbar from '../../shared/ListToolbar';
@@ -16,6 +17,7 @@ const EMPTY_LOC = { name:"", type:LOC_TYPE.SETTLEMENT, notes:"", tags:[] };
 
 function LocationsScreen({ locations, setLocations, openEntity }) {
   const T = useT();
+  const lang = useLang();
   const L = T.LOCATIONS;
 
   const [filterType, setFilterType] = useState(null);
@@ -30,9 +32,9 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
   const deleteLoc = id => setLocations(l => l.filter(x => x.id !== id));
 
   const visible = locations
-    .filter(l => !activeTag || (l.tags || []).includes(activeTag))
+    .filter(l => !activeTag || hasTag(l.tags, activeTag))
     .filter(l => !filterType || l.type === filterType)
-    .filter(l => matchesSearch(search, [l.name, plainText(l.notes), displayLocType(l.type), ...(l.tags || [])]))
+    .filter(l => matchesSearch(search, [l.name, plainText(l.notes), displayLocType(l.type), ...(l.tags || []).map(t => displayTag(t, lang))]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
 
   return (
@@ -45,7 +47,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
           { key:"type", label:T.LIST.type, value:filterType, onChange:setFilterType,
             options: LOC_TYPES.map(type => ({ value:type, label:displayLocType(type), icon:LOC_TYPE_ICONS[type], count:locations.filter(l => l.type === type).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
-            options: allTags.map(tag => ({ value:tag, label:tag, count:locations.filter(x => (x.tags||[]).includes(tag)).length })) },
+            options: allTags.map(tag => ({ value:tag, label:displayTag(tag, lang), count:locations.filter(x => hasTag(x.tags, tag)).length })) },
         ]}/>
 
       {locations.length === 0 && <div className="card empty-state">{L.empty}</div>}
@@ -60,7 +62,7 @@ function LocationsScreen({ locations, setLocations, openEntity }) {
             onEdit={() => setEditing({ item: loc, isNew: false })}
             meta={<>
               <span className="meta-badge">{displayLocType(loc.type)}</span>
-              {(loc.tags || []).slice(0, 3).map(t => <span key={t} className="meta-sub">{t}</span>)}
+              {(loc.tags || []).slice(0, 3).map(t => <span key={t} className="meta-sub">{displayTag(t, lang)}</span>)}
             </>}
             preview={loc.notes ? plainText(loc.notes) : null}>
             <RichText text={loc.notes}/>

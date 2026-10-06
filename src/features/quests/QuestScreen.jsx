@@ -69,8 +69,8 @@ function QuestScreen({ quests, setQuests, openEntity }) {
                       {quest.reward && <div style={{ display:"flex", alignItems:"center", gap:"0.3rem", fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.1em", color:"var(--quest-reward)", marginTop:"0.3rem" }}><Icon name="star" size="0.9em"/> {T.QUESTS.reward} {quest.reward}</div>}
                       {steps.length>0 && <div style={{ fontFamily:"Cinzel,serif", fontSize:"0.52rem", letterSpacing:"0.08em", marginTop:"0.2rem", opacity:0.6 }}>{doneCount}/{steps.length}</div>}
                     </div>
-                    <button className="entity-toggle" onClick={() => toggle(quest.id)} aria-label={open?"Collapse":"Expand"} style={{ marginTop:"0.1rem" }}><Icon name={open?"chevron-up":"chevron-down"}/></button>
-                    <button onClick={() => del(quest.id)} aria-label="Delete quest" style={{ background:"transparent", border:"none", cursor:"pointer", padding:"0.1rem 0.2rem", flexShrink:0, opacity:0.4, display:"flex" }}
+                    <button className="entity-toggle" onClick={() => toggle(quest.id)} aria-label={open ? T.LIST.collapse : T.LIST.expand} style={{ marginTop:"0.1rem" }}><Icon name={open?"chevron-up":"chevron-down"}/></button>
+                    <button onClick={() => del(quest.id)} aria-label={T.QUESTS.deleteQuest} style={{ background:"transparent", border:"none", cursor:"pointer", padding:"0.1rem 0.2rem", flexShrink:0, opacity:0.4, display:"flex" }}
                       onMouseEnter={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="0.4"}><Icon name="close" size="0.85em"/></button>
                   </div>
                   {open && (
@@ -80,7 +80,7 @@ function QuestScreen({ quests, setQuests, openEntity }) {
                           <div className={`check-box${step.done?" checked":""}`} onClick={() => updStep(quest.id,step.id,"done",!step.done)}/>
                           <input className={`iedit flex1 checklist-text${step.done?" done":""}`} style={{ fontSize:"0.92rem" }}
                             value={step.text} onChange={e => updStep(quest.id,step.id,"text",e.target.value)} placeholder={T.QUESTS.stepPh}/>
-                          <button aria-label="Delete step" style={{ background:"transparent", border:"none", cursor:"pointer", opacity:0.3, display:"flex" }}
+                          <button aria-label={T.QUESTS.deleteStep} style={{ background:"transparent", border:"none", cursor:"pointer", opacity:0.3, display:"flex" }}
                             onMouseEnter={e=>e.currentTarget.style.opacity="1"} onMouseLeave={e=>e.currentTarget.style.opacity="0.3"}
                             onClick={() => delStep(quest.id,step.id)}><Icon name="close" size="0.85em"/></button>
                         </div>

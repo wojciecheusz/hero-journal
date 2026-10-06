@@ -112,7 +112,7 @@ export default function App() {
           }}>
             <Icon name="cloud" size="0.95em"/>
             <span>{toast.text}</span>
-            <button onClick={dismissToast} aria-label="OK"
+            <button onClick={dismissToast} aria-label={T.UI.close}
               style={{ background:"transparent", border:"none", color:"inherit", cursor:"pointer",
                        padding:"0.25rem", lineHeight:1, flexShrink:0, display:"flex" }}>
               <Icon name="close" size="0.95em"/>

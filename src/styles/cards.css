@@ -222,3 +222,55 @@
 @media (hover: hover) {
   .eq-head:not(:disabled):hover { background: rgba(168,120,48,0.05); }
 }
+
+/* ── Rzuty obronne / Umiejętności: znaczniki biegłości pod palec ── */
+.prof-legend {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.9rem;
+  margin: -0.3rem 0 0.6rem;
+  font-family: 'Crimson Text', Georgia, serif; font-size: max(13px, 0.74rem); color: var(--hj-text-muted);
+}
+.prof-legend > span { display: inline-flex; align-items: center; gap: 0.35rem; }
+.prof-legend-hint { font-style: italic; color: var(--hj-text-dim); }
+.prof-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 0.8rem; }
+@media (max-width: 420px) { .prof-grid { grid-template-columns: 1fr; } }
+.prof-row { display: flex; align-items: center; gap: 0.35rem; min-width: 0; min-height: var(--hj-tap-sm); }
+@media (pointer: coarse) { .prof-row { min-height: var(--hj-tap); } }
+.prof-marker {
+  width: var(--hj-tap-sm); height: var(--hj-tap-sm); flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-left: -0.5rem;
+  background: transparent; border: none; border-radius: 50%; cursor: pointer;
+}
+@media (pointer: coarse) { .prof-marker { width: var(--hj-tap); height: var(--hj-tap); } }
+.prof-dot {
+  width: 0.7rem; height: 0.7rem; border-radius: 50%; display: inline-block; flex-shrink: 0;
+  border: 1.5px solid var(--hj-pip-empty); background: transparent; transition: all 0.15s;
+}
+.prof-marker.prof .prof-dot, .prof-dot.prof { border-color: var(--hj-pip-prof); background: var(--hj-pip-prof); box-shadow: 0 0 4px var(--hj-pip-prof); }
+.prof-marker.exp .prof-dot, .prof-dot.exp { border-color: var(--hj-pip-exp); background: var(--hj-pip-exp); border-radius: 2px; transform: rotate(45deg) scale(0.85); box-shadow: 0 0 4px var(--hj-pip-exp); }
+.prof-name {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: 'Cinzel', serif; font-size: max(13px, 0.74rem); color: var(--hj-text);
+}
+.prof-name.prof { color: var(--hj-pip-prof); font-weight: 700; }
+.prof-name.exp  { color: var(--hj-pip-exp);  font-weight: 700; }
+.prof-attr { font-family: 'Cinzel', serif; font-size: var(--hj-label); color: var(--hj-text-dim); }
+.prof-value {
+  width: 2.4rem; min-height: var(--hj-tap-sm); text-align: right; padding: 0;
+  font-family: 'Cinzel', serif; font-size: max(14px, 0.82rem); font-weight: 700;
+  background: transparent; border: none; outline: none;
+}
+.prof-value.overridden { border-bottom: 1px dashed var(--hj-pip-prof); }
+@media (hover: hover) { .prof-marker:hover { background: rgba(168,120,48,0.1); } }
+.prof-marker:active { transform: scale(0.92); }
+
+/* ── Atrybuty: modyfikator jako główna liczba, wartość do edycji pod spodem ── */
+.hcv2-stat-box { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.55rem 0.3rem 0.5rem; cursor: text; }
+.hcv2-stat-box .hcv2-stat-label { order: 0; font-size: var(--hj-label); color: var(--hj-text-label); }
+.hcv2-stat-box .hcv2-stat-mod { margin: 0; font-size: 1.45rem; font-weight: 700; color: var(--hj-accent); line-height: 1.1; }
+.hcv2-stat-box .hcv2-stat-score {
+  width: 2.6rem; min-height: var(--hj-tap-sm); text-align: center;
+  font-family: 'Cinzel', serif; font-size: max(14px, 0.8rem); font-weight: 600; color: var(--hj-text-muted);
+  background: var(--hj-bg-input); border: 1px solid var(--hj-border-input); border-radius: var(--radius-pill); outline: none;
+}
+.hcv2-stat-box .hcv2-stat-score:focus { border-color: var(--hj-accent-border); color: var(--hj-text); }

@@ -4,7 +4,7 @@ export function detectLang() {
   try {
     const stored = JSON.parse(localStorage.getItem('hj_lang'));
     if (stored === 'pl' || stored === 'en') return stored;
-  } catch {}
+  } catch { /* brak dostępu do localStorage — domyślnie angielski */ }
   return 'en';
 }
 
@@ -47,7 +47,7 @@ export const TRANSLATIONS = {
     SPELL_LEVELS:  ["Sztuczka","1. poziom","2. poziom","3. poziom","4. poziom","5. poziom","6. poziom","7. poziom","8. poziom","9. poziom"],
     SAVING_THROWS: [
       {key:"str",label:"Siła",attr:"STR"},{key:"dex",label:"Zręczność",attr:"DEX"},
-      {key:"con",label:"Budowa",attr:"CON"},{key:"int",label:"Intelekt",attr:"INT"},
+      {key:"con",label:"Kondycja",attr:"CON"},{key:"int",label:"Inteligencja",attr:"INT"},
       {key:"wis",label:"Mądrość",attr:"WIS"},{key:"cha",label:"Charyzma",attr:"CHA"},
     ],
     GENERIC_SKILLS: [
@@ -71,7 +71,8 @@ export const TRANSLATIONS = {
     },
     UI: {
       themeColor:"Motyw kolorystyczny", resetChar:"Reset postaci", syncData:"Synchronizuj dane",
-      close:"Zamknij", help:"Pomoc", settings:"Ustawienia", support:"Wesprzyj", dangerZone:"Strefa niebezpieczna",
+      close:"Zamknij", help:"Pomoc", settings:"Ustawienia", support:"Wesprzyj",
+      loadingTab:"Wczytywanie…", storageFull:"Brak miejsca w pamięci — dane nie zostały zapisane", removeTag:"Usuń tag", dangerZone:"Strefa niebezpieczna",
       langLabel:"Język", langName:"Polski",
       logout:"Wyloguj", changeHero:"Zmień bohatera", hero:"Bohater", langToggle:"EN",
       buyBeer:"Kup piwo karczmarzowi", buyBeerSoon:"Już niedługo — dziękujemy za chęć wsparcia!",
@@ -102,6 +103,7 @@ export const TRANSLATIONS = {
 
     SYNC: {
       running:"Synchronizuję…",
+      failedLocal:"Błąd synchronizacji — dane zapisane lokalnie",
       summary:(up, down) => `Zsynchronizowano. Wysłano: ${up}, pobrano: ${down}.`,
       upToDate:"Wszystko aktualne.",
       keptLocal:(n) => ` ${n === 1 ? "Jeden zestaw danych zmienił się" : `${n} zestawy danych zmieniły się`} równocześnie tu i w chmurze — zachowano wersję z tego urządzenia.`,
@@ -177,6 +179,8 @@ export const TRANSLATIONS = {
       eyes:"Oczy", eyesPh:"np. niebieskie",
       skin:"Skóra", skinPh:"np. oliwkowa",
       hair:"Włosy", hairPh:"np. ciemne",
+      profState:{ none:"brak biegłości", prof:"biegłość", exp:"ekspertyza" },
+      profLegend:"Dotknij znacznika: brak → biegłość → ekspertyza",
       savingThrowsTitle:"Rzuty Obronne", st:"ST", proficiency:"Biegłość: kliknij aby przełączyć (brak → biegły → ekspert)",
       skillsTitle:"Umiejętności",
       abilitiesTitle:"Atrybuty",
@@ -311,10 +315,11 @@ export const TRANSLATIONS = {
       delete:"Usuń wpis", done:"Gotowe",
       emptyNote:"Brak sporządzonych notatek. Dotknij, aby zacząć pisać kronikę sesji…",
       edit:"Edytuj kronikę",
+      legend:{ npc:"Postacie", location:"Miejsca", quest:"Zadania", inventory:"Przedmioty", skill:"Zdolności" },
     },
 
     QUESTS: {
-      newTitle:"Nowe zadanie w dzienniku",
+      newTitle:"Nowe zadanie w dzienniku", deleteQuest:"Usuń zadanie", deleteStep:"Usuń krok",
       namePh:"Nazwa zlecenia / misji głównej…",
       descPh:"Krótki opis celów zlecenia…",
       rewardPh:"Przewidziana nagroda (np. złoto, unikalny artefakt, PD)…",
@@ -339,7 +344,7 @@ export const TRANSLATIONS = {
     REST: {
       shortTitle:"Krótki odpoczynek", longTitle:"Długi odpoczynek",
       availableDice:(avail,max,type) => `Wydaj Kości Wytrzymałości. ${avail} z ${max} kości ${type} dostępnych.`,
-      diceType:"Typ kości", maxLabel:"Maks.", spend:"Wydaj",
+      diceType:"Typ kości", maxLabel:"Maks.", spend:"Wydaj", decrease:"Mniej kości", increase:"Więcej kości",
       restores:(avg,min,max,mod) => `Przywraca ok. ${avg} PŻ (zakres ${min}–${max}, MOD Budowy ${mod>=0?"+":""}${mod})`,
       cancel:"Anuluj", doShortRest:"Odpoczywaj", doLongRest:"Odpocznij Długo",
       restoreHp:"Przywróć pełne punkty życia",
@@ -367,6 +372,7 @@ export const TRANSLATIONS = {
 
     PROFILES: {
       tagline:"Wybierz postać bohatera, aby kontynuować kampanię RPG",
+      statArrays:{ standard:"Zestaw standardowy", heroic:"Heroiczny (silny)", balanced:"Zrównoważony" },
       unnamed:"Bezimienny Bohater", renameTitle:"Zmień imię bohatera",
       levelLabel:"Poziom", active:"Aktywny",
       createNew:"Stwórz Nowego Bohatera", createSample:"Stwórz przykładowego bohatera",
@@ -431,43 +437,43 @@ export const TRANSLATIONS = {
     HELP: {
       character:{
         title:"Postać",
-        intro:"Tożsamość, statystyki i zdolności bojowe Twojego bohatera.",
+        intro:"Tożsamość, statystyki i walka Twojego bohatera.",
         items:[
-          ["chevrons-updown","Zwiń / rozwiń kartę","Tapnij nagłówek sekcji. Stan zwiniecia jest zapamiętywany."],
-          ["CECHA","Edytuj statystykę","Kliknij box STR/DEX/… aby wpisać nową wartość. Modyfikator (+/−) wyliczany automatycznie."],
-          ["ST","Rzut obronny — nadpisanie","Wpisz wartość ST ręcznie aby ją nadpisać. Dwukliknij aby zresetować do wartości wyliczonej z cechy."],
-          [["circle","diamond"],"Biegłość w umiejętnościach","Kliknij umiejętność: brak → biegły (●) → ekspert (◆). Ekspert = podwójna premia z biegłości."],
-          ["KP / PŻ","Statystyki walki","KP, Inicjatywa, Prędkość, Biegłość: edytuj bezpośrednio. PŻ: przyciski +/− lub wpisz liczbę."],
-          ["STANY","Stany i Wyczerpanie","Tapnij stan aby aktywować / dezaktywować. Wyczerpanie: 0 = brak, 1–6 = poziomy siły efektu."],
-          ["skull","Rzuty obronne przy śmierci","Trzy kółka sukcesów i trzy porażek. Kliknij kółko aby ustawić. 3 sukcesy = stabilny."],
-          [["moon","sun"],"Krótki / Długi odpoczynek","Otwiera modal. Krótki: wydaj Kości Wyt. aby odzyskać PŻ. Długi: pełna regeneracja."],
-          ["AKTYWNE","Aktywne i Wyposażone","Dolna karta: wyposażone przedmioty, aktywne zdolności i czary. Monety (złoto/srebro/miedź). Przeciągnij ⠿ aby zmienić kolejność — działa też palcem na mobile."],
+          ["chevrons-updown","Zwijanie kart","Dotknij nagłówka sekcji, aby ją zwinąć lub rozwinąć. Stan jest zapamiętywany."],
+          ["STAT","Atrybuty","Duża liczba to modyfikator. Dotknij małej wartości pod nim, aby wpisać nową."],
+          ["ST","Rzuty obronne i umiejętności — nadpisanie","Wpisz wartość, aby nadpisać wyliczoną premię; wyczyść pole, aby wrócić do automatu."],
+          [["circle","diamond"],"Biegłość","Dotknij znacznika: brak → biegłość (●) → ekspertyza (◆). Ekspertyza = podwójna premia z biegłości."],
+          ["heart","Punkty życia","Dotknij liczby PŻ (w panelu bocznym lub na górnym pasku na telefonie), aby wpisać obrażenia, leczenie albo tymczasowe PŻ. Obrażenia najpierw zdejmują tymczasowe PŻ. Przyciski − / + zmieniają PŻ o 1."],
+          ["XP","Doświadczenie i awans","Dotknij XP, aby dodać doświadczenie. Gdy XP osiągnie próg, pojawi się „Awansuj”: wybierz klasę (przy multiklasie) i potwierdź przyrost PŻ — kości wytrzymałości i premia z biegłości zmienią się same."],
+          ["STANY","Stany, rzuty przeciw śmierci, wyczerpanie","Przyciski pokazują aktualny stan; dotknij, aby otworzyć okno i go zmienić."],
+          [["moon","sun"],"Krótki / długi odpoczynek","Krótki: wydaj kości wytrzymałości; odnawia ładunki przedmiotów oznaczonych „krótki odpoczynek”. Długi: pełna regeneracja i wszystkie ładunki."],
+          ["AKTYWNE","Walka i wyposażenie","Wyposażone przedmioty, aktywne zdolności i przygotowane czary w jednej liście. Dotknij wiersza, aby zobaczyć pełny opis. Przedmioty z ładunkami lub jednorazowe pokazują, ile zostało — dotknij „Użyj” albo kropki."],
         ],
       },
       equipment:{
         title:"Wyposażenie",
-        intro:"Plecak, Czary i Zdolności widoczne obok siebie na desktopie. Na mobile przełączaj zakładki.",
+        intro:"Przedmioty, Zdolności i Czary — wybierz podzakładkę na górze. Aplikacja pamięta ostatnio otwartą.",
         items:[
-          ["plus","Nowy przedmiot / czar / zdolność","Formularz dopasowuje pola do wybranego typu — broń pokazuje obrażenia, przedmiot naładowany — ładunki."],
-          ["chevrons-updown","Zwiń / rozwiń wpis","Zwinięty = podgląd 2 linii opisu. Rozwinięty = pełne szczegóły i formularz edycji."],
-          ["edit","Tryb edycji","Modyfikuj dowolne pole. Kliknij ✓ aby zapisać i zamknąć formularz."],
-          ["toggle","Wyposażony / Aktywny","Przedmioty: Wyposażony ↔ W plecaku. Czary i zdolności: Aktywny ↔ Nieaktywny. Aktywne trafiają na kartę Postać."],
-          ["SLOTY","Zarządzaj slotami czarów","Kliknij 'Zarządzaj slotami' nad listą czarów. Ustaw max i wydane sloty dla każdego poziomu."],
-          ["KAT.","Kategorie zdolności","Złoty = Umiejętność, niebieski = Cecha rasowa, brązowy = Atut. Legenda nad paskiem filtrów."],
-          ["# TAG","Filtruj po tagu (Plecak / Czary / Zdolności)","Kliknij tag w pasku filtrów aby pokazać tylko wpisy z tym tagiem. Ponowne kliknięcie usuwa filtr. Tagi dodajesz w trybie edycji każdego wpisu."],
+          ["SZUKAJ","Wyszukiwanie","Szuka w nazwach, opisach i tagach. Polskie znaki można pominąć („zbroja” = „zbroję”)."],
+          ["FILTRY","Filtry","Otwiera filtry typu, kategorii lub tagu. Aktywne filtry widać jako chipy pod paskiem — dotknij ✕, aby usunąć."],
+          ["plus","Dodawanie","Otwiera formularz. Wpis zapisuje się dopiero po „Zapisz”."],
+          ["chevrons-updown","Karta wpisu","Dotknij karty, aby rozwinąć pełny opis. Rozwinięta karta zajmuje cały wiersz."],
+          ["edit","Edycja","Przycisk w rozwiniętej karcie. Wszystko — także tagi i ładunki — edytujesz w oknie; „Usuń” wymaga drugiego potwierdzenia."],
+          ["toggle","Wyposażony / Aktywna / Przygotowany","Przełącznik na karcie. Aktywne wpisy pojawiają się w karcie „Walka i wyposażenie”."],
+          ["zap","Ładunki i użycia","W formularzu przedmiotu ustaw maks. ładunki i kiedy się odnawiają (krótki, długi odpoczynek, świt). Przedmioty jednorazowe liczą się sztukami."],
+          ["SLOTY","Sloty czarów","Przycisk „Sloty czarów” w podzakładce Czary."],
+          ["# TAG","Formatowanie opisów","Opisy obsługują **pogrubienie**, *kursywę*, # nagłówki, - listy i > cytaty."],
         ],
       },
       world:{
         title:"Świat",
-        intro:"Postacie, Miejsca i Frakcje w trzech kolumnach na desktopie. Na mobile przełączaj zakładki.",
+        intro:"Postacie, Lokacje i Frakcje — wybierz podzakładkę na górze. Wyszukiwanie i filtry działają jak w Wyposażeniu.",
         items:[
-          ["plus","Utwórz nowy wpis","Wpisz nazwę i kluczowe informacje. Wpis pojawia się na liście natychmiast."],
-          ["chevrons-updown","Zwiń / rozwiń","Zwinięty = tylko nazwa + tagi. Rozwinięty = pełne detale i edycja pól."],
-          ["edit","Tryb edycji wpisu","Modyfikuj pola, typ i notatki. Kliknij ✓ aby zamknąć."],
-          ["RELACJA","Nastawienie NPC — zmień tapem","Odznaka pod nazwą postaci. Tapnij aby cyklować: Nieznany → Sojusznik → Neutralny → Wrogi."],
-          ["RANGA","Ranga Frakcji — zmień tapem","Odznaka pod nazwą frakcji. Tapnij aby cyklować dostępne rangi (Nieznany, Sojusznik, Wróg…)."],
-          ["pin","Trzymaj wpis na górze","Tapnij ikonę szpilki. Przypięte wpisy wyświetlane zawsze jako pierwsze."],
-          ["# TAG","Filtruj po tagu","Kliknij tag w pasku filtrów aby zobaczyć tylko wpisy z tym tagiem. Ponowne kliknięcie usuwa filtr."],
+          ["plus","Nowy wpis","Wypełnij nazwę i najważniejsze pola w oknie, potem „Zapisz”."],
+          ["chevrons-updown","Karta wpisu","Zwinięta: nazwa, relacja lub stosunek i krótki podgląd. Rozwinięta: wszystkie pola i notatki."],
+          ["edit","Edycja","Przycisk w rozwiniętej karcie — relację postaci, typ lokacji, typ i stosunek frakcji zmieniasz w oknie."],
+          ["pin","Przypinanie","Dotknij pinezki. Przypięte wpisy są zawsze na początku listy."],
+          ["# TAG","Filtr po tagu","W panelu Filtry wybierz tag; aktywny filtr widać jako chip pod paskiem."],
         ],
       },
       sessions:{
@@ -556,7 +562,8 @@ export const TRANSLATIONS = {
       "compendium-monsters":"Monsters","compendium-equipment":"Equipment",
     },
     UI: {
-      close:"Close", help:"Help", settings:"Settings", support:"Support", dangerZone:"Danger zone",
+      close:"Close", help:"Help", settings:"Settings", support:"Support",
+      loadingTab:"Loading…", storageFull:"Storage full — data not saved", removeTag:"Remove tag", dangerZone:"Danger zone",
       langLabel:"Language", langName:"English",
       themeColor:"Color theme", resetChar:"Reset character", syncData:"Sync data",
       logout:"Log out", changeHero:"Change hero", hero:"Hero", langToggle:"PL",
@@ -588,6 +595,7 @@ export const TRANSLATIONS = {
 
     SYNC: {
       running:"Syncing…",
+      failedLocal:"Sync error — data saved locally",
       summary:(up, down) => `Synced. Sent: ${up}, received: ${down}.`,
       upToDate:"Everything is up to date.",
       keptLocal:(n) => ` ${n === 1 ? "One data set changed" : `${n} data sets changed`} both here and in the cloud — this device's version was kept.`,
@@ -663,6 +671,8 @@ export const TRANSLATIONS = {
       eyes:"Eyes", eyesPh:"e.g. blue",
       skin:"Skin", skinPh:"e.g. olive",
       hair:"Hair", hairPh:"e.g. dark",
+      profState:{ none:"not proficient", prof:"proficient", exp:"expertise" },
+      profLegend:"Tap a marker: none → proficient → expertise",
       savingThrowsTitle:"Saving Throws", st:"ST", proficiency:"Proficiency: click to cycle (none → proficient → expert)",
       skillsTitle:"Skills",
       abilitiesTitle:"Abilities",
@@ -797,10 +807,11 @@ export const TRANSLATIONS = {
       delete:"Delete entry", done:"Done",
       emptyNote:"No notes yet. Tap to start writing the session chronicle…",
       edit:"Edit chronicle",
+      legend:{ npc:"Characters", location:"Locations", quest:"Quests", inventory:"Items", skill:"Abilities" },
     },
 
     QUESTS: {
-      newTitle:"New quest entry",
+      newTitle:"New quest entry", deleteQuest:"Delete quest", deleteStep:"Delete step",
       namePh:"Quest / mission name…",
       descPh:"Brief description of quest goals…",
       rewardPh:"Expected reward (e.g. gold, unique artifact, XP)…",
@@ -825,7 +836,7 @@ export const TRANSLATIONS = {
     REST: {
       shortTitle:"Short Rest", longTitle:"Long Rest",
       availableDice:(avail,max,type) => `Spend Hit Dice to recover HP. ${avail} of ${max} ${type} dice available.`,
-      diceType:"Die type", maxLabel:"Max.", spend:"Spend",
+      diceType:"Die type", maxLabel:"Max.", spend:"Spend", decrease:"Fewer dice", increase:"More dice",
       restores:(avg,min,max,mod) => `Restores ~${avg} HP (range ${min}–${max}, CON mod ${mod>=0?"+":""}${mod})`,
       cancel:"Cancel", doShortRest:"Rest", doLongRest:"Long Rest",
       restoreHp:"Restore full hit points",
@@ -853,6 +864,7 @@ export const TRANSLATIONS = {
 
     PROFILES: {
       tagline:"Select your hero to continue your RPG campaign",
+      statArrays:{ standard:"Standard array", heroic:"Heroic (strong)", balanced:"Balanced" },
       unnamed:"Unnamed Hero", renameTitle:"Rename hero",
       levelLabel:"Level", active:"Active",
       createNew:"Create New Hero", createSample:"Create sample hero",
@@ -919,41 +931,41 @@ export const TRANSLATIONS = {
         title:"Character",
         intro:"Your hero's identity, stats, and combat abilities.",
         items:[
-          ["chevrons-updown","Collapse / expand card","Tap a section header to toggle. Collapsed state is remembered."],
-          ["STAT","Edit ability score","Click a stat box (STR/DEX/…) to type a new value. The modifier (+/−) updates automatically."],
-          ["ST","Saving throw — override","Type a value to manually override a saving throw. Double-click to reset back to the calculated value."],
-          [["circle","diamond"],"Skill proficiency","Click a skill: none → proficient (●) → expert (◆). Expert = double proficiency bonus."],
-          ["AC / HP","Combat stats","AC, Initiative, Speed, Prof. Bonus: edit directly. HP: use +/− buttons or type the number."],
-          ["COND.","Conditions & Exhaustion","Tap a condition to toggle it on or off. Exhaustion: 0 = none, 1–6 = increasing severity."],
-          ["skull","Death saving throws","Three success circles and three failure circles. Click a circle to set it. 3 successes = stable."],
-          [["moon","sun"],"Short / Long Rest","Opens a modal. Short: spend Hit Dice to recover HP. Long: full recovery."],
-          ["ACTIVE","Active & Equipped","Bottom card: equipped items, active abilities, and active spells. Coins (gold/silver/copper). Drag ⠿ to reorder — works with a finger on mobile too."],
+          ["chevrons-updown","Collapse / expand cards","Tap a section header to toggle it. The state is remembered."],
+          ["STAT","Abilities","The big number is the modifier. Tap the small score below it to type a new value."],
+          ["ST","Saving throws & skills — override","Type a value to override the calculated bonus; clear the field to return to automatic."],
+          [["circle","diamond"],"Proficiency","Tap the marker: none → proficient (●) → expertise (◆). Expertise = double proficiency bonus."],
+          ["heart","Hit points","Tap the HP number (sidebar, or the top bar on phones) to enter damage, healing or temporary HP. Damage removes temporary HP first. − / + change HP by 1."],
+          ["XP","Experience & level up","Tap XP to add experience. When XP reaches the threshold, “Level up” appears: choose the class (multiclass) and confirm HP gained — hit dice and proficiency bonus update automatically."],
+          ["COND.","Conditions, death saves, exhaustion","The buttons show the current state; tap to open a window and change it."],
+          [["moon","sun"],"Short / Long rest","Short: spend hit dice; restores item charges marked “short rest”. Long: full recovery and all item charges."],
+          ["ACTIVE","Combat & Equipment","Equipped items, active abilities and prepared spells in one list. Tap a row for the full description. Items with charges or single-use items show what's left — tap “Use” or a dot."],
         ],
       },
       equipment:{
         title:"Equipment",
-        intro:"Inventory, Spells, and Abilities shown side by side on desktop. On mobile, switch using the sub-tabs.",
+        intro:"Items, Abilities and Spells — pick the sub-tab at the top. The app remembers the last one you opened.",
         items:[
-          ["plus","New item / spell / ability","The form adapts to the selected type — weapons show damage fields, charged items show charges."],
-          ["chevrons-updown","Collapse / expand","Collapsed = 2-line description preview. Expanded = full details and edit form."],
-          ["edit","Edit mode","Modify any field. Click ✓ to save and close the form."],
-          ["toggle","Equipped / Active","Items: Equipped ↔ In bag. Spells & abilities: Active ↔ Inactive. Active entries appear on the Character card."],
-          ["SLOTS","Manage spell slots","Click 'Manage slots' above the spell list. Set max and spent slots per spell level."],
-          ["CAT.","Ability categories","Gold = Skill, blue = Racial Feature, brown = Feat. See the legend above the filter bar."],
-          ["# TAG","Filter by tag (Inventory / Spells / Abilities)","Click a tag in the filter bar to show only entries with that tag. Click again to clear. Add tags from any entry's edit mode."],
+          ["SEARCH","Search","Searches names, descriptions and tags."],
+          ["FILTERS","Filters","Opens filters by type, category or tag. Active filters show as chips under the bar — tap ✕ to remove."],
+          ["plus","Add","Opens the form. The entry is saved only after “Save”."],
+          ["chevrons-updown","Entry card","Tap a card to expand the full description. An expanded card spans the whole row."],
+          ["edit","Edit","Button inside an expanded card. Everything — tags and charges too — is edited in a window; “Delete” needs a second confirmation."],
+          ["toggle","Equipped / Active / Prepared","The switch on a card. Active entries appear on the Combat & Equipment card."],
+          ["zap","Charges & uses","In the item form set max charges and when they recharge (short rest, long rest, dawn). Single-use items count by quantity."],
+          ["SLOTS","Spell slots","The “Manage slots” button in the Spells sub-tab."],
+          ["# TAG","Description formatting","Descriptions support **bold**, *italic*, # headings, - lists and > quotes."],
         ],
       },
       world:{
         title:"World",
-        intro:"NPCs, Locations, and Factions in three columns on desktop. On mobile, switch using the sub-tabs.",
+        intro:"Characters, Locations and Factions — pick the sub-tab at the top. Search and filters work like in Equipment.",
         items:[
-          ["plus","Create a new entry","Fill in the name and key fields. The entry appears on the list immediately."],
-          ["chevrons-updown","Collapse / expand","Collapsed = name + tags only. Expanded = full details and editable fields."],
-          ["edit","Edit mode","Modify fields, type, and notes. Click ✓ to close."],
-          ["REL.","NPC relation — tap to change","Badge below the NPC name. Tap to cycle: Unknown → Ally → Neutral → Hostile."],
-          ["RANK","Faction rank — tap to change","Badge below the faction name. Tap to cycle through ranks (Unknown, Ally, Enemy…)."],
-          ["pin","Keep entry at top","Tap the pin icon. Pinned entries always appear first in the list."],
-          ["# TAG","Filter by tag","Click a tag in the filter bar to show only entries with that tag. Click again to clear."],
+          ["plus","New entry","Fill in the name and key fields in the window, then “Save”."],
+          ["chevrons-updown","Entry card","Collapsed: name, relation or standing and a short preview. Expanded: all fields and notes."],
+          ["edit","Edit","Button inside an expanded card — change an NPC's relation, location type, faction type and standing in the window."],
+          ["pin","Pin to top","Tap the pin. Pinned entries always stay at the top of the list."],
+          ["# TAG","Filter by tag","Pick a tag in the Filters panel; the active filter shows as a chip under the bar."],
         ],
       },
       sessions:{

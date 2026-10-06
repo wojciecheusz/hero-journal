@@ -115,45 +115,15 @@ export const CONDITIONS = [
   // obsługiwany osobno w CombatCard jako conditions.exhaustion
 ];
 
-export const SAVING_THROWS = [
-  { key: "str", label: "Siła",      attr: "STR" },
-  { key: "dex", label: "Zręczność", attr: "DEX" },
-  { key: "con", label: "Budowa",    attr: "CON" },
-  { key: "int", label: "Intelekt",  attr: "INT" },
-  { key: "wis", label: "Mądrość",   attr: "WIS" },
-  { key: "cha", label: "Charyzma",  attr: "CHA" },
-];
-
-export const GENERIC_SKILLS = [
-  { key: "acrobatics",    label: "Akrobatyka",              attr: "DEX" },
-  { key: "athletics",     label: "Atletyka",                attr: "STR" },
-  { key: "arcana",        label: "Wiedza tajemna",          attr: "INT" },
-  { key: "deception",     label: "Oszustwo",                attr: "CHA" },
-  { key: "history",       label: "Historia",                attr: "INT" },
-  { key: "insight",       label: "Intuicja",                attr: "WIS" },
-  { key: "intimidation",  label: "Zastraszanie",            attr: "CHA" },
-  { key: "investigation", label: "Śledztwo",                attr: "INT" },
-  { key: "medicine",      label: "Medycyna",                attr: "WIS" },
-  { key: "nature",        label: "Przyroda",                attr: "INT" },
-  { key: "perception",    label: "Percepcja",               attr: "WIS" },
-  { key: "performance",   label: "Występy",                 attr: "CHA" },
-  { key: "persuasion",    label: "Perswazja",               attr: "CHA" },
-  { key: "religion",      label: "Religia",                 attr: "INT" },
-  { key: "sleightzhand",  label: "Zwinne dłonie",           attr: "DEX" },
-  { key: "stealth",       label: "Skradanie",               attr: "DEX" },
-  { key: "survival",      label: "Sztuka przetrwania",      attr: "WIS" },
-  { key: "animalhandling",label: "Opieka nad zwierzętami",  attr: "WIS" },
-];
-
 export const DEFAULT_CHAR = {
-  name: "", classes: [{ name: "Poszukiwacz przygód", level: 1 }],
+  name: "", classes: [{ name: "", level: 1 }],
   stats: { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 },
   profBonus: 2, hp: { current: 10, max: 10, temp: 0 }, ac: 10,
   initiativeBonus: undefined,
   passivePerceptionOverride: undefined, skillDCOverride: undefined, spellAttackOverride: undefined,
   savingThrows: {}, savingThrowExp: {}, savingThrowOverride: {},
   skills: {}, skillExp: {},
-  alignment: "Bezwzględnie neutralny", background: "", race: "",
+  alignment: "", background: "", race: "",
   traits: { personality: "", ideals: "", bonds: "", flaws: "" },
   personalNotes: "", backstory: "",
   spellSlots: {}, spellcastingAbility: "INT",
@@ -169,25 +139,25 @@ export const DEFAULT_CHAR = {
 export const CHAR_SLOTS = ["char","inventory","npcs","locations","skills","spells","sessions","quests","factions"];
 
 export const LEGEND_ITEMS = [
-  { type: "npc",       color: "rgba(201,148,62,0.35)", border: "rgba(201,148,62,0.7)",  label: "Postacie" },
-  { type: "location",  color: "rgba(74,138,170,0.35)", border: "rgba(74,138,170,0.7)",  label: "Miejsca" },
-  { type: "quest",     color: "rgba(170,68,68,0.35)",  border: "rgba(170,68,68,0.7)",   label: "Zadania" },
-  { type: "inventory", color: "rgba(58,138,90,0.35)",  border: "rgba(58,138,90,0.7)",   label: "Plecak" },
-  { type: "skill",     color: "rgba(122,90,170,0.35)", border: "rgba(122,90,170,0.7)",  label: "Zdolności" },
+  { type: "npc",       color: "rgba(201,148,62,0.35)", border: "rgba(201,148,62,0.7)" },
+  { type: "location",  color: "rgba(74,138,170,0.35)", border: "rgba(74,138,170,0.7)" },
+  { type: "quest",     color: "rgba(170,68,68,0.35)",  border: "rgba(170,68,68,0.7)" },
+  { type: "inventory", color: "rgba(58,138,90,0.35)",  border: "rgba(58,138,90,0.7)" },
+  { type: "skill",     color: "rgba(122,90,170,0.35)", border: "rgba(122,90,170,0.7)" },
 ];
 
 export const DND_CLASSES = [
-  { name: "Barbarzyńca", icon: "axe" },        { name: "Bard",      icon: "music" },
-  { name: "Kleryk",      icon: "cross" },      { name: "Druid",     icon: "leaf" },
-  { name: "Wojownik",    icon: "sword" },      { name: "Mnich",     icon: "hand" },
-  { name: "Paladyn",     icon: "shield" },     { name: "Łowca",     icon: "crosshair" },
-  { name: "Łotrzyk",     icon: "footprints" }, { name: "Czarownik", icon: "flame" },
-  { name: "Zaklinacz",   icon: "sparkles" },   { name: "Mag",       icon: "book" },
-  { name: "Inna",        icon: "circle-ellipsis" },
+  { name: "Barbarzyńca", en: "Barbarian", icon: "axe" },    { name: "Bard",      en: "Bard",     icon: "music" },
+  { name: "Kleryk",      en: "Cleric",    icon: "cross" },  { name: "Druid",     en: "Druid",    icon: "leaf" },
+  { name: "Wojownik",    en: "Fighter",   icon: "sword" },  { name: "Mnich",     en: "Monk",     icon: "hand" },
+  { name: "Paladyn",     en: "Paladin",   icon: "shield" }, { name: "Łowca",     en: "Ranger",   icon: "crosshair" },
+  { name: "Łotrzyk",     en: "Rogue",     icon: "footprints" }, { name: "Czarownik", en: "Sorcerer", icon: "flame" },
+  { name: "Zaklinacz",   en: "Warlock",   icon: "sparkles" }, { name: "Mag",     en: "Wizard",   icon: "book" },
+  { name: "Inna",        en: "Other",     icon: "circle-ellipsis" },
 ];
 
 export const STAT_ARRAYS = {
-  "Zestaw standardowy": { STR: 15, DEX: 14, CON: 13, INT: 12, WIS: 10, CHA: 8 },
-  "Heroiczny (Silny)":  { STR: 16, DEX: 15, CON: 14, INT: 13, WIS: 12, CHA: 11 },
-  "Zrównoważony":       { STR: 13, DEX: 13, CON: 13, INT: 13, WIS: 13, CHA: 13 },
+  standard: { STR: 15, DEX: 14, CON: 13, INT: 12, WIS: 10, CHA: 8 },
+  heroic:   { STR: 16, DEX: 15, CON: 14, INT: 13, WIS: 12, CHA: 11 },
+  balanced: { STR: 13, DEX: 13, CON: 13, INT: 13, WIS: 13, CHA: 13 },
 };

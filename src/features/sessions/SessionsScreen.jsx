@@ -27,7 +27,7 @@ function SessionsScreen({ sessions, setSessions, npcs, locations, quests, invent
   return (
     <>
       <div className="row" style={{ justifyContent:"space-between" }}>
-        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{sessions.length} {sessions.length === 1 ? "session" : "sessions"}</span>
+        <span style={{ fontFamily:"Cinzel,serif", fontSize:"0.62rem", letterSpacing:"0.12em" }}>{T.SESSIONS.count(sessions.length)}</span>
         <button className="btn-ghost" style={{ display:"inline-flex", alignItems:"center", gap:"0.3rem" }} onClick={addSesja}><Icon name="plus" size="0.85em"/> {T.SESSIONS.add}</button>
       </div>
 
@@ -37,7 +37,7 @@ function SessionsScreen({ sessions, setSessions, npcs, locations, quests, invent
           {LEGEND_ITEMS.map(li => {
             const counts = { npc: npcs.length, location: locations.length, quest: quests.length, inventory: inventory.length, skill: skills.length };
             if (!counts[li.type]) return null;
-            return <div key={li.type} className="sess-legend-item"><div className="legend-dot" style={{ background: li.color, border: `1px solid ${li.border}` }}/><span style={{ color: li.border }}>{li.label}</span></div>;
+            return <div key={li.type} className="sess-legend-item"><div className="legend-dot" style={{ background: li.color, border: `1px solid ${li.border}` }}/><span style={{ color: li.border }}>{T.SESSIONS.legend?.[li.type]}</span></div>;
           })}
         </div>
       )}

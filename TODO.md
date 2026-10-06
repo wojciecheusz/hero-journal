@@ -3,7 +3,7 @@
 ## Do zrobienia
 <!-- Zadania oczekujące na wykonanie -->
 
-### 🔄 P29 — Pakiet poprawek UI z przeglądu na iPadzie A16 (zrzuty #1–#6, 2026-10-06) — W TRAKCIE
+### ✅ P29 — Pakiet poprawek UI z przeglądu na iPadzie A16 (zrzuty #1–#6, 2026-10-06) — UKOŃCZONE (bez F — ikony)
 **Decyzje użytkownika (2026-10-06):** obserwacje [O] wchodzą do zakresu; EN w 100%
 po angielsku, PL w 100% po polsku (poza treścią użytkownika); przedmioty: licznik
 użyć + ładunki odnawiane; ikony (F) pomijamy — użytkownik dostarczy folder z ikonami;
@@ -151,10 +151,23 @@ zrzutu/danych — do potwierdzenia.
       1366×768, 1920×1080, 2560×1440, 3840×2160.
 
 **E. Spójność językowa i danych**
-- [ ] E1 [O] (#1, #4, #6) Mieszanka EN/PL: interfejs w trybie EN, ale Rzuty
+- [x] E1 [O] (#1, #4, #6) Mieszanka EN/PL: interfejs w trybie EN, ale Rzuty
       obronne, tagi i część etykiet po polsku. Ustalić docelowy język.
-- [ ] E2 [O] (dane) Legacy typ przedmiotu „Ogólny" → „general" (4 szt.);
+- [x] E2 [O] (dane) Legacy typ przedmiotu „Ogólny" → „general" (4 szt.);
       kołczan zapisany jako broń.
+      ✅ **Zrobione (faza 5):** EN w 100% po angielsku, PL w 100% po polsku —
+      rzuty obronne z `T.SAVING_THROWS` (PL: oficjalne Kondycja/Inteligencja),
+      tagi sugerowane wyświetlane w języku interfejsu niezależnie od języka
+      zapisu (`utils/tags.js`, filtr łączy „akcja"/„action"), kreator: nazwy
+      klas i zestawów atrybutów w języku interfejsu, legenda Kroniki, teksty
+      na sztywno (ładowanie, synchronizacja, pamięć, aria-label) przeniesione
+      do tłumaczeń, domyślna postać bez polskich wartości, pomoc opisuje nowy
+      interfejs; automatyczna kontrola: identyczny zestaw kluczy PL/EN.
+      E2: `normalizeSlot()` przy każdym wczytaniu i imporcie (stare typy jak
+      „Ogólny" → general) + testy. Kołczan jako broń to treść użytkownika —
+      zmiana typu w oknie edycji. [O] z #4: legenda znaczników biegłości i
+      znaczniki pod palec (`ProfMarker.jsx`), modyfikator atrybutu jako główna
+      liczba. F (ikony) pominięte zgodnie z decyzją — czeka na folder ikon.
 
 **F. Ikony** — pełny spis w `IKONY.md` (istniejące, brakujące, do ujednolicenia).
 - [ ] F1 🐞 `activity` (przycisk Stanów) nie istnieje w rejestrze `ICONS` →

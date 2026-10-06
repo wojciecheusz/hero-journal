@@ -14,31 +14,27 @@ export default function HeroHeaderCard({ char, setChar, C }) {
         {STAT_KEYS.map(key => {
           const val = char.stats?.[key] ?? 10;
           return (
-            <div key={key} className="hcv2-stat-box">
+            <label key={key} className="hcv2-stat-box">
+              <div className="hcv2-stat-label">{statAbbr[key] || key}</div>
+              <div className="hcv2-stat-mod">{statMod(val)}</div>
               <input
-                type="number" min={STAT_MIN} max={STAT_MAX}
+                type="text" inputMode="numeric"
                 className="hcv2-stat-score"
                 value={val}
+                aria-label={`${statAbbr[key] || key}`}
                 onFocus={e => e.target.select()}
                 onChange={e => {
                   const raw = parseInt(e.target.value);
                   setChar(c => ({
                     ...c,
-                    stats: { ...(c.stats||{}), [key]: isNaN(raw) ? raw : clamp(raw, STAT_MIN, STAT_MAX) },
+                    stats: { ...(c.stats||{}), [key]: isNaN(raw) ? e.target.value : clamp(raw, STAT_MIN, STAT_MAX) },
                   }));
                 }}
                 onBlur={e => {
                   const v = parseInt(e.target.value);
                   setChar(c => ({...c, stats:{...(c.stats||{}), [key]: isNaN(v) ? 10 : clamp(v, STAT_MIN, STAT_MAX)}}));
-                }}
-                style={{ width:"100%", textAlign:"center", background:"transparent",
-                         border:"none", outline:"none",
-                         fontFamily:"inherit", fontSize:"inherit", fontWeight:"inherit",
-                         color:"inherit", padding:0, cursor:"text" }}
-              />
-              <div className="hcv2-stat-mod">{statMod(val)}</div>
-              <div className="hcv2-stat-label">{statAbbr[key] || key}</div>
-            </div>
+                }}/>
+            </label>
           );
         })}
       </div>

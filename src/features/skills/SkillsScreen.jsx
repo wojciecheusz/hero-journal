@@ -2,7 +2,8 @@ import { useState, memo } from 'react';
 import { SKILL_CATS, SKILL_CAT_ICONS } from '../../constants/gameConstants';
 import { SKILL_CAT } from '../../constants/enums.js';
 import { TagsEditor, Toggle } from '../../shared/ui';
-import { useT } from '../../i18n/translations';
+import { useT, useLang } from '../../i18n/translations';
+import { displayTag, hasTag, sameTag } from '../../utils/tags';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 import ListToolbar from '../../shared/ListToolbar';
@@ -20,6 +21,7 @@ const EMPTY_SKILL = { name:"", category: SKILL_CAT.SKILL, description:"", level:
 
 function SkillsScreen({ skills, setSkills, openEntity }) {
   const T    = useT();
+  const lang = useLang();
   const SK   = T.SKILLS;
   const CATS = T.SKILL_CATS;
   const catLabel = c => CATS[SKILL_CATS.indexOf(catKey(c))] ?? c;
@@ -39,9 +41,9 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
   const deleteSkill = id => setSkills(l => l.filter(x => x.id !== id));
 
   const visible = skills.filter(s =>
-    (!activeTag || (s.tags||[]).includes(activeTag)) &&
+    (!activeTag || hasTag(s.tags, activeTag)) &&
     (!activeCat || catKey(s.category) === activeCat) &&
-    matchesSearch(search, [s.name, plainText(s.description), catLabel(s.category), ...(s.tags || [])])
+    matchesSearch(search, [s.name, plainText(s.description), catLabel(s.category), ...(s.tags || []).map(t => displayTag(t, lang))])
   ).sort((a,b) => (b.pinned?1:0)-(a.pinned?1:0));
 
   const groups = [
@@ -60,7 +62,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
           { key:"cat", label:T.LIST.category, value:activeCat, onChange:setActiveCat,
             options: SKILL_CATS.map((c, i) => ({ value:c, label:CATS[i], icon:SKILL_CAT_ICONS[c], count:skills.filter(s => catKey(s.category) === c).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
-            options: allTags.map(tag => ({ value:tag, label:tag, count:skills.filter(x => (x.tags||[]).includes(tag)).length })) },
+            options: allTags.map(tag => ({ value:tag, label:displayTag(tag, lang), count:skills.filter(x => hasTag(x.tags, tag)).length })) },
         ]}/>
 
       {skills.length === 0 && <div className="card empty-state">{SK.empty}</div>}
@@ -83,7 +85,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
             <div className="form-field">
               <span className="form-label">{T.LIST.tagsLabel}</span>
               <TagsEditor tags={d.tags || []} onChange={v => set("tags", v)}
-                suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
+                suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).some(s => sameTag(s, t))) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
             </div>
           </>}
         </EntityEditModal>
@@ -102,7 +104,7 @@ function SkillsScreen({ skills, setSkills, openEntity }) {
         accent={sk.inUse ? "purple" : null}
         meta={<>
           <span className="meta-badge">{catLabel(sk.category)}</span>
-          {(sk.tags || []).slice(0, 2).map(t => <span key={t} className="meta-sub">{t}</span>)}
+          {(sk.tags || []).slice(0, 2).map(t => <span key={t} className="meta-sub">{displayTag(t, lang)}</span>)}
         </>}
         quick={<Toggle on={!!sk.inUse} onToggle={() => toggleInUse(sk.id)} label={sk.inUse ? SK.active : SK.inactive} color="purple"/>}
         preview={sk.description ? plainText(sk.description) : null}>

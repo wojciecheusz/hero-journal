@@ -1,5 +1,6 @@
 import Icon from './icons';
-import { useT } from '../i18n/translations';
+import { useT, useLang } from '../i18n/translations';
+import { displayTag } from '../utils/tags';
 
 /* Karta wpisu listy (P29/B1–B4) — wspólna dla Przedmiotów, Zdolności,
    Czarów, Postaci, Lokacji i Frakcji.
@@ -79,10 +80,11 @@ export function FieldGrid({ fields }) {
 
 /* Tagi tylko do odczytu (edycja w oknie) */
 export function TagList({ tags }) {
+  const lang = useLang();
   if (!tags?.length) return null;
   return (
     <div className="tag-list">
-      {tags.map(t => <span key={t} className="tag tag-default">{t}</span>)}
+      {tags.map(t => <span key={t} className="tag tag-default">{displayTag(t, lang)}</span>)}
     </div>
   );
 }

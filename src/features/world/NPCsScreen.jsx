@@ -1,7 +1,8 @@
 import { useState, memo } from 'react';
 import { REL_ICONS } from '../../constants/gameConstants';
 import { TagsEditor } from '../../shared/ui';
-import { useT } from '../../i18n/translations';
+import { useT, useLang } from '../../i18n/translations';
+import { displayTag, hasTag } from '../../utils/tags';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 import ListToolbar from '../../shared/ListToolbar';
@@ -17,6 +18,7 @@ const EMPTY_NPC = { name:"", role:"", relation:"unknown", affiliation:"", metAt:
 
 function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const T  = useT();
+  const lang = useLang();
   const N  = T.NPCS;
   const RL = T.REL_LABELS;
 
@@ -31,9 +33,9 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
   const deleteNPC = id => setNPCs(l => l.filter(x => x.id !== id));
 
   const visible = npcs
-    .filter(n => !activeTag || (n.tags || []).includes(activeTag))
+    .filter(n => !activeTag || hasTag(n.tags, activeTag))
     .filter(n => !filterRel || (n.relation || "unknown") === filterRel)
-    .filter(n => matchesSearch(search, [n.name, n.role, n.affiliation, n.metAt, plainText(n.notes), n.connections, RL[n.relation || "unknown"], ...(n.tags || [])]))
+    .filter(n => matchesSearch(search, [n.name, n.role, n.affiliation, n.metAt, plainText(n.notes), n.connections, RL[n.relation || "unknown"], ...(n.tags || []).map(t => displayTag(t, lang))]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
 
   return (
@@ -46,7 +48,7 @@ function NPCsScreen({ npcs, setNPCs, openEntity }) {
           { key:"rel", label:T.LIST.relation, value:filterRel, onChange:setFilterRel,
             options: RELATIONS.map(r => ({ value:r, label:RL[r], icon:REL_ICONS[r], count:npcs.filter(n => (n.relation||"unknown") === r).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
-            options: allTags.map(tag => ({ value:tag, label:tag, count:npcs.filter(x => (x.tags||[]).includes(tag)).length })) },
+            options: allTags.map(tag => ({ value:tag, label:displayTag(tag, lang), count:npcs.filter(x => hasTag(x.tags, tag)).length })) },
         ]}/>
 
       {npcs.length === 0 && <div className="card empty-state">{N.empty}</div>}

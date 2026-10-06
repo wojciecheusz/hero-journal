@@ -219,7 +219,7 @@ export function importProfileData(json) {
   }
   const newId = 'profile_' + Date.now();
   CHAR_SLOTS.forEach(slot => {
-    if (slot in data.slots) saveChar(slot, newId, data.slots[slot]);
+    if (slot in data.slots) saveChar(slot, newId, normalizeSlot(slot, data.slots[slot]));
   });
   return { ...data.profile, id: newId, created: Date.now() };
 }
@@ -318,6 +318,23 @@ export function migrateToEnums() {
     if (q)  saveChar("quests",    id, migrateQuests(q));
   });
   localStorage.setItem(MIGRATION_KEY, "1");
+}
+
+/* Normalizacja przy każdym wczytaniu i imporcie (P29/E2). Jednorazowa
+   migracja wyżej działa tylko na danych obecnych na urządzeniu w chwili jej
+   uruchomienia — dane, które przyszły później z chmury albo z importu
+   (np. stare typy przedmiotów „Ogólny"), zostawały po staremu. Mapowania są
+   idempotentne, więc poprawne wartości zostają bez zmian. */
+const SLOT_NORMALIZERS = {
+  char: migrateChar, inventory: migrateInventory, skills: migrateSkills,
+  spells: migrateSpells, locations: migrateLocations, factions: migrateFactions,
+  quests: migrateQuests,
+};
+export function normalizeSlot(slot, val) {
+  const fn = SLOT_NORMALIZERS[slot];
+  if (!fn || val == null) return val;
+  if (slot !== "char" && !Array.isArray(val)) return val;
+  return fn(val);
 }
 
 export const _migrationMaps = {

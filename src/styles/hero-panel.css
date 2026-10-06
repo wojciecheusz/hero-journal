@@ -447,3 +447,10 @@
   .hj-btn.temp:hover { background: var(--spell-bg); }
   .stepper-btn:not(:disabled):hover { color: var(--hj-accent); }
 }
+
+/* Podpisy w stopce i przyciski tożsamości — węższy krój bez wersalików,
+   żeby dłuższe polskie słowa („Ustawienia", „Zmień bohatera") mieściły się
+   bez łamania w środku wyrazu. */
+.sb-foot-btn { font-family: 'Crimson Text', Georgia, serif; font-size: max(13px, 0.68rem); font-weight: 600; letter-spacing: 0; text-transform: none; }
+.sb-foot-btn span { overflow-wrap: normal; word-break: keep-all; }
+.hero-chip { font-size: max(13px, 0.68rem); gap: 0.3rem; }

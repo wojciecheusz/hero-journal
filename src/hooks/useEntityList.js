@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { canonTag } from '../utils/tags';
 
 /**
  * Wspólny stan list encji (Przedmioty/Zdolności/Czary/NPC/Lokacje/Frakcje):
@@ -9,7 +10,7 @@ export function useEntityList(items, setItems) {
   const [expanded, setExpanded]   = useState({});
   const [activeTag, setActiveTag] = useState(null);
 
-  const allTags = [...new Set(items.flatMap(x => x.tags || []))].sort();
+  const allTags = [...new Set(items.flatMap(x => (x.tags || []).map(canonTag)))].sort();
 
   const upd    = (id, f, v) => setItems(l => l.map(x => x.id === id ? { ...x, [f]: v } : x));
   const toggle = id => setExpanded(e => ({ ...e, [id]: !e[id] }));

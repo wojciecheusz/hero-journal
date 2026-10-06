@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { STAT_KEYS, DND_CLASSES, STAT_ARRAYS } from '../../constants/gameConstants';
 import { clamp, statMod } from '../../utils/math';
 import { THEMES } from '../../theme/themes';
-import { useT } from '../../i18n/translations';
+import { useT, useLang } from '../../i18n/translations';
 import Icon from '../../shared/icons';
 
 export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete, onCreateSample, onRename, theme }) {
@@ -100,6 +100,7 @@ export function ProfileScreen({ profiles, activeId, onSelect, onCreate, onDelete
 }
 
 export function HeroWizard({ onFinish, onCancel, theme }) {
+  const lang = useLang();
   const t = THEMES[theme] || THEMES.pergamin;
   const T = useT();
   const P = T.PROFILES;
@@ -111,20 +112,22 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
   const [level, setLevel] = useState(1);
   const [bg, setBg]       = useState("");
   const [align, setAlign] = useState("");
-  const [statArray, setStatArray] = useState("Zestaw standardowy");
+  const [statArray, setStatArray] = useState("standard");
   const [customStats, setCustomStats] = useState({ STR:10, DEX:10, CON:10, INT:10, WIS:10, CHA:10 });
   const [useCustom, setUseCustom]   = useState(false);
   const [appearance, setAppearance] = useState({ age:"", height:"", weight:"", eyes:"", skin:"", hair:"" });
   const [traits, setTraits]         = useState({ personality:"", ideals:"", bonds:"", flaws:"" });
 
   const STEPS = P.stepNames;
-  const stats = useCustom ? customStats : (STAT_ARRAYS[statArray] || STAT_ARRAYS["Zestaw standardowy"]);
+  const stats = useCustom ? customStats : (STAT_ARRAYS[statArray] || STAT_ARRAYS.standard);
   const canNext = [name.trim().length > 0, cls !== null, true, true, true, true][step];
 
   const handleFinish = () => {
     const id = "profile_" + Date.now();
+    /* Nazwa klasy w języku interfejsu w chwili tworzenia (potem to treść użytkownika) */
+    const clsName = cls ? (lang === "en" ? cls.en : cls.name) : "";
     const newChar = {
-      name: name.trim(), race: "", classes: [{ name: cls?.name || "Poszukiwacz przygód", level }],
+      name: name.trim(), race: "", classes: [{ name: clsName, level }],
       stats: { ...stats }, profBonus: 2, hp: { current: 10, max: 10, temp: 0 }, ac: 10,
       initiativeBonus: undefined, savingThrows: {}, savingThrowExp: {}, savingThrowOverride: {},
       passivePerceptionOverride: undefined, skillDCOverride: undefined, spellAttackOverride: undefined,
@@ -137,7 +140,7 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
       conditions:{}, proficiencies:{ weapons:"", armor:"", languages:"", tools:"" },
       deathSaves:{ successes:0, failures:0 },
     };
-    onFinish(id, newChar, { name: name.trim(), class: cls?.name || "", level, created: Date.now(), system: "dnd5e" });
+    onFinish(id, newChar, { name: name.trim(), class: clsName, level, created: Date.now(), system: "dnd5e" });
   };
 
   const inputStyle = {
@@ -174,7 +177,7 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
               {DND_CLASSES.map(c => (
                 <button key={c.name} className={`wizard-class-btn${cls?.name === c.name ? " selected" : ""}`} onClick={() => setCls(c)}>
                   <span className="wizard-class-icon"><Icon name={c.icon} size="1.3em"/></span>
-                  <span className="wizard-class-name">{c.name}</span>
+                  <span className="wizard-class-name">{lang === "en" ? c.en : c.name}</span>
                 </button>
               ))}
             </div>
@@ -194,7 +197,7 @@ export function HeroWizard({ onFinish, onCancel, theme }) {
               {Object.keys(STAT_ARRAYS).map(arr => (
                 <button key={arr}
                   style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${!useCustom && statArray === arr ? t.accent : t.borderInput}`, color:!useCustom && statArray === arr ? t.accent : t.textMuted, padding:"0.3rem 0.7rem", cursor:"pointer" }}
-                  onClick={() => { setStatArray(arr); setUseCustom(false); }}>{arr}</button>
+                  onClick={() => { setStatArray(arr); setUseCustom(false); }}>{P.statArrays?.[arr] ?? arr}</button>
               ))}
               <button
                 style={{ fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.1em", textTransform:"uppercase", background:"transparent", border:`1px solid ${useCustom ? t.accent : t.borderInput}`, color:useCustom ? t.accent : t.textMuted, padding:"0.3rem 0.7rem", cursor:"pointer" }}

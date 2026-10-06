@@ -1,26 +1,28 @@
 import { useState } from 'react';
-import { useT } from '../i18n/translations';
+import { useT, useLang } from '../i18n/translations';
+import { canonTag, displayTag, hasTag } from '../utils/tags';
 import Icon from './icons';
 import { clamp } from '../utils/math';
 
 export function TagsEditor({ tags, onChange, suggestions }) {
   const T = useT();
+  const lang = useLang();
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
   const [showSugg, setShowSugg] = useState(true);
   const commit = () => {
-    const t = draft.trim().toLowerCase();
-    if (t && !tags.includes(t)) onChange([...tags, t]);
+    const t = canonTag(draft.trim().toLowerCase());
+    if (t && !hasTag(tags, t)) onChange([...tags, t]);
     setDraft(""); setAdding(false);
   };
-  const remaining = (suggestions || []).filter(s => !tags.includes(s));
+  const remaining = (suggestions || []).filter(s => !hasTag(tags, s));
   return (
     <div>
       <div className="tags-row">
         {tags.map(tag => (
           <span key={tag} className="tag tag-default">
-            {tag}
-            <button className="tag-remove" onClick={() => onChange(tags.filter(x => x !== tag))} aria-label="Remove tag"><Icon name="close" size="0.85em"/></button>
+            {displayTag(tag, lang)}
+            <button className="tag-remove" onClick={() => onChange(tags.filter(x => x !== tag))} aria-label={T.UI.removeTag}><Icon name="close" size="0.85em"/></button>
           </span>
         ))}
         {adding
@@ -35,7 +37,7 @@ export function TagsEditor({ tags, onChange, suggestions }) {
           <div className="tags-row tags-suggestions">
             <span className="tags-suggest-label">{T.UI.tagSuggestions}</span>
             {remaining.map(tag => (
-              <button key={tag} className="tag tag-suggestion" onClick={() => onChange([...tags, tag])}>
+              <button key={tag} className="tag tag-suggestion" onClick={() => onChange([...tags, canonTag(tag)])}>
                 + {tag}
               </button>
             ))}

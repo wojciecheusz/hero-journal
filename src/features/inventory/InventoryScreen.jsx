@@ -2,7 +2,8 @@ import { useState, memo } from 'react';
 import { ITEM_TYPES, ITEM_ICONS, DAMAGE_TYPES } from '../../constants/gameConstants';
 import { ITEM_TYPE } from '../../constants/enums.js';
 import { Toggle, TagsEditor } from '../../shared/ui';
-import { useT } from '../../i18n/translations';
+import { useT, useLang } from '../../i18n/translations';
+import { displayTag, hasTag, sameTag } from '../../utils/tags';
 import { useScrollToEntity } from '../../hooks/useScrollToEntity';
 import { useEntityList } from '../../hooks/useEntityList';
 import ListToolbar from '../../shared/ListToolbar';
@@ -21,6 +22,7 @@ const isArmor    = t => t === ITEM_TYPE.ARMOR || t === ITEM_TYPE.SHIELD;
 
 function InventoryScreen({ inventory, setInventory, openEntity }) {
   const T = useT();
+  const lang = useLang();
   const I = T.INVENTORY;
   const displayItemType   = type => T.ITEM_TYPES[ITEM_TYPES.indexOf(type)] ?? type;
   const displayDamageType = dt => T.DAMAGE_TYPES[DAMAGE_TYPES.indexOf(dt)] ?? dt;
@@ -43,8 +45,8 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
 
   const visible = inventory
     .filter(i => !filterType || i.type === filterType)
-    .filter(i => !activeTag || (i.tags || []).includes(activeTag))
-    .filter(i => matchesSearch(search, [i.name, plainText(i.note), i.effect, i.charges, displayItemType(i.type), ...(i.tags || [])]))
+    .filter(i => !activeTag || hasTag(i.tags, activeTag))
+    .filter(i => matchesSearch(search, [i.name, plainText(i.note), i.effect, i.charges, displayItemType(i.type), ...(i.tags || []).map(t => displayTag(t, lang))]))
     .sort((a, b) => (b.pinned?1:0) - (a.pinned?1:0));
   const equippedCount = inventory.filter(i => i.equipped).length;
 
@@ -64,7 +66,7 @@ function InventoryScreen({ inventory, setInventory, openEntity }) {
           { key:"type", label:T.LIST.type, value:filterType, onChange:setFilterType,
             options: ITEM_TYPES.map((t, i) => ({ value:t, label:T.ITEM_TYPES[i] ?? t, icon:ITEM_ICONS[t], count:inventory.filter(x => x.type === t).length })).filter(o => o.count) },
           { key:"tag", label:T.LIST.tags, value:activeTag, onChange:setActiveTag,
-            options: allTags.map(tag => ({ value:tag, label:tag, count:inventory.filter(x => (x.tags||[]).includes(tag)).length })) },
+            options: allTags.map(tag => ({ value:tag, label:displayTag(tag, lang), count:inventory.filter(x => hasTag(x.tags, tag)).length })) },
         ]}/>
 
       {inventory.length === 0 && <div className="card empty-state">{I.empty}</div>}
@@ -167,7 +169,7 @@ function ItemForm({ d, set, T }) {
       <div className="form-field">
         <span className="form-label">{T.LIST.tagsLabel}</span>
         <TagsEditor tags={d.tags || []} onChange={v => set("tags", v)}
-          suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).includes(t)) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
+          suggestions={(d.tags || []).some(t => (T.UI.SUGGESTED_ACTION_TAGS || []).some(s => sameTag(s, t))) ? [] : T.UI.SUGGESTED_ACTION_TAGS}/>
       </div>
     </>
   );

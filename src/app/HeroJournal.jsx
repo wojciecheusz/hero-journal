@@ -23,7 +23,7 @@ import Header        from './Header';
 import MobileHeroPanel from './hero/MobileHeroPanel';
 import MobileNav     from './MobileNav';
 import { RestModal } from '../features/character/widgets/RestModal';
-import { LangContext, TRANSLATIONS } from '../i18n/translations';
+import { LangContext, TRANSLATIONS, useT } from '../i18n/translations';
 import { ProfileScreen, HeroWizard } from '../features/profiles/ProfileScreen';
 import { ResetModal } from '../shared/ui';
 import ErrorBoundary from './ErrorBoundary';
@@ -47,9 +47,10 @@ const DICE_FAB_ENABLED = false;
 
 /* Loader wyświetlany podczas ładowania chunka */
 function TabLoader() {
+  const T = useT();
   return (
     <div style={{ display:"flex", alignItems:"center", justifyContent:"center", padding:"4rem 2rem", color:"var(--hj-text-dim)", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.18em", textTransform:"uppercase" }}>
-      Loading…
+      {T.UI.loadingTab}
     </div>
   );
 }
@@ -230,12 +231,12 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
       {restModal && <RestModal type={restModal} char={char} setChar={setChar} inventory={inventory} setInventory={setInventory} onClose={() => setRestModal(null)}/>}
       {syncWarning && !syncFailed && (
         <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"rgba(40,32,8,0.95)", border:"1px solid #8a7020", color:"#d4aa40", fontFamily:"Cinzel,serif", fontSize:"0.5rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.35rem 0.8rem", display:"flex", gap:"0.4rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 2px 8px rgba(0,0,0,0.4)", pointerEvents:"none" }}>
-          <Icon name="cloud" size="0.9em"/> Synchronizacja…
+          <Icon name="cloud" size="0.9em"/> {T.SYNC.running}
         </div>
       )}
       {syncFailed && (
         <div style={{ position:"fixed", bottom:"calc(var(--hj-nav-h,56px) + 0.5rem)", left:"50%", transform:"translateX(-50%)", zIndex:500, background:"#5a1a1a", border:"1px solid #8a3a3a", color:"#f0c0c0", fontFamily:"Cinzel,serif", fontSize:"0.55rem", letterSpacing:"0.1em", textTransform:"uppercase", padding:"0.5rem 1rem", display:"flex", gap:"0.8rem", alignItems:"center", borderRadius:"3px", maxWidth:"90vw", boxShadow:"0 4px 16px rgba(0,0,0,0.5)" }}>
-          <span style={{ display:"flex", alignItems:"center", gap:"0.4rem" }}><Icon name="cloud" size="0.9em"/> Błąd synchronizacji — dane zapisane lokalnie</span>
+          <span style={{ display:"flex", alignItems:"center", gap:"0.4rem" }}><Icon name="cloud" size="0.9em"/> {T.SYNC.failedLocal}</span>
           <button onClick={dismissSyncError}
             style={{ background:"transparent", border:"none", color:"inherit", cursor:"pointer", lineHeight:1, padding:0, flexShrink:0, display:"flex" }}><Icon name="close" size="0.9em"/></button>
         </div>
@@ -265,7 +266,7 @@ export default function HeroJournal({ user = null, onLogout = null, onCloudRefre
 
       {quotaWarning && (
         <div role="alert" style={{ position:"fixed", bottom:"4.5rem", left:"50%", transform:"translateX(-50%)", zIndex:9999, background:"var(--hj-accent,#cc2233)", color:"#fff", fontFamily:"Cinzel,serif", fontSize:"0.6rem", letterSpacing:"0.08em", textTransform:"uppercase", padding:"0.5rem 1rem", borderRadius:"2px", display:"flex", gap:"0.75rem", alignItems:"center", boxShadow:"0 2px 12px rgba(0,0,0,0.5)" }}>
-          <span>Storage full — data not saved</span>
+          <span>{T.UI.storageFull}</span>
           <button onClick={() => setQuotaWarning(false)} style={{ background:"none", border:"none", color:"inherit", cursor:"pointer", lineHeight:1, padding:0, display:"flex" }}><Icon name="close" size="0.9em"/></button>
         </div>
       )}

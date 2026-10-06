@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { _migrationMaps } from '../utils/storage.js';
+import { _migrationMaps, normalizeSlot } from '../utils/storage.js';
 
 const {
   QUEST_STATUS_MAP, SKILL_CAT_MAP, ITEM_TYPE_MAP,
@@ -69,5 +69,22 @@ describe('Migration maps — Polish → enum', () => {
     expect(QUEST_STATUS_MAP['active']).toBeUndefined();
     expect(ITEM_TYPE_MAP['weapon']).toBeUndefined();
     expect(SPELL_LEVEL_MAP['cantrip']).toBeUndefined();
+  });
+});
+
+
+describe('normalizeSlot() — normalizacja przy każdym wczytaniu (P29/E2)', () => {
+  it('maps legacy Polish item types that arrived after the one-time migration', () => {
+    const inv = normalizeSlot('inventory', [{ type: 'Ogólny' }, { type: 'Broń' }, { type: 'general' }]);
+    expect(inv.map(i => i.type)).toEqual(['general', 'weapon', 'general']);
+  });
+  it('is idempotent and leaves unknown values alone', () => {
+    const once = normalizeSlot('factions', [{ type: 'Gildia', rank: 'Wróg' }, { type: 'custom', rank: 'enemy' }]);
+    expect(normalizeSlot('factions', once)).toEqual([{ type: 'guild', rank: 'enemy' }, { type: 'custom', rank: 'enemy' }]);
+  });
+  it('ignores slots without a normalizer and bad data', () => {
+    expect(normalizeSlot('npcs', [{ a: 1 }])).toEqual([{ a: 1 }]);
+    expect(normalizeSlot('inventory', null)).toBe(null);
+    expect(normalizeSlot('inventory', 'oops')).toBe('oops');
   });
 });

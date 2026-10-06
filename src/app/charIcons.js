@@ -5,6 +5,7 @@ import { DND_CLASSES } from '../constants/gameConstants';
 export const ICON_CHOICES = [...new Set(DND_CLASSES.map(c => c.icon))];
 
 export function getCharIcon(char) {
-  const classIcon = DND_CLASSES.find(c => c.name === char.classes?.[0]?.name)?.icon || "sword";
+  const cls = char.classes?.[0]?.name;
+  const classIcon = DND_CLASSES.find(c => c.name === cls || c.en === cls)?.icon || "sword";
   return char.icon || classIcon;
 }
